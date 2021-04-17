@@ -5,56 +5,41 @@ module.exports = class AddRoleCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'addrole',
-      aliases: ['giverole', 'addr', 'ar'],
-      usage: 'addrole <user mention/ID> <role mention/ID> [reason]',
-      description: 'Adds the specified role to the provided user.',
+      aliases: ['ar', 'createrole', 'cr'],
+      usage: 'addrole roleName',
+      description: 'Creates a new role with the provided name.',
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
       userPermissions: ['MANAGE_ROLES'],
-      examples: ['addrole @Nettles @Member']
+      examples: ['addrole MyRole']
     });
   }
   async run(message, args) {
-
-    const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
-    if (!member)
-      return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
-    if (member.roles.highest.position >= message.member.roles.highest.position)
-      return this.sendErrorMessage(message, 0, 'You cannot add a role to someone with an equal or higher role');
-
-    const role = this.getRoleFromMention(message, args[1]) || message.guild.roles.cache.get(args[1]);
-    
-    let reason = args.slice(2).join(' ');
-    if (!reason) reason = '`None`';
-    if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
-
-    if (!role)
-      return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
-    else if (member.roles.cache.has(role.id)) // If member already has role
-      return this.sendErrorMessage(message, 0, 'User already has the provided role');
-    else {
+  if (args.length <= 0) this.sendErrorMessage(message, 1, 'Please type a role name', "");
+  else
+    {
+      if(args.join(' ').length > 30) return this.sendErrorMessage(message, 1, 'Your role name must not be longer than 30 characters', "");
       try {
-
         // Add role
-        await member.roles.add(role);
-        const embed = new MessageEmbed()
-          .setTitle('Add Role')
-          .setDescription(`${role} was successfully added to ${member}.`)
-          .addField('Moderator', message.member, true)
-          .addField('Member', member, true)
-          .addField('Role', role, true)
-          .addField('Reason', reason)
-          .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
-          .setTimestamp()
-          .setColor(message.guild.me.displayHexColor);
-        message.channel.send(embed);
+        await message.guild.roles.create({data:{name: `${args.join(' ')}`}, reason: `Created By ${message.author.username}#${message.author.discriminator}(${message.author.id})`})
+            .then(role => {
+              const embed = new MessageEmbed()
+                  .setTitle('Add Role')
+                  .setDescription(`${role} was successfully created.`)
+                  .addField('Created By', message.member, true)
+                  .addField('Role', role, true)
+                  .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+                  .setTimestamp()
+                  .setColor(message.guild.me.displayHexColor);
+              message.channel.send(embed);
 
-        // Update mod log
-        this.sendModLogMessage(message, reason, { Member: member, Role: role });
+              // Update mod log
+              this.sendModLogMessage(message, `Created By ${message.author.username}#${message.author.discriminator}(${message.author.id})`, { Member: message.author, Role: role });
+        });
 
       } catch (err) {
         message.client.logger.error(err.stack);
-        return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
+        this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
       }
     }  
   }

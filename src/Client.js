@@ -97,7 +97,7 @@ class Client extends Discord.Client {
      * @type {string}
      */
     this.serverLogId = config.serverLogId;
-
+    this.confessionReportsID = config.confessionReportsID
     /** 
      * Utility functions
      * @type {Object}
