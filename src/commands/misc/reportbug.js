@@ -9,7 +9,7 @@ module.exports = class ReportBugCommand extends Command {
       aliases: ['bugreport', 'report', 'bug', 'rb', 'br'],
       usage: 'reportbug <message>',
       description: oneLine`
-        Sends a message to the Splite Support Server's bug report channel.
+        Sends a message to the Splite developers bug report page.
         When reporting a bug, please include as much information as possible.
       `,
       type: client.types.MISC,
@@ -39,11 +39,10 @@ module.exports = class ReportBugCommand extends Command {
     if (report.length > 1024) report = report.slice(0, 1021) + '...';
     const embed = new MessageEmbed()
       .setTitle('Bug Report')
-      .setThumbnail('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite.png')
+      .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(oneLine`
         Successfully sent bug report!
-        Please join the [Splite Support Server](https://discord.gg/8Uk2REYmd3) to further discuss your issue.
-        Additionally, feel free to submit an issue on [GitHub](https://github.com/sabattle/SpliteBot/issues).
+        Please contact the developer (split#0420) if you wish to further discuss your issue.
       `) 
       .addField('Member', message.member, true)
       .addField('Message', report)

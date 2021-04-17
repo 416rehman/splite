@@ -10,7 +10,7 @@ module.exports = class WipeTotalPointsCommand extends Command {
       description: 'Wipes the provided user\'s points and total points.',
       type: client.types.OWNER,
       ownerOnly: true,
-      examples: ['wipetotalpoints @Nettles']
+      examples: ['wipetotalpoints @split']
     });
   }
   run(message, args) {

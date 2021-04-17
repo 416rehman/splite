@@ -13,10 +13,15 @@ module.exports = (client, oldMessage, newMessage) => {
     client.emit('message', newMessage);
   }
 
-  const embed = new MessageEmbed()
-    .setAuthor(`${newMessage.author.tag}`, newMessage.author.displayAvatarURL({ dynamic: true }))
-    .setTimestamp()
-    .setColor(newMessage.guild.me.displayHexColor);
+  try {
+    const embed = new MessageEmbed()
+        .setAuthor(`${newMessage.author.username}#${newMessage.author.discriminator}`, newMessage.author.displayAvatarURL({ dynamic: true }))
+        .setTimestamp()
+        .setColor(newMessage.guild.me.displayHexColor);
+  } catch (e) {
+    console.log(e)
+  }
+
 
   // Content change
   if (oldMessage.content != newMessage.content) {

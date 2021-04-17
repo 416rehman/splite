@@ -10,7 +10,7 @@ module.exports = class BanCommand extends Command {
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'BAN_MEMBERS'],
       userPermissions: ['BAN_MEMBERS'],
-      examples: ['ban @Nettles']
+      examples: ['ban @split']
     });
   }
   async run(message, args) {

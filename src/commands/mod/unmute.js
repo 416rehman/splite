@@ -10,7 +10,7 @@ module.exports = class UnmuteCommand extends Command {
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
       userPermissions: ['MANAGE_ROLES'],
-      examples: ['unmute @Nettles']
+      examples: ['unmute @split']
     });
   }
   async run(message, args) {

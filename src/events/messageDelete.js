@@ -4,10 +4,10 @@ module.exports = (client, message) => {
   
   // Check for webhook and that message is not empty
   if (message.webhookID || (!message.content && message.embeds.length === 0)) return;
-  
+
   const embed = new MessageEmbed()
     .setTitle('Message Update: `Delete`')
-    .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+    .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL({ dynamic: true }))
     .setTimestamp()
     .setColor(message.guild.me.displayHexColor);
   

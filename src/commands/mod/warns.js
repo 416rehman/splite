@@ -11,7 +11,7 @@ module.exports = class WarnsCommand extends Command {
       description: 'Displays a member\'s current warnings. A max of 5 warnings can be displayed at one time.',
       type: client.types.MOD,
       userPermissions: ['KICK_MEMBERS'],
-      examples: ['warns @Nettles']
+      examples: ['warns @split']
     });
   }
   run(message, args) {

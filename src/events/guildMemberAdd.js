@@ -99,7 +99,10 @@ module.exports = async (client, member) => {
     member.guild.id, 
     member.guild.name,
     member.joinedAt.toString(),
-    member.user.bot ? 1 : 0
+    member.user.bot ? 1 : 0,
+      null,
+      0,
+      null
   );
   
   // If member already in users table

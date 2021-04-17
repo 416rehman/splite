@@ -21,7 +21,7 @@ module.exports = class UptimeCommand extends Command {
     const date = moment().subtract(d, 'ms').format('dddd, MMMM Do YYYY');
     const embed = new MessageEmbed()
       .setTitle('Splite\'s Uptime')
-      .setThumbnail('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite.png')
+      .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(`\`\`\`prolog\n${days}, ${hours}, ${minutes}, and ${seconds}\`\`\``)
       .addField('Date Launched', date) 
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))

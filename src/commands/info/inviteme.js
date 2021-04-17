@@ -15,14 +15,13 @@ module.exports = class InviteMeCommand extends Command {
   run(message) {
     const embed = new MessageEmbed()
       .setTitle('Invite Me')
-      .setThumbnail('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite.png')
+      .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(oneLine`
-        Click [here](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599)
+        Click [here](https://discord.com/oauth2/authorize?client_id=832753795854237697&scope=bot%20identify%20guilds%20applications.commands)
         to invite me to your server!
       `)
-      .addField('Other Links', 
-        '**[Support Server](https://discord.gg/8Uk2REYmd3) | ' +
-        '[Repository](https://github.com/sabattle/SpliteBot)**'
+      .addField('Developed By',
+        '**Split#0420**'
       )
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()

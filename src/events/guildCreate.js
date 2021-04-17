@@ -75,17 +75,21 @@ module.exports = async (client, guild) => {
    * ------------------------------------------------------------------------------------------------ */ 
   // Update settings table
   client.db.settings.insertRow.run(
-    guild.id,
-    guild.name,
-    guild.systemChannelID, // Default channel
-    guild.systemChannelID, // Welcome channel
-    guild.systemChannelID, // Farewell channel
-    guild.systemChannelID,  // Crown Channel
-    modLog ? modLog.id : null,
-    adminRole ? adminRole.id : null,
-    modRole ? modRole.id : null,
-    muteRole ? muteRole.id : null,
-    crownRole ? crownRole.id : null
+      guild.id,
+      guild.name,
+      guild.systemChannelID, // Default channel
+      null, //confessions_channel_id
+      guild.systemChannelID, // Welcome channel
+      guild.systemChannelID, // Farewell channel
+      guild.systemChannelID,  // Crown Channel
+      modLog ? modLog.id : null,
+      adminRole ? adminRole.id : null,
+      modRole ? modRole.id : null,
+      muteRole ? muteRole.id : null,
+      crownRole ? crownRole.id : null,
+      null, //joinvoting_message_id
+      null,  //joinvoting_emoji
+      null  //voting_channel_id
   );
 
   // Update users table
@@ -97,7 +101,10 @@ module.exports = async (client, guild) => {
       guild.id, 
       guild.name,
       member.joinedAt.toString(),
-      member.bot ? 1 : 0
+      member.bot ? 1 : 0,
+        null,
+        0,
+        null
     );
   });
 
@@ -132,5 +139,5 @@ module.exports = async (client, guild) => {
   } catch (err) {
     client.logger.error(err.message);
   }
-  
+  await guild.me.setNickname(`[$] Splite`)
 };

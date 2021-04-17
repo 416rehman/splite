@@ -15,9 +15,9 @@ class Client extends Discord.Client {
    * @param {Object} config 
    * @param {ClientOptions} options 
    */
-  constructor(config, options = {}) {
+  constructor(config, options, partials = {}) {
     
-    super(options);
+    super({options, partials: ['MESSAGE', 'CHANNEL', 'REACTION']});
 
     /**
      * Create logger

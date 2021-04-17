@@ -10,7 +10,7 @@ module.exports = class ClearWarnsCommand extends Command {
       description: 'Clears all the warns of the provided member.',
       type: client.types.MOD,
       userPermissions: ['KICK_MEMBERS'],
-      examples: ['clearwarns @Nettles']
+      examples: ['clearwarns @split']
     });
   }
   run(message, args) {

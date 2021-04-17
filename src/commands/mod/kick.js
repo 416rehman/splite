@@ -10,7 +10,7 @@ module.exports = class KickCommand extends Command {
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'KICK_MEMBERS'],
       userPermissions: ['KICK_MEMBERS'],
-      examples: ['kick @Nettles']
+      examples: ['kick @split']
     });
   }
   async run(message, args) {

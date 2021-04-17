@@ -12,7 +12,7 @@ module.exports = class WarnPurgeCommand extends Command {
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'KICK_MEMBERS', 'MANAGE_MESSAGES'],
       userPermissions: ['KICK_MEMBERS', 'MANAGE_MESSAGES'],
-      examples: ['warnpurge @Nettles 50']
+      examples: ['warnpurge @split 50']
     });
   }
   async run(message, args) {

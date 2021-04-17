@@ -11,7 +11,7 @@ module.exports = class WarnCommand extends Command {
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'KICK_MEMBERS'],
       userPermissions: ['KICK_MEMBERS'],
-      examples: ['warn @Nettles']
+      examples: ['warn @split']
     });
   }
   run(message, args) {

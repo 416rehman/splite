@@ -32,7 +32,7 @@ module.exports = class UserInfoCommand extends Command {
       usage: 'userinfo [user mention/ID]',
       description: 'Fetches a user\'s information. If no user is given, your own information will be displayed.',
       type: client.types.INFO,
-      examples: ['userinfo @Nettles']
+      examples: ['userinfo @split']
     });
   }
   async run(message, args) {

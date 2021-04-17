@@ -15,7 +15,7 @@ module.exports = class PrefixCommand extends Command {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id); // Get prefix
     const embed = new MessageEmbed()
       .setTitle('Splite\'s Prefix')
-      .setThumbnail('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite.png')
+      .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .addField('Prefix', `\`${prefix}\``, true)
       .addField('Example', `\`${prefix}ping\``, true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))

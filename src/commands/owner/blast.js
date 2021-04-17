@@ -26,7 +26,7 @@ module.exports = class BlastCommand extends Command {
       ) {
         const embed = new MessageEmbed()
           .setTitle('Splite System Message')
-          .setThumbnail('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite.png')
+          .setThumbnail('https://i.imgur.com/B0XSinY.png')
           .setDescription(msg)
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);

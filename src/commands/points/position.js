@@ -13,7 +13,7 @@ module.exports = class PositionCommand extends Command {
         If no user is given, your own position will be displayed.
       `,
       type: client.types.POINTS,
-      examples: ['position @Nettles']
+      examples: ['position @split']
     });
   }
   run(message, args) {

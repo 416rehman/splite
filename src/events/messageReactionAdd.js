@@ -1,9 +1,10 @@
 const { MessageEmbed } = require('discord.js');
 const { verify } = require('../utils/emojis.json');
 const { stripIndent } = require('common-tags');
-
+const { joinvoting } = require("../utils/entryFunctions")
 module.exports = async (client, messageReaction, user) => {
 
+  if (messageReaction.partial) console.log("Partials Active")
   if (client.user === user) return;
 
   const { message, emoji } = messageReaction;
@@ -97,4 +98,27 @@ module.exports = async (client, messageReaction, user) => {
       await starboardChannel.send(`⭐ **1  |**  ${message.channel}`, embed);
     }
   }
+
+  if (messageReaction.partial) {
+    // If the message this reaction belongs to was removed the fetching might result in an API error, which we need to handle
+    try {
+      await messageReaction.fetch();
+    } catch (error) {
+      console.error('Something went wrong when fetching the message: ', error);
+      return;
+    }
+  }
+
+    let {
+      joinvoting_message_id: joinvotingMessageId,
+      joinvoting_emoji: joinvotingEmoji,
+      voting_channel_id: votingChannelID
+    } = message.client.db.settings.selectJoinVotingMessage.get(messageReaction.message.channel.guild.id);
+
+    if (joinvotingMessageId && joinvotingEmoji && votingChannelID)
+    {
+      try {
+        await joinvoting(messageReaction, user, client, 10, 60,joinvotingMessageId,votingChannelID,joinvotingEmoji)
+      }catch (err) {console.log(err)}
+    }
 };

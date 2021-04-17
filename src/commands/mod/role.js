@@ -11,7 +11,7 @@ module.exports = class RoleCommand extends Command {
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
       userPermissions: ['MANAGE_ROLES'],
-      examples: ['role @Nettles [@role or roleName or roleID]']
+      examples: ['role @split [@role or roleName or roleID]']
     });
   }
   async run(message, args) {

@@ -54,7 +54,7 @@ module.exports = class AliasesCommand extends Command {
 
       embed
         .setTitle(`Alias Type: \`${capitalize(type)}\``)
-        .setThumbnail('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite.png')
+        .setThumbnail('https://i.imgur.com/B0XSinY.png')
         .addField(
           `**${emojiMap[type]} [${aliases[type].reduce((a, b) => a + b.split(' ').slice(1).length, 0)}]**`, 
           aliases[type].join('\n')
@@ -81,7 +81,7 @@ module.exports = class AliasesCommand extends Command {
           **Prefix:** \`${prefix}\`
           **More Information:** \`${prefix}aliases [command type]\`
         `)
-        .setImage('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite_Title.png')
+        .setImage('https://i.imgur.com/B0XSinY.png')
         .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
@@ -98,11 +98,9 @@ module.exports = class AliasesCommand extends Command {
 
       embed.addField(
         '**Links**', 
-        '**[Invite Me](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599) | ' +
-        '[Support Server](https://discord.gg/8Uk2REYmd3) | ' +
-        '[Repository](https://github.com/sabattle/SpliteBot)**'
+        '**[Invite Me](https://discord.com/oauth2/authorize?client_id=832753795854237697&scope=bot%20identify%20guilds%20applications.commands) | ' +
+        'Developed By Split#0420**'
       );
-
     }
 
     message.channel.send(embed);

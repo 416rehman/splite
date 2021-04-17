@@ -18,7 +18,7 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS settings (
     guild_id TEXT PRIMARY KEY,
     guild_name TEXT,
-    prefix TEXT DEFAULT "c!" NOT NULL,
+    prefix TEXT DEFAULT "$" NOT NULL,
     system_channel_id TEXT,
     confessions_channel_id TEXT,
     starboard_channel_id TEXT,
@@ -51,7 +51,10 @@ db.prepare(`
     crown_role_id TEXT,
     crown_channel_id TEXT,
     crown_message TEXT DEFAULT "?member has won ?role this week! Points have been reset, better luck next time!",
-    crown_schedule TEXT DEFAULT "0 21 * * 5"
+    crown_schedule TEXT DEFAULT "0 21 * * 5",
+    joinvoting_message_id TEXT,
+    joinvoting_emoji TEXT,
+    voting_channel_id TEXT
   );
 `).run();
 
@@ -69,6 +72,9 @@ db.prepare(`
     total_points INTEGER NOT NULL,
     warns TEXT,
     current_member INTEGER NOT NULL,
+    afk TEXT,
+    afk_time INTEGER,
+    bio TEXT,
     PRIMARY KEY (user_id, guild_id)
   );
 `).run();
@@ -101,8 +107,11 @@ const settings = {
       admin_role_id,
       mod_role_id,
       mute_role_id,
-      crown_role_id
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      crown_role_id,
+      joinvoting_message_id,
+      joinvoting_emoji,
+      voting_channel_id
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -143,6 +152,10 @@ const settings = {
     FROM settings
     WHERE guild_id = ?;
   `),
+  selectJoinVotingMessage: db.prepare(`
+  SELECT joinvoting_message_id, joinvoting_emoji, voting_channel_id
+  FROM settings
+  WHERE guild_id = ?;`),
 
   // Updates
   updatePrefix: db.prepare('UPDATE settings SET prefix = ? WHERE guild_id = ?;'),
@@ -180,7 +193,10 @@ const settings = {
   updateCrownChannelId: db.prepare('UPDATE settings SET crown_channel_id = ? WHERE guild_id = ?;'),
   updateCrownMessage: db.prepare('UPDATE settings SET crown_message = ? WHERE guild_id = ?;'),
   updateCrownSchedule: db.prepare('UPDATE settings SET crown_schedule = ? WHERE guild_id = ?;'),
-  deleteGuild: db.prepare('DELETE FROM settings WHERE guild_id = ?;')
+  deleteGuild: db.prepare('DELETE FROM settings WHERE guild_id = ?;'),
+  updateJoinVotingMessageId: db.prepare('UPDATE settings SET joinvoting_message_id = ? WHERE guild_id = ?;'),
+  updateJoinVotingEmoji: db.prepare('UPDATE settings SET joinvoting_emoji = ? WHERE guild_id = ?;'),
+  updateVotingChannelID: db.prepare('UPDATE settings SET voting_channel_id = ? WHERE guild_id = ?;'),
 };
 
 // USERS TABLE
@@ -196,8 +212,11 @@ const users = {
       bot,
       points,
       total_points,
-      current_member
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1);
+      current_member,
+      afk,
+      afk_time,
+      bio
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?);
   `),
 
   // Selects
@@ -208,6 +227,8 @@ const users = {
   selectWarns: db.prepare('SELECT warns FROM users WHERE user_id = ? AND guild_id = ?;'),
   selectCurrentMembers: db.prepare('SELECT * FROM users WHERE guild_id = ? AND current_member = 1;'),
   selectMissingMembers: db.prepare('SELECT * FROM users WHERE guild_id = ? AND current_member = 0;'),
+  selectAfk: db.prepare('SELECT afk, afk_time FROM users WHERE guild_id = ? AND user_id = ?;'),
+  selectBio: db.prepare('SELECT bio FROM users WHERE guild_id = ? AND user_id = ?;'),
 
   // Updates
   updateGuildName: db.prepare('UPDATE users SET guild_name = ? WHERE guild_id = ?;'),
@@ -223,7 +244,10 @@ const users = {
   wipeAllTotalPoints: db.prepare('UPDATE users SET points = 0, total_points = 0 WHERE guild_id = ?;'),
   updateWarns: db.prepare('UPDATE users SET warns = ? WHERE user_id = ? AND guild_id = ?;'),
   updateCurrentMember: db.prepare('UPDATE users SET current_member = ? WHERE user_id = ? AND guild_id = ?;'),
-  deleteGuild: db.prepare('DELETE FROM users WHERE guild_id = ?;')
+  deleteGuild: db.prepare('DELETE FROM users WHERE guild_id = ?;'),
+  updateAfk: db.prepare('UPDATE users SET afk = ? WHERE user_id = ? AND guild_id = ?;'),
+  updateAfkTime: db.prepare('UPDATE users SET afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
+  updateBio: db.prepare('UPDATE users SET bio = ? WHERE user_id = ?;')
 };
 
 // BOT CONFESSIONS TABLE

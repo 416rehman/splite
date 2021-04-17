@@ -41,12 +41,10 @@ module.exports = class StatsCommand extends Command {
       .addField('Command Types', `\`${Object.keys(message.client.types).length}\` command types`, true)
       .addField('Client', `\`\`\`asciidoc\n${clientStats}\`\`\``)
       .addField('Server', `\`\`\`asciidoc\n${serverStats}\`\`\``)
-      .addField(
-        'Links', 
-        '**[Invite Me](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599) | ' +
-        '[Support Server](https://discord.gg/8Uk2REYmd3) | ' +
-        '[Repository](https://github.com/sabattle/SpliteBot)**'
-      )
+        .addField(
+            '**Links**',
+            '**[Invite Me](https://discord.com/oauth2/authorize?client_id=832753795854237697&scope=bot%20identify%20guilds%20applications.commands) | ' +
+            'Developed By Split#0420**')
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);

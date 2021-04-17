@@ -1,8 +1,35 @@
 const { MessageEmbed } = require('discord.js');
+const { online } = require('../utils/emojis.json')
+const moment = require('moment')
 const { oneLine } = require('common-tags');
 
 module.exports = (client, message) => {
   if (message.channel.type === 'dm' || !message.channel.viewable || message.author.bot) return;
+
+  const {
+    afk: currentStatus
+  } = message.client.db.users.selectAfk.get(message.guild.id, message.author.id);
+  if (currentStatus != null)
+  {
+    message.client.db.users.updateAfk.run(null, message.author.id, message.guild.id)
+    message.channel.send(`${online} Welcome back ${message.author}, you are not afk anymore!`)
+    message.member.setNickname(`${message.member.nickname.replace('[AFK]','')}`).catch(err=>{console.log(err)})
+  }
+
+  if (message.mentions.users.size > 0)
+  {
+    message.mentions.users.forEach(user=>{
+      const {
+        afk: currentStatus,
+        afk_time: afkTime
+      } = message.client.db.users.selectAfk.get(message.guild.id, user.id);
+      if (currentStatus != null)
+      {
+        const d = new Date(afkTime)
+        message.channel.send(`${user} is afk! ${currentStatus} - ${moment(d).fromNow()}`)
+      }
+    })
+  }
 
   // Get disabled commands
   let disabledCommands = client.db.settings.selectDisabledCommands.pluck().get(message.guild.id) || [];
@@ -37,7 +64,7 @@ module.exports = (client, message) => {
           // Update points with messagePoints value
           if (pointTracking)
             client.db.users.updatePoints.run({ points: messagePoints }, message.author.id, message.guild.id);
-          return; // Return early so Calypso doesn't respond
+          return; // Return early so Splite doesn't respond
         }
       }
 
@@ -57,18 +84,16 @@ module.exports = (client, message) => {
         !modChannelIds.includes(message.channel.id)
     ) {
       const embed = new MessageEmbed()
-          .setTitle('Hi, I\'m Calypso. Need help?')
-          .setThumbnail('https://raw.githubusercontent.com/sabattle/CalypsoBot/develop/data/images/Calypso.png')
+          .setTitle('Hi, I\'m Splite. Need help?')
+          .setThumbnail('https://i.imgur.com/B0XSinY.png')
           .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
           .addField('Invite Me', oneLine`
           You can add me to your server by clicking 
-          [here](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599)!
+          [here](https://discord.com/oauth2/authorize?client_id=832753795854237697&scope=bot%20identify%20guilds%20applications.commands)!
         `)
           .addField('Support', oneLine`
-          If you have questions, suggestions, or found a bug, please join the 
-          [Calypso Support Server](https://discord.gg/pnYVdut)!
-        `)
-          .setFooter('DM Nettles#8880 to speak directly with the developer!')
+          If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`)
+          .setFooter('DM split#0420 to speak directly with the developer!')
           .setColor(message.guild.me.displayHexColor);
       message.channel.send(embed);
     }

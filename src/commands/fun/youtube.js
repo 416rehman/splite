@@ -29,9 +29,11 @@ module.exports = class YoutubeCommand extends Command {
     if (!result) 
       return this.sendErrorMessage(message, 0, 'Unable to find video, please provide a different YouTube video name');
     const decodedTitle = he.decode(result.title);
+    console.log()
     const embed = new MessageEmbed()
       .setTitle(decodedTitle)
       .setURL(result.link)
+      .setImage(result.thumbnails.medium.url)
       .setThumbnail('https://cdn1.iconfinder.com/data/icons/logotypes/32/youtube-512.png')
       .setDescription(result.description)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
