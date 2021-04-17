@@ -10,7 +10,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
       aliases: ['setverificationmsg', 'setvm', 'svm'],
       usage: 'setverificationmessage <message>',
       description: oneLine`
-        Sets the message Calypso will post in the \`verification channel\`.
+        Sets the message Splite will post in the \`verification channel\`.
         Enter no message to clear the verification message.
         A \`verification role\`, a \`verification channel\`, 
         and a \`verification message\` must be set to enable server verification.

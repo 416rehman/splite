@@ -3,7 +3,7 @@ const permissions = require('../utils/permissions.json');
 const { fail } = require('../utils/emojis.json');
 
 /**
- * Calypso's custom Command class
+ * Splite's custom Command class
  */
 class Command {
 

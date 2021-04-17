@@ -1,8 +1,8 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/sabattle/CalypsoBot"><img src="./data/images/Calypso_Title.png"></a>
+  <a href="https://github.com/sabattle/SpliteBot"><img src="./data/images/Splite_Title.png"></a>
   <br>
-  Calypso Discord Bot
+  Splite Discord Bot
   <br>
 </h1>
 
@@ -11,7 +11,7 @@
 
 <div align=center>
 
-  <a href="https://discord.gg/pnYVdut">
+  <a href="https://discord.gg/8Uk2REYmd3">
     <img src="https://discordapp.com/api/guilds/709992782252474429/widget.png?style=shield" alt="shield.png">
   </a>
 
@@ -19,7 +19,7 @@
     <img src="https://img.shields.io/badge/discord.js-v12.3.1-blue.svg?logo=npm" alt="shield.png">
   </a>
 
-  <a href="https://github.com/sabattle/CalypsoBot/blob/develop/LICENSE">
+  <a href="https://github.com/sabattle/SpliteBot/blob/develop/LICENSE">
     <img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-green" alt="shield.png">
   </a>
 
@@ -41,9 +41,9 @@
 
 ## About
 
-Calypso is an open source, fully customizable Discord bot that is constantly growing. She comes packaged with a variety of commands and a multitude of settings that can be tailored to your server's specific needs. Her codebase also serves as a base framework to easily create Discord bots of all kinds. You can invite her to your Discord server using [this](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599) link! Also, you can join the official [Calypso Support Server](https://discord.gg/pnYVdut) for all questions, suggestions, and assistance!
+Splite is an open source, fully customizable Discord bot that is constantly growing. She comes packaged with a variety of commands and a multitude of settings that can be tailored to your server's specific needs. Her codebase also serves as a base framework to easily create Discord bots of all kinds. You can invite her to your Discord server using [this](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599) link! Also, you can join the official [Splite Support Server](https://discord.gg/8Uk2REYmd3) for all questions, suggestions, and assistance!
 
-If you liked this repository, feel free to leave a star ⭐ to help promote Calypso!
+If you liked this repository, feel free to leave a star ⭐ to help promote Splite!
 
 ## Features
 
@@ -58,7 +58,7 @@ If you liked this repository, feel free to leave a star ⭐ to help promote Caly
   * **Owner:** Owner specific commands like `eval` and `servers`
   * **Miscellaneous:** All other commands like `feedback` and `bugreport`
 
-Calypso also comes packed with a variety of features, such as:
+Splite also comes packed with a variety of features, such as:
 
   * **Auto role** assignment
   * Server **verification** via reactions
@@ -74,9 +74,9 @@ Calypso also comes packed with a variety of features, such as:
 
 ## Installation
 
-You can add Calypso to your server with [this](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599) link! Alternatively, you can clone this repo and host the bot yourself.
+You can add Splite to your server with [this](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599) link! Alternatively, you can clone this repo and host the bot yourself.
 ```
-git clone https://github.com/sabattle/CalypsoBot.git
+git clone https://github.com/sabattle/SpliteBot.git
 ```
 After cloning, run an
 ```
@@ -107,25 +107,25 @@ Visit the Discord [developer portal](https://discordapp.com/developers/applicati
 
 After your `config.json` file is built, you have enable `Privileged Intents` on your Discord [developer portal](https://discordapp.com/developers/applications/). You can find these intents under the "Bot" section, and there are two ticks you have to switch on. For more information on Gateway Intents, check out [this](https://discordjs.guide/popular-topics/intents.html#the-intents-bit-field-wrapper) link.
 
-Once done, feel free to launch Calypso using the command `node app.js` or `nodemon app.js`. If on Linux, you can also kick off using the `start.sh` script. If you need additional help setting up, join the [Calypso Support Server](https://discord.gg/pnYVdut)!
+Once done, feel free to launch Splite using the command `node app.js` or `nodemon app.js`. If on Linux, you can also kick off using the `start.sh` script. If you need additional help setting up, join the [Splite Support Server](https://discord.gg/8Uk2REYmd3)!
 
-**Important Note:** Do not use Heroku to host Calypso! Calypso uses SQLite as its database which backs up its data store on disk. Heroku clears its contents often, so your database will be wiped. Read more [here](https://devcenter.heroku.com/articles/sqlite3).
+**Important Note:** Do not use Heroku to host Splite! Splite uses SQLite as its database which backs up its data store on disk. Heroku clears its contents often, so your database will be wiped. Read more [here](https://devcenter.heroku.com/articles/sqlite3).
 
 ### Emojis
 
-If you are **self-hosting** Calypso, you may notice that the emojis for certain commands are not displaying. This is because Calypso uses **custom emojis** for a variety of her commands. These emojis will have to be added to your own server, and you will have to change the corresponding IDs in the `emojis.json` util if you would like to use them. Or, you can replace the emojis in `emojis.json` with ones you already have access to. If you would like to use Calypso's original custom emojis, hop into the [Calypso Support Server](https://discord.gg/pnYVdut) where you can snag them all.
+If you are **self-hosting** Splite, you may notice that the emojis for certain commands are not displaying. This is because Splite uses **custom emojis** for a variety of her commands. These emojis will have to be added to your own server, and you will have to change the corresponding IDs in the `emojis.json` util if you would like to use them. Or, you can replace the emojis in `emojis.json` with ones you already have access to. If you would like to use Splite's original custom emojis, hop into the [Splite Support Server](https://discord.gg/8Uk2REYmd3) where you can snag them all.
 
 ### Colors
 
-Upon being invited to a server, Calypso will automatically create **6** predefined colors for your server to enjoy. To add more, use the provided `createcolor` command to quickly and easily create new colors.
+Upon being invited to a server, Splite will automatically create **6** predefined colors for your server to enjoy. To add more, use the provided `createcolor` command to quickly and easily create new colors.
 
-To add colors manually, first create a few empty roles at the bottom of your server's role hierarchy. The names of these roles must begin with the character `#`, for example, `#Red` or `#Blue`. Then change the color of that role to your desired hex, and that's it! After they are set up, the members of your server can then change their color by using Calypso's color commands! Credit to [Threebow](https://github.com/Threebow) for the idea.
+To add colors manually, first create a few empty roles at the bottom of your server's role hierarchy. The names of these roles must begin with the character `#`, for example, `#Red` or `#Blue`. Then change the color of that role to your desired hex, and that's it! After they are set up, the members of your server can then change their color by using Splite's color commands! Credit to [Threebow](https://github.com/Threebow) for the idea.
 
 ![Alt Text](https://i.imgur.com/SLJCN6y.gif)
 
 ## To-Do
 
-Calypso is in a continuous state of development. New features/updates may come at any time. Some pending ideas are:
+Splite is in a continuous state of development. New features/updates may come at any time. Some pending ideas are:
 
   * Music
   * Automod

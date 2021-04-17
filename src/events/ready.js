@@ -1,8 +1,9 @@
+const { MessageEmbed, APIMessage } = require('discord.js');
+
 module.exports = async (client) => {
-  
   const activities = [
     { name: 'your commands', type: 'LISTENING' }, 
-    { name: '@Calypso', type: 'LISTENING' }
+    { name: '@Splite', type: 'LISTENING' }
   ];
 
   // Update presence
@@ -44,6 +45,7 @@ module.exports = async (client) => {
       guild.id,
       guild.name,
       guild.systemChannelID, // Default channel
+      null,
       guild.systemChannelID, // Welcome channel
       guild.systemChannelID, // Farewell channel
       guild.systemChannelID,  // Crown Channel
@@ -116,9 +118,75 @@ module.exports = async (client) => {
     client.db.settings.deleteGuild.run(guild.guild_id);
     client.db.users.deleteGuild.run(guild.guild_id);
 
-    client.logger.info(`Calypso has left ${guild.guild_name}`);
+    client.logger.info(`Splite has left ${guild.guild_name}`);
   }
 
-  client.logger.info('Calypso is now online');
-  client.logger.info(`Calypso is running on ${client.guilds.cache.size} server(s)`);
+  //Slash Commands
+  console.log("Setting up slash commands")
+  client.guilds.cache.forEach(server => {
+    // client.api.applications(client.user.id).guilds(server.id).commands('832797960407744513').delete()
+      client.api.applications(client.user.id).guilds(server.id).commands.post({
+        data: {
+          name: "confess",
+          description: "Post an anonymous confession",
+          options: [
+            {"name": "Confession",
+              "description": "Type your confession",
+              "type": 3,
+              "required": true}
+          ]
+        }
+      })
+    });
+
+  let reply = (interaction, response) => {
+    client.api.interactions(interaction.id, interaction.token).callback.post({
+    data: {
+      type: 4,
+      data: {
+        content: response
+      }
+    }
+  })}
+
+    client.ws.on('INTERACTION_CREATE', async interaction => {
+        const command = interaction.data.name.toLowerCase();
+        if (command === 'confess') console.log("WORKED")
+          const prefix = (client.db.settings.selectPrefix.pluck().get(interaction.guild_id))
+          const confessionsChannelID = (client.db.settings.selectConfessionsChannelId.pluck().get(interaction.guild_id))
+          const confession = interaction.data.options[0].value;
+          const guild = client.guilds.cache.get(interaction.guild_id)
+           if (!confessionsChannelID) {
+               client.channels.cache.get(interaction.channel_id).send(`This server doesn't have a confessions channel. Create one by using \`${prefix}setconfessions #channel\``)
+           }
+           else {
+             const confessionsChannel = client.channels.cache.get(confessionsChannelID)
+             const embed = new MessageEmbed()
+                   .setTitle('Anonymous Confession')
+                   .setThumbnail(guild.iconURL({dynamic: true}))
+                   .setDescription(`"${confession}"`)
+                   .setFooter("Report ToS-breaking or hateful confessions by using /report [confessionID]")
+                   .setTimestamp()
+                   .setColor("RANDOM");
+               confessionsChannel.send(embed).then(msg => {
+                 var d = new Date();
+                 var n = d.valueOf();
+                 n = (n.toString())
+                 n = n.slice(n.length - 6)
+
+                 client.db.confessions.insertRow.run(
+                     n,
+                     confession,
+                     interaction.member.user.id,
+                     interaction.guild_id
+                 );
+
+                 const user = guild.members.cache.find(u => u.id === interaction.member.user.id)
+                 user.send(`Your confession has been posted!\nhttps://discord.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}`).catch(()=>console.log(`Failed to DM after confessing!`))
+           })}
+  })
+
+
+  client.logger.info('Splite is now online');
+  client.logger.info(`Splite is running on ${client.guilds.cache.size} server(s)`);
 };

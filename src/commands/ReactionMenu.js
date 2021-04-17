@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 
 /**
- * Calypso's Reaction Menu class
+ * Splite's Reaction Menu class
  */
 module.exports = class ReactionMenu {
 
@@ -25,7 +25,7 @@ module.exports = class ReactionMenu {
   }, timeout = 120000) {
 
     /**
-     * The Calypso Client
+     * The Splite Client
      * @type {Client}
      */
     this.client = client;

@@ -1,5 +1,5 @@
 {
-  "name": "calypso",
+  "name": "splite",
   "version": "1.7.0",
   "description": "A fully customizable bot built with discord.js",
   "main": "app.js",
@@ -7,7 +7,8 @@
     "ascii-table": "0.0.9",
     "better-sqlite3": "^7.1.0",
     "common-tags": "^1.8.0",
-    "discord.js": "^12.3.1",
+    "discord-slash-commands-client": "^1.1.1",
+    "discord.js": "^12.5.3",
     "he": "^1.2.0",
     "minimist": ">=1.2.2",
     "moment": "^2.22.2",
@@ -27,12 +28,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://sabattle@github.com/sabattle/CalypsoBot.git"
+    "url": "git+https://sabattle@github.com/sabattle/SpliteBot.git"
   },
   "author": "Sebastian Battle",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/sabattle/CalypsoBot/issues"
+    "url": "https://github.com/sabattle/SpliteBot/issues"
   },
-  "homepage": "https://github.com/sabattle/CalypsoBot#readme"
+  "homepage": "https://github.com/sabattle/SpliteBot#readme"
 }

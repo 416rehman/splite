@@ -10,7 +10,7 @@ module.exports = class BotInfoCommand extends Command {
       name: 'botinfo',
       aliases: ['bot', 'bi'],
       usage: 'botinfo',
-      description: 'Fetches Calypso\'s bot information.',
+      description: 'Fetches Splite\'s bot information.',
       type: client.types.INFO
     });
   }
@@ -24,9 +24,9 @@ module.exports = class BotInfoCommand extends Command {
       Database    :: SQLite
     `;
     const embed = new MessageEmbed()
-      .setTitle('Calypso\'s Bot Information')
+      .setTitle('Splite\'s Bot Information')
       .setDescription(oneLine`
-        Calypso is an open source, fully customizable Discord bot that is constantly growing.
+        Splite is an open source, fully customizable Discord bot that is constantly growing.
         She comes packaged with a variety of commands and 
         a multitude of settings that can be tailored to your server's specific needs. 
         Her codebase also serves as a base framework to easily create Discord bots of all kinds.
@@ -39,10 +39,10 @@ module.exports = class BotInfoCommand extends Command {
       .addField(
         'Links', 
         '**[Invite Me](https://discordapp.com/oauth2/authorize?client_id=416451977380364288&scope=bot&permissions=403008599) | ' +
-        '[Support Server](https://discord.gg/pnYVdut) | ' +
-        '[Repository](https://github.com/sabattle/CalypsoBot)**'
+        '[Support Server](https://discord.gg/8Uk2REYmd3) | ' +
+        '[Repository](https://github.com/sabattle/SpliteBot)**'
       )
-      .setImage('https://raw.githubusercontent.com/sabattle/CalypsoBot/develop/data/images/Calypso_Title.png')
+      .setImage('https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite_Title.png')
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);

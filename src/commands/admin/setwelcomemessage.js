@@ -10,7 +10,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
       aliases: ['setwelcomemsg', 'setwm', 'swm'],
       usage: 'setwelcomemessage <message>',
       description: oneLine`
-        Sets the message Calypso will say when someone joins your server.
+        Sets the message Splite will say when someone joins your server.
         You may use \`?member\` to substitute for a user mention,
         \`?username\` to substitute for someone's username,
         \`?tag\` to substitute for someone's full Discord tag (username + discriminator),

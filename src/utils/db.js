@@ -20,6 +20,7 @@ db.prepare(`
     guild_name TEXT,
     prefix TEXT DEFAULT "c!" NOT NULL,
     system_channel_id TEXT,
+    confessions_channel_id TEXT,
     starboard_channel_id TEXT,
     admin_role_id TEXT,
     mod_role_id TEXT,
@@ -72,6 +73,16 @@ db.prepare(`
   );
 `).run();
 
+// CONFESSIONS TABLE
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS confessions (
+    confession_id INTEGER,
+    content TEXT,
+    author_id TEXT,
+    guild_id TEXT,
+    PRIMARY KEY (confession_id)
+  );
+`).run();
 /** ------------------------------------------------------------------------------------------------
  * PREPARED STATEMENTS
  * ------------------------------------------------------------------------------------------------ */
@@ -82,6 +93,7 @@ const settings = {
       guild_id,
       guild_name,
       system_channel_id,
+      confessions_channel_id,
       welcome_channel_id,
       farewell_channel_id,
       crown_channel_id,
@@ -90,7 +102,7 @@ const settings = {
       mod_role_id,
       mute_role_id,
       crown_role_id
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -98,6 +110,7 @@ const settings = {
   selectGuilds: db.prepare('SELECT guild_name, guild_id FROM settings'),
   selectPrefix: db.prepare('SELECT prefix FROM settings WHERE guild_id = ?;'),
   selectSystemChannelId: db.prepare('SELECT system_channel_id FROM settings WHERE guild_id = ?;'),
+  selectConfessionsChannelId: db.prepare('SELECT confessions_channel_id FROM settings WHERE guild_id = ?;'),
   selectStarboardChannelId: db.prepare('SELECT starboard_channel_id FROM settings WHERE guild_id = ?;'),
   selectAdminRoleId: db.prepare('SELECT admin_role_id FROM settings WHERE guild_id = ?;'),
   selectModRoleId: db.prepare('SELECT mod_role_id FROM settings WHERE guild_id = ?;'),
@@ -135,6 +148,7 @@ const settings = {
   updatePrefix: db.prepare('UPDATE settings SET prefix = ? WHERE guild_id = ?;'),
   updateGuildName: db.prepare('UPDATE settings SET guild_name = ? WHERE guild_id = ?;'),
   updateSystemChannelId: db.prepare('UPDATE settings SET system_channel_id = ? WHERE guild_id = ?;'),
+  updateConfessionsChannelId: db.prepare('UPDATE settings SET confessions_channel_id = ? WHERE guild_id = ?;'),
   updateStarboardChannelId: db.prepare('UPDATE settings SET starboard_channel_id = ? WHERE guild_id = ?;'),
   updateAdminRoleId: db.prepare('UPDATE settings SET admin_role_id = ? WHERE guild_id = ?;'),
   updateModRoleId: db.prepare('UPDATE settings SET mod_role_id = ? WHERE guild_id = ?;'),
@@ -212,7 +226,24 @@ const users = {
   deleteGuild: db.prepare('DELETE FROM users WHERE guild_id = ?;')
 };
 
+// BOT CONFESSIONS TABLE
+const confessions = {
+  insertRow: db.prepare(`
+    INSERT OR IGNORE INTO confessions (
+      confession_id,
+      content,
+      author_id,
+      guild_id
+    ) VALUES (?, ?, ?, ?);
+  `),
+
+  // Selects
+  selectConfessionByGuild: db.prepare('SELECT * FROM confessions WHERE guild_id = ?;'),
+  selectConfessionByAuthor: db.prepare('SELECT * FROM confessions WHERE author_id = ?;'),
+  selectConfessionByID: db.prepare('SELECT * FROM confessions WHERE confession_id = ?;'),
+};
 module.exports = {
   settings,
-  users
+  users,
+  confessions
 };

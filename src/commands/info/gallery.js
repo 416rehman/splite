@@ -2,11 +2,11 @@ const Command = require('../Command.js');
 const ReactionMenu = require('../ReactionMenu.js');
 const { MessageEmbed } = require('discord.js');
 const art = [
-  'https://raw.githubusercontent.com/sabattle/CalypsoBot/develop/data/images/Calypso_Full_Signature.png',
-  'https://raw.githubusercontent.com/sabattle/CalypsoBot/develop/data/images/Calypso.png',
-  'https://raw.githubusercontent.com/sabattle/CalypsoBot/develop/data/images/Calypso_WIP.png',
-  'https://raw.githubusercontent.com/sabattle/CalypsoBot/develop/data/images/Calypso_WIP_2.png',
-  'https://raw.githubusercontent.com/sabattle/CalypsoBot/develop/data/images/Calypso_WIP_3.png'
+  'https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite_Full_Signature.png',
+  'https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite.png',
+  'https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite_WIP.png',
+  'https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite_WIP_2.png',
+  'https://raw.githubusercontent.com/sabattle/SpliteBot/develop/data/images/Splite_WIP_3.png'
 ];
 
 module.exports = class GalleryCommand extends Command {
@@ -15,7 +15,7 @@ module.exports = class GalleryCommand extends Command {
       name: 'gallery',
       aliases: ['art'],
       usage: 'gallery',
-      description: 'Displays a gallery of Calypso\'s art.',
+      description: 'Displays a gallery of Splite\'s art.',
       type: client.types.INFO,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS']
     });

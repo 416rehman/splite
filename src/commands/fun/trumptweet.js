@@ -10,7 +10,7 @@ module.exports = class TrumpTweetCommand extends Command {
       usage: 'trumptweet <message>',
       description: 'Display\'s a custom tweet from Donald Trump with the message provided.',
       type: client.types.FUN,
-      examples: ['trumptweet Calypso is the best Discord Bot!']
+      examples: ['trumptweet Splite is the best Discord Bot!']
     });
   }
   async run(message, args) {
