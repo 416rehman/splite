@@ -18,7 +18,6 @@ module.exports = class setJoinVoting extends Command {
     });
   }
   async run(message, args) {
-    console.log(args)
     let {
       joinvoting_message_id: joinvotingMessageId,
       joinvoting_emoji: joinvotingEmoji,

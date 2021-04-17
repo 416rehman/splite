@@ -7,15 +7,17 @@ module.exports = (client, message) => {
   if (message.channel.type === 'dm' || !message.channel.viewable || message.author.bot) return;
 
   const {
-    afk: currentStatus
+    afk: currentStatus,
+    afk_time: afkTime
   } = message.client.db.users.selectAfk.get(message.guild.id, message.author.id);
   if (currentStatus != null)
   {
     message.client.db.users.updateAfk.run(null, message.author.id, message.guild.id)
     message.channel.send(`${online} Welcome back ${message.author}, you are not afk anymore!`)
-    message.member.setNickname(`${message.member.nickname.replace('[AFK]','')}`).catch(err=>{console.log(err)})
+    if(message.member.nickname) message.member.setNickname(`${message.member.nickname.replace('[AFK]','')}`).catch(err=>{console.log()})
   }
 
+  //AFK Mentioned
   if (message.mentions.users.size > 0)
   {
     message.mentions.users.forEach(user=>{

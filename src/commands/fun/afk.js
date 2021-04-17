@@ -13,9 +13,10 @@ module.exports = class AfkCommand extends Command {
     });
   }
   async run(message, args) {
+    message.guild.members.cache.get(message.author.id).setNickname(`[AFK]${message.member.nickname ? message.member.nickname : message.member.displayName}`).catch(err=>console.log())
   try {
     var d = new Date();
-    await message.member.setNickname(`[AFK]${message.member.nickname}`)
+    //await message.member.setNickname(`[AFK]${message.member.nickname}`)
     // Get message
     if (!args[0])
     {
