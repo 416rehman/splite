@@ -231,6 +231,7 @@ function scheduleCrown(client, guild) {
     guild.job = schedule.scheduleJob(cron, () => {
       client.utils.transferCrown(client, guild, crownRoleId);
     });
+    console.log(`${guild.name}: Successfully scheduled job`)
     client.logger.info(`${guild.name}: Successfully scheduled job`);
   }
 }

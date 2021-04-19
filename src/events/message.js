@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const { online } = require('../utils/emojis.json')
+const { online, dnd } = require('../utils/emojis.json')
 const moment = require('moment')
 const { oneLine } = require('common-tags');
 
@@ -7,9 +7,9 @@ module.exports = (client, message) => {
   if (message.channel.type === 'dm' || !message.channel.viewable || message.author.bot) return;
 
   const {
-    afk: currentStatus,
-    afk_time: afkTime
+    afk: currentStatus
   } = message.client.db.users.selectAfk.get(message.guild.id, message.author.id);
+
   if (currentStatus != null)
   {
     message.client.db.users.updateAfk.run(null, message.author.id, message.guild.id)
@@ -17,7 +17,6 @@ module.exports = (client, message) => {
     if(message.member.nickname) message.member.setNickname(`${message.member.nickname.replace('[AFK]','')}`).catch(err=>{console.log()})
   }
 
-  //AFK Mentioned
   if (message.mentions.users.size > 0)
   {
     message.mentions.users.forEach(user=>{
@@ -28,7 +27,7 @@ module.exports = (client, message) => {
       if (currentStatus != null)
       {
         const d = new Date(afkTime)
-        message.channel.send(`${user} is afk! ${currentStatus} - ${moment(d).fromNow()}`)
+        message.channel.send(`${dnd} ${user.username} is afk! ${currentStatus} - ${moment(d).fromNow()}`)
       }
     })
   }
