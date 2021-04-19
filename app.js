@@ -27,4 +27,4 @@ function init() {
 
 init();
 
-process.on('unhandledRejection', err => client.logger.error(err));
+process.on('unhandledRejection', err => {client.logger.error(err); console.log(err);});
