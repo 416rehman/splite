@@ -11,7 +11,7 @@ const { fail } = require('./utils/emojis.json');
 class Client extends Discord.Client {
 
   /**
-   * Create a new client
+   * Create a new client with partials
    * @param {Object} config 
    * @param {ClientOptions} options 
    */
