@@ -3,7 +3,7 @@ const { verify } = require('../utils/emojis.json');
 const { stripIndent } = require('common-tags');
 const { joinvoting } = require("../utils/entryFunctions")
 module.exports = async (client, messageReaction, user) => {
-
+  console.log("reacted")
   if (messageReaction.partial) console.log("Partials Active")
   if (client.user === user) return;
 
@@ -15,17 +15,18 @@ module.exports = async (client, messageReaction, user) => {
     client.db.settings.selectVerification.get(message.guild.id);
     const verificationRole = message.guild.roles.cache.get(verificationRoleId);
 
-    if (!verificationRole || message.id != verificationMessageId) return;
-
-    const member = message.guild.members.cache.get(user.id);
-    if (!member.roles.cache.has(verificationRole)) {
-      try {
-        await member.roles.add(verificationRole);
-      } catch (err) {
-        return client.sendSystemErrorMessage(member.guild, 'verification', 
-          stripIndent`Unable to assign verification role,` +
-          'please check the role hierarchy and ensure I have the Manage Roles permission'
-          , err.message);
+    if (verificationRole && message.id == verificationMessageId)
+    {
+      const member = message.guild.members.cache.get(user.id);
+      if (!member.roles.cache.has(verificationRole)) {
+        try {
+          await member.roles.add(verificationRole);
+        } catch (err) {
+          return client.sendSystemErrorMessage(member.guild, 'verification',
+              stripIndent`Unable to assign verification role,` +
+              'please check the role hierarchy and ensure I have the Manage Roles permission'
+              , err.message);
+        }
       }
     }
   }
@@ -114,7 +115,7 @@ module.exports = async (client, messageReaction, user) => {
       joinvoting_emoji: joinvotingEmoji,
       voting_channel_id: votingChannelID
     } = message.client.db.settings.selectJoinVotingMessage.get(messageReaction.message.channel.guild.id);
-
+  console.log("wtf")
     if (joinvotingMessageId && joinvotingEmoji && votingChannelID)
     {
       try {

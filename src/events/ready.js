@@ -70,8 +70,9 @@ module.exports = async (client) => {
         guild.name,
         member.joinedAt.toString(),
         member.user.bot ? 1 : 0,
+          null, //AFK
+          0,  //Afk_time
           null,
-          0,
           null
       );
     });

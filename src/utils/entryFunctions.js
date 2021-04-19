@@ -2,16 +2,15 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = {
     joinvoting: async function joinvoting(reaction, user, client, timer, duration, messageID, votingChannelID, emoji) {
-
         if (reaction.message.id === messageID) {
             let proceed = false;
-            if ((/<a?:.+:\d+>/gm).test(emoji)) {
-                console.log("UNICODE")
-                if(reaction.emoji.name === emoji) proceed = true;
-            }
-            else if(reaction.emoji.id === emoji) proceed = true;
-
+            if (reaction.emoji.id) if(reaction.emoji.id === emoji) proceed = true;
+            else if(reaction.emoji.name === emoji) proceed = true;
             if (proceed) {
+                const {
+                    voteRunning: voteStatus
+                } = client.db.users.selectVoteRunning.get(reaction.message.channel.guild.id, user.id)
+                if(voteStatus !== 0) return;
                 let time = duration*1000;
                 await user.send("Please wait, server members are deciding your fate.").catch(() => console.log("Can't send DM to your user!"));
                 let embed = new MessageEmbed()
@@ -24,6 +23,7 @@ module.exports = {
 
                 const channel = client.channels.cache.find(channel => channel.id === votingChannelID)
                 channel.send(embed).then(msg => {
+                    client.db.users.updateVoteRunning.run(1, user.id, msg.guild.id)
                     msg.react('👍').then(() => msg.react('👎'));
 
                     embed = new MessageEmbed()
@@ -52,6 +52,7 @@ module.exports = {
                             const reaction = collected.first();
                         })
                         .catch(async collected => {
+                            client.db.users.updateVoteRunning.run(0, user.id, reaction.message.channel.guild.id)
                             clearInterval(myinterval)
                             let yesVotes = (msg.reactions.cache.get('👍').count)
                             let noVotes = (msg.reactions.cache.get('👎').count)
