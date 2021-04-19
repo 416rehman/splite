@@ -3,7 +3,6 @@ const {MessageEmbed} = require('discord.js');
 module.exports = {
     joinvoting: async function joinvoting(reaction, user, client, timer, duration, messageID, votingChannelID, emoji) {
         if (reaction.message.id === messageID) {
-            console.log("Messages Match")
             let proceed = false;
             if (reaction.emoji.id) if(reaction.emoji.id === emoji) proceed = true;
             else if(reaction.emoji.name === emoji) proceed = true;
