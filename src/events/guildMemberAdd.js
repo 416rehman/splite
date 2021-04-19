@@ -102,6 +102,7 @@ module.exports = async (client, member) => {
     member.user.bot ? 1 : 0,
       null,
       0,
+      null,
       null
   );
   

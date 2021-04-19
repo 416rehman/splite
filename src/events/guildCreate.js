@@ -104,6 +104,7 @@ module.exports = async (client, guild) => {
       member.bot ? 1 : 0,
         null,
         0,
+        null,
         null
     );
   });

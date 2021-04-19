@@ -75,6 +75,7 @@ module.exports = async (client) => {
           null,
           null
       );
+      client.db.users.updateVoteRunning.run(0, member.id, guild.id)
     });
     
     /** ------------------------------------------------------------------------------------------------
