@@ -3,6 +3,7 @@ const {MessageEmbed} = require('discord.js');
 module.exports = {
     joinvoting: async function joinvoting(reaction, user, client, timer, duration, messageID, votingChannelID, emoji) {
         if (reaction.message.id === messageID) {
+            console.log("Messages Match")
             let proceed = false;
             if (reaction.emoji.id) if(reaction.emoji.id === emoji) proceed = true;
             else if(reaction.emoji.name === emoji) proceed = true;
@@ -10,7 +11,7 @@ module.exports = {
                 const {
                     voteRunning: voteStatus
                 } = client.db.users.selectVoteRunning.get(reaction.message.channel.guild.id, user.id)
-                if(voteStatus !== 0) return;
+                if(voteStatus) return;
                 let time = duration*1000;
                 await user.send("Please wait, server members are deciding your fate.").catch(() => console.log("Can't send DM to your user!"));
                 let embed = new MessageEmbed()

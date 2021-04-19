@@ -115,7 +115,6 @@ module.exports = async (client, messageReaction, user) => {
       joinvoting_emoji: joinvotingEmoji,
       voting_channel_id: votingChannelID
     } = message.client.db.settings.selectJoinVotingMessage.get(messageReaction.message.channel.guild.id);
-  console.log("wtf")
     if (joinvotingMessageId && joinvotingEmoji && votingChannelID)
     {
       try {
