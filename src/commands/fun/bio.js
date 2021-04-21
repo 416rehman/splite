@@ -73,7 +73,7 @@ module.exports = class BioCommand extends Command {
         else
         {
           const embed = new MessageEmbed()
-              .setTitle(`${message.author.username}'s Bio`)
+              .setTitle(`${args[0]}'s Bio`)
               .setDescription(`${Bio}`)
               .setFooter(`To clear your bio, type "@splite bio clear"`);
           return message.channel.send(embed)
