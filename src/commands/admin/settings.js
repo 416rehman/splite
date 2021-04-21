@@ -29,7 +29,7 @@ module.exports = class SettingsCommand extends Command {
     const joinVotingChannel = message.guild.channels.cache.get(row.voting_channel_id) || '`None`';
     const joinVotingMessage = !isNaN(row.joinvoting_message_id) ? row.joinvoting_message_id : '`None`';
     //Emoji
-    let joinVotingEmoji = row.joinvoting_emoji;
+    let joinVotingEmoji = row.joinvoting_emoji || '`None`';
     console.log(`${!!joinVotingEmoji} + ${!isNaN(row.joinvoting_emoji)}`)
     if (joinVotingEmoji && !isNaN(row.joinvoting_emoji))
       joinVotingEmoji = await message.guild.emojis.cache.find(e => e.id === joinVotingEmoji) || '`None`';
