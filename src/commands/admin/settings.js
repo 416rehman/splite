@@ -17,24 +17,19 @@ module.exports = class SettingsCommand extends Command {
       examples: ['settings System']
     });
   }
-  async run(message, args) {
+  run(message, args) {
 
     const { trimArray, replaceKeywords, replaceCrownKeywords } = message.client.utils;
 
     // Set values
     const row = message.client.db.settings.selectRow.get(message.guild.id);
-    console.log(`${row.joinvoting_message_id} +  ${row.voting_channel_id}: ${row.joinvoting_emoji}`)
+
     const prefix = `\`${row.prefix}\``;
     const systemChannel = message.guild.channels.cache.get(row.system_channel_id) || '`None`';
     const joinVotingChannel = message.guild.channels.cache.get(row.voting_channel_id) || '`None`';
     const joinVotingMessage = row.joinvoting_message_id || '`None`';
     //Emoji
-    let joinVotingEmoji = row.joinvoting_emoji || '`None`';
-    console.log(`${!!joinVotingEmoji} + ${!isNaN(row.joinvoting_emoji)}`)
-    if (joinVotingEmoji && !isNaN(row.joinvoting_emoji))
-      joinVotingEmoji = await message.guild.emojis.cache.find(e => e.id === joinVotingEmoji) || '`None`';
-
-
+    let joinVotingEmoji = message.client.utils.getEmojiForJoinVoting(message.guild, message.client) || '`None`';
 
     const confessionChannel = message.guild.channels.cache.get(row.confessions_channel_id) || '`None`';
     const starboardChannel = message.guild.channels.cache.get(row.starboard_channel_id) || '`None`';

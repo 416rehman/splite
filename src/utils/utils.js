@@ -144,6 +144,15 @@ function callSlashCommand(command, client, interaction){
   if (command === 'anonymous') anonymous.anonymous(interaction, client);
 }
 
+function getEmojiForJoinVoting(guild, client) {
+  const {joinvoting_emoji: joinVotingEmoji } = client.db.settings.selectJoinVotingMessage.get(guild.id)
+  let emoji = joinVotingEmoji || '`None`';
+  if (emoji && !isNaN(joinVotingEmoji)) {
+    emoji = guild.emojis.cache.find(e => e.id === emoji) || null;
+  }
+  return emoji;
+}
+
 /**
  * Surrounds crown message keywords with backticks
  * @param {string} message
@@ -265,5 +274,6 @@ module.exports = {
   transferCrown,
   scheduleCrown,
   registerSlashCommands,
-  callSlashCommand
+  callSlashCommand,
+  getEmojiForJoinVoting
 };
