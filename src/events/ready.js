@@ -1,6 +1,3 @@
-const confessions = require("../slashCommands/confessions")
-const report = require("../slashCommands/report")
-
 module.exports = async (client) => {
   const activities = [
     { name: '@splite help', type: 'LISTENING' },
@@ -57,7 +54,8 @@ module.exports = async (client) => {
       crownRole ? crownRole.id : null,
       null, //joinvoting_message_id
       null,  //joinvoting_emoji
-      null  //voting_channel_id
+      null,  //voting_channel_id
+      0     //anonymous
     );
     
     // Update users table
@@ -134,8 +132,7 @@ module.exports = async (client) => {
   console.log("Setting up slash commands")
   client.guilds.cache.forEach(server => {
     // client.api.applications(client.user.id).guilds(server.id).commands('832797960407744513').delete()
-      confessions.createSlashConfess(client, server);
-      report.createSlashReport(client, server)
+    client.utils.registerSlashCommands(client, server);
     });
 
   client.ws.on('INTERACTION_CREATE', async interaction => {

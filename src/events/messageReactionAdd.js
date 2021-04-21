@@ -3,8 +3,6 @@ const { verify } = require('../utils/emojis.json');
 const { stripIndent } = require('common-tags');
 const { joinvoting } = require("../utils/entryFunctions")
 module.exports = async (client, messageReaction, user) => {
-  console.log("reacted")
-  if (messageReaction.partial) console.log("Partials Active")
   if (client.user === user) return;
 
   const { message, emoji } = messageReaction;

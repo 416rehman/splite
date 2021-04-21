@@ -54,7 +54,8 @@ db.prepare(`
     crown_schedule TEXT DEFAULT "0 */24 * * *",
     joinvoting_message_id TEXT,
     joinvoting_emoji TEXT,
-    voting_channel_id TEXT
+    voting_channel_id TEXT,
+    anonymous INTEGER DEFAULT 0 NOT NULL
   );
 `).run();
 
@@ -111,8 +112,9 @@ const settings = {
       crown_role_id,
       joinvoting_message_id,
       joinvoting_emoji,
-      voting_channel_id
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      voting_channel_id,
+      anonymous
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -157,6 +159,7 @@ const settings = {
   SELECT joinvoting_message_id, joinvoting_emoji, voting_channel_id
   FROM settings
   WHERE guild_id = ?;`),
+  selectAnonymous: db.prepare('SELECT anonymous FROM settings WHERE guild_id = ?;'),
 
   // Updates
   updatePrefix: db.prepare('UPDATE settings SET prefix = ? WHERE guild_id = ?;'),
@@ -197,7 +200,8 @@ const settings = {
   deleteGuild: db.prepare('DELETE FROM settings WHERE guild_id = ?;'),
   updateJoinVotingMessageId: db.prepare('UPDATE settings SET joinvoting_message_id = ? WHERE guild_id = ?;'),
   updateJoinVotingEmoji: db.prepare('UPDATE settings SET joinvoting_emoji = ? WHERE guild_id = ?;'),
-  updateVotingChannelID: db.prepare('UPDATE settings SET voting_channel_id = ? WHERE guild_id = ?;')
+  updateVotingChannelID: db.prepare('UPDATE settings SET voting_channel_id = ? WHERE guild_id = ?;'),
+  updateAnonymous: db.prepare('UPDATE settings SET anonymous = ? WHERE guild_id = ?;')
 };
 
 // USERS TABLE
@@ -240,6 +244,7 @@ const users = {
     SET points = points + @points, total_points = total_points + @points
     WHERE user_id = ? AND guild_id = ?;
   `),
+  setPoints: db.prepare('UPDATE users SET points = ? WHERE user_id = ? AND guild_id = ?;'),
   wipePoints: db.prepare('UPDATE users SET points = 0 WHERE user_id = ? AND guild_id = ?;'),
   wipeTotalPoints: db.prepare('UPDATE users SET points = 0, total_points = 0 WHERE user_id = ? AND guild_id = ?;'),
   wipeAllPoints: db.prepare('UPDATE users SET points = 0 WHERE guild_id = ?;'),

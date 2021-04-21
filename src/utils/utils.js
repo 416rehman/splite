@@ -1,6 +1,9 @@
 const { MessageEmbed } = require('discord.js');
 const schedule = require('node-schedule');
 const { stripIndent } = require('common-tags');
+const confessions = require("../slashCommands/confessions")
+const report = require("../slashCommands/report")
+const anonymous = require("../slashCommands/anonymous")
 
 /**
  * Capitalizes a string
@@ -129,6 +132,12 @@ function replaceKeywords(message) {
     .replace(/\?size/g, '`?size`');
 }
 
+function registerSlashCommands(client, server){
+  confessions.createSlashConfess(client, server);
+  report.createSlashReport(client, server);
+  anonymous.createSlashAnonymous(client, server);
+}
+
 /**
  * Surrounds crown message keywords with backticks
  * @param {string} message
@@ -248,5 +257,6 @@ module.exports = {
   replaceKeywords,
   replaceCrownKeywords,
   transferCrown,
-  scheduleCrown
+  scheduleCrown,
+  registerSlashCommands
 };

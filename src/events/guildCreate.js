@@ -89,7 +89,9 @@ module.exports = async (client, guild) => {
       crownRole ? crownRole.id : null,
       null, //joinvoting_message_id
       null,  //joinvoting_emoji
-      null  //voting_channel_id
+      null,  //voting_channel_id
+      0     //anonymous
+
   );
 
   // Update users table
@@ -141,4 +143,7 @@ module.exports = async (client, guild) => {
     client.logger.error(err.message);
   }
   await guild.me.setNickname(`[$] Splite`)
+
+  // Create Slah Commands
+  client.utils.registerSlashCommands(client, guild)
 };
