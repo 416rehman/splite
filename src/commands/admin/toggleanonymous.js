@@ -7,7 +7,7 @@ module.exports = class ToggleAnonymous extends Command {
   constructor(client) {
     super(client, {
       name: 'toggleanonymous',
-      aliases: ['tanon', 'toganon', 'toggleanon'],
+      aliases: ['tanon', 'toganon', 'toggleanon', 'anon'],
       usage: 'toggleanonymous <role mention/ID>',
       description: oneLine`
         Enables or disables the /anonymous slash command for the server.

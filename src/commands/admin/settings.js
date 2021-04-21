@@ -25,6 +25,13 @@ module.exports = class SettingsCommand extends Command {
     const row = message.client.db.settings.selectRow.get(message.guild.id);
     const prefix = `\`${row.prefix}\``;
     const systemChannel = message.guild.channels.cache.get(row.system_channel_id) || '`None`';
+    const joinVotingChannel = message.guild.channels.cache.get(row.joinvoting_channel_id) || '`None`';
+    const joinVotingMessage = joinVotingChannel.messages.cache.get(row.joinvoting_message_id) || '`None`';
+    //Emoji
+    let joinVotingEmoji;
+    if (joinVotingEmoji && isNaN(row.joinvoting_emoji)) joinVotingEmoji = row.joinvoting_emoji;
+    else joinVotingEmoji = message.guild.channels.cache.get(row.joinvoting_emoji) || '`None`';
+
     const confessionChannel = message.guild.channels.cache.get(row.confessions_channel_id) || '`None`';
     const starboardChannel = message.guild.channels.cache.get(row.starboard_channel_id) || '`None`';
     const modLog = message.guild.channels.cache.get(row.mod_log_id) || '`None`';
@@ -63,7 +70,6 @@ module.exports = class SettingsCommand extends Command {
     let disabledCommands = '`None`';
     if (row.disabled_commands) 
       disabledCommands = row.disabled_commands.split(' ').map(c => `\`${c}\``).join(' ');
-    const anonymous = `\`${message.client.utils.getStatus(row.anonymous)}\``;
 
     // Get statuses
     const verificationStatus = `\`${message.client.utils.getStatus(
@@ -74,6 +80,8 @@ module.exports = class SettingsCommand extends Command {
     const farewellStatus = `\`${message.client.utils.getStatus(row.farewell_message && row.farewell_channel_id)}\``;
     const pointsStatus = `\`${message.client.utils.getStatus(row.point_tracking)}\``;
     const crownStatus = `\`${message.client.utils.getStatus(row.crown_role_id && row.crown_schedule)}\``;
+    const anonymous = `\`${message.client.utils.getStatus(row.anonymous)}\``;
+    const joinVotingStatus = `\`${message.client.utils.getStatus(row.joinvoting_emoji && row.joinvoting_channel_id && row.joinvoting_message_id)}\``;
 
     // Trim messages to 1024 characters
     if (verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
@@ -173,6 +181,17 @@ module.exports = class SettingsCommand extends Command {
           .addField('Status', crownStatus)
           .addField('Message', crownMessage);
         return message.channel.send(embed);
+      case 'j':
+      case 'join':
+      case 'joinvoting':
+        return message.channel.send(embed
+            .setTitle('Settings: `Join Voting`')
+            .addField('Status', joinVotingStatus)
+            .addField('JoinVoting Channel', joinVotingChannel, true)
+            .addField('JoinVoting Emoji', joinVotingEmoji, true)
+            .addField('JoinVoting MessageID', joinVotingMessage, true)
+            .addField('View', `[Here](https://discord.com/channels/${message.guild.id}/${joinVotingChannel.id}/${joinVotingMessage.id})`, true)
+        );
     }
     if (setting)
       return this.sendErrorMessage(message, 0, stripIndent`
@@ -187,6 +206,7 @@ module.exports = class SettingsCommand extends Command {
       .setTitle('Settings')
       .setDescription(`**More Information:** \`${row.prefix}settings [category]\``)
       .addField('System', '`11` settings', true)
+      .addField('JoinVoting', '`11` settings', true)
       .addField('Logging', '`6` settings', true)
       .addField('Verification', '`3` settings', true)
       .addField('Welcomes', '`2` settings', true)
