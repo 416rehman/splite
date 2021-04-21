@@ -182,6 +182,7 @@ module.exports = class SettingsCommand extends Command {
         return message.channel.send(embed);
       case 'j':
       case 'join':
+      case 'joinvote':
       case 'joinvoting':
         return message.channel.send(embed
             .setTitle('Settings: `Join Voting`')
