@@ -138,6 +138,12 @@ function registerSlashCommands(client, server){
   anonymous.createSlashAnonymous(client, server);
 }
 
+function callSlashCommand(command, client){
+  if (command === 'confess') confessions.confess(interaction, client);
+  if (command === 'report') report.report(interaction, client);
+  if (command === 'anonymous') anonymous.anonymous(interaction, client);
+}
+
 /**
  * Surrounds crown message keywords with backticks
  * @param {string} message
@@ -258,5 +264,6 @@ module.exports = {
   replaceCrownKeywords,
   transferCrown,
   scheduleCrown,
-  registerSlashCommands
+  registerSlashCommands,
+  callSlashCommand
 };
