@@ -191,8 +191,7 @@ module.exports = class SettingsCommand extends Command {
             .addField('JoinVoting Channel', joinVotingChannel, true)
             .addField('JoinVoting Emoji', joinVotingEmoji, true)
             .addField('JoinVoting MessageID', joinVotingMessage, true)
-            .addField('View', `[Here](https://discord.com/channels/${message.guild.id}/${joinVotingChannel.id}/${joinVotingMessage.id})`, true)
-        );
+            );
     }
     if (setting)
       return this.sendErrorMessage(message, 0, stripIndent`
