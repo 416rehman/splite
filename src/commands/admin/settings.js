@@ -205,7 +205,7 @@ module.exports = class SettingsCommand extends Command {
     embed
       .setTitle('Settings')
       .setDescription(`**More Information:** \`${row.prefix}settings [category]\``)
-      .addField('System', '`12` settings')
+      .addField('System', '`13` settings')
       .addField('Verification', '`3` settings', true)
       .addField('Welcomes', '`2` settings', true)
       .addField('Farewells', '`2` settings', true)
