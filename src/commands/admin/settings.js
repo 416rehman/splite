@@ -26,12 +26,12 @@ module.exports = class SettingsCommand extends Command {
     console.log(`${row.joinvoting_message_id} +  ${row.voting_channel_id}: ${row.joinvoting_emoji}`)
     const prefix = `\`${row.prefix}\``;
     const systemChannel = message.guild.channels.cache.get(row.system_channel_id) || '`None`';
-    const joinVotingChannel = message.guild.channels.cache.get(row.joinvoting_channel_id) || '`None`';
+    const joinVotingChannel = message.guild.channels.cache.get(row.voting_channel_id) || '`None`';
     const joinVotingMessage = joinVotingChannel.messages ? joinVotingChannel.messages.cache.get(row.joinvoting_message_id) : '`None`';
     //Emoji
-    let joinVotingEmoji;
-    if (joinVotingEmoji && isNaN(row.joinvoting_emoji)) joinVotingEmoji = row.joinvoting_emoji;
-    else joinVotingEmoji = message.guild.channels.cache.get(row.joinvoting_emoji) || '`None`';
+    let joinVotingEmoji = row.joinvoting_emoji;
+    if (joinVotingEmoji && !isNaN(row.joinvoting_emoji))
+      joinVotingEmoji = message.guild.channels.cache.get(row.joinvoting_emoji) || '`None`';
 
     const confessionChannel = message.guild.channels.cache.get(row.confessions_channel_id) || '`None`';
     const starboardChannel = message.guild.channels.cache.get(row.starboard_channel_id) || '`None`';
