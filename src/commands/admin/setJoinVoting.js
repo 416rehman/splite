@@ -121,7 +121,6 @@ module.exports = class setJoinVoting extends Command {
           .setColor(message.guild.me.displayHexColor);
 
       await message.channel.send(embed);
-      console.log("ADDED JOIN VOTING")
     }
   }
 };
