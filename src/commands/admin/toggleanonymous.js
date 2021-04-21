@@ -14,7 +14,7 @@ module.exports = class ToggleAnonymous extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setautorole @Member']
+      examples: ['toggleanonymous @Member']
     });
   }
   run(message, args) {
