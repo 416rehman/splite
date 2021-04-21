@@ -26,7 +26,6 @@ module.exports = class CrownCommand extends Command {
       .setTitle(':crown:  Crowned Members  :crown:')
       .setDescription(description)
       .addField('Crown Role', crownRole)
-      .addField('Crown Schedule', `\`${crownSchedule || 'None'}\``)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
