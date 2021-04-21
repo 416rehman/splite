@@ -19,8 +19,8 @@ module.exports = class RoleCommand extends Command {
     const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
     if (!member)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
-    if (member.roles.highest.position >= message.member.roles.highest.position)
-      return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with an equal or higher role');
+    if (member.roles.highest.position > message.member.roles.highest.position)
+      return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
 
     if (!args[1]) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
 
