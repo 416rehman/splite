@@ -5,7 +5,7 @@ module.exports = class WipePointsCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'setpoints',
-      aliases: ['setp', 'sp'],
+      aliases: ['osetp', 'osp'],
       usage: 'setpoints <user mention/ID> <amount>',
       description: 'Set the provided user\'s points.',
       type: client.types.OWNER,
