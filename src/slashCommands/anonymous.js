@@ -30,7 +30,7 @@ module.exports = {
         }
         const anonymousAllowed = (client.db.settings.selectAnonymous.pluck().get(interaction.guild_id))
         const anonMsg = interaction.data.options[0].value;
-        const guild = client.guilds.cache.get(interaction.guild_id)
+        console.log( {anonymousAllowed})
         if (!anonymousAllowed) {
             reply(interaction, `This server doesn't allow anonymous messages. An admin can change this by typing \`${prefix}setanonymous\``, client)
         } else {
