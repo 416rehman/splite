@@ -19,7 +19,7 @@ module.exports = class ToggleAnonymous extends Command {
   }
   run(message, args) {
     const anonymousState = message.client.db.settings.selectAnonymous.pluck().get(message.guild.id);
-
+    console.log(anonymousState)
     let description;
 
     // Disabled anonymous
