@@ -23,6 +23,7 @@ module.exports = class SettingsCommand extends Command {
 
     // Set values
     const row = message.client.db.settings.selectRow.get(message.guild.id);
+    console.log(`${row.joinvoting_message_id} +  ${row.joinvoting_channel_id}: ${row.joinvoting_emoji}`)
     const prefix = `\`${row.prefix}\``;
     const systemChannel = message.guild.channels.cache.get(row.system_channel_id) || '`None`';
     const joinVotingChannel = message.guild.channels.cache.get(row.joinvoting_channel_id) || '`None`';
