@@ -1,5 +1,5 @@
 # Written by Volhosis and Nettles
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/worldflags.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/worldflags.yaml
 questions:
 - question: What country is represented by this flag? https://i.imgur.com/00SGRuz.png
   answers:

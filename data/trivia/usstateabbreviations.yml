@@ -1,5 +1,5 @@
 # Written by Pqrallel & JennJenn
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/usstateabbreviations.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/usstateabbreviations.yaml
 questions:
 - question: What is the abbreviation for Alabama?
   answers:

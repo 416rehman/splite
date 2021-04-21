@@ -1,5 +1,5 @@
 # Written by JennJenn
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/dota2abilities.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/dota2abilities.yaml
 questions:
 - question: What ability is this? (removed from game) https://i.imgur.com/0KZLUdJ.png
   answers:

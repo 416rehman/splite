@@ -1,5 +1,5 @@
 # Written by Mahlss and Fjall
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/starwars.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/starwars.yaml
 questions:
 - question: According to C-3PO, why wouldn't Han recognize him in The Force Awakens?
   answers:

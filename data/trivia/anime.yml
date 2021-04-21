@@ -1,5 +1,5 @@
 # Written by JennJenn and RikaruAniki
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/anime.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/anime.yaml
 questions:
 - question: (Angel Sanctuary) Which angel is assigned to serve as Setsuna's guardian angel?
   answers:

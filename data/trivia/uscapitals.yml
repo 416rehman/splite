@@ -1,5 +1,5 @@
 # Written by JennJenn
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/uscapitals.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/uscapitals.yaml
 questions:
 - question: What is the state capital of Alabama?
   answers:

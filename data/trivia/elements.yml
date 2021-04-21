@@ -1,5 +1,5 @@
 # Written by Mamalus
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/elements.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/elements.yaml
 questions:
 - question: What is the element symbol of "Actinium"?
   answers:

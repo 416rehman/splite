@@ -1,5 +1,5 @@
 # Written by hatred
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/sports.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/sports.yaml
 questions:
 - question: A shuttlecock is used in what sport?
   answers:

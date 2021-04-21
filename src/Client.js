@@ -57,7 +57,7 @@ class Client extends Discord.Client {
     this.aliases = new Discord.Collection();
 
     /** 
-     * Array of trivia topics
+     * Array of geoGuessr topics
      * @type {Array<string>}
      */
     this.topics = [];
@@ -166,7 +166,7 @@ class Client extends Discord.Client {
   }
 
   /**
-   * Loads all available trivia topics
+   * Loads all available geoGuessr topics
    * @param {string} path 
    */
   loadTopics(path) {

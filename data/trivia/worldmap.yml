@@ -1,5 +1,5 @@
 # Written by Volhosis and Nettles
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/worldmap.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/worldmap.yaml
 questions:
 - question: What country is highlighted on this map? https://i.imgur.com/09dDNah.png
   answers:

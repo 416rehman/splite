@@ -1,4 +1,4 @@
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/games.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/games.yaml
 questions:
 - question: "\"Call of Duty: Ghosts\" is what number primary installment in the COD series?"
   answers:

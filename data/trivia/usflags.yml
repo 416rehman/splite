@@ -1,5 +1,5 @@
 # Written by Volhosis
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/usflags.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/usflags.yaml
 questions:
 - question: What USA state or territory is represented by this flag? https://i.imgur.com/0xDmqqw.png
   answers:

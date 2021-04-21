@@ -21,6 +21,7 @@ module.exports = class PointPerCommand extends Command {
       Message Points :: ${messagePoints} per message
       Command Points :: ${commandPoints} per command
       Voice Points   :: ${voicePoints} per minute
+      geoGuessr Points   :: 2 per correct answer
     `;
 
     const embed = new MessageEmbed()

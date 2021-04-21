@@ -1,5 +1,5 @@
 # Written by Pqrallel & JennJenn
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/worldcapitals.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/worldcapitals.yaml
 questions:
 - question: Name one of South Africa's capitals.
   answers:

@@ -21,7 +21,7 @@ const client = new Client(config, { ws: { intents: intents } });
 function init() {
   client.loadEvents('./src/events');
   client.loadCommands('./src/commands');
-  client.loadTopics('./data/trivia');
+  client.loadTopics('./data/geoguessr');
   client.login(client.token);
 }
 

@@ -1,5 +1,5 @@
 # Written by JennJenn
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/greekmyth.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/greekmyth.yaml
 questions:
 - question: From whom did Hermes steal cattle?
   answers:

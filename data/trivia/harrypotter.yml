@@ -1,5 +1,5 @@
 # Written by JennJenn and Nettles
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/harrypotter.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/harrypotter.yaml
 questions:
 - question: A bezoar is a stone taken from the stomach of what?
   answers:

@@ -25,14 +25,15 @@ module.exports = class ExplainPointsCommand extends Command {
     // Points per
     let earningPoints = 
       stripIndent`You can earn points in the following ways: by sending **messages**, by using **commands**,` +
-      ' and by spending time in **voice chat**.';
+      ` by playing geoGuessr (To play, type **\`${prefix}geoguessr\`**)and by spending time in **voice chat**.`;
     if (!disabledCommands.includes('givepoints')) earningPoints += 
-      ` And if someone's feeling generous, they can give you points by using the \`${prefix}givepoints\` command.`;
+      ` And if someone's feeling generous, they can give you points by using the \`${prefix}givepoints\` command.\nAdditionally, points can be used to send anonymous messages (Type **\`/anonymous\`**) in a server if allowed by admins.`;
     
     const pointsPer = stripIndent`
       Message Points :: ${messagePoints} per message
       Command Points :: ${commandPoints} per command
       Voice Points   :: ${voicePoints} per minute
+      GeoGuessr Points :: 2 per correct answer
     `;
 
     earningPoints += ` Here is this server's **points per action**:\n\`\`\`asciidoc\n${pointsPer}\`\`\``;
@@ -62,7 +63,7 @@ module.exports = class ExplainPointsCommand extends Command {
     
     // The Crown
     let crown = stripIndent`
-      If a \`crown role\` and \`crown schedule\` are set, then the person with the most points that cycle will win!` +
+      If a \`crown role\` is set, then the person with the most points every 24 hours will win!` +
       ` Additionally, everyone's points will be reset to **0** (total points will remain untouched).
     `;
 

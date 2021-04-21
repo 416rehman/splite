@@ -1,5 +1,5 @@
 # Written by JennJenn and Nettles
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/slogans.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/slogans.yaml
 questions:
 - question: 100% juice for 100% kids.
   answers:

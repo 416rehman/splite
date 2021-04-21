@@ -1,5 +1,5 @@
 # Written by ThePhoenixGuy, sinsterpyro, and Nettles
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/overwatch.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/overwatch.yaml
 questions:
 - question: Omnics and humans live as equals in Numbani. True/False?
   answers:

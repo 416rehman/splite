@@ -1,5 +1,5 @@
 # Written by JennJenn
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/leagueults.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/leagueults.yaml
 questions:
 - question: "Which champion's ultimate is named: Absolute Zero?"
   answers:

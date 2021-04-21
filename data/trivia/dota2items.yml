@@ -1,5 +1,5 @@
 # Written by JennJenn
-# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/trivia/data/lists/dota2items.yaml
+# Original file from: https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/geoGuessr/data/lists/dota2items.yaml
 questions:
 - question: What item is this? (removed from game) https://i.imgur.com/hze6GhN.png
   answers:
