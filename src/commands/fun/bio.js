@@ -55,7 +55,7 @@ module.exports = class BioCommand extends Command {
           console.log(e)
         }
       }
-      else if (args[0].startsWith('<@!') && args.length === 1)
+      else if ( args.length === 1 && args[0].startsWith('<@!') && args[0].endsWith('>'))
       {
         let userId = args[0].replace('<@!', '').replace('>','');
         let {
@@ -73,7 +73,7 @@ module.exports = class BioCommand extends Command {
         else
         {
           const embed = new MessageEmbed()
-              .setTitle(`${args[0]}'s Bio`)
+              .setTitle(`${message.mentions.users.first()}'s Bio`)
               .setDescription(`${Bio}`)
               .setFooter(`To clear your bio, type "@splite bio clear"`);
           return message.channel.send(embed)
