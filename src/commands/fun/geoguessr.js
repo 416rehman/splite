@@ -21,7 +21,7 @@ module.exports = class geoGuessrCommand extends Command {
   }
   run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
-
+    const topic = message.client.topics[Math.floor(Math.random() * message.client.topics.length)];
     // Get question and answers
     const path = __basedir + '/data/geoguessr/' + topic + '.yml';
     const questions = YAML.parse(fs.readFileSync(path, 'utf-8')).questions;
