@@ -31,7 +31,7 @@ module.exports = {
         } else {
             const points = (client.db.users.selectPoints.pluck().get(interaction.member.user.id, interaction.guild_id))
             if (!points || points < cost)
-                reply(interaction, `**You need ${cost-points} more points to send an anonymous message in this server.**\n\nEarn points by sending messages, talking in VC, and being active.\nTo check your points, type \`${prefix}points\``, client)
+                reply(interaction, `**You need ${cost-points} more points to send an anonymous message in this server.**\n\nTo check your points, type \`${prefix}points\``, client)
             else {
                 const channel = client.channels.cache.get(interaction.channel_id)
                 const embed = new MessageEmbed()
@@ -39,9 +39,9 @@ module.exports = {
                     .setDescription(`"${anonMsg}"`)
                     .setFooter("To send an anonymous message, type /anonymous")
                     .setColor("RANDOM");
-                channel.send(embed).then(msg => {
+                channel.send(embed).then(()=>{
                     client.db.users.setPoints.run(points - cost, interaction.member.user.id, interaction.guild_id)
-                    reply(interaction, `Your anonymous message has been posted! ${cost} points have been deducted.`, client)
+                    reply(interaction, `Your anonymous message has been posted! Remaining points: **\`${points - cost}\`**.`, client)
                 })
             }
         }
