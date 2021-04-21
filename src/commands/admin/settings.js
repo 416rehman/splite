@@ -205,15 +205,15 @@ module.exports = class SettingsCommand extends Command {
     embed
       .setTitle('Settings')
       .setDescription(`**More Information:** \`${row.prefix}settings [category]\``)
-      .addField('System', '`13` settings')
+      .addField('System', '`13` settings', true)
+      .addField('Logging', '`6` settings', true)
       .addField('Verification', '`3` settings', true)
       .addField('Welcomes', '`2` settings', true)
       .addField('Farewells', '`2` settings', true)
       .addField('Points', '`3` settings', true)
       .addField('Crown', '`4` settings', true)
       .addField('JoinVoting', '`5` settings', true)
-      .addField('Logging', '`6` settings');
-
+      .addField('Invite Me', '[Click Here](https://discord.com/api/oauth2/authorize?client_id=832753795854237697&permissions=8&scope=bot%20applications.commands)', true);
     message.channel.send(embed);
   }
 };
