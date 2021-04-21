@@ -137,7 +137,7 @@ module.exports = async (client) => {
 
   client.ws.on('INTERACTION_CREATE', async interaction => {
         const command = interaction.data.name.toLowerCase();
-        client.utils.callSlashCommand(command, client)
+        client.utils.callSlashCommand(command, client, interaction)
   })
 
 

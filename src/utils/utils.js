@@ -138,7 +138,7 @@ function registerSlashCommands(client, server){
   anonymous.createSlashAnonymous(client, server);
 }
 
-function callSlashCommand(command, client){
+function callSlashCommand(command, client, interaction){
   if (command === 'confess') confessions.confess(interaction, client);
   if (command === 'report') report.report(interaction, client);
   if (command === 'anonymous') anonymous.anonymous(interaction, client);
