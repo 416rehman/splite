@@ -31,7 +31,7 @@ module.exports = class SettingsCommand extends Command {
     //Emoji
     let joinVotingEmoji = row.joinvoting_emoji;
     if (joinVotingEmoji && !isNaN(row.joinvoting_emoji))
-      joinVotingEmoji = message.guild.channels.cache.get(row.joinvoting_emoji) || '`None`';
+      joinVotingEmoji = message.guild.emojis.cache.get(e => e.id === row.joinvoting_emoji) || '`None`';
 
     const confessionChannel = message.guild.channels.cache.get(row.confessions_channel_id) || '`None`';
     const starboardChannel = message.guild.channels.cache.get(row.starboard_channel_id) || '`None`';
@@ -188,9 +188,9 @@ module.exports = class SettingsCommand extends Command {
         return message.channel.send(embed
             .setTitle('Settings: `Join Voting`')
             .addField('Status', joinVotingStatus)
-            .addField('JoinVoting Channel', joinVotingChannel, true)
-            .addField('JoinVoting Emoji', joinVotingEmoji, true)
-            .addField('JoinVoting MessageID', joinVotingMessage, true)
+            .addField('Reaction', joinVotingEmoji, true)
+            .addField('MessageID', joinVotingMessage, true)
+            .addField('Voting Channel', joinVotingChannel, true)
             );
     }
     if (setting)
