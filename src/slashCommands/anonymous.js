@@ -33,6 +33,7 @@ module.exports = {
             if (!points || points < cost)
             {
                 reply(interaction, `**You need ${cost-points} more points to send an anonymous message in this server.**\n\nEarn points by sending messages, talking in VC, and being active.\nTo check your points, type \`${prefix}points\``, client)
+                return;
             }
             const channel = client.channels.cache.get(interaction.channel_id)
             const embed = new MessageEmbed()
