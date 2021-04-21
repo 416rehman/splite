@@ -18,7 +18,7 @@ module.exports = class PrefixCommand extends Command {
       .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .addField('Prefix', `\`${prefix}\``, true)
       .addField('Example', `\`${prefix}ping\``, true)
-      .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+      .setFooter(`To change the prefix, type ${prefix}setprefix`)
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
     message.channel.send(embed);
