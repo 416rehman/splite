@@ -1,4 +1,5 @@
 const Command = require('../Command.js');
+const {isNumber} = require("node-os-utils");
 const { MessageEmbed } = require('discord.js');
 
 module.exports = class WipePointsCommand extends Command {
