@@ -17,7 +17,7 @@ module.exports = class SettingsCommand extends Command {
       examples: ['settings System']
     });
   }
-  run(message, args) {
+  async run(message, args) {
 
     const { trimArray, replaceKeywords, replaceCrownKeywords } = message.client.utils;
 
@@ -32,9 +32,8 @@ module.exports = class SettingsCommand extends Command {
     let joinVotingEmoji = row.joinvoting_emoji;
     console.log(`${!!joinVotingEmoji} + ${!isNaN(row.joinvoting_emoji)}`)
     if (joinVotingEmoji && !isNaN(row.joinvoting_emoji))
-    {
-      joinVotingEmoji = message.guild.emojis.cache.get(e => e.id === joinVotingEmoji) || '`None`';
-    }
+      joinVotingEmoji = await message.guild.emojis.cache.find(e => e.id === joinVotingEmoji) || '`None`';
+
 
 
     const confessionChannel = message.guild.channels.cache.get(row.confessions_channel_id) || '`None`';
