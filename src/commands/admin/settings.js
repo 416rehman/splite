@@ -85,7 +85,7 @@ module.exports = class SettingsCommand extends Command {
     const pointsStatus = `\`${message.client.utils.getStatus(row.point_tracking)}\``;
     const crownStatus = `\`${message.client.utils.getStatus(row.crown_role_id && row.crown_schedule)}\``;
     const anonymous = `\`${message.client.utils.getStatus(row.anonymous)}\``;
-    const joinVotingStatus = `\`${message.client.utils.getStatus(joinVotingMessage && joinVotingChannel && joinVotingEmoji)}\``;
+    const joinVotingStatus = `\`${message.client.utils.getStatus(row.joinvoting_message_id && row.voting_channel_id && joinvoting_emoji)}\``;
 
     // Trim messages to 1024 characters
     if (verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
