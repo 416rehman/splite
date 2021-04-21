@@ -25,6 +25,7 @@ module.exports = class SettingsCommand extends Command {
     const row = message.client.db.settings.selectRow.get(message.guild.id);
     const prefix = `\`${row.prefix}\``;
     const systemChannel = message.guild.channels.cache.get(row.system_channel_id) || '`None`';
+    const confessionChannel = message.guild.channels.cache.get(row.confessions_channel_id) || '`None`';
     const starboardChannel = message.guild.channels.cache.get(row.starboard_channel_id) || '`None`';
     const modLog = message.guild.channels.cache.get(row.mod_log_id) || '`None`';
     const memberLog = message.guild.channels.cache.get(row.member_log_id) || '`None`';
@@ -62,6 +63,7 @@ module.exports = class SettingsCommand extends Command {
     let disabledCommands = '`None`';
     if (row.disabled_commands) 
       disabledCommands = row.disabled_commands.split(' ').map(c => `\`${c}\``).join(' ');
+    const anonymous = `\`${message.client.utils.getStatus(row.anonymous)}\``;
 
     // Get statuses
     const verificationStatus = `\`${message.client.utils.getStatus(
@@ -72,7 +74,7 @@ module.exports = class SettingsCommand extends Command {
     const farewellStatus = `\`${message.client.utils.getStatus(row.farewell_message && row.farewell_channel_id)}\``;
     const pointsStatus = `\`${message.client.utils.getStatus(row.point_tracking)}\``;
     const crownStatus = `\`${message.client.utils.getStatus(row.crown_role_id && row.crown_schedule)}\``;
-    
+
     // Trim messages to 1024 characters
     if (verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
     if (welcomeMessage.length > 1024) welcomeMessage = welcomeMessage.slice(0, 1021) + '...';
@@ -104,6 +106,8 @@ module.exports = class SettingsCommand extends Command {
           .addField('Auto Role', autoRole, true)
           .addField('Auto Kick', autoKick, true)
           .addField('Random Color', randomColor, true)
+            .addField('Anonymous Messages', anonymous, true)
+            .addField('Confessions Channel', confessionChannel, true)
           .addField('Mod Channels', modChannels)
           .addField('Disabled Commands', disabledCommands)
         );
