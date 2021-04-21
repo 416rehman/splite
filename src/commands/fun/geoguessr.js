@@ -64,7 +64,7 @@ module.exports = class geoGuessrCommand extends Command {
       if (winner)
       {
         message.client.db.users.updatePoints.run({ points: 2 }, winner.id, message.guild.id);
-        message.channel.send(answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer!`));
+        message.channel.send(answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! +2 Points!`));
       }
 
       else message.channel.send(answerEmbed
