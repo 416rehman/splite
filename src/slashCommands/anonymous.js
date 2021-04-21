@@ -34,13 +34,13 @@ module.exports = {
             {
                 reply(interaction, `**You need ${cost-points} more points to send an anonymous message in this server.**\n\nEarn points by sending messages, talking in VC, and being active.\nTo check your points, type \`${prefix}points\``, client)
             }
-            console.log(interaction)
+            const channel = client.channels.cache.get(interaction.channel_id)
             const embed = new MessageEmbed()
                 .setTitle(`Anonymous Message`)
                 .setDescription(`"${anonMsg}"`)
                 .setFooter("To send an anonymous message, type /anonymous")
                 .setColor("RANDOM");
-            interaction.channel.send(embed).then(msg => {
+            channel.send(embed).then(msg => {
                 client.db.users.setPoints.run(points - cost, interaction.member.user.id, interaction.guild_id)
                 reply(interaction, `Your anonymous message has been posted! ${cost} points have been deducted.`, client)
             })
