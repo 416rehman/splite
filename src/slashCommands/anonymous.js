@@ -26,7 +26,7 @@ module.exports = {
         const points = (client.db.users.selectPoints.pluck().get(interaction.member.user.id, interaction.guild_id))
         if (!points || points < cost)
         {
-            reply(interaction, `You need ${cost-points} more points to send an anonymous message in this server.\nEarn points by sending messages, talking in VC, and being active.\nTo check your points, type \`${prefix}\``, client)
+            reply(interaction, `**You need ${cost-points} more points to send an anonymous message in this server.**\n\nEarn points by sending messages, talking in VC, and being active.\nTo check your points, type \`${prefix}points\``, client)
         }
         const anonymousAllowed = (client.db.settings.selectAnonymous.pluck().get(interaction.guild_id))
         const anonMsg = interaction.data.options[0].value;
