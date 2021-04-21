@@ -23,7 +23,7 @@ module.exports = class ToggleAnonymous extends Command {
     let description;
 
     // Disabled anonymous
-    if (anonymousState) {
+    if (!anonymousState) {
         message.client.db.settings.updateAnonymous.run(1, message.guild.id)
         description = `Anonymous messages have been enabled! Type /anonymous to send an anonymous message. ${success}`;
       }
