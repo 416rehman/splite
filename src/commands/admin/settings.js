@@ -26,7 +26,7 @@ module.exports = class SettingsCommand extends Command {
     const prefix = `\`${row.prefix}\``;
     const systemChannel = message.guild.channels.cache.get(row.system_channel_id) || '`None`';
     const joinVotingChannel = message.guild.channels.cache.get(row.joinvoting_channel_id) || '`None`';
-    const joinVotingMessage = joinVotingChannel.messages.cache.get(row.joinvoting_message_id) || '`None`';
+    const joinVotingMessage = joinVotingChannel?.messages?.cache?.get(row.joinvoting_message_id) || '`None`';
     //Emoji
     let joinVotingEmoji;
     if (joinVotingEmoji && isNaN(row.joinvoting_emoji)) joinVotingEmoji = row.joinvoting_emoji;
