@@ -6,7 +6,7 @@ module.exports = class PurgeBotCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'purgebot',
-      aliases: ['clearbot, pb'],
+      aliases: ['clearbot', 'pb'],
       usage: 'purgebot [channel mention/ID] <message count> [reason]',
       description: oneLine`
         Sifts through the specified amount of messages in the provided channel
