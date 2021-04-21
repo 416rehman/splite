@@ -205,14 +205,14 @@ module.exports = class SettingsCommand extends Command {
     embed
       .setTitle('Settings')
       .setDescription(`**More Information:** \`${row.prefix}settings [category]\``)
-      .addField('System', '`11` settings', true)
-      .addField('JoinVoting', '`11` settings', true)
-      .addField('Logging', '`6` settings', true)
+      .addField('System', '`11` settings')
       .addField('Verification', '`3` settings', true)
       .addField('Welcomes', '`2` settings', true)
       .addField('Farewells', '`2` settings', true)
       .addField('Points', '`3` settings', true)
-      .addField('Crown', '`4` settings', true);
+      .addField('Crown', '`4` settings', true)
+      .addField('JoinVoting', '`11` settings', true)
+      .addField('Logging', '`6` settings');
 
     message.channel.send(embed);
   }
