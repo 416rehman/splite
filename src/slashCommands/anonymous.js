@@ -23,7 +23,7 @@ module.exports = {
 
     anonymous: function anonymous(interaction, client) {
         const prefix = (client.db.settings.selectPrefix.pluck().get(interaction.guild_id))
-        const points = (client.db.users.selectPoints.pluck().get(interaction.member.user.id))
+        const points = (client.db.users.selectPoints.pluck().get(interaction.member.user.id, interaction.guild_id))
         if (!points || points < cost)
         {
             reply(interaction, `You need ${cost-points} more points to send an anonymous message in this server.\nEarn points by sending messages, talking in VC, and being active.\nTo check your points, type \`${prefix}\``, client)
