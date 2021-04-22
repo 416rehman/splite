@@ -29,7 +29,6 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
       .setTitle('Settings: `Confessions`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
       .setDescription(`The \`view confessions role\` was successfully updated. ${success}`)
-      .addField('Role', oldViewConfessionsRole || '`None`', true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
