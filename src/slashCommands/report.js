@@ -16,7 +16,7 @@ module.exports = {
                         "name": "Reason",
                         "description": "Optional: Reason",
                         "type": 3,
-                        "required": false,
+                        "required": true,
                     }
                 ]
             }
