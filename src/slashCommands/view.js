@@ -28,8 +28,8 @@ module.exports = {
             reply(interaction, `No role is set to run this command. To set a role to run this command type, ${prefix}setviewconfessionsrole`, client)
         } else
         {
-            const guild = (client.guilds.cache.get(interaction.guild_id))
-            const role = (guild.roles.cache.get(viewConfessionsRole))
+            const guild = client.guilds.cache.get(interaction.guild_id)
+            const role = guild.roles.cache.get(viewConfessionsRole)
             const user = guild.members.cache.find(u => u.id === interaction.member.user.id)
             console.log(role)
             if (!user.roles.cache.has(role))
