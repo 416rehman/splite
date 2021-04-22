@@ -29,7 +29,7 @@ module.exports = {
         } else
         {
             const guild = client.guilds.cache.get(interaction.guild_id)
-            const role = guild.roles.cache.get(viewConfessionsRole)
+            const role = guild.roles.cache.find(r => r.id === viewConfessionsRole)
             const user = guild.members.cache.find(u => u.id === interaction.member.user.id)
             console.log(role)
             if (!user.roles.cache.has(role))
