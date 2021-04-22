@@ -55,7 +55,8 @@ db.prepare(`
     joinvoting_message_id TEXT,
     joinvoting_emoji TEXT,
     voting_channel_id TEXT,
-    anonymous INTEGER DEFAULT 0 NOT NULL
+    anonymous INTEGER DEFAULT 0 NOT NULL,
+    confessions_view_role INTEGER
   );
 `).run();
 
@@ -88,6 +89,7 @@ db.prepare(`
     content TEXT,
     author_id TEXT,
     guild_id TEXT,
+    timeanddate TEXT
     PRIMARY KEY (confession_id)
   );
 `).run();
@@ -113,8 +115,9 @@ const settings = {
       joinvoting_message_id,
       joinvoting_emoji,
       voting_channel_id,
-      anonymous
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      anonymous,
+      confessions_view_role
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -123,6 +126,7 @@ const settings = {
   selectPrefix: db.prepare('SELECT prefix FROM settings WHERE guild_id = ?;'),
   selectSystemChannelId: db.prepare('SELECT system_channel_id FROM settings WHERE guild_id = ?;'),
   selectConfessionsChannelId: db.prepare('SELECT confessions_channel_id FROM settings WHERE guild_id = ?;'),
+  selectViewConfessionsRole: db.prepare('SELECT confessions_view_role FROM settings WHERE guild_id = ?;'),
   selectStarboardChannelId: db.prepare('SELECT starboard_channel_id FROM settings WHERE guild_id = ?;'),
   selectAdminRoleId: db.prepare('SELECT admin_role_id FROM settings WHERE guild_id = ?;'),
   selectModRoleId: db.prepare('SELECT mod_role_id FROM settings WHERE guild_id = ?;'),
@@ -166,6 +170,7 @@ const settings = {
   updateGuildName: db.prepare('UPDATE settings SET guild_name = ? WHERE guild_id = ?;'),
   updateSystemChannelId: db.prepare('UPDATE settings SET system_channel_id = ? WHERE guild_id = ?;'),
   updateConfessionsChannelId: db.prepare('UPDATE settings SET confessions_channel_id = ? WHERE guild_id = ?;'),
+  updateViewConfessionsRole: db.prepare('UPDATE settings set confessions_view_role = ? WHERE guild_id = ?;'),
   updateStarboardChannelId: db.prepare('UPDATE settings SET starboard_channel_id = ? WHERE guild_id = ?;'),
   updateAdminRoleId: db.prepare('UPDATE settings SET admin_role_id = ? WHERE guild_id = ?;'),
   updateModRoleId: db.prepare('UPDATE settings SET mod_role_id = ? WHERE guild_id = ?;'),
@@ -265,8 +270,9 @@ const confessions = {
       confession_id,
       content,
       author_id,
-      guild_id
-    ) VALUES (?, ?, ?, ?);
+      guild_id,
+      timeanddate
+    ) VALUES (?, ?, ?, ?, ?);
   `),
 
   // Selects

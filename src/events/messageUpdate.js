@@ -43,13 +43,11 @@ module.exports = (client, oldMessage, newMessage) => {
       if (newMessage.content.length > 1024) newMessage.content = newMessage.content.slice(0, 1021) + '...';
       if (oldMessage.content.length > 1024) oldMessage.content = oldMessage.content.slice(0, 1021) + '...';
 
-      embed
-        .setTitle('Message Update: `Edit`')
-        .setDescription(`
-          ${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})
-        `)
-        .addField('Before', oldMessage.content)
-        .addField('After', newMessage.content);
+      const embed = new MessageEmbed()
+          .setTitle('Message Update: `Edit`')
+          .setDescription(`${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})`)
+          .addField('Before', oldMessage.content)
+          .addField('After', newMessage.content);
       messageEditLog.send(embed);
     }
   }

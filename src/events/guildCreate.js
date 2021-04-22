@@ -90,8 +90,8 @@ module.exports = async (client, guild) => {
       null, //joinvoting_message_id
       null,  //joinvoting_emoji
       null,  //voting_channel_id
-      0     //anonymous
-
+      0,     //anonymous
+      0      //viewconfessionsrole
   );
 
   // Update users table

@@ -25,10 +25,12 @@ module.exports = {
         const guild = client.guilds.cache.get(interaction.guild_id)
         if (!confessionsChannelID) {
             reply(interaction, `This server doesn't have a confessions channel. Create one by using \`${prefix}setconfessions #channel\``, client)
-        } else {
+        }
+        else
+        {
 
             const confessionsChannel = client.channels.cache.get(confessionsChannelID)
-
+            const viewConfessionRole = client.db.settings.selectViewConfessionsRole.pluck().get(interaction.guild_id)
             var d = new Date();
             var n = d.valueOf();
             n = (n.toString())
@@ -38,7 +40,7 @@ module.exports = {
                 .setTitle(`Confession ID: ${n}`)
                 .setThumbnail(guild.iconURL({dynamic: true}))
                 .setDescription(`"${confession}"`)
-                .setFooter("Report ToS-breaking or hateful confessions by using /report [confessionID]")
+                .setFooter(`Report ToS-breaking or hateful confessions by using /report [confessionID] ${viewConfessionRole > 0 ? "| Viewable by staff" : ""}`)
                 .setTimestamp()
                 .setColor("RANDOM");
             confessionsChannel.send(embed).then(msg => {
@@ -46,7 +48,8 @@ module.exports = {
                     n,
                     confession,
                     interaction.member.user.id,
-                    interaction.guild_id
+                    interaction.guild_id,
+                    d.toISOString()
                 );
 
                 const user = guild.members.cache.find(u => u.id === interaction.member.user.id)

@@ -136,12 +136,14 @@ function registerSlashCommands(client, server){
   confessions.createSlashConfess(client, server);
   report.createSlashReport(client, server);
   anonymous.createSlashAnonymous(client, server);
+  view.createSlashView(client, server);
 }
 
 function callSlashCommand(command, client, interaction){
   if (command === 'confess') confessions.confess(interaction, client);
   if (command === 'report') report.report(interaction, client);
   if (command === 'anonymous') anonymous.anonymous(interaction, client);
+  if (command === 'view') anonymous.anonymous(interaction, client);
 }
 
 function getEmojiForJoinVoting(guild, client) {
