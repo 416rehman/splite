@@ -23,7 +23,7 @@ module.exports = {
         const prefix = (client.db.settings.selectPrefix.pluck().get(interaction.guild_id))
         const viewConfessionsRole = (client.db.settings.selectViewConfessionsRole.pluck().get(interaction.guild_id))
         const confessionID = interaction.data.options[0].value;
-        console.log( {confessionID})
+        console.log( {confessionID} ${viewConfessionsRole})
         if (!viewConfessionsRole) {
             reply(interaction, `No role is set to run this command. To set a role to run this command type, ${prefix}setviewconfessionsrole`, client)
         } else
