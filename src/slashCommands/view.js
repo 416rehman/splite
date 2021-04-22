@@ -23,7 +23,6 @@ module.exports = {
         const { prefix : prefix } = client.db.settings.selectPrefix.get(interaction.guild_id)
         const { confessions_view_role : viewConfessionsRole } = client.db.settings.selectViewConfessionsRole.get(interaction.guild_id)
         const confessionID = interaction.data.options[0].value;
-        console.log( {confessionID}, {viewConfessionsRole})
         if (!viewConfessionsRole) {
             reply(interaction, `No role is set to run this command. To set a role to run this command type, ${prefix}setviewconfessionsrole`, client)
         } else
@@ -32,7 +31,7 @@ module.exports = {
             const role = guild.roles.cache.find(r => r.id === viewConfessionsRole)
             const user = guild.members.cache.find(u => u.id === interaction.member.user.id)
             console.log(role)
-            if (!user.roles.cache.has(role))
+            if (!user.roles.cache.has(role.id))
                 reply(interaction, `**You don't have perms to run this command**`, client)
             else {
                 const {confession_id: confession_id, content : content, author_id : author_id, timeanddate : timeanddate, guild_id : guild_id} = client.db.confessions.selectConfessionByID.run(interaction.data.options[0].value)
