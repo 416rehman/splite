@@ -36,7 +36,7 @@ module.exports = {
             else {
                 //const { confession_id: confession_id, content : content, author_id : author_id, timeanddate : timeanddate, guild_id : guild_id } = client.db.confessions.selectConfessionByID.get(interaction.data.options[0].value)
                 const row = client.db.confessions.selectConfessionByID.get(interaction.data.options[0].value)
-
+                console.log(row)
                 if (confession_id && guild_id === interaction.guild_id)
                 {
                     const sender = guild.members.cache.get(author_id);
