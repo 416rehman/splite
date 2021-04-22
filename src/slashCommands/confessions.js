@@ -38,7 +38,6 @@ module.exports = {
 
             const embed = new MessageEmbed()
                 .setTitle(`Confession ID: ${n}`)
-                .setThumbnail(guild.iconURL({dynamic: true}))
                 .setDescription(`"${confession}"`)
                 .setFooter(`Report ToS-breaking or hateful confessions by using /report [confessionID] ${viewConfessionRole > 0 ? "| Viewable by staff" : ""}`)
                 .setTimestamp()
