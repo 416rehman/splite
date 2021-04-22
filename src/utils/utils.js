@@ -4,6 +4,7 @@ const { stripIndent } = require('common-tags');
 const confessions = require("../slashCommands/confessions")
 const report = require("../slashCommands/report")
 const anonymous = require("../slashCommands/anonymous")
+const view = require("../slashCommands/view")
 
 /**
  * Capitalizes a string
