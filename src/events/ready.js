@@ -56,7 +56,7 @@ module.exports = async (client) => {
       null,  //joinvoting_emoji
       null,  //voting_channel_id
       0,     //anonymous
-      0      //view_confessions_role
+      null      //view_confessions_role
     );
     
     // Update users table

@@ -56,7 +56,7 @@ db.prepare(`
     joinvoting_emoji TEXT,
     voting_channel_id TEXT,
     anonymous INTEGER DEFAULT 0 NOT NULL,
-    confessions_view_role INTEGER
+    confessions_view_role TEXT
   );
 `).run();
 

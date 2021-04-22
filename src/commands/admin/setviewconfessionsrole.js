@@ -35,7 +35,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
 
     // Clear role
     if (args.length === 0) {
-      message.client.db.settings.updateViewConfessionsRole.run(0, message.guild.id);
+      message.client.db.settings.updateViewConfessionsRole.run(null, message.guild.id);
       
       // Update status
       const status = 'disabled';
