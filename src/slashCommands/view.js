@@ -11,7 +11,7 @@ module.exports = {
                     {
                         "name": "confessionID",
                         "description": "Type the ID of confession",
-                        "type": 3,
+                        "type": 4,
                         "required": true,
                     }
                 ]
