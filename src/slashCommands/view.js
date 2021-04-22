@@ -31,7 +31,7 @@ module.exports = {
             const guild = (client.guilds.cache.get(interaction.guild_id))
             const role = (guild.roles.cache.get(viewConfessionsRole))
             const user = guild.members.cache.find(u => u.id === interaction.member.user.id)
-            if (!user.roles.cache.has(role.id))
+            if (!role || !user.roles.cache.has(role.id))
                 reply(interaction, `**You don't have perms to run this command**`, client)
             else {
                 const {confession_id: confession_id, content : content, author_id : author_id, timeanddate : timeanddate, guild_id : guild_id} = client.db.confessions.selectConfessionByID.run(interaction.data.options[0].value)
