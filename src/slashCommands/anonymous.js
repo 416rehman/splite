@@ -11,8 +11,8 @@ module.exports = {
                 description: "Send an anonymous message in your current channel.",
                 options: [
                     {
-                        "name": "Anonymous",
-                        "description": "Send an anonymous message in your current channel.",
+                        "name": "message",
+                        "description": "Type your message.",
                         "type": 3,
                         "required": true,
                     }
