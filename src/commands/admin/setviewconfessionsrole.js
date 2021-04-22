@@ -51,7 +51,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
     }
 
     // Update role
-    const confessionsRole = message.guild.roles.cache.get(args[0]);
+    const confessionsRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!confessionsRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateViewConfessionsRole.run(confessionsRole.id, message.guild.id);
 
