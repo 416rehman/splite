@@ -20,8 +20,8 @@ module.exports = {
     },
 
     view: function view(interaction, client) {
-        const prefix = client.db.settings.selectPrefix.pluck().get(interaction.guild_id)
-        const viewConfessionsRole = client.db.settings.selectViewConfessionsRole.pluck().get(interaction.guild_id)
+        const { prefix : prefix } = client.db.settings.selectPrefix.get(interaction.guild_id)
+        const { confessions_view_role : viewConfessionsRole } = client.db.settings.selectViewConfessionsRole.get(interaction.guild_id)
         const confessionID = interaction.data.options[0].value;
         console.log( {confessionID}, {viewConfessionsRole})
         if (!viewConfessionsRole) {
