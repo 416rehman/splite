@@ -7,16 +7,16 @@ module.exports = {
                 description: "report a ToS-breaking or hateful confession",
                 options: [
                     {
-                        "name": "Report",
-                        "description": "Report a confession by ID",
+                        "name": "ID",
+                        "description": "ID of the confession you wish to report.",
                         "type": 4,
                         "required": true,
                     },
                     {
                         "name": "Reason",
-                        "description": "Please provide a reason",
+                        "description": "Optional: Reason",
                         "type": 3,
-                        "required": true,
+                        "required": false,
                     }
                 ]
             }
