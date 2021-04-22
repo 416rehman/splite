@@ -89,7 +89,7 @@ db.prepare(`
     content TEXT,
     author_id TEXT,
     guild_id TEXT,
-    timeanddate TEXT
+    timeanddate TEXT,
     PRIMARY KEY (confession_id)
   );
 `).run();
