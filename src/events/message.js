@@ -13,8 +13,8 @@ module.exports = (client, message) => {
   if (currentStatus != null)
   {
     message.client.db.users.updateAfk.run(null, message.author.id, message.guild.id)
-    message.channel.send(`${online} Welcome back ${message.author}, you are not afk anymore!`)
     if(message.member.nickname) message.member.setNickname(`${message.member.nickname.replace('[AFK]','')}`).catch(err=>{console.log()})
+    message.channel.send(`${online} Welcome back ${message.author}, you are not afk anymore!`)
   }
 
   if (message.mentions.users.size > 0)
