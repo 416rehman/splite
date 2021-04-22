@@ -19,9 +19,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
     });
   }
   async run(message, args) {
-    let { 
-      view_confessions_role: view_confessions_role
-    } = message.client.db.settings.selectViewConfessionsRole.get(message.guild.id);
+    const view_confessions_role = message.client.db.settings.selectViewConfessionsRole.pluck().get(message.guild.id);
     const oldViewConfessionsRole = message.guild.roles.cache.get(view_confessions_role) || '`None`';
     
     // Get status
