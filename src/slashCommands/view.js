@@ -40,10 +40,10 @@ module.exports = {
                 if (row && row.guild_id === interaction.guild_id)
                 {
                     const sender = guild.members.cache.get(row.author_id);
-                    reply(interaction, `Confession ID: **\`${row.confession_id}\`**
-                        Content: **\`${row.content}\`**
-                        Sent By: **${sender || "Someone not in the server"} (ID: ${row.author_id})**
-                        Date/Time: **\`${row.timeanddate}\`**`, client)
+                    reply(interaction, `Confession ID: **\`${row.confession_id}\`** \
+                    \nContent: **\`${row.content}\`**\
+                    \nSent By: **${sender || "Someone not in the server"} (ID: ${row.author_id})**\
+                    \nDate/Time: **\`${row.timeanddate}\`**`, client)
                 }
                 else reply(interaction, `Error: Can't find that confession! Please check the confession ID`, client)
             }
