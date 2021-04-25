@@ -6,8 +6,9 @@ module.exports = class MembersCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'members',
+      aliases: ['mem', 'member'],
       usage: 'members <role mention/ID/name>',
-      description: 'Displays members with the specified role',
+      description: 'Displays members with the specified role. If no role is specified, displays how many server members are online, busy, AFK, and offline.',
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
       userPermissions: ['MANAGE_ROLES'],
@@ -15,6 +16,28 @@ module.exports = class MembersCommand extends Command {
     });
   }
   async run(message, args) {
+    if (!args)
+    {
+      const members = message.guild.members.cache.array();
+      const online = members.filter((m) => m.presence.status === 'online').length;
+      const offline =  members.filter((m) => m.presence.status === 'offline').length;
+      const dnd =  members.filter((m) => m.presence.status === 'dnd').length;
+      const afk =  members.filter((m) => m.presence.status === 'idle').length;
+      const embed = new MessageEmbed()
+          .setTitle(`Member Status [${message.guild.members.cache.size}]`)
+          .setThumbnail(message.guild.iconURL({ dynamic: true }))
+          .setDescription(stripIndent`
+        ${emojis.online} **Online:** \`${online}\` members
+        ${emojis.dnd} **Busy:** \`${dnd}\` members
+        ${emojis.idle} **AFK:** \`${afk}\` members
+        ${emojis.offline} **Offline:** \`${offline}\` members
+      `)
+          .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+          .setTimestamp()
+          .setColor(message.guild.me.displayHexColor);
+      return message.channel.send(embed);
+    }
+
     let role;
     if (args[0].startsWith("<@&") || (/^[0-9]{18}$/g).test(args[0])) role = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     else role = message.guild.roles.cache.find(r=> r.name.toLowerCase().startsWith(args[0].toLowerCase()))
