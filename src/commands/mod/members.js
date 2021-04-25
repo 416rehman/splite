@@ -20,6 +20,6 @@ module.exports = class MembersCommand extends Command {
     else role = message.guild.roles.cache.find(r=> r.name.toLowerCase().startsWith(args[0].toLowerCase()))
 
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
-    console.log(role)
+    console.log(role.members)
   }
 };
