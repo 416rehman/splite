@@ -17,7 +17,7 @@ module.exports = class MembersCommand extends Command {
   }
   async run(message, args) {
     console.log(args)
-    if (!args)
+    if (!args.length > 0)
     {
       const members = message.guild.members.cache.array();
       const online = members.filter((m) => m.presence.status === 'online').length;
