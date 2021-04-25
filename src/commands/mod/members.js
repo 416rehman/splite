@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
-const ms = require('ms');
+const { stripIndent } = require('common-tags');
 
 module.exports = class MembersCommand extends Command {
   constructor(client) {
@@ -16,7 +16,6 @@ module.exports = class MembersCommand extends Command {
     });
   }
   async run(message, args) {
-    console.log(args.length)
     if (!args.length > 0)
     {
       const members = message.guild.members.cache.array();
