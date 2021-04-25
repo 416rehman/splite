@@ -24,7 +24,7 @@ module.exports = class MembersCommand extends Command {
     let description = '';
     let i = 0;
     role.members.forEach(m => {
-      if (i < 100)
+      if (i < 50)
       {
         console.log(m.user.username)
         description += `<@${m.user.id}> `
@@ -35,6 +35,8 @@ module.exports = class MembersCommand extends Command {
     const embed = new MessageEmbed()
         .setTitle(`${role.members.size} Members in ${role.name}`)
         .setDescription(description)
-    message.channel.send(embed)
+    message.channel.send(embed).catch(err => {
+      return this.sendErrorMessage(message, 0, `Too many members to display. Please try another role with fewer members`);
+    })
   }
 };
