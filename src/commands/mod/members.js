@@ -28,7 +28,7 @@ module.exports = class MembersCommand extends Command {
     })
 
     const embed = new MessageEmbed()
-        .setTitle(`Members of ${role.name}`)
+        .setTitle(`${role.members.size} Members in ${role.name}`)
         .setDescription(description)
     message.channel.send(embed)
   }
