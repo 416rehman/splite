@@ -36,6 +36,6 @@ module.exports = class YoutubeCommand extends Command {
       .setThumbnail('https://cdn1.iconfinder.com/data/icons/logotypes/32/youtube-512.png')
       .setDescription(result.description)
       .setColor("#FF0000");
-    message.channel.send(result.link).then(message.channel.send(embed));
+    message.channel.send(result.link)
   }
 };
