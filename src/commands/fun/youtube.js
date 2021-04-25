@@ -34,11 +34,8 @@ module.exports = class YoutubeCommand extends Command {
       .setTitle(decodedTitle)
       .setURL(result.link)
       .setImage(result.thumbnails.medium.url)
-      .setThumbnail('https://cdn1.iconfinder.com/data/icons/logotypes/32/youtube-512.png')
       .setDescription(result.description)
-      .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(message.guild.me.displayHexColor);
+      .setColor("RED");
     if (message.channel.nsfw) embed.setImage(result.thumbnails.high.url);
     message.channel.send(embed).then(message.channel.send(result.link));
   }
