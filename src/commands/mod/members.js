@@ -16,6 +16,7 @@ module.exports = class MembersCommand extends Command {
     });
   }
   async run(message, args) {
+    console.log(args)
     if (!args)
     {
       const members = message.guild.members.cache.array();
