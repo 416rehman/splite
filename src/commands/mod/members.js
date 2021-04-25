@@ -23,6 +23,7 @@ module.exports = class MembersCommand extends Command {
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
     let description;
     role.members.forEach(m => {
+      console.log(m.user.username)
       description += `<@${m.user.id}> `
     })
 
