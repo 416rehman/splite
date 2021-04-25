@@ -6,7 +6,7 @@ module.exports = class GivePointsCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'givepoints',
-      aliases: ['gp'],
+      aliases: ['gp', 'give'],
       usage: 'givepoints <user mention/ID> <point count>',
       description: 'Gives the specified amount of your own points to the mentioned user.',
       type: client.types.POINTS,

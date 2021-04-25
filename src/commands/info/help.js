@@ -106,6 +106,13 @@ module.exports = class HelpCommand extends Command {
           embed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, commands[type].join(' '));
       }
 
+      let viewHelp = ''
+      if (message.member.hasPermission('MANAGE_GUILD')) viewHelp = `\`/view\` View details of a confession.`
+      embed.addField(`${emojis.verified_developer} **/Slash Commands**`, `\`/anonymous\` Post an anonymous message in your current channel. **Cost: 50 points**\
+      \n\`/anonymous\` Post an anonymous message in your current channel.\
+      \n\`/report\` Report a confession.\
+      \n${viewHelp}`)
+
       embed.addField(
           '**Links**',
           '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=832753795854237697&permissions=8&scope=bot%20applications.commands) | ' +

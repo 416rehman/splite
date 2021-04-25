@@ -115,7 +115,6 @@ module.exports = async (client) => {
      * ------------------------------------------------------------------------------------------------ */ 
     // Schedule crown role rotation
     client.utils.scheduleCrown(client, guild);
-
   }
 
   // Remove left guilds
