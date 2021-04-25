@@ -23,18 +23,20 @@ module.exports = class MembersCommand extends Command {
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
     let description = '';
     let i = 0;
-    role.members.forEach(m => {
-      if (i < 50)
+    role.members.some(m => {
+      const user = `<@${m.user.id}> `
+      if (description.length + user.length < 2048)
       {
-        console.log(m.user.username)
-        description += `<@${m.user.id}> `
+        description += user
         i++;
       }
+      else return true;
     })
 
     const embed = new MessageEmbed()
-        .setTitle(`${role.members.size} Members in ${role.name}`)
+        .setTitle(`Members of ${role.name}`)
         .setDescription(description)
+        .setFooter(`${role.members.size} Members in ${role.name} | Showing ${i}`)
     message.channel.send(embed).catch(err => {
       return this.sendErrorMessage(message, 0, `Too many members to display. Please try another role with fewer members`);
     })
