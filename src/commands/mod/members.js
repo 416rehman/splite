@@ -24,7 +24,7 @@ module.exports = class MembersCommand extends Command {
     let description;
     for (const m of role.members)
     {
-      description += ` ${m.tag} `
+      description += ` ${m.user.tag} `
     }
     const embed = new MessageEmbed()
         .setTitle(`Members of ${role.name}`)
