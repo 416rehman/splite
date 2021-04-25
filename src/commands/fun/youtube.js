@@ -37,6 +37,6 @@ module.exports = class YoutubeCommand extends Command {
       .setDescription(result.description)
       .setColor("#FF0000");
     if (message.channel.nsfw) embed.setImage(result.thumbnails.high.url);
-    message.channel.send(result.link, {embed : embed})
+    message.channel.send(embed).then(message.channel.send(result.link));
   }
 };
