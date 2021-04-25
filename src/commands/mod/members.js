@@ -22,12 +22,11 @@ module.exports = class MembersCommand extends Command {
 
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
     let description;
-
-    for (var i = 0; i < 1; i++)
-    {
-      console.log(role.members[i])
-    }
-    //
+    console.log(role.members)
+    // for (const m of role.members)
+    // {
+    //   description += `<@${m.user.id}> `
+    // }
     // const embed = new MessageEmbed()
     //     .setTitle(`Members of ${role.name}`)
     //     .setDescription(description)
