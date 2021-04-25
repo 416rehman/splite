@@ -108,8 +108,8 @@ module.exports = class HelpCommand extends Command {
 
       let viewHelp = ''
       if (message.member.hasPermission('MANAGE_GUILD')) viewHelp = `\`/view\` View details of a confession.`
-      embed.addField(`${emojis.verified_developer} **/Slash Commands**`, `\`/anonymous\` Post an anonymous message in your current channel. **Cost: 50 points**\
-      \n\`/anonymous\` Post an anonymous message in your current channel.\
+      embed.addField(`${emojis.verified_developer} **/Slash Commands**`, `\`/anonymous\` Post anonymous message. **Cost: 50 points**\
+      \n\`/confess\` Post a confession in confessions channel.\
       \n\`/report\` Report a confession.\
       \n${viewHelp}`)
 
