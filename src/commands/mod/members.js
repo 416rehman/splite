@@ -22,14 +22,15 @@ module.exports = class MembersCommand extends Command {
 
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
     let description;
-    console.log(role.members.keys())
-    for (const m of role.members)
+
+    for (var i = 0; i < role.members.size; i++)
     {
-      description += `<@${m.user.id}> `
+      console.log(role.members[i].id)
     }
-    const embed = new MessageEmbed()
-        .setTitle(`Members of ${role.name}`)
-        .setDescription(description)
-    message.channel.send(embed)
+    //
+    // const embed = new MessageEmbed()
+    //     .setTitle(`Members of ${role.name}`)
+    //     .setDescription(description)
+    // message.channel.send(embed)
   }
 };
