@@ -26,7 +26,7 @@ module.exports = class CrownCommand extends Command {
       .setTitle(':crown:  Crowned Members  :crown:')
       .setDescription(description)
       .addField('Crown Role', crownRole)
-      .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+      .setFooter(`Crown transfer will occur at 20:00 EST`)
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
     message.channel.send(embed);

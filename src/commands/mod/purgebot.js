@@ -12,6 +12,7 @@ module.exports = class PurgeBotCommand extends Command {
         Sifts through the specified amount of messages in the provided channel
         and deletes all Splite commands and messages from Splite.
         If no channel is given, the messages will be deleted from the current channel.
+        If no amount is specified, upto 100 messages will be deleted.
         No more than 100 messages may be sifted through at a time.
         Messages older than 2 weeks old cannot be deleted.
       `,
@@ -33,9 +34,9 @@ module.exports = class PurgeBotCommand extends Command {
       Please mention an accessible text channel or provide a valid text channel ID
     `);
 
-    const amount = parseInt(args[0]);
+    let amount = parseInt(args[0]);
     if (isNaN(amount) === true || !amount || amount < 0 || amount > 100)
-      return this.sendErrorMessage(message, 0, 'Please provide a message count between 1 and 100');
+      amount = 100;
 
     // Check channel permissions
     if (!channel.permissionsFor(message.guild.me).has(['MANAGE_MESSAGES']))

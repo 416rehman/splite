@@ -97,7 +97,7 @@ module.exports = class HelpCommand extends Command {
           message.author.displayAvatarURL({ dynamic: true })
         )
         .setTimestamp()
-        .setImage('https://i.imgur.com/B0XSinY.png')
+        .setThumbnail('https://i.imgur.com/B0XSinY.png')
         .setColor(message.guild.me.displayHexColor);
 
       for (const type of Object.values(message.client.types)) {
