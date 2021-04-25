@@ -6,7 +6,7 @@ module.exports = class MembersCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'members',
-      aliases: ['mem', 'member'],
+      aliases: ['mm', 'mem', 'mems'],
       usage: 'members <role mention/ID/name>',
       description: 'Displays members with the specified role. If no role is specified, displays how many server members are online, busy, AFK, and offline.',
       type: client.types.MOD,
