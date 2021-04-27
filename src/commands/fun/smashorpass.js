@@ -26,9 +26,13 @@ module.exports = class geoGuessrCommand extends Command {
 
     const guild = message.client.guilds.cache.get(potentialMatchRow.guild_id)
     const potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
+
+    let bio = `${potentialMatchUser.displayName} has not set a bio yet.`
+    if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.displayName}'s Bio:\n${potentialMatchRow.bio}`
+
     const embed = new MessageEmbed()
         .setTitle(`🔥 Smash or Pass 👎`)
-        .setDescription(`${potentialMatchUser.displayName}'s Bio:\n${potentialMatchRow.bio}`)
+        .setDescription(bio)
         .setImage(potentialMatchUser.user.avatarURL())
     message.reply(embed)
   }
