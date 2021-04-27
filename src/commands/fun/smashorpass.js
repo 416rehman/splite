@@ -29,7 +29,7 @@ module.exports = class geoGuessrCommand extends Command {
     const embed = new MessageEmbed()
         .setTitle(`🔥 Smash or Pass 👎`)
         .setDescription(`${potentialMatchUser.displayName}'s Bio:\n${potentialMatchRow.bio}`)
-        .setImage(potentialMatchUser.user.avatar)
+        .setImage(potentialMatchUser.user.avatarURL())
     message.reply(embed)
   }
 };
