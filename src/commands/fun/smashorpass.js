@@ -34,6 +34,9 @@ module.exports = class geoGuessrCommand extends Command {
         .setTitle(`🔥 Smash or Pass 👎`)
         .setDescription(bio)
         .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-    message.reply(embed)
+    message.reply(embed).then(async msg=> {
+      await msg.react('🔥')
+      await msg.react('👎')
+    })
   }
 };
