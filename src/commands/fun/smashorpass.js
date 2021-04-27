@@ -33,7 +33,7 @@ module.exports = class geoGuessrCommand extends Command {
     const embed = new MessageEmbed()
         .setTitle(`🔥 Smash or Pass 👎`)
         .setDescription(bio)
-        .setImage(potentialMatchUser.user.avatarURL())
+        .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
     message.reply(embed)
   }
 };
