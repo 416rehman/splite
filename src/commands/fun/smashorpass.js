@@ -23,5 +23,6 @@ module.exports = class geoGuessrCommand extends Command {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id)
     console.log(potentialMatchRow)
+    message.reply(`This feature is in development atm!`)
   }
 };
