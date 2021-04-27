@@ -93,6 +93,18 @@ db.prepare(`
     PRIMARY KEY (confession_id)
   );
 `).run();
+
+// MATCHES TABLE
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS confessions (
+    matchID INTEGER,
+    userID TEXT,
+    shownUserID TEXT,
+    liked TEXT,
+    dateandtime TEXT,
+    PRIMARY KEY (matchID)
+  );
+`).run();
 /** ------------------------------------------------------------------------------------------------
  * PREPARED STATEMENTS
  * ------------------------------------------------------------------------------------------------ */
@@ -280,8 +292,36 @@ const confessions = {
   selectConfessionByAuthor: db.prepare('SELECT * FROM confessions WHERE author_id = ?;'),
   selectConfessionByID: db.prepare('SELECT * FROM confessions WHERE confession_id = ?;'),
 };
+
+// MATCHES TABLE
+const matches = {
+  insertRow: db.prepare(`
+    INSERT OR IGNORE INTO matches (
+      userID,
+      shownUserID,
+      liked,
+      dateandtime
+    ) VALUES (?, ?, ?, ?);
+  `),
+
+  // Selects
+  getAllMatchesOfUser: db.prepare(`
+    select matches.shownUserID, matches.dateandtime
+    from matches
+    inner join matches as AlsoLikesMe
+        on matches.userID = AlsoLikesMe.shownUserID
+            and AlsoLikesMe.liked = 'yes'
+    where matches.userID = ? and matches.liked = 'yes';`),
+  getLikedByUsers: db.prepare(`select userID, dateandtime from matches where shownUserID = ? and liked = 'yes';`),
+  getPotentialMatch: db.prepare(`
+    SELECT * FROM users
+    WHERE (SELECT COUNT(*) FROM matches WHERE shownUserID = users.user_id and userID = ?) = 0 and bot = 0
+    ORDER BY RANDOM()
+    limit 1;`),
+};
 module.exports = {
   settings,
   users,
-  confessions
+  confessions,
+  matches
 };
