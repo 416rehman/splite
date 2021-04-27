@@ -22,7 +22,14 @@ module.exports = class geoGuessrCommand extends Command {
   run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id)
-    console.log(potentialMatchRow)
-    message.reply(`This feature is in development atm!`)
+    console.log(potentialMatchRow.bio)
+
+    const guild = message.client.guilds.cache.get(potentialMatchRow.guild_id)
+    const potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
+    const embed = new MessageEmbed()
+        .setTitle(`🔥 Smash or Pass 👎`)
+        .setDescription(`${potentialMatchUser.displayName}'s Bio:\n${potentialMatchRow.bio}`)
+        .setImage(potentialMatchUser.user.avatar)
+    message.reply(embed)
   }
 };
