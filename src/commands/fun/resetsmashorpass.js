@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const { confirm } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
-const cost = 500;
+const cost = 1000;
 module.exports = class resetSmashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
