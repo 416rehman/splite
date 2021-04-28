@@ -316,7 +316,7 @@ const matches = {
 
   // Selects
   getAllMatchesOfUser: db.prepare(`
-    select distinct matches.shownUserID, matches.dateandtime
+    select distinct AlsoLikesMe.userID, AlsoLikesMe.dateandtime
     from matches
     inner join matches as AlsoLikesMe
         on matches.userID = AlsoLikesMe.shownUserID
@@ -324,12 +324,13 @@ const matches = {
     where matches.userID = ? and matches.liked = 'yes'
     order by matches.dateandtime desc;`),
   getMatch: db.prepare(`
-    select matches.shownUserID, matches.dateandtime
+    select distinct AlsoLikesMe.userID, AlsoLikesMe.dateandtime
     from matches
     inner join matches as AlsoLikesMe
         on matches.userID = AlsoLikesMe.shownUserID
             and AlsoLikesMe.liked = 'yes'
-    where matches.userID = ? and matches.liked = 'yes' and matches.shownUserID = ?;`),
+            and AlsoLikesMe.userID = ?
+    where matches.userID = ? and matches.liked = 'yes';`),
   getLikedByUsers: db.prepare(`select userID, dateandtime from matches where shownUserID = ? and liked = 'yes';`),
   getPotentialMatch: db.prepare(`
     SELECT * FROM users
