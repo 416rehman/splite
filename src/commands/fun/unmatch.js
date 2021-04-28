@@ -21,7 +21,24 @@ module.exports = class unmatchCommand extends Command {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     if (args[0] !== undefined || args[0] != null)
     {
-        const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
+        let member;
+        if (args[0].startsWith("<@") || (/^[0-9]{18}$/g).test(args[0])) member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+        else if ((/^[0-9]{18}$/g).test(args[0]))
+        {
+            member = message.guild.members.cache.get(args[0]);
+            if (member === undefined)
+            {
+                const mRow = await message.client.db.users.selectRowUserOnly.get(args[0])
+                console.log(mRow)
+                const mGuild = await message.client.guilds.cache.get(mRow.guild_id)
+                console.log(mGuild)
+                const member = await mGuild.members.cache.get(mRow.user_id)
+                console.log(member)
+            }
+        }
+        else member = message.guild.members.cache.find(r=> r.name.toLowerCase().startsWith(args[0].toLowerCase()))
+
+        if (member == undefined) return message.channel.send(`Failed to find the user. Please try again later.`)
         const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
         if (match != null || match !== undefined)
         {

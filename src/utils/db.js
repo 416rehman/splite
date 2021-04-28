@@ -246,6 +246,7 @@ const users = {
 
   // Selects
   selectRow: db.prepare('SELECT * FROM users WHERE user_id = ? AND guild_id = ?;'),
+  selectRowUserOnly: db.prepare('SELECT * FROM users WHERE user_id = ? limit 1;'),
   selectLeaderboard: db.prepare('SELECT * FROM users WHERE guild_id = ? AND current_member = 1 ORDER BY points DESC;'),
   selectPoints: db.prepare('SELECT points FROM users WHERE user_id = ? AND guild_id = ?;'),
   selectTotalPoints: db.prepare('SELECT total_points FROM users WHERE user_id = ? AND guild_id = ?;'),
@@ -333,9 +334,9 @@ const matches = {
     ORDER BY RANDOM()
     limit 1;`),
   getAllUserLikes: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes';`),
-  getUserLike: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes' and shownUserID = ?`),
+  getUserLike: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes' and shownUserID = ?;`),
   getSeenByUser: db.prepare(`select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;`),
-  unmatchUser: db.prepare(`delete from matches where userID = ? and shownUserID = ?`)
+  unmatchUser: db.prepare(`delete from matches where userID = ? and shownUserID = ?;`)
 };
 
 module.exports = {
