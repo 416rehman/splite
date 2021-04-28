@@ -41,6 +41,7 @@ module.exports = class smashOrPassCommand extends Command {
           const mUser = message.client.db.users.selectRowUserOnly(mRow.userID)
           guild = await message.client.guilds.cache.get(mUser.guild_id)
           potentialMatchUser = await guild.members.cache.get(mUser.user_id)
+          console.log(potentialMatchUser.user.tag)
         })
       }
       let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
