@@ -32,32 +32,34 @@ module.exports = class smashOrPassCommand extends Command {
       return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 5000})
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
-    console.log(suggested);
+    console.log(suggested.size);
     if (args[0] == null || args[0] == undefined)
     {
+      let potentialMatchUser, guild
       if (suggested !== undefined && suggested != null)
       {
-        for (const mRow of suggested) {
-          const mUser = message.client.db.users.selectRowUserOnly.get(mRow.userID)
-          let guild = await message.client.guilds.cache.get(mUser.guild_id)
-          let potentialMatchUser = await guild.members.cache.get(mUser.user_id)
-          console.log(potentialMatchUser.user.tag)
-        }
+        const mUser = message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
+        guild = await message.client.guilds.cache.get(mUser[0].guild_id)
+        potentialMatchUser = await guild.members.cache.get(mUser[0].user_id)
+        console.log(potentialMatchUser.user.tag)
       }
-      let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
-      let potentialMatchUser, guild
-      let i = 0;
-      do {
-        guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
-        potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
-        i++;
-        if (i > 50)
-        {
-          message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-          return message.reply(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
-        }
-      } while (potentialMatchUser === undefined)
-      i = 0;
+      else
+      {
+        let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
+        let i = 0;
+        do {
+          guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+          potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
+          i++;
+          if (i > 50)
+          {
+            message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+            return message.reply(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
+          }
+        } while (potentialMatchUser === undefined)
+        i = 0;
+      }
+
       let bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
       if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
 
