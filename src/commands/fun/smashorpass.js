@@ -22,7 +22,7 @@ module.exports = class geoGuessrCommand extends Command {
   async run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
-    if (points < 10) return message.reply(`**You need ${cost-points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)
+    if (points < 10) return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete(3000)
 
     let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
