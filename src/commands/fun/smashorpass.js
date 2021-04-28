@@ -220,6 +220,12 @@ module.exports = class smashOrPassCommand extends Command {
             size: 512
           })))).then(m=>m.delete({timeout: 10000}))
         }
+        else
+        {
+          message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+          await msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
+          return;
+        }
       })
     }
   }
