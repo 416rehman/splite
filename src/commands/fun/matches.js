@@ -22,7 +22,15 @@ module.exports = class MatchesCommand extends Command {
     let max = parseInt(args[0]);
     if (!max || max < 0) max = 10;
     else if (max > 25) max = 25;
-    let matches = message.client.db.matches.getAllMatchesOfUser.all(message.author.id);
+
+    let matches
+    if (args.length>0)
+    {
+      const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
+      if (member == undefined) return message.reply(`Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:15000}))
+      matches = message.client.db.matches.getAllMatchesOfUser.all(member.user.id);
+    }
+    else matches = message.client.db.matches.getAllMatchesOfUser.all(message.author.id);
 
     const members = [];
     let count = 1;
