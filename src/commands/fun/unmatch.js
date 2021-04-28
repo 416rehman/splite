@@ -39,7 +39,7 @@ module.exports = class unmatchCommand extends Command {
 
         if (member === undefined) return message.channel.send(`Failed to find the user. Please try again later.`)
         const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
-        if (match != null || match !== undefined)
+        if (match != null)
         {
             const embed = new MessageEmbed()
                 .setTitle(`🔥 Smash or Pass 👎`)
