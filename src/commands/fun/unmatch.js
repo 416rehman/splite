@@ -64,7 +64,6 @@ module.exports = class unmatchCommand extends Command {
             const embed = new MessageEmbed()
                 .setTitle(`🔥 Smash or Pass 👎`)
                 .setDescription(`You can't unmatch someone you haven't matched with.`)
-                .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
 
            return message.channel.send(embed).then(m=>m.delete({timeout:5000}))
         }
