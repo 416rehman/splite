@@ -59,7 +59,7 @@ module.exports = class unmatchCommand extends Command {
                 })
         }
     }
-
+    else message.reply(`Please mention a user, or provide a valid ID`).then(m=> m.delete({timeout:5000}))
 
   }
 };

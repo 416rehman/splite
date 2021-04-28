@@ -8,10 +8,12 @@ module.exports = class smashOrPassCommand extends Command {
     super(client, {
       name: 'smashorpass',
       aliases: ['sop', 'smash'],
-      usage: 'smashorpass',
+      usage: 'smashorpass [<user mention/id>]',
       description: oneLine`
         Play a game of smash or pass. You will be shown a random user and you vote smash or pass.
         If there's a match, your discord username is revealed to them.
+        
+        If a user is mentioned, you will be asked to vote for them.        
         
         Cost: 25 points per smash
       `,
