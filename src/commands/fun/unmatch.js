@@ -30,9 +30,7 @@ module.exports = class unmatchCommand extends Command {
             if (member === undefined)
             {
                 const mRow = await message.client.db.users.selectRowUserOnly.get(args[0])
-                console.log(mRow)
                 const mGuild = await message.client.guilds.cache.get(mRow.guild_id)
-                console.log(mGuild)
                 const member = await mGuild.members.cache.get(mRow.user_id)
                 console.log(member)
             }
