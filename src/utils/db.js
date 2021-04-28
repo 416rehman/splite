@@ -317,7 +317,8 @@ const matches = {
     inner join matches as AlsoLikesMe
         on matches.userID = AlsoLikesMe.shownUserID
             and AlsoLikesMe.liked = 'yes'
-    where matches.userID = ? and matches.liked = 'yes';`),
+    where matches.userID = ? and matches.liked = 'yes'
+    order by dateandtime;`),
   getMatch: db.prepare(`
     select matches.shownUserID, matches.dateandtime
     from matches
