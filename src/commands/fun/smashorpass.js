@@ -34,9 +34,10 @@ module.exports = class geoGuessrCommand extends Command {
         .setTitle(`🔥 Smash or Pass 👎`)
         .setDescription(bio)
         .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
+        .setFooter(`Expires in 10 seconds.`)
 
     const deletion = await message.channel.send(embed).then(async msg=> {
-      const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000); //TIME IS IN MILLISECONDS
+      const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
       if(reactions === "🔥") {
         message.channel.send("Hello All")
       }
@@ -47,7 +48,5 @@ module.exports = class geoGuessrCommand extends Command {
         console.log("Timed Out")
       }
     })
-
-    deletetimeout(message, deletion, 1000)
   }
 };
