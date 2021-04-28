@@ -75,7 +75,6 @@ module.exports = class MatchesCommand extends Command {
         );
       
       new ReactionMenu(message.client, message.channel, message.member, embed, members, max);
-
     } 
   }
 };

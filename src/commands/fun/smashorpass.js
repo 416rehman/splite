@@ -22,6 +22,7 @@ module.exports = class smashOrPassCommand extends Command {
     });
   }
   async run(message, args) {
+    return message.reply(`Feature Disabled!`)
     const SmashRunning = message.client.db.users.selectSmashRunning.pluck().get(message.guild.id, message.author.id)
     if (SmashRunning == 1) return;
     else message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
