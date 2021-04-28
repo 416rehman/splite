@@ -312,12 +312,22 @@ const matches = {
         on matches.userID = AlsoLikesMe.shownUserID
             and AlsoLikesMe.liked = 'yes'
     where matches.userID = ? and matches.liked = 'yes';`),
+  getMatch: db.prepare(`
+    select matches.shownUserID, matches.dateandtime
+    from matches
+    inner join matches as AlsoLikesMe
+        on matches.userID = AlsoLikesMe.shownUserID
+            and AlsoLikesMe.liked = 'yes'
+    where matches.userID = '411677648289267728' and matches.liked = 'yes' and matches.shownUserID = '212724742984171521';`),
   getLikedByUsers: db.prepare(`select userID, dateandtime from matches where shownUserID = ? and liked = 'yes';`),
   getPotentialMatch: db.prepare(`
     SELECT * FROM users
     WHERE (SELECT COUNT(*) FROM matches WHERE shownUserID = users.user_id and userID = ?) = 0 and bot = 0 and user_id != ?
     ORDER BY RANDOM()
     limit 1;`),
+  getAllUserLikes: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes';`),
+  getUserLike: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes' and shownUserID = ?`),
+  getSeenByUser: db.prepare(`select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;`),
 };
 module.exports = {
   settings,
