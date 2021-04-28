@@ -136,14 +136,13 @@ module.exports = class smashOrPassCommand extends Command {
           {
             let i = 0;
             do {
-              potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
-              guild = message.client.guilds.cache.get(potentialMatchRow.guild_id)
-              potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
+              potentialMatchRow = await message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
+              guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+              potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
               i++;
               if (i > 100)
               {
                 console.log('Exceeded 100 loops')
-                console.log(potentialMatchUser)
                 message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
                 return msg.edit(new MessageEmbed().setTitle(`🔥 Smash Or Pass 👎`).setDescription(`ERROR: Please try again later!`)).then(m=>m.delete({timeout: 5000}))
               }
