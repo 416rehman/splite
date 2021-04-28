@@ -5,7 +5,7 @@ const { oneLine } = require('common-tags');
 
 module.exports = (client, message) => {
   if (message.channel.type === 'dm' || !message.channel.viewable || message.author.bot) return;
-
+  console.log(message.content)
   const {
     afk: currentStatus
   } = message.client.db.users.selectAfk.get(message.guild.id, message.author.id);
