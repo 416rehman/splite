@@ -57,22 +57,25 @@ module.exports = class geoGuessrCommand extends Command {
             {
               message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${potentialMatchUser.user.tag}, say hi to them!`).setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 })).setFooter(`Remember to always be respectful!`))
                   .catch(err=>msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 })))
-              msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${potentialMatchUser.user.username}'s tag has been dmed to you.`).setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 })))
+              await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${potentialMatchUser.user.username}'s tag has been dmed to you.`).setImage(potentialMatchUser.user.displayAvatarURL({
+                dynamic: true,
+                size: 512
+              })))
             }
-            msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
+            await msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
             potentialMatchUser.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
             if (points < cost) break;
           }
           else if(reactions === '👎') {
             message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'no', d.toISOString())
-            msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
+            await msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
           }
           else {
-            msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
+            await msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
             return;
           }
 
-          msg.reactions.removeAll();
+          await msg.reactions.removeAll();
           potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
           guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
@@ -85,7 +88,7 @@ module.exports = class geoGuessrCommand extends Command {
               .setDescription(bio)
               .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
               .setFooter(`Expires in 10 seconds | Points: ${points}`)
-          msg.edit(embed)
+          await msg.edit(embed)
         }
         if (points < cost)
         {
@@ -137,8 +140,14 @@ module.exports = class geoGuessrCommand extends Command {
           {
             try
             {
-              message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${member.user.tag}, say hi to them!`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })).setFooter(`Remember to always be respectful!`))
-              msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${member.user.username}'s tag has been dmed to you.`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })))
+              await message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${member.user.tag}, say hi to them!`).setImage(member.user.displayAvatarURL({
+                dynamic: true,
+                size: 512
+              })).setFooter(`Remember to always be respectful!`))
+              await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${member.user.username}'s tag has been dmed to you.`).setImage(member.user.displayAvatarURL({
+                dynamic: true,
+                size: 512
+              })))
             }
             catch (e) {
               console.log(e)
@@ -146,12 +155,18 @@ module.exports = class geoGuessrCommand extends Command {
             }
 
           }
-          msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })))
+          await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
+            dynamic: true,
+            size: 512
+          })))
           member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
         }
         else if(reactions === '👎') {
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'no', d.toISOString())
-          msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 👎 Pass on ${member.user.username}`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })))
+          await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 👎 Pass on ${member.user.username}`).setImage(member.user.displayAvatarURL({
+            dynamic: true,
+            size: 512
+          })))
         }
       })
     }
