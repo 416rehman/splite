@@ -45,12 +45,12 @@ module.exports = class geoGuessrCommand extends Command {
         const d = new Date();
         const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
         console.log(reactions)
-        if(reactions === "🔥") {
+        if(reactions === '🔥') {
           message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'yes', d.toISOString())
           msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Remaining Points: ${points - cost}`))
         }
-        if(reactions === "👎") {
+        if(reactions === '👎') {
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'no', d.toISOString())
           msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.user.username}`).setDescription(`Loading...`))
         }
