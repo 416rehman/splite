@@ -43,7 +43,7 @@ module.exports = class geoGuessrCommand extends Command {
       while (points > 10)
       {
         const d = new Date();
-        const reactions = await confirm(msg, message.author, ["🔥", "⏹", "👎"], 10000);
+        const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
         console.log(reactions)
         if(reactions === '🔥') {
           console.log('fire')
