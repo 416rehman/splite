@@ -44,7 +44,7 @@ module.exports = class geoGuessrCommand extends Command {
       {
         const d = new Date();
         const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
-        console.log(reactions)
+
         if(reactions === '🔥') {
           console.log('fire')
           message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
@@ -65,7 +65,7 @@ module.exports = class geoGuessrCommand extends Command {
 
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
-
+        console.log(potentialMatchUser)
         bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
         if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
 
