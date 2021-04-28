@@ -173,10 +173,10 @@ module.exports = class geoGuessrCommand extends Command {
                   .then(m=>m.delete({timeout: 10000}))
             }
           }
-          await (await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
+          await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,
             size: 512
-          })))).then(m=>m.delete({timeout: 10000}))
+          }))).then(m=>m.delete({timeout: 10000}))
           member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
         }
         else if(reactions === '👎') {
