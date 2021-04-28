@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const { MessageEmbed, MessageCollector } = require('discord.js');
-const { confirm } = require("djs-reaction-collector")
+const { confirm, deletetimeout } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
 
 module.exports = class geoGuessrCommand extends Command {
@@ -19,7 +19,7 @@ module.exports = class geoGuessrCommand extends Command {
       examples: ['smashorpass', 'sop', 'smash']
     });
   }
-  run(message, args) {
+  async run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id)
     console.log(potentialMatchRow.bio)
@@ -34,7 +34,8 @@ module.exports = class geoGuessrCommand extends Command {
         .setTitle(`🔥 Smash or Pass 👎`)
         .setDescription(bio)
         .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-    message.reply(embed).then(async msg=> {
+
+    const deletion = await message.channel.send("DJS REACTION COLLECTOR");message.channel.send(embed).then(async msg=> {
       const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000); //TIME IS IN MILLISECONDS
       if(reactions === "🔥") {
         message.channel.send("Hello All")
@@ -46,5 +47,7 @@ module.exports = class geoGuessrCommand extends Command {
         console.log("Timed Out")
       }
     })
+
+    deletetimeout(message, deletion, 1000)
   }
 };
