@@ -84,7 +84,7 @@ module.exports = class smashOrPassCommand extends Command {
             points = points - cost
             const matched = message.client.db.matches.getMatch.get(message.author.id, potentialMatchUser.user.id)
             console.log(matched)
-            if (matched.length > 0)
+            if (matched != null)
             {
               try{
                 await message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${potentialMatchUser.user.tag}, say hi to them!`).setImage(potentialMatchUser.user.displayAvatarURL({
