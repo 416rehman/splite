@@ -60,23 +60,26 @@ module.exports = class geoGuessrCommand extends Command {
           msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
           return;
         }
-        msg.reactions.removeAll();
-        potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
+        if (points > cost)
+        {
+          msg.reactions.removeAll();
+          potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
-        guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
-        potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
-        console.log(potentialMatchUser)
-        bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
-        if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
+          guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+          potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
+          console.log(potentialMatchUser)
+          bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
+          if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
 
-        embed = new MessageEmbed()
-            .setTitle(`🔥 Smash or Pass 👎`)
-            .setDescription(bio)
-            .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-            .setFooter(`Expires in 10 seconds | Points: ${points}`)
-        msg.edit(embed)
+          embed = new MessageEmbed()
+              .setTitle(`🔥 Smash or Pass 👎`)
+              .setDescription(bio)
+              .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
+              .setFooter(`Expires in 10 seconds | Points: ${points}`)
+          msg.edit(embed)
+        }
       }
-      if (points < 10)
+      if (points < cost)
       {
         return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``).then(m => m.delete({timeout: 5000}))
       }
