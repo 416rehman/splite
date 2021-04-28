@@ -336,7 +336,10 @@ const matches = {
   getAllUserLikes: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes';`),
   getUserLike: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes' and shownUserID = ?;`),
   getSeenByUser: db.prepare(`select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;`),
-  unmatchUser: db.prepare(`delete from matches where userID = ? and shownUserID = ?;`)
+  unmatchUser: db.prepare(`delete from matches where userID = ? and shownUserID = ?;`),
+  getSuggestedUsers: db.prepare(`
+    select * from (select * from matches where shownUserID == ? and liked == 'yes') m
+    left outer join (select * from matches where userID == ?) t on t.shownUserID = m.userID where t.shownUserID is null;`)
 };
 
 module.exports = {
