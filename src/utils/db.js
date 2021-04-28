@@ -318,7 +318,7 @@ const matches = {
     inner join matches as AlsoLikesMe
         on matches.userID = AlsoLikesMe.shownUserID
             and AlsoLikesMe.liked = 'yes'
-    where matches.userID = '411677648289267728' and matches.liked = 'yes' and matches.shownUserID = '212724742984171521';`),
+    where matches.userID = ? and matches.liked = 'yes' and matches.shownUserID = ?;`),
   getLikedByUsers: db.prepare(`select userID, dateandtime from matches where shownUserID = ? and liked = 'yes';`),
   getPotentialMatch: db.prepare(`
     SELECT * FROM users
