@@ -56,14 +56,13 @@ module.exports = class geoGuessrCommand extends Command {
           .setFooter(`Expires in 10 seconds | Points: ${points}`)
 
       await message.channel.send(embed).then(async msg=> {
-        console.log(points)
+
         while (points > cost)
         {
           const d = new Date();
           const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
 
           if(reactions === '🔥') {
-            console.log('fire')
             message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
             message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.user.id, 'yes', d.toISOString())
             points = points - cost
@@ -182,7 +181,7 @@ module.exports = class geoGuessrCommand extends Command {
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
           const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
-          console.log(matched)
+
           if (matched != null || matched != undefined)
           {
             try
