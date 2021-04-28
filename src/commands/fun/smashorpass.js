@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageCollector } = require('discord.js');
 const { confirm, deletetimeout } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
-const cost = 1;
+const cost = 10;
 module.exports = class geoGuessrCommand extends Command {
   constructor(client) {
     super(client, {
@@ -36,7 +36,7 @@ module.exports = class geoGuessrCommand extends Command {
         .setTitle(`🔥 Smash or Pass 👎`)
         .setDescription(bio)
         .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-        .setFooter(`Expires in 10 seconds.`)
+        .setFooter(`Expires in 10 seconds | Points: ${points}`)
 
     await message.channel.send(embed).then(async msg=> {
       console.log(points)
@@ -50,11 +50,11 @@ module.exports = class geoGuessrCommand extends Command {
           message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'yes', d.toISOString())
           points = points - cost
-          msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Remaining Points: ${points}`))
+          msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
         }
         else if(reactions === '👎') {
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'no', d.toISOString())
-          msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.user.username}`).setDescription(`Loading...`))
+          msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
         }
         else {
           msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
@@ -73,7 +73,7 @@ module.exports = class geoGuessrCommand extends Command {
             .setTitle(`🔥 Smash or Pass 👎`)
             .setDescription(bio)
             .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-            .setFooter(`Expires in 10 seconds.`)
+            .setFooter(`Expires in 10 seconds | Points: ${points}`)
         msg.edit(embed)
       }
     })
