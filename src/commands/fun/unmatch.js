@@ -31,13 +31,13 @@ module.exports = class unmatchCommand extends Command {
             {
                 const mRow = await message.client.db.users.selectRowUserOnly.get(args[0])
                 const mGuild = await message.client.guilds.cache.get(mRow.guild_id)
-                const member = await mGuild.members.cache.get(mRow.user_id)
+                member = await mGuild.members.cache.get(mRow.user_id)
                 console.log(member)
             }
         }
         else member = message.guild.members.cache.find(r=> r.name.toLowerCase().startsWith(args[0].toLowerCase()))
 
-        if (member == undefined) return message.channel.send(`Failed to find the user. Please try again later.`)
+        if (member === undefined) return message.channel.send(`Failed to find the user. Please try again later.`)
         const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
         if (match != null || match !== undefined)
         {
