@@ -40,7 +40,7 @@ module.exports = class geoGuessrCommand extends Command {
 
     await message.channel.send(embed).then(async msg=> {
       console.log(points)
-      while (points > 10)
+      while (points > cost)
       {
         const d = new Date();
         const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
@@ -60,24 +60,22 @@ module.exports = class geoGuessrCommand extends Command {
           msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
           return;
         }
-        if (points > cost)
-        {
-          msg.reactions.removeAll();
-          potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
-          guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
-          potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
-          console.log(potentialMatchUser)
-          bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
-          if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
+        msg.reactions.removeAll();
+        potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
-          embed = new MessageEmbed()
-              .setTitle(`🔥 Smash or Pass 👎`)
-              .setDescription(bio)
-              .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-              .setFooter(`Expires in 10 seconds | Points: ${points}`)
-          msg.edit(embed)
-        }
+        guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+        potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
+        console.log(potentialMatchUser)
+        bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
+        if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
+
+        embed = new MessageEmbed()
+            .setTitle(`🔥 Smash or Pass 👎`)
+            .setDescription(bio)
+            .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
+            .setFooter(`Expires in 10 seconds | Points: ${points}`)
+        msg.edit(embed)
       }
       if (points < cost)
       {
