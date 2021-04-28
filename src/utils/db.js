@@ -344,7 +344,7 @@ const matches = {
   getSuggestedUsers: db.prepare(`
         select t1.* from matches t1
         LEFT join matches t2 on t2.userID = t1.shownUserID
-        where t1.shownUserID = '212724742984171521' and t1.liked = 'yes' and t1.userID != t2.shownUserID;`)
+        where t1.shownUserID = ? and t1.liked = 'yes' and t1.userID != t2.shownUserID;`)
 };
 
 module.exports = {
