@@ -114,7 +114,7 @@ module.exports = class geoGuessrCommand extends Command {
     else
     {
       const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
-
+      console.log(member)
       const row = message.client.db.matches.getSeenByUser.get(message.author.id, member.user.id)
       if (row != null || row !== undefined)
       {
