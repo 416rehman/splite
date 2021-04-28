@@ -80,7 +80,7 @@ module.exports = class geoGuessrCommand extends Command {
       }
       if (points < cost)
       {
-        return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``).then(m => m.delete({timeout: 5000}))
+        return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 5000}))
       }
     })
   }
