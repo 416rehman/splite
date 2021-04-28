@@ -35,7 +35,7 @@ module.exports = class unmatchCommand extends Command {
                 console.log(member)
             }
         }
-        else member = message.guild.members.cache.find(r=> r.name.toLowerCase().startsWith(args[0].toLowerCase()))
+        else member = message.guild.members.cache.find(r=> r.user.username.toLowerCase().startsWith(args[0].toLowerCase()))
 
         if (member === undefined) return message.channel.send(`Failed to find the user. Please try again later.`)
         const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
