@@ -57,7 +57,7 @@ module.exports = class geoGuessrCommand extends Command {
           return;
         }
         console.log('Bottom')
-        await msg.reactions.removeAll();
+        msg.reactions.removeAll();
       }
     })
   }
