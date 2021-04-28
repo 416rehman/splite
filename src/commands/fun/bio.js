@@ -16,9 +16,7 @@ module.exports = class BioCommand extends Command {
   }
   async run(message, args) {
 
-    const {
-      prefix: prefix
-    } = message.client.db.settings.selectPrefix.get(message.guild.id);
+    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     // Get message
     if (!args[0])
     {
