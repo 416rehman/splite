@@ -36,14 +36,12 @@ module.exports = class smashOrPassCommand extends Command {
     let x = 0;
     if (args[0] == null || args[0] == undefined)
     {
-      console.log(suggested)
       let potentialMatchUser, guild, potentialMatchRow
       if (suggested !== undefined && suggested != null && suggested.length > 0)
       {
         potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
-        console.log(potentialMatchUser.user.tag)
         x++;
       }
       else
@@ -148,7 +146,7 @@ module.exports = class smashOrPassCommand extends Command {
               if (i > 50)
               {
                 message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-                return msg.edit(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
+                return msg.edit(new MessageEmbed().setTitle(`🔥 Smash Or Pass 👎`).setDescription(`ERROR: Please try again later!`)).then(m=>m.delete({timeout: 5000}))
               }
             } while (potentialMatchUser === undefined)
             i = 0;
@@ -167,7 +165,7 @@ module.exports = class smashOrPassCommand extends Command {
         if (points < cost)
         {
           message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-          return msg.edit(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``).then(m => m.delete({timeout: 15000}))
+          return msg.edit(new MessageEmbed().setTitle(`🔥 Smash Or Pass 👎`).setDescription(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``)).then(m => m.delete({timeout: 15000}))
         }
       })
     }
