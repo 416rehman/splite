@@ -14,7 +14,7 @@ module.exports = (client, message) => {
   {
     message.client.db.users.updateAfk.run(null, message.author.id, message.guild.id)
     if(message.member.nickname) message.member.setNickname(`${message.member.nickname.replace('[AFK]','')}`).catch(err=>{console.log()})
-    message.channel.send(`${online} Welcome back ${message.author}, you are not afk anymore!`).then(msg=>{msg.delete(5000)})
+    message.channel.send(`${online} Welcome back ${message.author}, you are not afk anymore!`).then(msg=>{msg.delete({timeout: 5000})})
   }
 
   if (message.mentions.users.size > 0)
@@ -27,7 +27,7 @@ module.exports = (client, message) => {
       if (currentStatus != null)
       {
         const d = new Date(afkTime)
-        message.channel.send(`${dnd} ${user.username} is afk! ${currentStatus} - ${moment(d).fromNow()}`).then(msg=>{msg.delete(5000)})
+        message.channel.send(`${dnd} ${user.username} is afk! ${currentStatus} - ${moment(d).fromNow()}`).then(msg=>{msg.delete({timeout: 5000})})
       }
     })
   }
