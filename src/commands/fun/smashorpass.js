@@ -54,8 +54,8 @@ module.exports = class geoGuessrCommand extends Command {
           msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.displayName}`).setDescription(`Loading...`))
         }
         else {
-          stop = true;
           msg.edit(`Stopped playing Smash or Pass!`)
+          return;
         }
       }
     })
