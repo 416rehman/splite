@@ -9,7 +9,7 @@ module.exports = (client, message) => {
     .setTitle('Message Update: `Delete`')
     .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL({ dynamic: true }))
     .setTimestamp()
-    .setColor(message.guild.me.displayHexColor);
+    .setColor("RANDOM");
   
   // Message delete
   if (message.content) {

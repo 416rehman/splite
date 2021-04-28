@@ -134,9 +134,9 @@ module.exports = class smashOrPassCommand extends Command {
           }
           else
           {
-            potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
             let i = 0;
             do {
+              potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
               guild = message.client.guilds.cache.get(potentialMatchRow.guild_id)
               potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
               i++;
