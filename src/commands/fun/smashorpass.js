@@ -103,6 +103,7 @@ module.exports = class geoGuessrCommand extends Command {
         if (row.liked == 'yes')
         {
           const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
+          console.log(row2)
           if (row2 != null || row2 !== undefined) return message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``);
           return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``);
         }
