@@ -45,7 +45,7 @@ module.exports = class geoGuessrCommand extends Command {
           return message.reply(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
         }
       } while (potentialMatchUser === undefined)
-
+      i = 0;
       let bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
       if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
 
@@ -114,7 +114,6 @@ module.exports = class geoGuessrCommand extends Command {
           await msg.reactions.removeAll();
           potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
-          let i = 0;
           do {
             guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
             potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
@@ -125,6 +124,7 @@ module.exports = class geoGuessrCommand extends Command {
               return message.reply(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
             }
           } while (potentialMatchUser === undefined)
+          i = 0;
 
           bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
           if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
