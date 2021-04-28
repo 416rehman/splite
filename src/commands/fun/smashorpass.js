@@ -27,10 +27,12 @@ module.exports = class geoGuessrCommand extends Command {
     if (args[0] == null || args[0] == undefined)
     {
       let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
-
-      let guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
-      let potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
-
+      let potentialMatchUser, guild
+      do {
+        guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+        potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
+      }
+      while (potentialMatchUser === undefined)
       let bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
       if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
 
