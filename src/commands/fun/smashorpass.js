@@ -61,6 +61,21 @@ module.exports = class geoGuessrCommand extends Command {
           return;
         }
         msg.reactions.removeAll();
+
+        const potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id)
+
+        const guild = message.client.guilds.cache.get(potentialMatchRow.guild_id)
+        const potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
+
+        let bio = `*${potentialMatchUser.displayName} has not set a bio yet.*`
+        if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
+
+        const embed = new MessageEmbed()
+            .setTitle(`🔥 Smash or Pass 👎`)
+            .setDescription(bio)
+            .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
+            .setFooter(`Expires in 10 seconds.`)
+        msg.edit(embed)
       }
     })
   }
