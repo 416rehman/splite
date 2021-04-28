@@ -40,8 +40,8 @@ module.exports = class smashOrPassCommand extends Command {
       if (suggested !== undefined && suggested != null)
       {
         potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
-        guild = await message.client.guilds.cache.get(mUser.guild_id)
-        potentialMatchUser = await guild.members.cache.get(mUser.user_id)
+        guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+        potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
         console.log(potentialMatchUser.user.tag)
         x++;
       }
@@ -129,8 +129,8 @@ module.exports = class smashOrPassCommand extends Command {
           if (x < NumOfSuggestions)
           {
             potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
-            guild = await message.client.guilds.cache.get(mUser.guild_id)
-            potentialMatchUser = await guild.members.cache.get(mUser.user_id)
+            guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+            potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
             console.log(potentialMatchUser.user.tag)
             x++;
           }
