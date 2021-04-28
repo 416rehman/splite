@@ -342,7 +342,7 @@ const matches = {
   getSeenByUser: db.prepare(`select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;`),
   unmatchUser: db.prepare(`delete from matches where userID = ? and shownUserID = ?;`),
   getSuggestedUsers: db.prepare(`
-        select * from matches t1
+        select t1.* from matches t1
         left outer join (select * from matches where userID = ?) t2 on t2.shownUserID = t1.userID where t2.shownUserID is null
         and t1.shownUserID = ? and t1.liked = 'yes';`)
 };
