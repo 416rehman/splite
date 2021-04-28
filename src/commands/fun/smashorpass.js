@@ -1,9 +1,9 @@
 const Command = require('../Command.js');
-const { MessageEmbed, MessageCollector } = require('discord.js');
-const { confirm, deletetimeout } = require("djs-reaction-collector")
+const { MessageEmbed } = require('discord.js');
+const { confirm } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
 const cost = 25;
-module.exports = class geoGuessrCommand extends Command {
+module.exports = class smashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'smashorpass',
@@ -25,7 +25,7 @@ module.exports = class geoGuessrCommand extends Command {
     else message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
-    if (points < 10) {
+    if (points < cost) {
       message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
       return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 5000})
     }

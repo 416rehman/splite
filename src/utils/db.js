@@ -277,7 +277,8 @@ const users = {
   updateAfkTime: db.prepare('UPDATE users SET afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
   updateBio: db.prepare('UPDATE users SET bio = ? WHERE user_id = ?;'),
   updateVoteRunning: db.prepare('UPDATE users SET voteRunning = ? WHERE user_id = ? AND guild_id = ?;'),
-  updateSmashRunning: db.prepare('UPDATE users SET SmashRunning = ? WHERE user_id = ? AND guild_id = ?;')
+  updateSmashRunning: db.prepare('UPDATE users SET SmashRunning = ? WHERE user_id = ? AND guild_id = ?;'),
+  resetSmashOrPass: db.prepare('delete from matches where userID = ?')
 };
 
 // BOT CONFESSIONS TABLE
