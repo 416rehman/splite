@@ -22,7 +22,7 @@ module.exports = class geoGuessrCommand extends Command {
   async run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
-    if (points < 10) return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete(3000)
+    if (points < 10) return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 5000})
 
     let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
@@ -76,7 +76,7 @@ module.exports = class geoGuessrCommand extends Command {
             .setFooter(`Expires in 10 seconds | Points: ${points}`)
         msg.edit(embed)
       }
-      if (points < 10) return msg.edit(`**You need ${cost-points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``)
+      if (points < 10) return (await msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 5000})
     })
   }
 };
