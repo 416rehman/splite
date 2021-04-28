@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const ReactionMenu = require('../ReactionMenu.js');
 const { MessageEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
+const moment = require('moment')
 
 module.exports = class MatchesCommand extends Command {
   constructor(client) {
@@ -27,8 +28,9 @@ module.exports = class MatchesCommand extends Command {
     let count = 1;
     for (const row of matches) {
       const mUser = message.client.db.users.selectRowUserOnly.get(row.shownUserID)
+      const d = row.dateandtime
       members.push(oneLine`
-        **${count}.** ${mUser.user_name} - \`${row.dateandtime}\`
+        **${count}.** ${mUser.user_name}#${mUser.user_discriminator} - \`${moment(d).fromNow()}\`
       `);
       count++;
     }
