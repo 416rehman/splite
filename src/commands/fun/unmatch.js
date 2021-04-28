@@ -45,7 +45,7 @@ module.exports = class unmatchCommand extends Command {
                 .setTitle(`🔥 Smash or Pass 👎`)
                 .setDescription(`You will be unmatched with ${member.user.username}\nDo you want to continue?`)
                 .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
-            message.reply()
+            message.channel.send(embed)
                 .then(async msg=>{
                     const reactions = await confirm(msg, message.author, ["✅", "❎"], 30000);
 
