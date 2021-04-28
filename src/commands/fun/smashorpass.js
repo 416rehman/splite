@@ -35,7 +35,7 @@ module.exports = class geoGuessrCommand extends Command {
         .setDescription(bio)
         .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
 
-    const deletion = await message.channel.send("DJS REACTION COLLECTOR");message.channel.send(embed).then(async msg=> {
+    const deletion = await message.channel.send(embed).then(async msg=> {
       const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000); //TIME IS IN MILLISECONDS
       if(reactions === "🔥") {
         message.channel.send("Hello All")
