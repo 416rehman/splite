@@ -141,6 +141,8 @@ module.exports = async (client) => {
         client.utils.callSlashCommand(command, client, interaction)
   })
 
+  //Reset timers/cooldowns/blockers
+  client.db.users.resetTimers.run()
 
   client.logger.info('Splite is now online');
   client.logger.info(`Splite is running on ${client.guilds.cache.size} server(s)`);

@@ -279,7 +279,11 @@ const users = {
   updateBio: db.prepare('UPDATE users SET bio = ? WHERE user_id = ?;'),
   updateVoteRunning: db.prepare('UPDATE users SET voteRunning = ? WHERE user_id = ? AND guild_id = ?;'),
   updateSmashRunning: db.prepare('UPDATE users SET SmashRunning = ? WHERE user_id = ? AND guild_id = ?;'),
-  resetSmashOrPass: db.prepare('delete from matches where userID = ?')
+  resetSmashOrPass: db.prepare('delete from matches where userID = ?'),
+  resetTimers: db.prepare(`
+    update users set voteRunning = 0,
+                 SmashRunning = 0
+    where SmashRunning = 1 or voteRunning = 1;`)
 };
 
 // BOT CONFESSIONS TABLE
