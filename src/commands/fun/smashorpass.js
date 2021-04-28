@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const { MessageEmbed, MessageCollector } = require('discord.js');
-const ReactionMenu = require('../ReactionMenu.js');
+const { confirm } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
 
 module.exports = class geoGuessrCommand extends Command {
@@ -35,8 +35,16 @@ module.exports = class geoGuessrCommand extends Command {
         .setDescription(bio)
         .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
     message.reply(embed).then(async msg=> {
-      await msg.react('🔥')
-      await msg.react('👎')
+      const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000); //TIME IS IN MILLISECONDS
+      if(reactions === "🔥") {
+        message.channel.send("Hello All")
+      }
+      if(reactions === "👎") {
+        return;
+      }
+      else {
+        console.log("Timed Out")
+      }
     })
   }
 };
