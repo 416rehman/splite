@@ -29,7 +29,7 @@ module.exports = class smashOrPassCommand extends Command {
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
       message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-      return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 5000})
+      return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 15000})
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
     const NumOfSuggestions = suggested.length;
@@ -122,7 +122,7 @@ module.exports = class smashOrPassCommand extends Command {
           }
           else {
             message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-            await msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
+            await msg.edit(`Stopped playing Smash or Pass!`, {embed: null}).then(msg=> msg.delete({timeout: 5000}))
             return;
           }
 
@@ -165,7 +165,7 @@ module.exports = class smashOrPassCommand extends Command {
         if (points < cost)
         {
           message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-          return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 10000}))
+          return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 15000}))
         }
       })
     }
@@ -180,10 +180,10 @@ module.exports = class smashOrPassCommand extends Command {
         if (row.liked == 'yes')
         {
           const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
-          if (row2 != null || row2 !== undefined) return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).then(m=>m.delete({timeout: 10000}))
-          return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 10000}))
+          if (row2 != null || row2 !== undefined) return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).then(m=>m.delete({timeout: 15000}))
+          return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 15000}))
         }
-        return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 10000}))
+        return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 15000}))
       }
 
       let {
@@ -229,13 +229,12 @@ module.exports = class smashOrPassCommand extends Command {
             catch (e) {
               console.log(e)
               await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
-                  .then(m=>m.delete({timeout: 10000}))
             }
           }
           await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,
             size: 512
-          }))).then(m=>m.delete({timeout: 10000}))
+          })))
           member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
         }
         else if(reactions === '👎') {
@@ -243,7 +242,7 @@ module.exports = class smashOrPassCommand extends Command {
           (await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 👎 Pass on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,
             size: 512
-          })))).then(m=>m.delete({timeout: 10000}))
+          }))))
         }
         else
         {
