@@ -84,7 +84,7 @@ module.exports = class smashOrPassCommand extends Command {
             points = points - cost
             const matched = message.client.db.matches.getMatch.get(message.author.id, potentialMatchUser.user.id)
             console.log(matched)
-            if (matched != null || matched != undefined)
+            if (matched.length > 0)
             {
               try{
                 await message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${potentialMatchUser.user.tag}, say hi to them!`).setImage(potentialMatchUser.user.displayAvatarURL({
@@ -123,7 +123,7 @@ module.exports = class smashOrPassCommand extends Command {
           }
           else {
             message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-            await msg.edit(`Stopped playing Smash or Pass!`, {embed: null}).then(msg=> msg.delete({timeout: 5000}))
+            await msg.edit(new MessageEmbed().setTitle(`🔥 Smash Or Pass 👎`).setDescription(`Stopped Playing!`)).then(msg=> msg.delete({timeout: 5000}))
             return;
           }
 
@@ -147,7 +147,7 @@ module.exports = class smashOrPassCommand extends Command {
               if (i > 50)
               {
                 message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-                return msg.edit(`Please try again later!`, {embed: null}).then(m=>m.delete({timeout: 5000}))
+                return msg.edit(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
               }
             } while (potentialMatchUser === undefined)
             i = 0;
@@ -166,7 +166,7 @@ module.exports = class smashOrPassCommand extends Command {
         if (points < cost)
         {
           message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-          return msg.edit(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 15000}))
+          return msg.edit(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``).then(m => m.delete({timeout: 15000}))
         }
       })
     }
@@ -248,7 +248,7 @@ module.exports = class smashOrPassCommand extends Command {
         else
         {
           message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-          await msg.edit(`Stopped playing Smash or Pass!`, {embed: null})
+          await msg.edit(new MessageEmbed().setTitle(`🔥 Smash Or Pass 👎`).setDescription(`Stopped Playing!`)).then(msg=> msg.delete({timeout: 5000}))
           return;
         }
       })
