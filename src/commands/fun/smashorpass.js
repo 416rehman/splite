@@ -36,8 +36,9 @@ module.exports = class smashOrPassCommand extends Command {
     let x = 0;
     if (args[0] == null || args[0] == undefined)
     {
+      console.log(suggested)
       let potentialMatchUser, guild, potentialMatchRow
-      if (suggested !== undefined && suggested != null)
+      if (suggested !== undefined && suggested != null && suggested.length > 0)
       {
         potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
