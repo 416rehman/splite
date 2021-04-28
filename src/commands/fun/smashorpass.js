@@ -132,6 +132,7 @@ module.exports = class geoGuessrCommand extends Command {
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
           const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
+          console.log(matched)
           if (matched != null || matched != undefined)
           {
             try
