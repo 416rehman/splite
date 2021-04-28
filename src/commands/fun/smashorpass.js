@@ -220,7 +220,11 @@ module.exports = class smashOrPassCommand extends Command {
             catch (e) {
               console.log(e)
               message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-              await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+              await msg.edit(new MessageEmbed()
+                  .setTitle(`🔥 Smash or Pass 👎`)
+                  .setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
+                  .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+              )
             }
           }
           await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
