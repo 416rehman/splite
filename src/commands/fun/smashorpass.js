@@ -55,12 +55,27 @@ module.exports = class geoGuessrCommand extends Command {
             const matched = message.client.db.matches.getMatch(message.author.id, potentialMatchUser.user.id)
             if (matched != null || matched != undefined)
             {
-              message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${potentialMatchUser.user.tag}, say hi to them!`).setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 })).setFooter(`Remember to always be respectful!`))
-                  .catch(err=>msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 })))
-              await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${potentialMatchUser.user.username}'s tag has been dmed to you.`).setImage(potentialMatchUser.user.displayAvatarURL({
-                dynamic: true,
-                size: 512
-              })))
+              try{
+                await message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${potentialMatchUser.user.tag}, say hi to them!`).setImage(potentialMatchUser.user.displayAvatarURL({
+                  dynamic: true,
+                  size: 512
+                })).setFooter(`Remember to always be respectful!`))
+                await potentialMatchUser.user.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${message.author.tag}, say hi to them!`).setImage(message.author.displayAvatarURL({
+                  dynamic: true,
+                  size: 512
+                })).setFooter(`Remember to always be respectful!`))
+                await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${potentialMatchUser.user.username}'s tag has been dmed to you.`).setImage(potentialMatchUser.user.displayAvatarURL({
+                  dynamic: true,
+                  size: 512
+                })))
+              }
+              catch(err)
+              {
+                await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(potentialMatchUser.user.displayAvatarURL({
+                  dynamic: true,
+                  size: 512
+                }))
+              }
             }
             await msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
             potentialMatchUser.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
@@ -106,10 +121,10 @@ module.exports = class geoGuessrCommand extends Command {
         if (row.liked == 'yes')
         {
           const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
-          if (row2 != null || row2 !== undefined) return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).delete({timeout: 10000});
-          return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).delete({timeout: 10000});
+          if (row2 != null || row2 !== undefined) return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).then(m=>m.delete({timeout: 10000}))
+          return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 10000}))
         }
-        return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).delete({timeout: 10000})
+        return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 10000}))
       }
 
       let {
@@ -143,22 +158,25 @@ module.exports = class geoGuessrCommand extends Command {
                 dynamic: true,
                 size: 512
               })).setFooter(`Remember to always be respectful!`))
+              await member.user.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${message.author.tag}, say hi to them!`).setImage(message.author.displayAvatarURL({
+                dynamic: true,
+                size: 512
+              })).setFooter(`Remember to always be respectful!`))
               await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${member.user.username}'s tag has been dmed to you.`).setImage(member.user.displayAvatarURL({
                 dynamic: true,
                 size: 512
-              }))).delete({timeout: 10000})
+              }))).then(m=>m.delete({timeout: 10000}))
             }
             catch (e) {
               console.log(e)
               await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
-                .delete({timeout: 10000})
+                  .then(m=>m.delete({timeout: 10000}))
             }
-
           }
           await (await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,
             size: 512
-          })))).delete({timeout: 10000})
+          })))).then(m=>m.delete({timeout: 10000}))
           member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
         }
         else if(reactions === '👎') {
@@ -166,7 +184,7 @@ module.exports = class geoGuessrCommand extends Command {
           (await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 👎 Pass on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,
             size: 512
-          })))).delete({timeout: 10000})
+          })))).then(m=>m.delete({timeout: 10000}))
         }
       })
     }
