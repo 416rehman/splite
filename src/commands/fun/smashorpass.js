@@ -39,8 +39,7 @@ module.exports = class geoGuessrCommand extends Command {
         .setFooter(`Expires in 10 seconds.`)
 
     await message.channel.send(embed).then(async msg=> {
-      let stop = false;
-      while (points > 10 && stop == false)
+      while (points > 10)
       {
         const d = new Date();
         const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
@@ -57,7 +56,7 @@ module.exports = class geoGuessrCommand extends Command {
           msg.edit(`Stopped playing Smash or Pass!`)
           return;
         }
-        await msg.reactions.removeAll();
+        msg.reactions.removeAll();
       }
     })
   }
