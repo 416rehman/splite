@@ -134,9 +134,15 @@ module.exports = class geoGuessrCommand extends Command {
           const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
           if (matched != null || matched != undefined)
           {
-            message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${member.user.tag}, say hi to them!`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })).setFooter(`Remember to always be respectful!`))
-                .catch(err=>msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })))
-            msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${member.user.username}'s tag has been dmed to you.`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })))
+            try
+            {
+              message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${member.user.tag}, say hi to them!`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })).setFooter(`Remember to always be respectful!`))
+              msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${member.user.username}'s tag has been dmed to you.`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })))
+            }
+            catch (e) {
+              msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+            }
+
           }
           msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })))
           member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
