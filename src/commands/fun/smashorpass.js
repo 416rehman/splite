@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageCollector } = require('discord.js');
 const { confirm, deletetimeout } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
-const cost = 10;
+const cost = 0;
 module.exports = class geoGuessrCommand extends Command {
   constructor(client) {
     super(client, {
