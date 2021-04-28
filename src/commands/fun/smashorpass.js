@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const { confirm } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
-const cost = 25;
+const cost = 5;
 module.exports = class smashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
@@ -15,7 +15,7 @@ module.exports = class smashOrPassCommand extends Command {
         
         If a user is mentioned, you will be asked to vote for them.        
         
-        Cost: 25 points per smash
+        Cost: 5 points per smash
       `,
       type: client.types.FUN,
       examples: ['smashorpass', 'sop', 'smash']
@@ -46,7 +46,7 @@ module.exports = class smashOrPassCommand extends Command {
       }
       else
       {
-        potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
+        potentialMatchRow = await message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
         let i = 0;
         do {
           guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
