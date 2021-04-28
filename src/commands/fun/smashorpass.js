@@ -76,6 +76,7 @@ module.exports = class geoGuessrCommand extends Command {
             .setFooter(`Expires in 10 seconds | Points: ${points}`)
         msg.edit(embed)
       }
+      if (points < 10) return msg.edit(`**You need ${cost-points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``)
     })
   }
 };
