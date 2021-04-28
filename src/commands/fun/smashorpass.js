@@ -56,7 +56,8 @@ module.exports = class geoGuessrCommand extends Command {
           msg.edit(`Stopped playing Smash or Pass!`)
           return;
         }
-        msg.reactions.removeAll();
+        console.log('Bottom')
+        await msg.reactions.removeAll();
       }
     })
   }
