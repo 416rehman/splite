@@ -29,7 +29,7 @@ module.exports = class smashOrPassCommand extends Command {
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
       message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-      return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 15000})
+      return (await message.reply(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 15000})
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
     const NumOfSuggestions = suggested.length;
@@ -165,7 +165,7 @@ module.exports = class smashOrPassCommand extends Command {
         if (points < cost)
         {
           message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-          return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 15000}))
+          return msg.edit(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 15000}))
         }
       })
     }
