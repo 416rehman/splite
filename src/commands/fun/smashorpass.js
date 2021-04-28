@@ -122,7 +122,7 @@ module.exports = class smashOrPassCommand extends Command {
             if (i > 50)
             {
               message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-              return message.reply(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
+              return msg.edit(`Please try again later!`, {embed: null}).then(m=>m.delete({timeout: 5000}))
             }
           } while (potentialMatchUser === undefined)
           i = 0;
