@@ -30,7 +30,7 @@ module.exports = class geoGuessrCommand extends Command {
     const potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
 
     let bio = `*${potentialMatchUser.displayName} has not set a bio yet.*`
-    if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.displayName}'s Bio:\n${potentialMatchRow.bio}`
+    if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
 
     const embed = new MessageEmbed()
         .setTitle(`🔥 Smash or Pass 👎`)
@@ -47,11 +47,11 @@ module.exports = class geoGuessrCommand extends Command {
         if(reactions === "🔥") {
           message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'yes', d.toISOString())
-          msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.displayName}`).setDescription(`Loading...`).setFooter(`Remaining Points: ${points - cost}`))
+          msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Remaining Points: ${points - cost}`))
         }
         if(reactions === "👎") {
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'no', d.toISOString())
-          msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.displayName}`).setDescription(`Loading...`))
+          msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.user.username}`).setDescription(`Loading...`))
         }
         else {
           msg.edit(`Stopped playing Smash or Pass!`)
