@@ -37,12 +37,12 @@ module.exports = class smashOrPassCommand extends Command {
     {
       if (suggested !== undefined && suggested != null)
       {
-        suggested.foreach(async mRow=>{
+        for (const mRow of suggested) {
           const mUser = message.client.db.users.selectRowUserOnly(mRow.userID)
-          guild = await message.client.guilds.cache.get(mUser.guild_id)
-          potentialMatchUser = await guild.members.cache.get(mUser.user_id)
+          let guild = await message.client.guilds.cache.get(mUser.guild_id)
+          let potentialMatchUser = await guild.members.cache.get(mUser.user_id)
           console.log(potentialMatchUser.user.tag)
-        })
+        }
       }
       let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
       let potentialMatchUser, guild
