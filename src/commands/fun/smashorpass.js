@@ -42,7 +42,6 @@ module.exports = class geoGuessrCommand extends Command {
       let stop = false;
       while (points > 10 && stop == false)
       {
-        await msg.reactions.removeAll();
         const d = new Date();
         const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
         if(reactions === "🔥") {
@@ -58,6 +57,7 @@ module.exports = class geoGuessrCommand extends Command {
           msg.edit(`Stopped playing Smash or Pass!`)
           return;
         }
+        await msg.reactions.removeAll();
       }
     })
   }
