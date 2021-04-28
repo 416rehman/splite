@@ -142,7 +142,9 @@ module.exports = async (client) => {
   })
 
   //Reset timers/cooldowns/blockers
+  console.log(`resetting blockers`)
   client.db.users.resetTimers.run()
+  console.log(`blockers reset!`)
 
   client.logger.info('Splite is now online');
   client.logger.info(`Splite is running on ${client.guilds.cache.size} server(s)`);
