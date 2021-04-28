@@ -22,9 +22,10 @@ module.exports = class unmatchCommand extends Command {
     if (args[0] !== undefined || args[0] != null)
     {
         let member;
-        if (args[0].startsWith("<@") || (/^[0-9]{18}$/g).test(args[0])) member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+        if (args[0].startsWith("<@")) member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
         else if ((/^[0-9]{18}$/g).test(args[0]))
         {
+            console.log('ID')
             member = message.guild.members.cache.get(args[0]);
             if (member === undefined)
             {
