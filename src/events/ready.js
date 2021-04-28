@@ -71,8 +71,9 @@ module.exports = async (client) => {
         member.user.bot ? 1 : 0,
           null, //AFK
           0,  //Afk_time
-          null,
-          null
+          null, //BIO
+          null, //VoteRunning
+          0   //Smashrunning
       );
       client.db.users.updateVoteRunning.run(0, member.id, guild.id)
     });

@@ -78,6 +78,7 @@ db.prepare(`
     afk_time INTEGER,
     bio TEXT,
     voteRunning INTEGER,
+    SmashRunning INTEGER,
     PRIMARY KEY (user_id, guild_id)
   );
 `).run();
@@ -238,8 +239,9 @@ const users = {
       afk,
       afk_time,
       bio,
-      voteRunning
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?);
+      voteRunning,
+      SmashRunning
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -253,6 +255,8 @@ const users = {
   selectAfk: db.prepare('SELECT afk, afk_time FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectBio: db.prepare('SELECT bio FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectVoteRunning: db.prepare('SELECT voteRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
+  selectSmashRunning: db.prepare('SELECT SmashRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
+
   // Updates
   updateGuildName: db.prepare('UPDATE users SET guild_name = ? WHERE guild_id = ?;'),
   updateUser: db.prepare('UPDATE users SET user_name = ?, user_discriminator = ? WHERE user_id = ?;'),
@@ -272,7 +276,8 @@ const users = {
   updateAfk: db.prepare('UPDATE users SET afk = ? WHERE user_id = ? AND guild_id = ?;'),
   updateAfkTime: db.prepare('UPDATE users SET afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
   updateBio: db.prepare('UPDATE users SET bio = ? WHERE user_id = ?;'),
-  updateVoteRunning: db.prepare('UPDATE users SET voteRunning = ? WHERE user_id = ? AND guild_id = ?;')
+  updateVoteRunning: db.prepare('UPDATE users SET voteRunning = ? WHERE user_id = ? AND guild_id = ?;'),
+  updateSmashRunning: db.prepare('UPDATE users SET SmashRunning = ? WHERE user_id = ? AND guild_id = ?;')
 };
 
 // BOT CONFESSIONS TABLE
@@ -329,6 +334,7 @@ const matches = {
   getUserLike: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes' and shownUserID = ?`),
   getSeenByUser: db.prepare(`select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;`),
 };
+
 module.exports = {
   settings,
   users,

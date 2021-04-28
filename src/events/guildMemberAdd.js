@@ -100,10 +100,11 @@ module.exports = async (client, member) => {
     member.guild.name,
     member.joinedAt.toString(),
     member.user.bot ? 1 : 0,
-      null,
-      0,
-      null,
-      null
+      null, //AFK
+      0,  //Afk_time
+      null, //BIO
+      null, //VoteRunning
+      0   //Smashrunning
   );
   
   // If member already in users table
