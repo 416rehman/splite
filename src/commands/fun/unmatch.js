@@ -52,10 +52,12 @@ module.exports = class unmatchCommand extends Command {
                     if(reactions === '✅')
                     {
                         message.client.db.matches.unmatchUser.run(message.author.id, member.user.id)
-                        msg.edit(`You have unmatched with ${member.user.username}!`, {embed: null})
+                        msg.edit(new MessageEmbed()
+                            .setTitle(`🔥 Smash or Pass 👎`)
+                            .setDescription(`You have unmatched with ${member.user.username}!`))
                         msg.delete({timeout: 5000})
                     }
-                    else return msg.delete({timeout: 5000});
+                    else return msg.delete();
                 })
         }
     }
