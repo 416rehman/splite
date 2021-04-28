@@ -335,6 +335,7 @@ const matches = {
   getAllUserLikes: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes';`),
   getUserLike: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes' and shownUserID = ?`),
   getSeenByUser: db.prepare(`select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;`),
+  unmatchUser: db.prepare(`delete from matches where userID = ? and shownUserID = ?`)
 };
 
 module.exports = {
