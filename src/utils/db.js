@@ -315,7 +315,7 @@ const matches = {
   getLikedByUsers: db.prepare(`select userID, dateandtime from matches where shownUserID = ? and liked = 'yes';`),
   getPotentialMatch: db.prepare(`
     SELECT * FROM users
-    WHERE (SELECT COUNT(*) FROM matches WHERE shownUserID = users.user_id and userID = ?) = 0 and bot = 0
+    WHERE (SELECT COUNT(*) FROM matches WHERE shownUserID = users.user_id and userID = ?) = 0 and bot = 0 and user_id != ?
     ORDER BY RANDOM()
     limit 1;`),
 };

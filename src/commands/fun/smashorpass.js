@@ -24,7 +24,7 @@ module.exports = class geoGuessrCommand extends Command {
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < 10) return message.reply(`**You need ${cost-points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``)
 
-    let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id)
+    let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
     let guild = message.client.guilds.cache.get(potentialMatchRow.guild_id)
     let potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
@@ -61,7 +61,7 @@ module.exports = class geoGuessrCommand extends Command {
           return;
         }
         msg.reactions.removeAll();
-        potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id)
+        potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
 
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
