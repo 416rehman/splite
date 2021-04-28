@@ -32,15 +32,15 @@ module.exports = class smashOrPassCommand extends Command {
       return (await message.reply(`**You need ${cost - points} more points in this server to play 🔥 Smash or Pass 👎 .**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 5000})
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
-    console.log(suggested);
+    console.log(suggested.size);
     if (args[0] == null || args[0] == undefined)
     {
       let potentialMatchUser, guild
       if (suggested !== undefined && suggested != null)
       {
-        const mUser = message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
-        guild = await message.client.guilds.cache.get(mUser[0].guild_id)
-        potentialMatchUser = await guild.members.cache.get(mUser[0].user_id)
+        const mUser = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
+        guild = await message.client.guilds.cache.get(mUser.guild_id)
+        potentialMatchUser = await guild.members.cache.get(mUser.user_id)
         console.log(potentialMatchUser.user.tag)
       }
       else
