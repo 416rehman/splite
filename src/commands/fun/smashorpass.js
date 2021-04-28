@@ -109,7 +109,7 @@ module.exports = class smashOrPassCommand extends Command {
               }
             }
             await msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
-            potentialMatchUser.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
+            potentialMatchUser.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using \`${prefix}smashOrPass\` to see if it's a match`).catch(err => console.log(err))
             if (points < cost)
             {
               message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
@@ -235,7 +235,7 @@ module.exports = class smashOrPassCommand extends Command {
             dynamic: true,
             size: 512
           })))
-          member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
+          member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using \`${prefix}smashOrPass\`to see if it's a match`).catch(err => console.log(err))
         }
         else if(reactions === '👎') {
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'no', d.toISOString())
