@@ -34,7 +34,7 @@ module.exports = class smashOrPassCommand extends Command {
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
     const NumOfSuggestions = suggested.length;
     let x = 0;
-    if (args[0] == null || args[0] == undefined)
+    if (args[0] == null || args[0] === undefined)
     {
       let potentialMatchUser, guild, potentialMatchRow
       if (suggested !== undefined && suggested != null && suggested.length > 0)
@@ -174,12 +174,17 @@ module.exports = class smashOrPassCommand extends Command {
       const row = message.client.db.matches.getSeenByUser.get(message.author.id, member.user.id)
       if (row != null || row !== undefined)
       {
-        if (row.liked == 'yes')
+        if (row.liked === 'yes')
         {
           const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
-          if (row2 != null || row2 !== undefined) return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).then(m=>m.delete({timeout: 15000}))
+          if (row2 != null || row2 !== undefined) {
+            message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+            return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).then(m=>m.delete({timeout: 15000}))
+          }
+          message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
           return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 15000}))
         }
+        message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
         return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 15000}))
       }
 
@@ -224,6 +229,7 @@ module.exports = class smashOrPassCommand extends Command {
             }
             catch (e) {
               console.log(e)
+              message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
               await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
             }
           }
@@ -247,6 +253,7 @@ module.exports = class smashOrPassCommand extends Command {
           return;
         }
       })
+      message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
     }
   }
 };
