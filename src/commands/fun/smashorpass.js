@@ -51,6 +51,7 @@ module.exports = class geoGuessrCommand extends Command {
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'yes', d.toISOString())
           points = points - cost
           msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
+          if (points < cost) break;
         }
         else if(reactions === '👎') {
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'no', d.toISOString())
