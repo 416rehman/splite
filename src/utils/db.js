@@ -319,7 +319,7 @@ const matches = {
         on matches.userID = AlsoLikesMe.shownUserID
             and AlsoLikesMe.liked = 'yes'
     where matches.userID = ? and matches.liked = 'yes'
-    order by matches.dateandtime;`),
+    order by matches.dateandtime desc;`),
   getMatch: db.prepare(`
     select matches.shownUserID, matches.dateandtime
     from matches
