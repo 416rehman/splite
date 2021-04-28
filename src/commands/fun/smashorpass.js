@@ -130,7 +130,7 @@ module.exports = class geoGuessrCommand extends Command {
           message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
-          const matched = message.client.db.matches.getMatch(message.author.id, member.user.id)
+          const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
           if (matched != null || matched != undefined)
           {
             message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${member.user.tag}, say hi to them!`).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 })).setFooter(`Remember to always be respectful!`))
