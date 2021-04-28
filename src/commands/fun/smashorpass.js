@@ -84,26 +84,14 @@ module.exports = class smashOrPassCommand extends Command {
             if (matched != null)
             {
               try{
-                await message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${potentialMatchUser.user.tag}, say hi to them!`).setImage(potentialMatchUser.user.displayAvatarURL({
-                  dynamic: true,
-                  size: 512
-                })).setFooter(`Remember to always be respectful!`))
-                await potentialMatchUser.user.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${message.author.tag}, say hi to them!`).setImage(message.author.displayAvatarURL({
-                  dynamic: true,
-                  size: 512
-                })).setFooter(`Remember to always be respectful!`))
-                await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${potentialMatchUser.user.username}'s tag has been dmed to you.`).setImage(potentialMatchUser.user.displayAvatarURL({
-                  dynamic: true,
-                  size: 512
-                })))
+                await message.author.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${potentialMatchUser.user.tag}, say hi to them!`).setImage(potentialMatchUser.user.avatarURL()).setFooter(`Remember to always be respectful!`))
+                await potentialMatchUser.user.send(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nYou matched with ${message.author.tag}, say hi to them!`).setImage(message.author.avatarURL()).setFooter(`Remember to always be respectful!`))
+                await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${potentialMatchUser.user.username}'s tag has been dmed to you.`).setImage(potentialMatchUser.user.avatarURL()))
               }
               catch(err)
               {
                 message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-                await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(potentialMatchUser.user.displayAvatarURL({
-                  dynamic: true,
-                  size: 512
-                }))
+                await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(potentialMatchUser.user.avatarURL())
               }
             }
             await msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
@@ -156,7 +144,7 @@ module.exports = class smashOrPassCommand extends Command {
           embed = new MessageEmbed()
               .setTitle(`🔥 Smash or Pass 👎`)
               .setDescription(bio)
-              .setImage(potentialMatchUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
+              .setImage(potentialMatchUser.user.avatarURL())
               .setFooter(`Expires in 10 seconds | Points: ${points}`)
           await msg.edit(embed)
         }
@@ -199,7 +187,7 @@ module.exports = class smashOrPassCommand extends Command {
       let embed = new MessageEmbed()
           .setTitle(`🔥 Smash or Pass 👎`)
           .setDescription(bio)
-          .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+          .setImage(member.user.avatarURL())
           .setFooter(`Expires in 10 seconds | Points: ${points}`)
 
       message.channel.send(embed).then(async msg=>{
