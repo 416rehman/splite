@@ -63,8 +63,8 @@ module.exports = class geoGuessrCommand extends Command {
         msg.reactions.removeAll();
         potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id)
 
-        guild = message.client.guilds.cache.get(potentialMatchRow.guild_id)
-        potentialMatchUser = guild.members.cache.get(potentialMatchRow.user_id)
+        guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
+        potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
 
         bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
         if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
