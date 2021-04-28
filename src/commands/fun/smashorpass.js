@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageCollector } = require('discord.js');
 const { confirm, deletetimeout } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
-const cost = 10;
+const cost = 25;
 module.exports = class geoGuessrCommand extends Command {
   constructor(client) {
     super(client, {
@@ -28,9 +28,12 @@ module.exports = class geoGuessrCommand extends Command {
     {
       let potentialMatchRow = message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
       let potentialMatchUser, guild
+      let i = 0;
       do {
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
+        i++;
+        if (i > 50) return message.reply(`Please try again later!`).then(m=>m.delete({timeout: 5000}))
       }
       while (potentialMatchUser === undefined)
       let bio = `*${potentialMatchUser.user.username} has not set a bio yet.*`
