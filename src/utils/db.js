@@ -313,7 +313,7 @@ const matches = {
 
   // Selects
   getAllMatchesOfUser: db.prepare(`
-    select matches.shownUserID, matches.dateandtime
+    select distinct matches.shownUserID, matches.dateandtime
     from matches
     inner join matches as AlsoLikesMe
         on matches.userID = AlsoLikesMe.shownUserID
