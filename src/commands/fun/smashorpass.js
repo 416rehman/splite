@@ -92,7 +92,7 @@ module.exports = class geoGuessrCommand extends Command {
         }
         if (points < cost)
         {
-          return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 5000}))
+          return msg.edit(`**You need ${cost - points} more points in this server to play Smash or Pass .**\n\nTo check your points, type \`${prefix}points\``, {embed: null}).then(m => m.delete({timeout: 10000}))
         }
       })
     }
@@ -106,11 +106,10 @@ module.exports = class geoGuessrCommand extends Command {
         if (row.liked == 'yes')
         {
           const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
-          console.log(row2)
-          if (row2 != null || row2 !== undefined) return message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``);
-          return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``);
+          if (row2 != null || row2 !== undefined) return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).delete({timeout: 10000});
+          return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).delete({timeout: 10000});
         }
-        return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``)
+        return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).delete({timeout: 10000})
       }
 
       let {
@@ -147,26 +146,27 @@ module.exports = class geoGuessrCommand extends Command {
               await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\n${member.user.username}'s tag has been dmed to you.`).setImage(member.user.displayAvatarURL({
                 dynamic: true,
                 size: 512
-              })))
+              }))).delete({timeout: 10000})
             }
             catch (e) {
               console.log(e)
               await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`🔥🔥 **IT'S A MATCH** 🔥🔥\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)).setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+                .delete({timeout: 10000})
             }
 
           }
-          await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
+          await (await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 🔥 Smash on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,
             size: 512
-          })))
+          })))).delete({timeout: 10000})
           member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now to see if it's a match`).catch(err => console.log(err))
         }
         else if(reactions === '👎') {
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'no', d.toISOString())
-          await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 👎 Pass on ${member.user.username}`).setImage(member.user.displayAvatarURL({
+          (await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 👎 Pass on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,
             size: 512
-          })))
+          })))).delete({timeout: 10000})
         }
       })
     }
