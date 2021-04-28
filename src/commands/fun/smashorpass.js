@@ -81,8 +81,6 @@ module.exports = class smashOrPassCommand extends Command {
             message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.user.id, 'yes', d.toISOString())
             points = points - cost
             const matched = await message.client.db.matches.getMatch.get(message.author.id, potentialMatchUser.user.id)
-            console.log(`matched`)
-            console.log(matched)
             if (matched != null)
             {
               try{
@@ -132,7 +130,6 @@ module.exports = class smashOrPassCommand extends Command {
             potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[x].userID)
             guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
             potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
-            console.log(potentialMatchUser.user.tag)
             x++;
           }
           else
@@ -208,7 +205,6 @@ module.exports = class smashOrPassCommand extends Command {
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
           const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
-          console.log(matched)
           if (matched != null || matched != undefined)
           {
             try
