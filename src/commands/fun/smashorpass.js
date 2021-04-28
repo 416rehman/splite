@@ -49,7 +49,8 @@ module.exports = class geoGuessrCommand extends Command {
           console.log('fire')
           message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'yes', d.toISOString())
-          msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Remaining Points: ${points - cost}`))
+          points = points - cost
+          msg.edit(new MessageEmbed().setTitle(`🔥 Smashed ${potentialMatchUser.user.username}`).setDescription(`Loading...`).setFooter(`Remaining Points: ${points}`))
         }
         else if(reactions === '👎') {
           message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.id, 'no', d.toISOString())
