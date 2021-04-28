@@ -39,6 +39,7 @@ module.exports = class geoGuessrCommand extends Command {
         .setFooter(`Expires in 10 seconds.`)
 
     await message.channel.send(embed).then(async msg=> {
+      console.log(points)
       while (points > 10)
       {
         const d = new Date();
