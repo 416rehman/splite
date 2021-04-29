@@ -73,7 +73,8 @@ module.exports = async (client) => {
           0,  //Afk_time
           null, //BIO
           null, //VoteRunning
-          0   //Smashrunning
+          0,   //Smashrunning
+          0    //OptOutSmashOrPass
       );
       client.db.users.updateVoteRunning.run(0, member.id, guild.id)
     });

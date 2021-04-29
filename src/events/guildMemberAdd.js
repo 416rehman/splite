@@ -93,18 +93,19 @@ module.exports = async (client, member) => {
    * ------------------------------------------------------------------------------------------------ */ 
   // Update users table
   client.db.users.insertRow.run(
-    member.id, 
-    member.user.username, 
-    member.user.discriminator,
-    member.guild.id, 
-    member.guild.name,
-    member.joinedAt.toString(),
-    member.user.bot ? 1 : 0,
+      member.id,
+      member.user.username,
+      member.user.discriminator,
+      guild.id,
+      guild.name,
+      member.joinedAt.toString(),
+      member.user.bot ? 1 : 0,
       null, //AFK
       0,  //Afk_time
       null, //BIO
       null, //VoteRunning
-      0   //Smashrunning
+      0,   //Smashrunning
+      0    //OptOutSmashOrPass
   );
   
   // If member already in users table

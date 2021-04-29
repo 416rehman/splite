@@ -16,17 +16,27 @@ module.exports = class smashOrPassCommand extends Command {
         If a user is mentioned, you will be asked to vote for them.        
         
         Cost: 5 points per smash
+        To opt-out of the game, use the command "optSmashOrPass"
       `,
       type: client.types.FUN,
       examples: ['smashorpass', 'sop', 'smash']
     });
   }
   async run(message, args) {
-    return message.reply(`Feature Disabled!`)
+    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
+    const optOutSmashOrPass = message.client.db.users.selectOptOutSmashOrPass.pluck().get(message.author.id)
+    if (!optOutSmashOrPass)
+    {
+      const embed = new MessageEmbed()
+          .setTitle(`🔥 Smash or Pass 👎`)
+          .setDescription(`To play Smash or Pass, you must be opted-in to 🔥 Smash or Pass 👎.\nTo play, please opt back in, by typing **\`${prefix}optSmashOrPass\`**`)
+      return message.channel.send(embed)
+    }
+
     const SmashRunning = message.client.db.users.selectSmashRunning.pluck().get(message.guild.id, message.author.id)
     if (SmashRunning == 1) return;
     else message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
-    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
+
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
       message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
@@ -81,7 +91,7 @@ module.exports = class smashOrPassCommand extends Command {
             message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
             message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.user.id, 'yes', d.toISOString())
             points = points - cost
-            const matched = await message.client.db.matches.getMatch.get(message.author.id, potentialMatchUser.user.id)
+            const matched = await message.client.db.matches.getMatch.get(message.author.id, potentialMatchUser.user.id, potentialMatchUser.user.id)
             if (matched != null)
             {
               try{
@@ -114,7 +124,10 @@ module.exports = class smashOrPassCommand extends Command {
                 .setDescription(`Loading...`)
                 .setFooter(`Expires in 10 seconds | Points: ${points}`)
             )
-            potentialMatchUser.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` to see if it's a match`).catch(err => console.log(err))
+            potentialMatchUser.user.send(new MessageEmbed()
+                .setTitle()
+                .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${guild.name}**to see if it's a match`)
+                .setFooter(`To opt-out of the game, use the command optSmashOrPass`)).catch(err => console.log(err))
             if (points < cost)
             {
               message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
@@ -179,7 +192,8 @@ module.exports = class smashOrPassCommand extends Command {
     {
       const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
       if (member == undefined) return message.reply(`Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:5000}))
-      if (member.user.id == message.author.id) {
+      if (member.user.id == message.author.id)
+      {
         message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
         return message.reply(`No stupid, how are you gonna 🔥Smash yourself??`)
       }
@@ -188,7 +202,7 @@ module.exports = class smashOrPassCommand extends Command {
       {
         if (row.liked === 'yes')
         {
-          const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
+          const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
           if (row2 != null || row2 !== undefined) {
             message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
             return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).then(m=>m.delete({timeout: 15000}))
@@ -217,11 +231,12 @@ module.exports = class smashOrPassCommand extends Command {
         const d = new Date();
         const reactions = await confirm(msg, message.author, ["🔥", "👎"], 10000);
 
-        if(reactions === '🔥') {
-          message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
-          message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
+        if(reactions === '🔥')
+        {
+          await message.client.db.users.updatePoints.run({ points: -cost }, message.author.id, message.guild.id);
+          await message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
-          const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
+          const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
           if (matched != null || matched != undefined)
           {
             try
@@ -253,9 +268,13 @@ module.exports = class smashOrPassCommand extends Command {
             dynamic: true,
             size: 512
           })))
-          member.user.send(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\`to see if it's a match`).catch(err => console.log(err))
+          member.user.send(new MessageEmbed()
+              .setTitle()
+              .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${message.guild.name}** to see if it's a match`)
+              .setFooter(`To opt-out of the game, use the command optSmashOrPass`)).catch(err => console.log(err))
         }
-        else if(reactions === '👎') {
+        else if(reactions === '👎')
+        {
           message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'no', d.toISOString())
           (await msg.edit(new MessageEmbed().setTitle(`🔥 Smash or Pass 👎`).setDescription(`You voted 👎 Pass on ${member.user.username}`).setImage(member.user.displayAvatarURL({
             dynamic: true,

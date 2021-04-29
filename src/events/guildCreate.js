@@ -97,18 +97,19 @@ module.exports = async (client, guild) => {
   // Update users table
   guild.members.cache.forEach(member => {
     client.db.users.insertRow.run(
-      member.id, 
-      member.user.username, 
+      member.id,
+      member.user.username,
       member.user.discriminator,
-      guild.id, 
+      guild.id,
       guild.name,
       member.joinedAt.toString(),
-      member.bot ? 1 : 0,
-        null, //AFK
-        0,  //Afk_time
-        null, //BIO
-        null, //VoteRunning
-        0   //Smashrunning
+      member.user.bot ? 1 : 0,
+      null, //AFK
+      0,  //Afk_time
+      null, //BIO
+      null, //VoteRunning
+      0,   //Smashrunning
+      0    //OptOutSmashOrPass
     );
   });
 

@@ -79,6 +79,7 @@ db.prepare(`
     bio TEXT,
     voteRunning INTEGER,
     SmashRunning INTEGER,
+    optOutSmashOrPass INTEGER,
     PRIMARY KEY (user_id, guild_id)
   );
 `).run();
@@ -240,8 +241,9 @@ const users = {
       afk_time,
       bio,
       voteRunning,
-      SmashRunning
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?);
+      SmashRunning,
+      optOutSmashOrPass
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -257,6 +259,7 @@ const users = {
   selectBio: db.prepare('SELECT bio FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectVoteRunning: db.prepare('SELECT voteRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectSmashRunning: db.prepare('SELECT SmashRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
+  selectOptOutSmashOrPass: db.prepare('SELECT optOutSmashOrPass FROM users WHERE user_id = ? limit 1;'),
 
   // Updates
   updateGuildName: db.prepare('UPDATE users SET guild_name = ? WHERE guild_id = ?;'),
@@ -282,7 +285,8 @@ const users = {
   resetSmashOrPass: db.prepare('delete from matches where userID = ?'),
   resetTimers: db.prepare(`
     update users set voteRunning = 0,
-                 SmashRunning = 0;`)
+                 SmashRunning = 0;`),
+  updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;')
 };
 
 // BOT CONFESSIONS TABLE
@@ -315,21 +319,25 @@ const matches = {
   `),
 
   // Selects
+  //getMatch(arg0, arg0)
   getAllMatchesOfUser: db.prepare(`
     select distinct AlsoLikesMe.userID, AlsoLikesMe.dateandtime
     from matches
     inner join matches as AlsoLikesMe
-        on matches.userID = AlsoLikesMe.shownUserID
+        on AlsoLikesMe.userID = matches.shownUserID
             and AlsoLikesMe.liked = 'yes'
+            and AlsoLikesMe.shownUserID = ?
     where matches.userID = ? and matches.liked = 'yes'
-    order by matches.dateandtime desc;`),
-  getMatch: db.prepare(`
+    group by AlsoLikesMe.userID
+    order by AlsoLikesMe.dateandtime desc;`),
+  //getMatch(arg0, arg1, arg1)
+  getMatch: db.prepare(`    
     select distinct AlsoLikesMe.userID, AlsoLikesMe.dateandtime
     from matches
     inner join matches as AlsoLikesMe
-        on matches.userID = AlsoLikesMe.shownUserID
+        on AlsoLikesMe.userID = ?
             and AlsoLikesMe.liked = 'yes'
-            and AlsoLikesMe.userID = ?
+            and AlsoLikesMe.shownUserID = ?
     where matches.userID = ? and matches.liked = 'yes';`),
   getLikedByUsers: db.prepare(`select userID, dateandtime from matches where shownUserID = ? and liked = 'yes';`),
   getPotentialMatch: db.prepare(`

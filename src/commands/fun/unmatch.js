@@ -38,7 +38,7 @@ module.exports = class unmatchCommand extends Command {
         else member = message.guild.members.cache.find(r=> r.user.username.toLowerCase().startsWith(args[0].toLowerCase()))
 
         if (member === undefined) return message.channel.send(`Failed to find the user. Please try again later.`)
-        const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id)
+        const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
         if (match != null)
         {
             const embed = new MessageEmbed()
