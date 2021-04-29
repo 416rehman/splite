@@ -25,7 +25,7 @@ module.exports = class smashOrPassCommand extends Command {
   async run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const optOutSmashOrPass = message.client.db.users.selectOptOutSmashOrPass.pluck().get(message.author.id)
-    if (!optOutSmashOrPass)
+    if (optOutSmashOrPass === 1)
     {
       const embed = new MessageEmbed()
           .setTitle(`🔥 Smash or Pass 👎`)
