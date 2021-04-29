@@ -32,7 +32,7 @@ module.exports = class gambleCommand extends Command {
 
     message.channel.send(embed).then(msg => {
           const inter = setInterval(()=>{
-            if (progress.length > 1)
+            if (progress.length > 0)
             {
               msg.edit(embed.setDescription(`**Rolling**\n${progress.join(" ")}`))
               progress.pop()
