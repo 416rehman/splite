@@ -32,14 +32,16 @@ module.exports = class gambleCommand extends Command {
     message.channel.send(embed).then(msg => {
           const inter = setInterval(()=>{
             if (progress.length > 0)
-              msg.edit(embed.setDescription(`**Rolling**\n${progress.join(" ")}`)).then(r => progress.pop())
+            {
+              msg.edit(embed.setDescription(`**Rolling**\n${progress.join(" ")}`))
+              progress.pop()
+            }
             else
             {
               msg.edit(embed.setDescription(`**Rolling**`))
-              const d = Math.random();
-              console.log(d)
+              const d = weightedRandom({0:0.6, 1:0.4})
               //Loss
-              if (d < 0.7)
+              if (d === 0)
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} Gambling ${amount} points`)
@@ -62,3 +64,11 @@ module.exports = class gambleCommand extends Command {
         }).catch(e=>{console.log(e)})
   }
 };
+
+function weightedRandom(prob) {
+  let i, sum=0, r=Math.random();
+  for (i in prob) {
+    sum += prob[i];
+    if (r <= sum) return i;
+  }
+}
