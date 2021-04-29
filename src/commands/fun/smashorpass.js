@@ -124,10 +124,10 @@ module.exports = class smashOrPassCommand extends Command {
                 .setDescription(`Loading...`)
                 .setFooter(`Expires in 10 seconds | Points: ${points}`)
             )
-            potentialMatchUser.user.send(new MessageEmbed()
-                .setTitle(`🔥 Smash or Pass 👎`)
-                .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${guild.name}** to see if it's a match`)
-                .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
+            // potentialMatchUser.user.send(new MessageEmbed()
+            //     .setTitle(`🔥 Smash or Pass 👎`)
+            //     .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${guild.name}** to see if it's a match`)
+            //     .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
             if (points < cost)
             {
               message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
@@ -268,10 +268,10 @@ module.exports = class smashOrPassCommand extends Command {
             dynamic: true,
             size: 512
           })))
-          member.user.send(new MessageEmbed()
-              .setTitle(`🔥 Smash or Pass 👎`)
-              .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${message.guild.name}** to see if it's a match`)
-              .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
+          // member.user.send(new MessageEmbed()
+          //     .setTitle(`🔥 Smash or Pass 👎`)
+          //     .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${message.guild.name}** to see if it's a match`)
+          //     .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
         }
         else if(reactions === '👎')
         {
