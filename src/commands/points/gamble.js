@@ -26,8 +26,9 @@ module.exports = class gambleCommand extends Command {
 
     const progress = "🎲 🎲 🎲 🎲 🎲".split(' ')
     const embed = new MessageEmbed()
-        .setTitle(`${message.author.username} Gambling ${amount} points`)
+        .setTitle(`${message.author.username} gambling ${amount} points`)
         .setDescription(`**Rolling**`)
+        .setFooter(`Your points: ${points}`)
 
     message.channel.send(embed).then(msg => {
           const inter = setInterval(()=>{
@@ -39,7 +40,7 @@ module.exports = class gambleCommand extends Command {
             else
             {
               msg.edit(embed.setDescription(`**Rolling**`))
-              const d = weightedRandom({0:10, 1:90})
+              const d = weightedRandom({0:55, 1:45})
               console.log(d)
               //Loss
               if (d == 0)
