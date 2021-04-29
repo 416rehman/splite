@@ -39,7 +39,7 @@ module.exports = class gambleCommand extends Command {
             else
             {
               msg.edit(embed.setDescription(`**Rolling**`))
-              const d = weightedRandom({0:0.6, 1:0.4})
+              const d = weightedRandom({0:60, 1:40})
               console.log(d)
               //Loss
               if (d === 0)
