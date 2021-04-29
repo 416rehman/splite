@@ -3,17 +3,17 @@ const { MessageEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const { confirm } = require("djs-reaction-collector")
 
-module.exports = class optSmashOrPassCommand extends Command {
+module.exports = class toggleSmashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'optsmashorpass',
-      aliases: ['opt', 'optsmash', 'osop'],
-      usage: 'optsmashorpass',
+      name: 'togglesmashorpass',
+      aliases: ['tsmashorpass', 'tsmash', 'tsop'],
+      usage: 'togglesmashorpass',
       description: oneLine`
         Opt out/in of 🔥 Smash or Pass 👎. If you opt-out you will not be shown to other users in the game.
       `,
       type: client.types.FUN,
-      examples: ['optsmashorpass']
+      examples: ['togglesmashorpass']
     });
   }
   async run(message, args) {
