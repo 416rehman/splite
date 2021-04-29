@@ -66,10 +66,15 @@ module.exports = class gambleCommand extends Command {
   }
 };
 
-function weightedRandom(prob) {
-  let i, sum=0, r=Math.random();
-  for (i in prob) {
-    sum += prob[i];
-    if (r <= sum) return i;
+function weightedRandom(input) {
+  const array = []; // Just Checking...
+  for(let item in input) {
+    if ( input.hasOwnProperty(item) ) { // Safety
+      for( let i=0; i<input[item]; i++ ) {
+        array.push(item);
+      }
+    }
   }
+  // Probability Fun
+  return array[Math.floor(Math.random() * array.length)];
 }
