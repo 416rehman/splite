@@ -39,14 +39,20 @@ module.exports = class gambleCommand extends Command {
               //Loss 55% chance
               if (d < 0.55)
               {
+                const embed = new MessageEmbed()
+                    .setTitle(`${message.author.username} Gambling ${amount} points`)
+                    .setDescription(`${fail} You lost! **Remaining points: ${points - amount}**🪙`)
                 message.client.db.users.updatePoints.run({ points: -amount }, message.author.id, message.guild.id);
-                msg.edit(embed.setDescription(`${fail} You lost! **Remaining points: ${points - amount}**🪙`))
+                msg.edit(embed)
               }
               //Win 45% chance
               else
               {
+                const embed = new MessageEmbed()
+                    .setTitle(`${message.author.username} Gambling ${amount} points`)
+                    .setDescription(`🎉 You Won! **Your points: ${points + amount}**🪙`)
                 message.client.db.users.updatePoints.run({ points: amount }, message.author.id, message.guild.id);
-                msg.edit(embed.setDescription(`🎉 You Won! **Your points: ${points + amount}**🪙`))
+                msg.edit(embed)
               }
               clearInterval(inter)
             }
