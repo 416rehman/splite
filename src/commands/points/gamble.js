@@ -27,7 +27,7 @@ module.exports = class gambleCommand extends Command {
     const progress = "🎲 🎲 🎲 🎲 🎲".split(' ')
     const embed = new MessageEmbed()
         .setTitle(`${message.author.username} Gambling ${amount} points`)
-        .setDescription(`**Rolling**\n${progress.join(" ")}`)
+        .setDescription(`**Rolling**`)
 
     message.channel.send(embed).then(msg => {
           const inter = setInterval(()=>{
@@ -36,8 +36,8 @@ module.exports = class gambleCommand extends Command {
             else
             {
               const d = Math.random();
-              //Loss 55% chance
-              if (d < 0.55)
+              //Loss
+              if (d < 0.7)
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} Gambling ${amount} points`)
@@ -45,7 +45,7 @@ module.exports = class gambleCommand extends Command {
                 message.client.db.users.updatePoints.run({ points: -amount }, message.author.id, message.guild.id);
                 msg.edit(embed)
               }
-              //Win 45% chance
+              //Win
               else
               {
                 const embed = new MessageEmbed()
