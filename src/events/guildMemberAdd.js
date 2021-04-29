@@ -96,8 +96,8 @@ module.exports = async (client, member) => {
       member.id,
       member.user.username,
       member.user.discriminator,
-      guild.id,
-      guild.name,
+      member.guild.id,
+      member.guild.name,
       member.joinedAt.toString(),
       member.user.bot ? 1 : 0,
       null, //AFK

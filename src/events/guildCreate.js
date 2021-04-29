@@ -103,7 +103,7 @@ module.exports = async (client, guild) => {
       guild.id,
       guild.name,
       member.joinedAt.toString(),
-      member.user.bot ? 1 : 0,
+      member.bot ? 1 : 0,
       null, //AFK
       0,  //Afk_time
       null, //BIO
