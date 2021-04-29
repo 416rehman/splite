@@ -63,7 +63,7 @@ module.exports = class geoGuessrCommand extends Command {
         .setColor(message.guild.me.displayHexColor);
       if (winner)
       {
-        message.client.db.users.updatePoints.run({ points: 2 }, winner.id, message.guild.id);
+        message.client.db.users.updatePoints.run({ points: 20 }, winner.id, message.guild.id);
         message.channel.send(answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! +2 Points!`));
       }
 
