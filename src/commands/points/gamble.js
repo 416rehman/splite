@@ -35,7 +35,7 @@ module.exports = class gambleCommand extends Command {
               msg.edit(embed.setDescription(`**Rolling**\n${progress.join(" ")}`)).then(r => progress.pop())
             else
             {
-              msg.edit(embed.setDescription(`**Rolling**\n${progress.join(" ")}`))
+              msg.edit(embed.setDescription(`**Rolling**\n${progress}`))
               const d = Math.random();
               console.log(d)
               //Loss
@@ -43,7 +43,7 @@ module.exports = class gambleCommand extends Command {
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} Gambling ${amount} points`)
-                    .setDescription(`${fail} You lost! **Remaining points: ${points - amount}**🪙`)
+                    .setDescription(`${fail} You lost! **Remaining points: ${points - amount}** 🪙`)
                 message.client.db.users.updatePoints.run({ points: -amount }, message.author.id, message.guild.id);
                 msg.edit(embed)
               }
@@ -52,7 +52,7 @@ module.exports = class gambleCommand extends Command {
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} Gambling ${amount} points`)
-                    .setDescription(`🎉 You Won! **Your points: ${points + amount}**🪙`)
+                    .setDescription(`🎉 You Won! **Your points: ${points + amount}** 🪙`)
                 message.client.db.users.updatePoints.run({ points: amount }, message.author.id, message.guild.id);
                 msg.edit(embed)
               }
