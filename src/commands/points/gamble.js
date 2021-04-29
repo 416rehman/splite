@@ -9,14 +9,14 @@ module.exports = class gambleCommand extends Command {
     super(client, {
       name: 'gamble',
       aliases: ['spin', 'coinflip', 'heads', 'tails', 'roll', 'bet'],
-      usage: 'givepoints <user mention/ID> <point count>',
+      usage: 'gamble <point count>',
       description: 'Gamble your points. Limit: 1000',
       type: client.types.POINTS,
       examples: ['gamble 1000']
     });
   }
   run(message, args) {
-    const amount = parseInt(args[1]);
+    const amount = parseInt(args[0]);
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     if (isNaN(amount) === true || !amount)
       return this.sendErrorMessage(message, 0, 'Please provide a valid point count');
