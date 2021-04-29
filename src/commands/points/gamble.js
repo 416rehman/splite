@@ -42,7 +42,7 @@ module.exports = class gambleCommand extends Command {
               const d = weightedRandom({0:60, 1:40})
               console.log(d)
               //Loss
-              if (d === 0)
+              if (d == 0)
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} Gambling ${amount} points`)
