@@ -22,8 +22,9 @@ module.exports = class gambleCommand extends Command {
       return this.sendErrorMessage(message, 0, 'Please provide a valid point count');
     if (amount < 0 || amount > points) return message.reply(`Please provide an amount you currently have! You have ${points}`);
     if (amount > limit) return message.reply(`You can't bet more than ${limit} at a time. Please try again!`);
-    console.log(`🎲 🎲 🎲 🎲 🎲`)
-    console.log(`🎲 🎲 🎲 🎲 🎲`.length)
+    const q = "🎲 🎲 🎲 🎲 🎲"
+    console.log(q)
+    console.log(q.length)
     // message.channel.send(new MessageEmbed()
     //     .setTitle(`${message.author.username} Gambling ${amount} points`)
     //     .setDescription(`**Rolling**\n🎲 🎲 🎲 🎲 🎲`))
