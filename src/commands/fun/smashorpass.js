@@ -40,7 +40,7 @@ module.exports = class smashOrPassCommand extends Command {
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
       message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-      return (await message.reply(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 15000})
+      return await message.reply(`You need **${cost - points}** more points in this server to play 🔥 **Smash or Pass** 👎 .\n\nTo check your points, type \`${prefix}points\``).delete({timeout: 15000})
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
     const NumOfSuggestions = suggested.length;
@@ -205,7 +205,7 @@ module.exports = class smashOrPassCommand extends Command {
           const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
           if (row2 != null || row2 !== undefined) {
             message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
-            return (await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``)).then(m=>m.delete({timeout: 15000}))
+            return await message.reply(`🔥 You two have matched already 🔥. To unmatch, type \`${prefix}unmatch <user mention/id>\``).then(m=>m.delete({timeout: 15000}))
           }
           message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
           return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your Smash or Pass history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 15000}))
@@ -237,7 +237,7 @@ module.exports = class smashOrPassCommand extends Command {
           await message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
           const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
-          if (matched != null || matched != undefined)
+          if (matched != null)
           {
             try
             {
