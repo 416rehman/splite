@@ -25,6 +25,9 @@ module.exports = class gambleCommand extends Command {
     const q = "🎲 🎲 🎲 🎲 🎲"
     console.log(q)
     console.log(q.length)
+    const p = "abcde"
+    console.log(p)
+    console.log(p.length)
     // message.channel.send(new MessageEmbed()
     //     .setTitle(`${message.author.username} Gambling ${amount} points`)
     //     .setDescription(`**Rolling**\n🎲 🎲 🎲 🎲 🎲`))
