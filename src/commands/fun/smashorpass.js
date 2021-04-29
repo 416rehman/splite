@@ -125,8 +125,8 @@ module.exports = class smashOrPassCommand extends Command {
                 .setFooter(`Expires in 10 seconds | Points: ${points}`)
             )
             potentialMatchUser.user.send(new MessageEmbed()
-                .setTitle()
-                .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${guild.name}**to see if it's a match`)
+                .setTitle(`🔥 Smash or Pass 👎`)
+                .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${guild.name}** to see if it's a match`)
                 .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
             if (points < cost)
             {
@@ -269,7 +269,7 @@ module.exports = class smashOrPassCommand extends Command {
             size: 512
           })))
           member.user.send(new MessageEmbed()
-              .setTitle()
+              .setTitle(`🔥 Smash or Pass 👎`)
               .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${message.guild.name}** to see if it's a match`)
               .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
         }
