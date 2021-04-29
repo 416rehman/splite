@@ -37,6 +37,7 @@ module.exports = class gambleCommand extends Command {
             {
               msg.edit(embed.setDescription(`**Rolling**\n${progress.join(" ")}`))
               const d = Math.random();
+              console.log(d)
               //Loss
               if (d < 0.7)
               {
