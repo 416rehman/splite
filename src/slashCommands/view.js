@@ -25,20 +25,24 @@ module.exports = {
         const viewConfessionsRole = client.db.settings.selectViewConfessionsRole.pluck().get(interaction.guild_id)
 
         if (!viewConfessionsRole) {
+            console.log(`No confession channel`)
             reply(interaction, `No role is set to run this command. To set a role to run this command type, \`${prefix}setviewconfessionsrole\``, client)
         } else
         {
+            console.log(` confession channel `)
             const guild = client.guilds.cache.get(interaction.guild_id)
             const role = guild.roles.cache.find(r => r.id === viewConfessionsRole)
             const user = guild.members.cache.find(u => u.id === interaction.member.user.id)
 
             if (!user.roles.cache.has(role.id))
+                console.log(`No perms`)
                 reply(interaction, `**You don't have perms to run this command**`, client)
             else {
+                console.log(`yes perms`)
                 const row = client.db.confessions.selectConfessionByID.get(interaction.data.options[0].value)
 
                 if (row && row.guild_id === interaction.guild_id)
-                {
+                {   console.log(`done`)
                     const sender = guild.members.cache.get(row.author_id);
                     reply(interaction, `Confession ID: **\`${row.confession_id}\`** \
                     \nContent: **\`${row.content}\`**\
