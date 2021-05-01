@@ -35,8 +35,10 @@ module.exports = {
             const user = guild.members.cache.find(u => u.id === interaction.member.user.id)
 
             if (!user.roles.cache.has(role.id))
+            {
                 console.log(`No perms`)
                 reply(interaction, `**You don't have perms to run this command**`, client)
+            }
             else {
                 console.log(`yes perms`)
                 const row = client.db.confessions.selectConfessionByID.get(interaction.data.options[0].value)
