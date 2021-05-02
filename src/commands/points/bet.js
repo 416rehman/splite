@@ -59,8 +59,13 @@ module.exports = class betCommand extends Command {
               msg.edit(embed.setDescription(`💰 **Rolling for ${amount} points** 💰`))
                   .then(function (){
                     const d = weightedRandom({0:50, 1:50})
+
                     const winner = d ? member.user : message.author;
+                    const winnerPoints = winner.id === member.id ? otherPoints : points;
+
                     const loser = winner.id === member.id ? message.author : member.user;
+                    const loserPoints = winner.id === member.id ? points : otherPoints;
+
                     console.log(`winner ` + winner.username)
                     console.log(`loser ` + loser.username)
                     message.client.db.users.updatePoints.run({ points: -amount }, loser.id, message.guild.id);
@@ -69,7 +74,7 @@ module.exports = class betCommand extends Command {
                     const embed = new MessageEmbed()
                         .setTitle(`${message.author.username} VS ${member.user.username}`)
                         .setDescription(`🎉 ${winner} has won ${amount} points from ${loser}! 💰`)
-                        .setFooter(`🏆 ${winner.username}'s points: ${points + amount} | ${loser.username}'s points: ${otherPoints - amount}`)
+                        .setFooter(`🏆 ${winner.username}'s points: ${winnerPoints + amount} | ${loser.username}'s points: ${loserPoints - amount}`)
                     msg.edit(embed)
 
                     clearInterval(inter)
