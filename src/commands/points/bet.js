@@ -58,8 +58,9 @@ module.exports = class betCommand extends Command {
                   .then(function (){
                     const d = weightedRandom({0:50, 1:50})
                     const winner = d ? member : message.author;
-                    const loser = winner == member ? message.author : member;
-
+                    const loser = winner === member ? message.author : member;
+                    console.log(winner)
+                    console.log(loser)
                     message.client.db.users.updatePoints.run({ points: -amount }, loser.user.id, message.guild.id);
                     message.client.db.users.updatePoints.run({ points: amount }, winner.user.id, message.guild.id);
 
