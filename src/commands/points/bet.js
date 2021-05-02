@@ -27,11 +27,11 @@ module.exports = class betCommand extends Command {
       return this.sendErrorMessage(message, 0, 'Please provide a valid point count');
 
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
-    const otherPoints = message.client.db.users.selectPoints.pluck().get(member.author.id, message.guild.id);
+    const otherPoints = message.client.db.users.selectPoints.pluck().get(member.user.id, message.guild.id);
 
     if (amount < 0 || amount > points) return message.reply(`Please provide an amount you currently have! You have ${points} points`);
     if (amount > limit) amount = limit;
-    if (amount < 0 || amount > otherPoints) return message.reply(`${member.author.username} only has ${otherPoints} points! Please change your betting amount!`);
+    if (amount < 0 || amount > otherPoints) return message.reply(`${member.user.username} only has ${otherPoints} points! Please change your betting amount!`);
 
     message.channel.send(`${member}, ${message.author.username} has sent you a bet of ${amount} points 💰. Do you accept?`).then(async msg =>
     {
