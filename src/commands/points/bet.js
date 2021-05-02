@@ -61,7 +61,7 @@ module.exports = class betCommand extends Command {
                     const d = weightedRandom({0:50, 1:50})
                     Console.log(d)
                     let winner = message.author
-                    If (d == 1) winner = member.user
+                    if (d == 1) winner = member.user
                     
                     const winnerPoints = winner.id === member.id ? otherPoints : points;
 
