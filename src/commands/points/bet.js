@@ -55,20 +55,22 @@ module.exports = class betCommand extends Command {
             else
             {
               msg.edit(embed.setDescription(`💰 **Rolling for ${amount} points** 💰`))
-              const d = weightedRandom({0:50, 1:50})
-              const winner = d ? member : message.author;
-              const loser = winner == member ? message.author : member;
+                  .then(function (){
+                    const d = weightedRandom({0:50, 1:50})
+                    const winner = d ? member : message.author;
+                    const loser = winner == member ? message.author : member;
 
-              message.client.db.users.updatePoints.run({ points: -amount }, loser.user.id, message.guild.id);
-              message.client.db.users.updatePoints.run({ points: amount }, winner.user.id, message.guild.id);
+                    message.client.db.users.updatePoints.run({ points: -amount }, loser.user.id, message.guild.id);
+                    message.client.db.users.updatePoints.run({ points: amount }, winner.user.id, message.guild.id);
 
-              const embed = new MessageEmbed()
-                  .setTitle(`${message.author.username} VS ${member.user.username}`)
-                  .setDescription(`🎉 ${winner} has won ${amount} points from ${loser}! 💰`)
-                  .setFooter(`🏆 ${winner}'s points: ${points + amount} | ${loser}'s points: ${otherPoints - amount}`)
-              msg.edit(embed)
+                    const embed = new MessageEmbed()
+                        .setTitle(`${message.author.username} VS ${member.user.username}`)
+                        .setDescription(`🎉 ${winner} has won ${amount} points from ${loser}! 💰`)
+                        .setFooter(`🏆 ${winner}'s points: ${points + amount} | ${loser}'s points: ${otherPoints - amount}`)
+                    msg.edit(embed)
 
-              clearInterval(inter)
+                    clearInterval(inter)
+                  })
             }
           }, 1000)
         }).catch(e=>{console.log(e)})
