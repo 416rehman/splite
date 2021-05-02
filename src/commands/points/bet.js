@@ -59,7 +59,7 @@ module.exports = class betCommand extends Command {
               msg.edit(embed.setDescription(`💰 **Rolling for ${amount} points** 💰`))
                   .then(function (){
                     const d = weightedRandom({0:50, 1:50})
-                    Console.log(d)
+                    console.log(d)
                     let winner = message.author
                     if (d == 1) winner = member.user
                     
