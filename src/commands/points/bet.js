@@ -67,7 +67,7 @@ module.exports = class betCommand extends Command {
                     const embed = new MessageEmbed()
                         .setTitle(`${message.author.username} VS ${member.user.username}`)
                         .setDescription(`🎉 ${winner} has won ${amount} points from ${loser}! 💰`)
-                        .setFooter(`🏆 ${winner}'s points: ${points + amount} | ${loser}'s points: ${otherPoints - amount}`)
+                        .setFooter(`🏆 ${winner.username}'s points: ${points + amount} | ${loser.username}'s points: ${otherPoints - amount}`)
                     msg.edit(embed)
 
                     clearInterval(inter)
