@@ -22,6 +22,8 @@ module.exports = class betCommand extends Command {
     if (!member) return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
     if (member.id === message.client.user.id)
       return message.channel.send('Sorry I am not allowed to play with you 😟');
+    if (member.user.id == message.author.id)
+      return message.reply(`No stupid, you NEVER bet against yourself!!`)
 
     let amount = parseInt(args[1]);
     if (isNaN(amount) === true || !amount)
@@ -58,9 +60,9 @@ module.exports = class betCommand extends Command {
                   .then(function (){
                     const d = weightedRandom({0:50, 1:50})
                     const winner = d ? member.user : message.author;
-                    const loser = winner === member ? message.author : member.user;
-                    console.log(winner)
-                    console.log(loser)
+                    const loser = winner.id === member.id ? message.author : member.user;
+                    console.log(`winner ` + winner.username)
+                    console.log(`loser ` + loser.username)
                     message.client.db.users.updatePoints.run({ points: -amount }, loser.id, message.guild.id);
                     message.client.db.users.updatePoints.run({ points: amount }, winner.id, message.guild.id);
 
