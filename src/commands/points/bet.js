@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const { stripIndent } = require('common-tags');
+const { confirm } = require("djs-reaction-collector")
 const { fail } = require('../../utils/emojis.json')
 
 const limit = 1000;
