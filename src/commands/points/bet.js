@@ -45,8 +45,8 @@ module.exports = class betCommand extends Command {
             .setFooter(`${message.author.username} points: ${points} | ${member.user.username} points: ${otherPoints}`)
 
         message.channel.send(embed).then(msg => {
+          const progress = "🃏 🃏 🃏".split(' ')
           const inter = setInterval(()=>{
-            const progress = "🃏 🃏 🃏".split(' ')
             if (progress.length > 0)
             {
               msg.edit(embed.setDescription(`💰 **Rolling for ${amount} points** 💰\n${progress.join(" ")}`))
