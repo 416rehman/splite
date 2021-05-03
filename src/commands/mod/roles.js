@@ -20,10 +20,11 @@ module.exports = class rolesCommand extends Command {
   }
   async run(message, args) {
     if (message.guild.roleRetrieval === true) return message.reply(`Already in progres.`)
-    const max = 25;
 
+    message.guild.roleRetrieval = true;
+    console.log(message.guild.roleRetrieval)
+    const max = 25;
     try {
-      message.guild.roleRetrieval = true;
       const roleCount = message.guild.roles.cache.size
       const embed = new MessageEmbed()
           .setTitle(`Role Count ${roleCount}`)
