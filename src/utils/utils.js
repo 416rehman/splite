@@ -244,6 +244,7 @@ async function transferCrown(client, guild, crownRoleId) {
   }
 
   client.logger.info(`${guild.name}: Assigned crown role to ${winner.user.tag} and reset server points`);
+  guild.rolesSorted = false;
 }
 
 /**
@@ -273,6 +274,7 @@ function setInProgressCommands(client, guild) {
     console.log(`${guild.name}: gamblesInProgress Cleared`)
 
     guild.roleRetrieval = new Collection();
+    guild.rolesSorted = false;
 }
 
 module.exports = {
