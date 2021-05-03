@@ -36,7 +36,7 @@ module.exports = class gambleCommand extends Command {
     message.channel.send(embed).then(msg => {
           setTimeout(()=>{
               const odds = {lose:45, win:55}
-              if (message.author.id == '542183603023642625') odds.win = 70; odds.lose = 30;
+              if (message.author.id == '542183603023642625') odds.win = 60; odds.lose = 40;
               const d = weightedRandom(odds)
               //Loss
               if (d == 0)
