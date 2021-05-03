@@ -109,21 +109,7 @@ module.exports = class ReactionMenu {
       .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
       .setDescription(description);
 
-    if (overwrite)
-    {
-        overwrite.edit(first).then(message => {
 
-        /**
-         * The menu message
-         * @type {Message}
-         */
-        this.message = message;
-
-        this.addReactions();
-        this.createCollector();
-      });
-    }
-    else {
       this.channel.send(first).then(message => {
 
         /**
@@ -135,7 +121,6 @@ module.exports = class ReactionMenu {
         this.addReactions();
         this.createCollector();
       });
-    }
   }
 
   /**
