@@ -26,7 +26,7 @@ module.exports = class rolesCommand extends Command {
 
     message.guild.roles.cache.sort(function (a,b){return a.members.size - b.members.size})
         .forEach(r=>{
-          embed.addField(`${r.name}`, r.members.size + "Members", true)
+          embed.addField(`${r.name}`, "`" + r.members.size + " Members`", true)
         })
 
     message.channel.send(embed).catch(err => {
