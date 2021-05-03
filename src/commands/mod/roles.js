@@ -41,7 +41,7 @@ module.exports = class rolesCommand extends Command {
                 let roles = [];
                 if (msg.client.sortedRoles.has(message.guild.id))
                 {
-                    roles = msg.client.sortedRoles
+                    roles = msg.client.sortedRoles.get(message.guild.id)
                     Cached = true
                 }
                 else
