@@ -12,11 +12,12 @@ module.exports = class ReactionMenu {
    * @param {GuildMember} member
    * @param {MessageEmbed} embed
    * @param {Array} arr
-   * @param {int} interval 
+   * @param {int} interval
+   * @param {Message} overwrite
    * @param {Object} reactions
-   * @param {int} timeout 
+   * @param {int} timeout
    */
-  constructor(client, channel, member, embed, arr = null, interval = 10, reactions = {
+  constructor(client, channel, member, embed, arr = null, interval = 10, overwrite = null, reactions = {
     '⏪': this.first.bind(this), 
     '◀️': this.previous.bind(this), 
     '▶️': this.next.bind(this), 
@@ -67,6 +68,12 @@ module.exports = class ReactionMenu {
     this.interval = interval;
 
     /**
+     * The message to overwrite
+     * @type {int}
+     */
+    this.overwrite = overwrite;
+
+    /**
      * The current array window start
      * @type {int}
      */
@@ -102,17 +109,33 @@ module.exports = class ReactionMenu {
       .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
       .setDescription(description);
 
-    this.channel.send(first).then(message => {
+    if (overwrite)
+    {
+      this.overwrite.edit(first).then(message => {
 
-      /**
-       * The menu message
-       * @type {Message}
-     */
-      this.message = message;
+        /**
+         * The menu message
+         * @type {Message}
+         */
+        this.message = message;
 
-      this.addReactions();
-      this.createCollector();
-    });
+        this.addReactions();
+        this.createCollector();
+      });
+    }
+    else {
+      this.channel.send(first).then(message => {
+
+        /**
+         * The menu message
+         * @type {Message}
+         */
+        this.message = message;
+
+        this.addReactions();
+        this.createCollector();
+      });
+    }
   }
 
   /**

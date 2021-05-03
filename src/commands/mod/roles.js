@@ -33,7 +33,7 @@ module.exports = class rolesCommand extends Command {
       message.channel.send(embed).then(
           msg=>{
             const roles = [];
-              sort(message.guild.roles.cache).desc(u => u.members.length).forEach(r => roles.push(`<@&${r.id}> - ${r.members.size} Members`))
+              sort(message.guild.roles.cache).desc(u => u.members.length).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
             if (roles.length <= max) {
               msg.edit(embed.setDescription(`TOTAL ROLES: \`${roleCount}\`\nREMAINING SPACE: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
@@ -44,7 +44,7 @@ module.exports = class rolesCommand extends Command {
                   'Expires after two minutes.\n',
                   message.author.displayAvatarURL({ dynamic: true })))
 
-              new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
+              new ReactionMenu(message.client, message.channel, message.member, embed, roles, max, msg);
             }
             msg.edit(embed).catch(err => {
               this.sendErrorMessage(message, 0, `Too much data to display.`);
