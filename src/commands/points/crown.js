@@ -21,13 +21,14 @@ module.exports = class CrownCommand extends Command {
     }).array();
 
     let description = message.client.utils.trimStringFromArray(crowned);
-    if (crowned.length === 0) description = `No one has the crown! ${emojis.crown}`;
+    if (crowned.length === 0) description = `No one has the crown!`;
 
     const embed = new MessageEmbed()
       .setTitle(`${emojis.crown}  Crowned Members  ${emojis.crown}`)
       .setDescription(description)
       .addField('Crown Role', crownRole)
       .setFooter(`Crown transfer will occur at 20:00 EST`)
+        .setImage(`https://i.imgur.com/P98jTYc.gif`)
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
     message.channel.send(embed);
