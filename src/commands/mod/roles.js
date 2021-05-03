@@ -35,9 +35,10 @@ module.exports = class rolesCommand extends Command {
           .setFooter(`Total Roles: ${roleCount}`)
 
       message.channel.send(embed).then(
-          msg=>{
+          async msg=>{
             const roles = [];
-            const sorted = sort(message.guild.roles.cache).desc(u => u.members.size)
+            const allRoles = await message.guild.roles.cache;
+            const sorted = sort(allRoles).desc(u => u.members.size)
             sorted.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
             if (roles.length <= max) {
@@ -53,8 +54,8 @@ module.exports = class rolesCommand extends Command {
               new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
             }
             msg.edit(embed).catch(err => {
-                message.guild.roleRetrieval.delete(message.guild.id);
-              this.sendErrorMessage(message, 0, `Too much data to display.`);
+                if (err) message.guild.roleRetrieval.delete(message.guild.id);
+                console.log(err)
             })
           }
       )
