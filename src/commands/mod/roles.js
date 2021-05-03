@@ -19,9 +19,9 @@ module.exports = class rolesCommand extends Command {
     });
   }
   async run(message, args) {
-    if (message.guild.roleRetrieval === true) return message.reply(`Already in progres.`)
+    if (message.guild.roleRetrieval.has(message.guild.id)) return message.reply(`Already in progress.`)
+    message.guild.roleRetrieval.set(message.guild.id, true);
 
-    message.guild.roleRetrieval = true;
     console.log(message.guild.roleRetrieval)
     const max = 25;
     try {
@@ -34,7 +34,8 @@ module.exports = class rolesCommand extends Command {
       message.channel.send(embed).then(
           msg=>{
             const roles = [];
-              sort(message.guild.roles.cache).desc(u => u.members.length).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
+            const sorted = sort(message.guild.roles.cache).desc(u => u.members.length)
+            sorted.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
             if (roles.length <= max) {
               msg.edit(embed.setDescription(`TOTAL ROLES: \`${roleCount}\`\nREMAINING SPACE: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
@@ -55,6 +56,6 @@ module.exports = class rolesCommand extends Command {
     } catch (e) {
       console.log(e)
     }
-    message.guild.roleRetrieval = false;
+    message.guild.roleRetrieval.delete(message.guild.id);
   }
 };

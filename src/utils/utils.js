@@ -272,7 +272,7 @@ function setInProgressCommands(client, guild) {
     guild.gamblesInProgress = new Collection();
     console.log(`${guild.name}: gamblesInProgress Cleared`)
 
-    guild.roleRetrieval = false;
+    guild.roleRetrieval = new Collection();
 }
 
 module.exports = {
