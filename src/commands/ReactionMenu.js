@@ -120,6 +120,7 @@ module.exports = class ReactionMenu {
 
         this.addReactions();
         this.createCollector();
+        message.guild.roleRetrieval.delete(message.guild.id);
       });
   }
 
@@ -136,7 +137,6 @@ module.exports = class ReactionMenu {
    * Creates a reaction collector
    */
   createCollector() {
-    
     // Create collector
     const collector = this.message.createReactionCollector((reaction, user) => {
       return (this.emojis.includes(reaction.emoji.name) || this.emojis.includes(reaction.emoji.id)) &&

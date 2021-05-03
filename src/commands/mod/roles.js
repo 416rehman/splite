@@ -19,7 +19,10 @@ module.exports = class rolesCommand extends Command {
     });
   }
   async run(message, args) {
-    if (message.guild.roleRetrieval.has(message.guild.id)) return message.reply(`Already in progress.`)
+    if (message.guild.roleRetrieval.has(message.guild.id))
+    {
+        return message.reply(`Already in progress.`)
+    }
     message.guild.roleRetrieval.set(message.guild.id, true);
 
     console.log(message.guild.roleRetrieval)
@@ -38,6 +41,7 @@ module.exports = class rolesCommand extends Command {
             sorted.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
             if (roles.length <= max) {
+                message.guild.roleRetrieval.delete(message.guild.id);
               msg.edit(embed.setDescription(`TOTAL ROLES: \`${roleCount}\`\nREMAINING SPACE: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
             }
             else
@@ -49,13 +53,14 @@ module.exports = class rolesCommand extends Command {
               new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
             }
             msg.edit(embed).catch(err => {
+                message.guild.roleRetrieval.delete(message.guild.id);
               this.sendErrorMessage(message, 0, `Too much data to display.`);
             })
           }
       )
     } catch (e) {
+        message.guild.roleRetrieval.delete(message.guild.id);
       console.log(e)
     }
-    message.guild.roleRetrieval.delete(message.guild.id);
   }
 };
