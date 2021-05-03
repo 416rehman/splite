@@ -37,12 +37,10 @@ module.exports = class rolesCommand extends Command {
       message.channel.send(embed).then(
           async msg=>{
             const roles = [];
-            const allRoleMembers = await message.guild.roles.cache.map(r => {r.members.rID = r.id; return r.members})
-            // message.guild.roles.cache.sort(function (a,b) {
-            //     b.members.length > a.members.length
-            // }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
-              await sort(allRoleMembers).asc(u=>u.length).forEach(r => roles.push(`<@&${r.rID}> - \`${r.size} Members\``))
+            message.guild.roles.cache.sort(function (a,b) {
+                b.members.length > a.members.length
+            }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
             if (roles.length <= max) {
                 message.guild.roleRetrieval.delete(message.guild.id);
