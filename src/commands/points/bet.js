@@ -34,7 +34,7 @@ module.exports = class betCommand extends Command {
     if (message.guild.betsInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already betting against someone! Please try again later.`).then(m=>m.delete(5000))
 
     const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
-    if (!member) return this.sendErrorMessage(message, 0, `${emojis.fail} Please mention a user or provide a valid user ID`);
+    if (!member) return this.sendErrorMessage(message, 0, `Please mention a user or provide a valid user ID`);
     if (member.id === message.client.user.id)
       return message.channel.send(`${emojis.fail} Sorry I am not allowed to play with you 😟`).then(m=>m.delete(5000));
     if (member.user.id == message.author.id)
@@ -44,7 +44,7 @@ module.exports = class betCommand extends Command {
 
     let amount = parseInt(args[1]);
     if (isNaN(amount) === true || !amount)
-      return this.sendErrorMessage(message, 0, `${emojis.fail} Please provide a valid point count`);
+      return this.sendErrorMessage(message, 0, `Please provide a valid point count`);
 
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     const otherPoints = message.client.db.users.selectPoints.pluck().get(member.user.id, message.guild.id);
