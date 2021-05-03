@@ -34,7 +34,6 @@ module.exports = class gambleCommand extends Command {
 
     message.channel.send(embed).then(msg => {
           setTimeout(()=>{
-              msg.edit(embed.setDescription(`**Rolling**`))
               const d = weightedRandom({0:50, 1:50})
               //Loss
               if (d == 0)
@@ -56,9 +55,12 @@ module.exports = class gambleCommand extends Command {
                 message.client.db.users.updatePoints.run({ points: amount }, message.author.id, message.guild.id);
                 msg.edit(embed)
               }
-          }, 1000)
-        }).catch(e=>{console.log(e)})
-    message.guild.gamblesInProgress.delete(message.author.id)
+              message.guild.gamblesInProgress.delete(message.author.id)
+          }, 3000)
+        }).catch(e=>{
+            console.log(e)
+        message.guild.gamblesInProgress.delete(message.author.id)
+        })
   }
 };
 
