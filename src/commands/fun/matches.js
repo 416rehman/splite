@@ -67,7 +67,6 @@ module.exports = class MatchesCommand extends Command {
 
     // Reaction Menu
     } else {
-
       embed
         .setTitle(`${name}'s ${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass} Matches ${emojis.matches}`)
         .setFooter(
