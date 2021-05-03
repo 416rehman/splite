@@ -28,7 +28,7 @@ module.exports = class CrownCommand extends Command {
       .setDescription(description)
       .addField('Crown Role', crownRole)
       .setFooter(`Crown transfer will occur at 20:00 EST`)
-        .setImage(`https://i.imgur.com/P98jTYc.gif`)
+        .setImage(`${Object.keys(description).length > 0 ? "https://i.imgur.com/P98jTYc.gif" : ""}`)
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
     message.channel.send(embed);
