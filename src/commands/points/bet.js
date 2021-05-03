@@ -44,7 +44,7 @@ module.exports = class betCommand extends Command {
 
     let amount = parseInt(args[1]);
     if (isNaN(amount) === true || !amount)
-      return this.sendErrorMessage(message, 0, `${emojis.fail} Please provide a valid point count`).then(m=>m.delete(5000));
+      return this.sendErrorMessage(message, 0, `${emojis.fail} Please provide a valid point count`);
 
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     const otherPoints = message.client.db.users.selectPoints.pluck().get(member.user.id, message.guild.id);
