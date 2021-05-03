@@ -17,20 +17,30 @@ module.exports = class rolesCommand extends Command {
     });
   }
   async run(message, args) {
-    const roleCount = message.guild.roles.cache.size
-    const embed = new MessageEmbed()
-        .setTitle(`Role Count`)
-        .setDescription(`**TOTAL ROLES**: \`${roleCount}\`\n**REMAINING SPACE**: \`${250-roleCount}\``)
-        .setFooter(`TOTAL ROLES: ${roleCount}`)
 
 
-    message.guild.roles.cache.sort(function (a,b){return a.members.size - b.members.size})
-        .forEach(r=>{
-          embed.addField(`${r.name}`, "`" + r.members.size + " Members`", true)
-        })
+    try {
+      message.channel.send(new MessageEmbed().title(`Role count`).description(`${emojis.load} Loading`))
 
-    message.channel.send(embed).catch(err => {
-      return this.sendErrorMessage(message, 0, `Too much data to display.`);
-    })
+      const roleCount = message.guild.roles.cache.size
+      const embed = new MessageEmbed()
+          .setTitle(`Role Count ${roleCount}`)
+          .setDescription(`**TOTAL ROLES**: \`\`\n**REMAINING SPACE**: \`${250 - roleCount}\`\n\n`)
+          .setFooter(`TOTAL ROLES: ${roleCount}`)
+
+
+      message.guild.roles.cache.sort(function (a, b) {
+        return a.members.size - b.members.size
+      })
+          .forEach(r => {
+              embed.addField(`${r.name}`, "`" + r.members.size + " Members`", true)
+          })
+
+      message.channel.send(embed).catch(err => {
+        return this.sendErrorMessage(message, 0, `Too much data to display.`);
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 };
