@@ -31,7 +31,7 @@ module.exports = class LeaderboardCommand extends Command {
     let count = 1;
     for (const row of leaderboard) {
       members.push(oneLine`
-        **${count}.** ${await message.guild.members.cache.get(row.user_id)} - \`${row.points}\` points ${emojis.point}
+        **${count}.** ${await message.guild.members.cache.get(row.user_id)} - \`${row.points}\` ${emojis.point}
       `);
       count++;
     }
@@ -65,7 +65,6 @@ module.exports = class LeaderboardCommand extends Command {
         );
       
       new ReactionMenu(message.client, message.channel, message.member, embed, members, max);
-
     } 
   }
 };

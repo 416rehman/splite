@@ -22,7 +22,7 @@ module.exports = class PointsCommand extends Command {
       .setTitle(`${member.displayName}'s ${emojis.point}`)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
       .addField('Member', member, true)
-      .addField(`${emojis.point}`, `\`${points}\``, true)
+      .addField(`Points ${emojis.point}`, `\`${points}\``, true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);
