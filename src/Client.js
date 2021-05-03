@@ -47,7 +47,7 @@ class Client extends Discord.Client {
      * Sorted Roles for all guild
      * @type {Collection}
      */
-    this.sortedRoles = new Map();
+    this.sortedRoles = new Discord.Collection();
 
     /** 
      * Collection of bot commands
