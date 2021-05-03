@@ -42,7 +42,7 @@ module.exports = class rolesCommand extends Command {
             //     b.members.length > a.members.length
             // }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
-              await sort(allRoleMembers).asc(u=>u.length).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
+              await sort(allRoleMembers).asc(u=>u.length).forEach(r => roles.push(`<@&${r.rID}> - \`${r.size} Members\``))
 
             if (roles.length <= max) {
                 message.guild.roleRetrieval.delete(message.guild.id);
