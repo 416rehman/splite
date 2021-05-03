@@ -37,15 +37,14 @@ module.exports = class rolesCommand extends Command {
       message.channel.send(embed).then(
           async msg=>{
             const roles = [];
-            console.log(message.guild.rolesSorted)
-            if (message.guild.rolesSorted.has(message.guild.id))
+            console.log(message.guild.rolesSorted.size)
+            if (message.guild.rolesSorted.size > 0)
                 message.guild.roles.cache.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
-
             else {
-                message.guild.roles.cache.sort(function (a,b) {
+                message.guild.rolesSorted = message.guild.roles.cache.sort(function (a,b) {
                     return b.members.size - a.members.size
-                }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
-                message.guild.rolesSorted.set(message.guild.id, true)
+                })
+                message.guild.rolesSorted.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
             }
 
 
