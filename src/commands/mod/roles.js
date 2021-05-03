@@ -49,7 +49,7 @@ module.exports = class rolesCommand extends Command {
               msg.edit(embed.setFooter(
                   'Expires after two minutes.\n',
                   message.author.displayAvatarURL({ dynamic: true })))
-
+                    msg.delete()
               new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
             }
             msg.edit(embed).catch(err => {

@@ -53,7 +53,7 @@ module.exports = (client, oldMessage, newMessage) => {
       const embed = new MessageEmbed()
           .setTitle('Message Update: `Edit`')
           .setDescription(`${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})`)
-          .addField('Before', oldMessage.content)
+          .addField('Before', oldMessage ? oldMessage.content : "")
           .addField('After', newMessage.content);
       messageEditLog.send(embed);
     }
