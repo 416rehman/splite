@@ -21,8 +21,8 @@ module.exports = class rolesCommand extends Command {
     const embed = new MessageEmbed()
         .setTitle(`Role Count`)
         .setDescription(`**TOTAL ROLES**: \`${roleCount}\`\n**REMAINING SPACE**: \`${250-roleCount}\``)
-        .setFooter(`**TOTAL ROLES**: ${roleCount}`)
-        .addField('**Name**', '**Members**')
+        .setFooter(`TOTAL ROLES: ${roleCount}`)
+
 
     message.guild.roles.cache.sort(function (a,b){return a.members.size - b.members.size})
         .forEach(r=>{
