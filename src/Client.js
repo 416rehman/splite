@@ -43,6 +43,12 @@ class Client extends Discord.Client {
       OWNER: 'owner'
     };
 
+    /**
+     * Sorted Roles for all guild
+     * @type {Collection}
+     */
+    this.sortedRoles = new Collection();
+
     /** 
      * Collection of bot commands
      * @type {Collection<string, Command>}
