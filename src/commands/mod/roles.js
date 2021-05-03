@@ -31,7 +31,7 @@ module.exports = class rolesCommand extends Command {
         const roleCount = message.guild.roles.cache.size
         const embed = new MessageEmbed()
             .setTitle(`Role Count ${roleCount}`)
-            .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load}`)
+            .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load} Please wait.... This will take a while`)
             .setFooter(`Total Roles: ${roleCount}`)
 
         message.channel.send(embed).then(
