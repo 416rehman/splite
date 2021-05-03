@@ -31,27 +31,27 @@ module.exports = class betCommand extends Command {
   }
 
   run(message, args) {
-    if (message.guild.betsInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already betting against someone! Please try again later.`)
+    if (message.guild.betsInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already betting against someone! Please try again later.`).then(m=>m.delete(5000))
 
     const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
     if (!member) return this.sendErrorMessage(message, 0, `${emojis.fail} Please mention a user or provide a valid user ID`);
     if (member.id === message.client.user.id)
-      return message.channel.send(`${emojis.fail} Sorry I am not allowed to play with you 😟`);
+      return message.channel.send(`${emojis.fail} Sorry I am not allowed to play with you 😟`).then(m=>m.delete(5000));
     if (member.user.id == message.author.id)
-      return message.reply(`${emojis.fail} No stupid, you NEVER bet against yourself!!`)
+      return message.reply(`${emojis.fail} No stupid, you NEVER bet against yourself!!`).then(m=>m.delete(5000))
 
-    if (message.guild.betsInProgress.has(member.user.id)) return message.reply(`${emojis.fail} ${member.user.username} is already betting against someone! Please try again later.`)
+    if (message.guild.betsInProgress.has(member.user.id)) return message.reply(`${emojis.fail} ${member.user.username} is already betting against someone! Please try again later.`).then(m=>m.delete(5000))
 
     let amount = parseInt(args[1]);
     if (isNaN(amount) === true || !amount)
-      return this.sendErrorMessage(message, 0, `${emojis.fail} Please provide a valid point count`);
+      return this.sendErrorMessage(message, 0, `${emojis.fail} Please provide a valid point count`).then(m=>m.delete(5000));
 
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     const otherPoints = message.client.db.users.selectPoints.pluck().get(member.user.id, message.guild.id);
 
-    if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`);
+    if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`).then(m=>m.delete(5000));
     if (amount > limit) amount = limit;
-    if (amount < 0 || amount > otherPoints) return message.reply(`${emojis.nep} ${member.user.username} only has ${otherPoints} points ${emojis.point}! Please change your betting amount!`);
+    if (amount < 0 || amount > otherPoints) return message.reply(`${emojis.nep} ${member.user.username} only has ${otherPoints} points ${emojis.point}! Please change your betting amount!`).then(m=>m.delete(5000));
 
     message.guild.betsInProgress.set(message.author.id, new Date().getTime().toString());
     message.guild.betsInProgress.set(member.user.id, new Date().getTime().toString());
@@ -65,6 +65,7 @@ module.exports = class betCommand extends Command {
               .setDescription(`${emojis.point} **Rolling for ${amount} points** ${emojis.point}\n${emojis.dices}${emojis.dices}${emojis.dices}`)
               .setFooter(`${message.author.username} points: ${points} | ${member.user.username} points: ${otherPoints}`)
           message.channel.send(embed).then(msg => {
+            msg.delete()
             setTimeout(() => {
                       const d = weightedRandom({0: 50, 1: 50})
                       console.log(d)
