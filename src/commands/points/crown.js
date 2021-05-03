@@ -20,11 +20,11 @@ module.exports = class CrownCommand extends Command {
       if (m.roles.cache.find(r => r === crownRole)) return true;
     }).array();
 
-    let description = message.client.utils.trimStringFromArray(crowned);
-    if (crowned.length === 0) description = `No one has the crown!`;
+    let description = `${emojis.crown} ${message.client.utils.trimStringFromArray(crowned) ${emojis.crown}}`
+    if (crowned.length === 0) description = `No one has the crown ${emojis.crown}`;
 
     const embed = new MessageEmbed()
-      .setTitle(`${emojis.crown}  Crowned Members  ${emojis.crown}`)
+      .setTitle(`Crowned Members`)
       .setDescription(description)
       .addField('Crown Role', crownRole)
       .setFooter(`Crown transfer will occur at 20:00 EST`)
