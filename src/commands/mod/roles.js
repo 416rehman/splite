@@ -27,7 +27,7 @@ module.exports = class rolesCommand extends Command {
 
     console.log(message.guild.roleRetrieval)
     const max = 25;
-    try {
+
       const roleCount = message.guild.roles.cache.size
       const embed = new MessageEmbed()
           .setTitle(`Role Count ${roleCount}`)
@@ -58,9 +58,5 @@ module.exports = class rolesCommand extends Command {
             })
           }
       )
-    } catch (e) {
-        message.guild.roleRetrieval.delete(message.guild.id);
-      console.log(e)
-    }
   }
 };
