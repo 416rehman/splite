@@ -64,7 +64,7 @@ module.exports = class betCommand extends Command {
               .setTitle(`${message.author.username} VS ${member.user.username}`)
               .setDescription(`${emojis.point} **Rolling for ${amount} points** ${emojis.point}\n${emojis.dices}${emojis.dices}${emojis.dices}`)
               .setFooter(`${message.author.username} points: ${points} | ${member.user.username} points: ${otherPoints}`)
-          message.channel.send(embed).then(msg => {
+          message.channel.send(embed).then(msg2 => {
             msg.delete()
             setTimeout(() => {
                       const d = weightedRandom({0: 50, 1: 50})
@@ -86,7 +86,7 @@ module.exports = class betCommand extends Command {
                           .setTitle(`${message.author.username} VS ${member.user.username}`)
                           .setDescription(`🎉 ${winner} has won ${amount} points ${emojis.point} from ${loser}!`)
                           .setFooter(`🏆 ${winner.username}'s points: ${winnerPoints + amount} | ${loser.username}'s points: ${loserPoints - amount}`)
-                      msg.edit(embed)
+                      msg2.edit(embed)
             }, 3000)
           }).catch(e => {
             console.log(e)
