@@ -111,7 +111,7 @@ module.exports = class ReactionMenu {
 
     if (overwrite)
     {
-      this.overwrite.edit(first).then(message => {
+        overwrite.edit(first).then(message => {
 
         /**
          * The menu message
