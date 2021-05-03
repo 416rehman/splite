@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const ReactionMenu = require('../ReactionMenu.js');
 const { stripIndent } = require('common-tags');
+import { sort } from 'fast-sort';
 const emojis = require('../../utils/emojis.json')
 
 module.exports = class rolesCommand extends Command {
@@ -32,11 +33,7 @@ module.exports = class rolesCommand extends Command {
       message.channel.send(embed).then(
           msg=>{
             const roles = [];
-
-            message.guild.roles.cache.sort(function (a, b) {
-              console.log(a.name)
-              return a.members.size - b.members.size
-            }).forEach(r => roles.push(`<@&${r.id}> - ${r.members.size} Members`))
+              sort(message.guild.roles.cache).desc(u => u.members.length).forEach(r => roles.push(`<@&${r.id}> - ${r.members.size} Members`))
 
             if (roles.length <= max) {
               msg.edit(embed.setDescription(`TOTAL ROLES: \`${roleCount}\`\nREMAINING SPACE: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
