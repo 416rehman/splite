@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const ReactionMenu = require('../ReactionMenu.js');
 const { stripIndent } = require('common-tags');
-import { sort } from 'fast-sort';
+const { sort } = require ('fast-sort');
 const emojis = require('../../utils/emojis.json')
 
 module.exports = class rolesCommand extends Command {
