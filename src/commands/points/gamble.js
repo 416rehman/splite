@@ -26,7 +26,7 @@ module.exports = class gambleCommand extends Command {
     if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`);
     if (amount > limit) return message.reply(`${emojis.fail} You can't bet more than ${limit} points ${emojis.point} at a time. Please try again!`);
 
-    message.guild.gamblesInProgress.add(message.author.id)
+    message.guild.gamblesInProgress.add(message.author.id, new Date().getTime().toString())
 
     const embed = new MessageEmbed()
         .setTitle(`${message.author.username} gambling ${amount} points ${emojis.point}`)

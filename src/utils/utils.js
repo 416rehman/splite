@@ -5,6 +5,7 @@ const confessions = require("../slashCommands/confessions")
 const report = require("../slashCommands/report")
 const anonymous = require("../slashCommands/anonymous")
 const view = require("../slashCommands/view")
+const Collection = require("@discordjs/collection");
 
 /**
  * Capitalizes a string
@@ -265,10 +266,10 @@ function scheduleCrown(client, guild) {
 
 function setInProgressCommands(client, guild) {
 
-    guild.betsInProgress = new Set();
+    guild.betsInProgress = new Collection();
     console.log(`${guild.name}: betsInProgress Cleared`)
 
-    guild.gamblesInProgress = new Set();
+    guild.gamblesInProgress = new Collection();
     console.log(`${guild.name}: gamblesInProgress Cleared`)
 }
 

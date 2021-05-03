@@ -53,8 +53,8 @@ module.exports = class betCommand extends Command {
     if (amount > limit) amount = limit;
     if (amount < 0 || amount > otherPoints) return message.reply(`${emojis.nep} ${member.user.username} only has ${otherPoints} points ${emojis.point}! Please change your betting amount!`);
 
-    message.guild.betsInProgress.add(message.author.id)
-    message.guild.betsInProgress.add(member.user.id)
+    message.guild.betsInProgress.add(message.author.id, new Date().getTime().toString());
+    message.guild.betsInProgress.add(member.user.id, new Date().getTime().toString());
 
     try {
       message.channel.send(`${member}, ${message.author.username} has sent you a bet of ${amount} points ${emojis.point}. Do you accept?`).then(async msg => {
