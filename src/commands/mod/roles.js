@@ -31,7 +31,7 @@ module.exports = class rolesCommand extends Command {
       const roleCount = message.guild.roles.cache.size
       const embed = new MessageEmbed()
           .setTitle(`Role Count ${roleCount}`)
-          .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load}`)
+          .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load} This may take a while... ${emojis.load}`)
           .setFooter(`Total Roles: ${roleCount}`)
 
       message.channel.send(embed).then(
@@ -39,12 +39,12 @@ module.exports = class rolesCommand extends Command {
             const roles = [];
 
             message.guild.roles.cache.sort(function (a,b) {
-                b.members.length > a.members.length
+                return b.members.size - a.members.size
             }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
             if (roles.length <= max) {
                 message.guild.roleRetrieval.delete(message.guild.id);
-              msg.edit(embed.setDescription(`TOTAL ROLES: \`${roleCount}\`\nREMAINING SPACE: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
+              msg.edit(embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
             }
             else
             {
