@@ -31,19 +31,19 @@ module.exports = class rolesCommand extends Command {
       const roleCount = message.guild.roles.cache.size
       const embed = new MessageEmbed()
           .setTitle(`Role Count ${roleCount}`)
-          .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load} Please Wait... ${emojis.load}`)
+          .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load}`)
           .setFooter(`Total Roles: ${roleCount}`)
 
       message.channel.send(embed).then(
           async msg=>{
             const roles = [];
             console.log(message.guild.rolesSorted)
-            if (message.guild.rolesSorted == false)
+            if (message.guild.rolesSorted.has(message.guild.id))
             {
                 message.guild.roles.cache.sort(function (a,b) {
                     return b.members.size - a.members.size
                 }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
-                message.guild.rolesSorted == true
+                message.guild.rolesSorted.set(message.guild.id, true)
             }
             else message.guild.roles.cache.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
