@@ -2,6 +2,8 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const { confirm } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
+const emojis = require('../../utils/emojis.json')
+
 const cost = 1000;
 module.exports = class resetSmashOrPassCommand extends Command {
   constructor(client) {
@@ -23,9 +25,9 @@ module.exports = class resetSmashOrPassCommand extends Command {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
-      return (await message.reply(`**You need ${cost - points} more points in this server to reset your 🔥 Smash or Pass 👎 history.**\n\nTo check your points, type \`${prefix}points\``)).delete({timeout: 5000})
+      return (await message.reply(`${emojis.nep} **You need ${cost - points} more points ${emojis.point} in this server to reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history.**\n\nTo check your points ${emojis.point}, type \`${prefix}points\``)).delete({timeout: 5000})
     }
-    message.reply(`Your 🔥 **Smash or Pass** 👎 matches, likes, and passes will be reset and 500 points will be deducted from you.\nDo you want to continue?`)
+    message.reply(`Your ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} matches, likes, and passes will be reset and 500 points ${emojis.point} will be deducted from you.\nDo you want to continue?`)
         .then(async msg=>{
           const reactions = await confirm(msg, message.author, ["✅", "❎"], 30000);
 
@@ -33,7 +35,7 @@ module.exports = class resetSmashOrPassCommand extends Command {
           {
             message.client.db.users.updatePoints.run({points: -cost}, message.author.id, message.guild.id)
             message.client.db.users.resetSmashOrPass.run(message.author.id)
-            msg.edit(`Your 🔥 **Smash or Pass** 👎 history has been reset. Enjoy the fresh start!`)
+            msg.edit(`Your ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} history has been reset. Enjoy the fresh start!`)
           }
           else return;
         })

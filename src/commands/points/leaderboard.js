@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const ReactionMenu = require('../ReactionMenu.js');
 const { MessageEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
+const emojis = require('../../utils/emojis.json')
 
 module.exports = class LeaderboardCommand extends Command {
   constructor(client) {
@@ -30,7 +31,7 @@ module.exports = class LeaderboardCommand extends Command {
     let count = 1;
     for (const row of leaderboard) {
       members.push(oneLine`
-        **${count}.** ${await message.guild.members.cache.get(row.user_id)} - \`${row.points}\` points
+        **${count}.** ${await message.guild.members.cache.get(row.user_id)} - \`${row.points}\` points ${emojis.point}
       `);
       count++;
     }

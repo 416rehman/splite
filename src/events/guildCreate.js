@@ -1,5 +1,4 @@
 const { MessageEmbed } = require('discord.js');
-const colors = require('../utils/colors.json');
 const { success } = require('../utils/emojis.json');
 
 module.exports = async (client, guild) => {
@@ -113,39 +112,9 @@ module.exports = async (client, guild) => {
     );
   });
 
-  /** ------------------------------------------------------------------------------------------------
-   * DEFAULT COLORS
-   * ------------------------------------------------------------------------------------------------ */ 
-  // Create default colors
-  let position = 1;
-  for (let [key, value] of Object.entries(colors)){
-    key = '#' + key;
-    if (!guild.roles.cache.find(r => r.name === key)) {
-      try {
-        await guild.roles.create({
-          data: {
-            name: key,
-            color: value,
-            position: position,
-            permissions: []
-          }
-        });
-        position++; // Increment position to create roles in order
-      } catch (err) {
-        client.logger.error(err.message);
-      }
-    }
-  }
-
-  // Self-assign color
-  try {
-    const spliteColor = guild.roles.cache.find(r => r.name === '#Seagrass');
-    if (spliteColor) await guild.me.roles.add(spliteColor);
-  } catch (err) {
-    client.logger.error(err.message);
-  }
   await guild.me.setNickname(`[$] Splite`)
 
-  // Create Slah Commands
+  // Create Slash Commands
   client.utils.registerSlashCommands(client, guild)
+  client.utils.setInProgressCommands(client, guild)
 };

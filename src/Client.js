@@ -36,7 +36,6 @@ class Client extends Discord.Client {
     this.types = {
       INFO: 'info',
       FUN: 'fun',
-      COLOR: 'color',
       POINTS: 'points',
       MISC: 'misc',
       MOD: 'mod',
@@ -216,7 +215,7 @@ class Client extends Discord.Client {
       .setTitle(`${fail} System Error: \`${error}\``)
       .setDescription(`\`\`\`diff\n- System Failure\n+ ${errorMessage}\`\`\``)
       .setTimestamp()
-      .setColor(guild.me.displayHexColor);
+      .setColor("RANDOM");
     systemChannel.send(embed);
   }
 }

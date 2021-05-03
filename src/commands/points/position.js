@@ -29,7 +29,7 @@ module.exports = class PositionCommand extends Command {
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
       .setDescription(`${member} is in **${ordinalPos}** place!`)
       .addField('Position', `\`${pos}\` of \`${message.guild.members.cache.size}\``, true)
-      .addField('Points', `\`${points}\``, true)
+      .addField(`Points ${emojis.point}`, `\`${points}\``, true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);

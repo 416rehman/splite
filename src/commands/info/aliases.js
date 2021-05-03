@@ -31,13 +31,12 @@ module.exports = class AliasesCommand extends Command {
 
     const type = (args[0]) ? args[0].toLowerCase() : '';
     const types = Object.values(message.client.types);
-    const { INFO, FUN, COLOR, POINTS, MISC, MOD, ADMIN, OWNER } = message.client.types;
+    const { INFO, FUN, POINTS, MISC, MOD, ADMIN, OWNER } = message.client.types;
     const { capitalize } = message.client.utils;
 
     const emojiMap = {
       [INFO]: `${emojis.info} ${capitalize(INFO)}`,
       [FUN]: `${emojis.fun} ${capitalize(FUN)}`,
-      [COLOR]: `${emojis.color} ${capitalize(COLOR)}`,
       [POINTS]: `${emojis.points} ${capitalize(POINTS)}`,
       [MISC]: `${emojis.misc} ${capitalize(MISC)}`,
       [MOD]: `${emojis.mod} ${capitalize(MOD)}`,

@@ -3,6 +3,7 @@ const ReactionMenu = require('../ReactionMenu.js');
 const { MessageEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const moment = require('moment')
+const emojis = require('../../utils/emojis.json')
 
 module.exports = class MatchesCommand extends Command {
   constructor(client) {
@@ -11,7 +12,7 @@ module.exports = class MatchesCommand extends Command {
       aliases: ['match', 'sopmatch', 'matched'],
       usage: 'matches',
       description: oneLine`
-        Displays your 🔥 Smash Or Pass 👎 matches.
+        Displays your Smash Or Pass matches ${emojis.matches}.
       `,
       type: client.types.FUN,
       examples: ['matches']
@@ -27,7 +28,7 @@ module.exports = class MatchesCommand extends Command {
     if (args.length>0)
     {
       const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
-      if (member == undefined) return message.reply(`Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:15000}))
+      if (member == undefined) return message.reply(`${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:5000}))
       matches = message.client.db.matches.getAllMatchesOfUser.all(member.user.id, member.user.id);
       name = member.user.username;
     }
@@ -60,7 +61,7 @@ module.exports = class MatchesCommand extends Command {
     if (members.length <= max) {
       const range = (members.length == 1) ? '[1]' : `[1 - ${members.length}]`;
       message.channel.send(embed
-        .setTitle(`${name}'s 🔥 Smash Or Pass 👎 Matches ${range}`)
+        .setTitle(`${name}'s ${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass} Matches ${emojis.matches} ${range}`)
         .setDescription(members.join('\n'))
       );
 
@@ -68,7 +69,7 @@ module.exports = class MatchesCommand extends Command {
     } else {
 
       embed
-        .setTitle(`${name}'s 🔥 Smash Or Pass 👎 Matches`)
+        .setTitle(`${name}'s ${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass} Matches ${emojis.matches}`)
         .setFooter(
           'Expires after two minutes.\n',
           message.author.displayAvatarURL({ dynamic: true })

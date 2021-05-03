@@ -3,7 +3,7 @@ const { MessageEmbed, MessageCollector } = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
 const { oneLine } = require('common-tags');
-
+const reward = 25;
 module.exports = class geoGuessrCommand extends Command {
   constructor(client) {
     super(client, {
@@ -12,7 +12,7 @@ module.exports = class geoGuessrCommand extends Command {
       usage: 'geoguessr',
       description: oneLine`
         Compete against your friends in a game of geoGuessr (anyone can answer).
-        Correct answer rewards 2 points.
+        Correct answer rewards ${reward} points.
         The question will expire after 15 seconds.
       `,
       type: client.types.FUN,
@@ -63,8 +63,8 @@ module.exports = class geoGuessrCommand extends Command {
         .setColor(message.guild.me.displayHexColor);
       if (winner)
       {
-        message.client.db.users.updatePoints.run({ points: 20 }, winner.id, message.guild.id);
-        message.channel.send(answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! +2 Points!`));
+        message.client.db.users.updatePoints.run({ points: reward }, winner.id, message.guild.id);
+        message.channel.send(answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! +${reward} Points!`));
       }
 
       else message.channel.send(answerEmbed

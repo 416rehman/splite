@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const { confirm } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
+const emojis = require('../../utils/emojis.json')
 
 module.exports = class unmatchCommand extends Command {
   constructor(client) {
@@ -37,13 +38,14 @@ module.exports = class unmatchCommand extends Command {
         }
         else member = message.guild.members.cache.find(r=> r.user.username.toLowerCase().startsWith(args[0].toLowerCase()))
 
-        if (member === undefined) return message.channel.send(`Failed to find the user. Please try again later.`)
+        if (member === undefined) return message.channel.send(`${emojis.fail} Failed to find the user. Please try again later.`)
+        if (member.user.id === message.author.id) return message.channel.send(`${emojis.fail} I am sorry, I can't do that.`)
         const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
         if (match != null)
         {
             const embed = new MessageEmbed()
-                .setTitle(`🔥 Smash or Pass 👎`)
-                .setDescription(`You will be unmatched with ${member.user.username}\nDo you want to continue?`)
+                .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
+                .setDescription(`You will be unmatched ${emojis.unmatch} with ${member.user.username}\nDo you want to continue?`)
                 .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
             message.channel.send(embed)
                 .then(async msg=>{
@@ -53,8 +55,8 @@ module.exports = class unmatchCommand extends Command {
                     {
                         message.client.db.matches.unmatchUser.run(message.author.id, member.user.id)
                         msg.edit(new MessageEmbed()
-                            .setTitle(`🔥 Smash or Pass 👎`)
-                            .setDescription(`You have unmatched with ${member.user.username}!`))
+                            .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
+                            .setDescription(`You have unmatched ${emojis.unmatch} with ${member.user.username}!`))
                         msg.delete({timeout: 5000})
                     }
                     else return msg.delete();
@@ -62,8 +64,8 @@ module.exports = class unmatchCommand extends Command {
         }
         else {
             const embed = new MessageEmbed()
-                .setTitle(`🔥 Smash or Pass 👎`)
-                .setDescription(`You can't unmatch someone you haven't matched with.`)
+                .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
+                .setDescription(`You can't unmatch ${emojis.unmatch} someone you haven't matched with.`)
 
            return message.channel.send(embed).then(m=>m.delete({timeout:5000}))
         }

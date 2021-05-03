@@ -1,5 +1,6 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
+const emojis = require('../../utils/emojis.json')
 
 module.exports = class CrownCommand extends Command {
   constructor(client) {
@@ -20,10 +21,10 @@ module.exports = class CrownCommand extends Command {
     }).array();
 
     let description = message.client.utils.trimStringFromArray(crowned);
-    if (crowned.length === 0) description = 'No one has the crown!';
+    if (crowned.length === 0) description = `No one has the crown! ${emojis.crown}`;
 
     const embed = new MessageEmbed()
-      .setTitle(':crown:  Crowned Members  :crown:')
+      .setTitle(`${emojis.crown}  Crowned Members  ${emojis.crown}`)
       .setDescription(description)
       .addField('Crown Role', crownRole)
       .setFooter(`Crown transfer will occur at 20:00 EST`)

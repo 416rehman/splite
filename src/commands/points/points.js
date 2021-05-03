@@ -1,5 +1,6 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
+const emojis = require('../../utils/emojis.json')
 
 module.exports = class PointsCommand extends Command {
   constructor(client) {
@@ -18,10 +19,10 @@ module.exports = class PointsCommand extends Command {
       message.member;
     const points = message.client.db.users.selectPoints.pluck().get(member.id, message.guild.id);
     const embed = new MessageEmbed()
-      .setTitle(`${member.displayName}'s Points`)
+      .setTitle(`${member.displayName}'s ${emojis.point}`)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
       .addField('Member', member, true)
-      .addField('Points', `\`${points}\``, true)
+      .addField(`${emojis.point}`, `\`${points}\``, true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);

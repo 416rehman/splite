@@ -263,6 +263,15 @@ function scheduleCrown(client, guild) {
   }
 }
 
+function setInProgressCommands(client, guild) {
+
+    guild.betsInProgress = new Set();
+    console.log(`${guild.name}: betsInProgress Cleared`)
+
+    guild.gamblesInProgress = new Set();
+    console.log(`${guild.name}: gamblesInProgress Cleared`)
+}
+
 module.exports = {
   capitalize,
   removeElement,
@@ -278,5 +287,6 @@ module.exports = {
   scheduleCrown,
   registerSlashCommands,
   callSlashCommand,
-  getEmojiForJoinVoting
+  getEmojiForJoinVoting,
+  setInProgressCommands
 };
