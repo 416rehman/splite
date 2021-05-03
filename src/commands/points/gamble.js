@@ -40,7 +40,7 @@ module.exports = class gambleCommand extends Command {
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} gambling ${amount} Points ${emojis.point}`)
-                    .setDescription(`${fail} You lost! **Remaining Points **${emojis.point} **: ${points - amount}**`)
+                    .setDescription(`${fail} You lost! **You now have ${points - amount}** ${emojis.point}`)
                     .setFooter(`Your points: ${points - amount}`, message.author.displayAvatarURL({ dynamic: true }))
                 message.client.db.users.updatePoints.run({ points: -amount }, message.author.id, message.guild.id);
                 msg.edit(embed)
@@ -50,7 +50,7 @@ module.exports = class gambleCommand extends Command {
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} gambling ${amount} Points ${emojis.point}`)
-                    .setDescription(`🎉 You Won! **Your points **${emojis.point} **: ${points + amount}**`)
+                    .setDescription(`🎉 You Won! **You now have ${points + amount}** ${emojis.point}`)
                     .setFooter(`Your points: ${points + amount}`, message.author.displayAvatarURL({ dynamic: true }))
                 message.client.db.users.updatePoints.run({ points: amount }, message.author.id, message.guild.id);
                 msg.edit(embed)
