@@ -18,6 +18,7 @@ module.exports = class gambleCommand extends Command {
   }
   run(message, args) {
     if (message.guild.betsInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already gambling. Please try again later`)
+      console.log(message.guild.betsInProgress)
     const amount = parseInt(args[0]);
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     if (isNaN(amount) === true || !amount)
@@ -40,7 +41,7 @@ module.exports = class gambleCommand extends Command {
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} gambling ${amount} Points ${emojis.point}`)
-                    .setDescription(`${fail} You lost! **You now have ${points - amount}** ${emojis.point}`)
+                    .setDescription(`${emojis.fail} You lost! **You now have ${points - amount}** ${emojis.point}`)
                     .setFooter(`Your points: ${points - amount}`, message.author.displayAvatarURL({ dynamic: true }))
                 message.client.db.users.updatePoints.run({ points: -amount }, message.author.id, message.guild.id);
                 msg.edit(embed)
