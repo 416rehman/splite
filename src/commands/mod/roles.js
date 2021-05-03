@@ -39,13 +39,15 @@ module.exports = class rolesCommand extends Command {
             const roles = [];
             console.log(message.guild.rolesSorted)
             if (message.guild.rolesSorted.has(message.guild.id))
-            {
+                message.guild.roles.cache.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
+
+            else {
                 message.guild.roles.cache.sort(function (a,b) {
                     return b.members.size - a.members.size
                 }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
                 message.guild.rolesSorted.set(message.guild.id, true)
             }
-            else message.guild.roles.cache.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
+
 
             if (roles.length <= max) {
                 message.guild.roleRetrieval.delete(message.guild.id);
