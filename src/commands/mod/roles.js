@@ -33,7 +33,7 @@ module.exports = class rolesCommand extends Command {
         return a.members.size - b.members.size
       })
           .forEach(r => {
-              embed.addField(`${r.name}`, "`" + r.members.size + " Members`", true)
+              embed.addField(`${r.members.size}`, `${r}`, true)
           })
 
       message.channel.send(embed).catch(err => {
