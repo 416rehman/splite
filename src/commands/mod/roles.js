@@ -21,7 +21,7 @@ module.exports = class rolesCommand extends Command {
   async run(message, args) {
     if (message.guild.roleRetrieval.has(message.guild.id))
     {
-        return message.reply(`Already in progress.`)
+        return message.reply(`Please wait a while before calling this command.`)
     }
     message.guild.roleRetrieval.set(message.guild.id, true);
 
@@ -37,7 +37,7 @@ module.exports = class rolesCommand extends Command {
       message.channel.send(embed).then(
           msg=>{
             const roles = [];
-            const sorted = sort(message.guild.roles.cache).desc(u => u.members.length)
+            const sorted = sort(message.guild.roles.cache).desc(u => u.members.size)
             sorted.forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
 
             if (roles.length <= max) {
