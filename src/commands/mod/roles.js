@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const ReactionMenu = require('../ReactionMenu.js');
 const { stripIndent } = require('common-tags');
-const { sort } = require ('fast-sort');
+const { inPlaceSort } = require ('fast-sort');
 const emojis = require('../../utils/emojis.json')
 
 module.exports = class rolesCommand extends Command {
@@ -39,17 +39,28 @@ module.exports = class rolesCommand extends Command {
 
                 let Cached = false;
                 let roles = [];
-                if (msg.client.sortedRoles.has(message.guild.id))
+                //msg.client.sortedRoles.has(message.guild.id)
+                if (false)
                 {
                     roles = msg.client.sortedRoles.get(message.guild.id)
                     Cached = true
                 }
                 else
                 {
+                    console.time('sort')
                     await message.guild.roles.cache.sort(function (a, b) {
                         return b.members.size - a.members.size
                     }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
                     msg.client.sortedRoles.set(message.guild.id, roles);
+                    console.timeEnd('sort')
+
+                    // console.time('newsort')
+                    // const sorted = message.guild.roles.cache.map(r=> {
+                    //     return { id: r.id, memberCount: r.members.size }
+                    // })
+                    // inPlaceSort(sorted).desc(u=>u.memberCount)
+                    // sorted.forEach(r=>{roles.push(`<@&${r.id}> - \`${r.memberCount} Members\``)})
+                    // console.timeEnd('newsort')
                 }
 
                 if (roles.length <= max) {
