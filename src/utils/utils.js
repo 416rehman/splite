@@ -244,7 +244,6 @@ async function transferCrown(client, guild, crownRoleId) {
   }
 
   client.logger.info(`${guild.name}: Assigned crown role to ${winner.user.tag} and reset server points`);
-  client.sortedRoles.delete(guild.id)
 }
 
 /**

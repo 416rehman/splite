@@ -36,47 +36,30 @@ module.exports = class rolesCommand extends Command {
 
         message.channel.send(embed).then(
             async msg => {
-
-                let Cached = false;
-                let roles = [];
-                //msg.client.sortedRoles.has(message.guild.id)
-                if (false)
+                if (message.guild.roleRetrieval.has(message.guild.id)) return message.reply(`Role count is already in progress. Please try later!`)
+                message.guild.roleRetrieval.set(message.guild.id, true)
+                const roles = [];
+                try
                 {
-                    roles = msg.client.sortedRoles.get(message.guild.id)
-                    Cached = true
-                }
-                else
-                {
-                    // console.time('sort')
-                    // await message.guild.roles.cache.sort(function (a, b) {
-                    //     return b.members.size - a.members.size
-                    // }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
-                    // msg.client.sortedRoles.set(message.guild.id, roles);
-                    // console.timeEnd('sort')
-
-                    console.time('newsort')
                     const sorted = message.guild.roles.cache.map(r=> {
                         return { id: r.id, memberCount: r.members.size }
                     })
                     inPlaceSort(sorted).desc(u=>u.memberCount)
                     sorted.forEach(r=>{roles.push(`<@&${r.id}> - \`${r.memberCount} Members\``)})
-                    console.timeEnd('newsort')
-                }
 
-                if (roles.length <= max) {
-                    message.guild.roleRetrieval.delete(message.guild.id);
-                    msg.edit(embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`).setFooter(Cached ? `This data is from a cached copy. Next cache update at 8PM EST` : ""))
-                } else {
-                    msg.edit(embed.setFooter(
-                        `Expires after two minutes.\n${Cached ? "This data is from a cached copy. Next cache update at 8PM EST" : ""}`,
-                        message.author.displayAvatarURL({dynamic: true})))
-                    msg.delete()
-                    new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
-                }
-                msg.edit(embed).catch(err => {
-                    if (err) message.guild.roleRetrieval.delete(message.guild.id);
-                    console.log(err)
-                })
+                    if (roles.length <= max) {
+                        msg.edit(embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
+                    } else {
+                        msg.edit(embed.setFooter(
+                            `Expires after two minutes.\n${Cached ? "This data is from a cached copy. Next cache update at 8PM EST" : ""}`,
+                            message.author.displayAvatarURL({dynamic: true})))
+                        msg.delete()
+                        new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
+                    }
+                    msg.edit(embed)
+                } catch (e) { console.log(e) }
+
+                message.guild.roleRetrieval.delete(message.guild.id);
             }
         )
     }

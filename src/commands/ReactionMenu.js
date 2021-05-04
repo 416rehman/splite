@@ -120,7 +120,6 @@ module.exports = class ReactionMenu {
 
         this.addReactions();
         this.createCollector();
-        message.guild.roleRetrieval.delete(message.guild.id);
       });
   }
 
