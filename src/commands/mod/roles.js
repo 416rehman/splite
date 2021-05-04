@@ -20,24 +20,19 @@ module.exports = class rolesCommand extends Command {
     }
 
     async run(message, args) {
-        if (message.guild.roleRetrieval.has(message.guild.id)) {
-            return message.reply(`Please wait a while before calling this command.`)
-        }
+        if (message.guild.roleRetrieval.has(message.guild.id)) return message.reply(`Role count is already in progress. Please try later!`)
         message.guild.roleRetrieval.set(message.guild.id, true);
 
-        console.log(message.guild.roleRetrieval)
         const max = 25;
 
         const roleCount = message.guild.roles.cache.size
         const embed = new MessageEmbed()
             .setTitle(`Role Count ${roleCount}`)
-            .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load} Please wait.... This will take a while`)
+            .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load} Please wait.... This may take a while`)
             .setFooter(`Total Roles: ${roleCount}`)
 
         message.channel.send(embed).then(
             async msg => {
-                if (message.guild.roleRetrieval.has(message.guild.id)) return message.reply(`Role count is already in progress. Please try later!`)
-                message.guild.roleRetrieval.set(message.guild.id, true)
                 const roles = [];
                 try
                 {
@@ -51,7 +46,7 @@ module.exports = class rolesCommand extends Command {
                         msg.edit(embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
                     } else {
                         msg.edit(embed.setFooter(
-                            `Expires after two minutes.\n${Cached ? "This data is from a cached copy. Next cache update at 8PM EST" : ""}`,
+                            `Expires after two minutes.`,
                             message.author.displayAvatarURL({dynamic: true})))
                         msg.delete()
                         new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
