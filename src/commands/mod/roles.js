@@ -47,20 +47,20 @@ module.exports = class rolesCommand extends Command {
                 }
                 else
                 {
-                    console.time('sort')
-                    await message.guild.roles.cache.sort(function (a, b) {
-                        return b.members.size - a.members.size
-                    }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
-                    msg.client.sortedRoles.set(message.guild.id, roles);
-                    console.timeEnd('sort')
+                    // console.time('sort')
+                    // await message.guild.roles.cache.sort(function (a, b) {
+                    //     return b.members.size - a.members.size
+                    // }).forEach(r => roles.push(`<@&${r.id}> - \`${r.members.size} Members\``))
+                    // msg.client.sortedRoles.set(message.guild.id, roles);
+                    // console.timeEnd('sort')
 
-                    // console.time('newsort')
-                    // const sorted = message.guild.roles.cache.map(r=> {
-                    //     return { id: r.id, memberCount: r.members.size }
-                    // })
-                    // inPlaceSort(sorted).desc(u=>u.memberCount)
-                    // sorted.forEach(r=>{roles.push(`<@&${r.id}> - \`${r.memberCount} Members\``)})
-                    // console.timeEnd('newsort')
+                    console.time('newsort')
+                    const sorted = message.guild.roles.cache.map(r=> {
+                        return { id: r.id, memberCount: r.members.size }
+                    })
+                    inPlaceSort(sorted).desc(u=>u.memberCount)
+                    sorted.forEach(r=>{roles.push(`<@&${r.id}> - \`${r.memberCount} Members\``)})
+                    console.timeEnd('newsort')
                 }
 
                 if (roles.length <= max) {
