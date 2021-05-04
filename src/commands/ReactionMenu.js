@@ -68,12 +68,6 @@ module.exports = class ReactionMenu {
     this.interval = interval;
 
     /**
-     * The message to overwrite
-     * @type {int}
-     */
-    this.overwrite = overwrite;
-
-    /**
      * The current array window start
      * @type {int}
      */
