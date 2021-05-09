@@ -36,7 +36,7 @@ module.exports = class SnipeCommand extends Command {
           .setDescription(`${fail} There is nothing to snipe!`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp();
-      msg.edit(embed);
+      msg.edit(embed).then(m => {m.delete({timeout: 5000})});
     }
   }
 };
