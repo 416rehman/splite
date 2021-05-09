@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const ms = require('ms');
+const { confirm } = require("djs-reaction-collector")
 
 module.exports = class MuteCommand extends Command {
   constructor(client) {
@@ -43,42 +44,54 @@ module.exports = class MuteCommand extends Command {
     if (member.roles.cache.has(muteRoleId))
       return this.sendErrorMessage(message, 0, 'Provided member is already muted');
 
-    // Mute member
-    try {
-      await member.roles.add(muteRole);
-    } catch (err) {
-      message.client.logger.error(err.stack);
-      return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
-    }
-    const muteEmbed = new MessageEmbed()
-      .setTitle('Mute Member')
-      .setDescription(`${member} has now been muted for **${ms(time, { long: true })}**.`)
-      .addField('Moderator', message.member, true)
-      .addField('Member', member, true)
-      .addField('Time', `\`${ms(time)}\``, true)
-      .addField('Reason', reason)
-      .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(message.guild.me.displayHexColor);
-    message.channel.send(muteEmbed);
+    message.channel.send(new MessageEmbed().setTitle('Mute Member')
+        .setDescription(`Do you want to mute ${member} for **${ms(time, {long: true})}**?`)).then(async m=>
+    {
+      const reactions = await confirm(msg, message.author, ["✅", "❌"], 10000);
 
-    // Unmute member
-    member.timeout = message.client.setTimeout(async () => {
-      try {
-        await member.roles.remove(muteRole);
-        const unmuteEmbed = new MessageEmbed()
-          .setTitle('Unmute Member')
-          .setDescription(`${member} has been unmuted.`)
-          .setTimestamp()
-          .setColor(message.guild.me.displayHexColor);
-        message.channel.send(unmuteEmbed);
-      } catch (err) {
-        message.client.logger.error(err.stack);
-        return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
+      if(reactions === '✅') {
+        // Mute member
+        try {
+          await member.roles.add(muteRole);
+        } catch (err) {
+          message.client.logger.error(err.stack);
+          return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
+        }
+        const muteEmbed = new MessageEmbed()
+            .setTitle('Mute Member')
+            .setDescription(`${member} has now been muted for **${ms(time, {long: true})}**.`)
+            .addField('Moderator', message.member, true)
+            .addField('Member', member, true)
+            .addField('Time', `\`${ms(time)}\``, true)
+            .addField('Reason', reason)
+            .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+            .setTimestamp()
+            .setColor(message.guild.me.displayHexColor);
+        message.channel.send(muteEmbed);
+
+        // Unmute member
+        member.timeout = message.client.setTimeout(async () => {
+          try {
+            await member.roles.remove(muteRole);
+            const unmuteEmbed = new MessageEmbed()
+                .setTitle('Unmute Member')
+                .setDescription(`${member} has been unmuted.`)
+                .setTimestamp()
+                .setColor(message.guild.me.displayHexColor);
+            message.channel.send(unmuteEmbed);
+          } catch (err) {
+            message.client.logger.error(err.stack);
+            return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
+          }
+        }, time);
+
+        // Update mod log
+        this.sendModLogMessage(message, reason, {Member: member, Time: `\`${ms(time)}\``});
       }
-    }, time);
-
-    // Update mod log
-    this.sendModLogMessage(message, reason, { Member: member, Time: `\`${ms(time)}\`` });
+      else
+      {
+        m.delete();
+      }
+    })
   }
 };
