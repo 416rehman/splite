@@ -14,7 +14,7 @@ module.exports = class SnipeCommand extends Command {
   async run(message) {
     const embed = new MessageEmbed()
       .setDescription('`Sniping...`')
-      .setColor(message.guild.me.displayHexColor);    
+      .setColor("RANDOM");
     const msg = await message.channel.send(embed);
 
 
@@ -23,12 +23,11 @@ module.exports = class SnipeCommand extends Command {
     if (snipedMSg)
     {
         if (snipedMSg.content || snipedMSg.attachments)
-      embed.setTitle(`\u200b`)
-          .setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
+        embed.setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setImage(`${snipedMSg.attachments ? snipedMSg.attachments[0].url : ''}`)
           .setTimestamp()
-          .setAuthor(`${snipedMSg.author.username}$${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
+          .setAuthor(`${snipedMSg.author.username}#${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
       msg.edit(embed);
     }
     else
