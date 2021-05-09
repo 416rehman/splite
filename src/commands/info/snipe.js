@@ -24,7 +24,7 @@ module.exports = class SnipeCommand extends Command {
     {
         embed.setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
             .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
-            .setImage(`${snipedMSg.attachments.size > 0 ? snipedMSg.attachments[0].url : ''}`)
+            .setImage(`${snipedMSg.attachments.size > 0 ? snipedMSg.attachments.first().url : ''}`)
             .setTimestamp()
             .setAuthor(`${snipedMSg.author.username}#${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
         msg.edit(embed);
