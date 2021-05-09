@@ -7,11 +7,13 @@ module.exports = (client, message) => {
   if (message.channel.type === 'dm' || !message.channel.viewable || message.author.bot) return;
 
   const {
-    afk: currentStatus
+    afk: currentStatus,
+    afk_time: afkTime
   } = message.client.db.users.selectAfk.get(message.guild.id, message.author.id);
 
   if (currentStatus != null)
   {
+    const d = new Date(afkTime)
     message.client.db.users.updateAfk.run(null, message.author.id, message.guild.id)
     if(message.member.nickname) message.member.setNickname(`${message.member.nickname.replace('[AFK]','')}`).catch(err=>{console.log()})
     message.channel.send(`${online} Welcome back ${message.author}, you went afk ${moment(d).fromNow()}`).then(msg=>{msg.delete({timeout: 5000})})
