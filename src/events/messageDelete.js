@@ -1,7 +1,9 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = (client, message) => {
-  console.log(message)
+
+  if (message.guild.snipes.has(message.channel.id)) message.guild.snipes.delete(message.channel.id)
+  message.guilds.snipes.set(message.channel.id, message)
   // Check for webhook and that message is not empty
   if (message.webhookID || (!message.content && message.embeds.length === 0)) return;
 
@@ -14,7 +16,6 @@ module.exports = (client, message) => {
   // Message delete
   if (message.content) {
     try {
-      if (message.guild.snipes.has(message.channel.id)) message.guild.snipes.delete(message.channel.id)
       // Dont send logs for starboard delete
       const starboardChannelId = client.db.settings.selectStarboardChannelId.pluck().get(message.guild.id);
       const starboardChannel = message.guild.channels.cache.get(starboardChannelId);

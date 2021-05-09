@@ -22,9 +22,11 @@ module.exports = class SnipeCommand extends Command {
     console.log(snipedMSg)
     if (snipedMSg)
     {
+        if (snipedMSg.content || snipedMSg.attachments)
       embed.setTitle(`\u200b`)
-          .setDescription(`${snipedMSg.content}`)
+          .setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+          .setImage(`${snipedMSg.attachments[0].url ? snipedMSg.attachments[0].url : ''}`)
           .setTimestamp()
           .setAuthor(`${snipedMSg.author.username}$${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
       msg.edit(embed);
