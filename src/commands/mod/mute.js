@@ -31,7 +31,7 @@ module.exports = class MuteCommand extends Command {
     if (member.roles.highest.position >= message.member.roles.highest.position)
       return this.sendErrorMessage(message, 0, 'You cannot mute someone with an equal or higher role');
     let time = ms('5m');
-    if (args[1]) let time = ms(args[1]);
+    if (args[1]) time = ms(args[1]);
 
     if (!time || time > 1209600000) // Cap at 14 days, larger than 24.8 days causes integer overflow
       return this.sendErrorMessage(message, 0, 'Please enter a length of time of 14 days or less (1s/m/h/d)');
