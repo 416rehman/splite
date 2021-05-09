@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = (client, message) => {
-  
+  console.log(message)
   // Check for webhook and that message is not empty
   if (message.webhookID || (!message.content && message.embeds.length === 0)) return;
 
@@ -43,9 +43,6 @@ module.exports = (client, message) => {
     }
 
   // Embed delete
-  }
-  if (message.content || message.attachments){
-    message.guild.snipes.set(message.channel.id, message);
   }
   else {
 
