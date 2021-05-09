@@ -45,7 +45,7 @@ module.exports = class MuteCommand extends Command {
       return this.sendErrorMessage(message, 0, 'Provided member is already muted');
 
     message.channel.send(new MessageEmbed().setTitle('Mute Member')
-        .setDescription(`Do you want to mute ${member} for **${ms(time, {long: true})}**?`)).then(async m=>
+        .setDescription(`Do you want to mute ${member} for **${ms(time, {long: true})}**?`)).then(async msg=>
     {
       const reactions = await confirm(msg, message.author, ["✅", "❌"], 10000);
 
@@ -90,7 +90,7 @@ module.exports = class MuteCommand extends Command {
       }
       else
       {
-        m.delete();
+        msg.delete();
       }
     })
   }
