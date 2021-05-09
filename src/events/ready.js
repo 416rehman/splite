@@ -1,3 +1,4 @@
+const Collection = require("@discordjs/collection");
 module.exports = async (client) => {
   const activities = [
     { name: '@splite help', type: 'LISTENING' },
@@ -19,6 +20,7 @@ module.exports = async (client) => {
   }, 30000);
 
   client.logger.info('Updating database and scheduling jobs...');
+  //FOR EACH GUILD
   for (const guild of client.guilds.cache.values()) {
 
     /** ------------------------------------------------------------------------------------------------
@@ -122,6 +124,12 @@ module.exports = async (client) => {
      * RUNNING COMMANDS
      * ------------------------------------------------------------------------------------------------ */
     client.utils.setInProgressCommands(client, guild)
+
+    /** ------------------------------------------------------------------------------------------------
+     * SNIPE HISTORY
+     * ------------------------------------------------------------------------------------------------ */
+
+    guild.snipes = new Collection()
   }
 
   // Remove left guilds

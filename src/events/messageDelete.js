@@ -14,6 +14,8 @@ module.exports = (client, message) => {
   // Message delete
   if (message.content) {
     try {
+      if (message.guild.snipes.has(message.channel.id)) message.guild.snipes.delete(message.channel.id)
+      message.guild.snipes.set(message.channel.id, message);
       // Dont send logs for starboard delete
       const starboardChannelId = client.db.settings.selectStarboardChannelId.pluck().get(message.guild.id);
       const starboardChannel = message.guild.channels.cache.get(starboardChannelId);
