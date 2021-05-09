@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const { pong } = require('../../utils/emojis.json');
-
+const { fail } = require('../../utils/emojis.json')
 module.exports = class SnipeCommand extends Command {
   constructor(client) {
     super(client, {
@@ -17,15 +17,22 @@ module.exports = class SnipeCommand extends Command {
       .setColor(message.guild.me.displayHexColor);    
     const msg = await message.channel.send(embed);
 
-    console.log(message.guild.snipes.get(`${message.channel.id}`))
-   // const snipedMSg = message.guild.snipes.find(message.channel.id)
+
+   const snipedMSg = message.guild.snipes.get(message.channel.id)
 
     if (snipedMSg)
     {
-      embed.setTitle(`Pong!  ${pong}`)
-          .setDescription('')
-          .addField('Latency', latency, true)
-          .addField('API Latency', apiLatency, true)
+      embed.setTitle(`${snipedMSg.author.username}${snipedMSg.author.discriminator}`)
+          .setDescription(`${snipedMSg.content}`)
+          .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+          .setTimestamp()
+          .setAuthor(snipedMSg.author.avatarURL())
+      msg.edit(embed);
+    }
+    else
+    {
+      embed.setTitle(`Splite Sniper`)
+          .setDescription(`${fail} There is nothing to snipe!`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp();
       msg.edit(embed);
