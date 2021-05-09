@@ -27,7 +27,7 @@ module.exports = (client, message) => {
       if (currentStatus != null)
       {
         const d = new Date(afkTime)
-        message.channel.send(`${dnd} ${user.username} is afk! ${currentStatus} - ${moment(d).fromNow()}`).then(msg=>{msg.delete({timeout: 5000})})
+        message.channel.send(`${dnd} ${user.username} is afk! ${currentStatus} - ${moment(d).fromNow()}`)
       }
     })
   }
