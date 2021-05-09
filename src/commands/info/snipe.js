@@ -17,8 +17,9 @@ module.exports = class SnipeCommand extends Command {
       .setColor(message.guild.me.displayHexColor);    
     const msg = await message.channel.send(embed);
 
-    const snipedMSg = message.guild.snipes.find(message.channel.id)
     console.log(message.guild.snipes)
+    const snipedMSg = message.guild.snipes.find(message.channel.id)
+
     if (snipedMSg)
     {
       embed.setTitle(`Pong!  ${pong}`)
