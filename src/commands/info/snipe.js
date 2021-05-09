@@ -20,17 +20,14 @@ module.exports = class SnipeCommand extends Command {
 
    const snipedMSg = message.guild.snipes.get(message.channel.id)
     console.log(snipedMSg)
-    if (snipedMSg)
+    if (snipedMSg && (snipedMSg.content || snipedMSg.attachments > 0))
     {
-        if (snipedMSg.content || snipedMSg.attachments > 0)
-        {
-            embed.setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
-                .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
-                .setImage(`${snipedMSg.attachments.size > 0 ? snipedMSg.attachments[0].url : ''}`)
-                .setTimestamp()
-                .setAuthor(`${snipedMSg.author.username}#${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
-            msg.edit(embed);
-        }
+        embed.setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
+            .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+            .setImage(`${snipedMSg.attachments.size > 0 ? snipedMSg.attachments[0].url : ''}`)
+            .setTimestamp()
+            .setAuthor(`${snipedMSg.author.username}#${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
+        msg.edit(embed);
     }
     else
     {
