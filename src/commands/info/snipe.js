@@ -22,11 +22,11 @@ module.exports = class SnipeCommand extends Command {
 
     if (snipedMSg)
     {
-      embed.setTitle(`${snipedMSg.author.username}${snipedMSg.author.discriminator}`)
+      embed.setTitle(`\u200b`)
           .setDescription(`${snipedMSg.content}`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
-          .setAuthor(snipedMSg.author.avatarURL())
+          .setAuthor(`${snipedMSg.author.username}${snipedMSg.author.discriminator}`, snipedMSg.author.iconURL)
       msg.edit(embed);
     }
     else
