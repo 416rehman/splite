@@ -17,7 +17,7 @@ module.exports = class SnipeCommand extends Command {
       .setColor(message.guild.me.displayHexColor);    
     const msg = await message.channel.send(embed);
 
-    console.log(message.guild.snipes.find(message.channel.id))
+    console.log(message.guild.snipes.keys())
    // const snipedMSg = message.guild.snipes.find(message.channel.id)
 
     if (snipedMSg)
