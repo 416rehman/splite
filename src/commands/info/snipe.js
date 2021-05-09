@@ -20,7 +20,7 @@ module.exports = class SnipeCommand extends Command {
 
    const snipedMSg = message.guild.snipes.get(message.channel.id)
     console.log(snipedMSg)
-    if (snipedMSg && (snipedMSg.content || snipedMSg.attachments > 0))
+    if (snipedMSg && (snipedMSg.content || snipedMSg.attachments.size > 0))
     {
         embed.setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
             .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
