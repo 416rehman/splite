@@ -15,7 +15,6 @@ module.exports = (client, message) => {
   if (message.content) {
     try {
       if (message.guild.snipes.has(message.channel.id)) message.guild.snipes.delete(message.channel.id)
-      message.guild.snipes.set(message.channel.id, message);
       // Dont send logs for starboard delete
       const starboardChannelId = client.db.settings.selectStarboardChannelId.pluck().get(message.guild.id);
       const starboardChannel = message.guild.channels.cache.get(starboardChannelId);
@@ -44,7 +43,11 @@ module.exports = (client, message) => {
     }
 
   // Embed delete
-  } else { 
+  }
+  if (message.content || message.attachments){
+    message.guild.snipes.set(message.channel.id, message);
+  }
+  else {
 
     // Get message delete log
     const messageDeleteLogId = client.db.settings.selectMessageDeleteLogId.pluck().get(message.guild.id);
