@@ -26,7 +26,7 @@ module.exports = class SnipeCommand extends Command {
           .setDescription(`${snipedMSg.content}`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
-          .setAuthor(`${snipedMSg.author.username}${snipedMSg.author.discriminator}`, snipedMSg.author.iconURL)
+          .setAuthor(`${snipedMSg.author.username}$${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
       msg.edit(embed);
     }
     else
