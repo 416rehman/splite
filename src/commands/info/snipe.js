@@ -18,7 +18,7 @@ module.exports = class SnipeCommand extends Command {
     const msg = await message.channel.send(embed);
 
     const snipedMSg = message.guild.snipes.find(message.channel.id)
-    console.log(snipedMSg)
+    console.log(message.guild.snipes)
     if (snipedMSg)
     {
       embed.setTitle(`Pong!  ${pong}`)
