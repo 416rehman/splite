@@ -19,7 +19,7 @@ module.exports = class SnipeCommand extends Command {
 
 
    const snipedMSg = message.guild.snipes.get(message.channel.id)
-
+    console.log(snipedMSg)
     if (snipedMSg)
     {
       embed.setTitle(`\u200b`)
