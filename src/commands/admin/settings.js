@@ -6,7 +6,7 @@ module.exports = class SettingsCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'settings',
-      aliases: ['set', 's', 'config', 'conf'],
+      aliases: ['set', 'config', 'conf'],
       usage: 'settings [category]',
       description: oneLine`
         Displays a list of all current settings for the given setting category. 

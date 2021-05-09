@@ -7,6 +7,7 @@ module.exports = class SnipeCommand extends Command {
     super(client, {
       name: 'snipe',
       usage: 'snipe',
+      aliases: ['s', 'sn', 'sniper'],
       description: 'Shows the most recently deleted message in the channel',
       type: client.types.INFO
     });
@@ -19,7 +20,7 @@ module.exports = class SnipeCommand extends Command {
 
 
    const snipedMSg = message.guild.snipes.get(message.channel.id)
-    console.log(snipedMSg)
+
     if (snipedMSg && (snipedMSg.content || snipedMSg.attachments.size > 0))
     {
         embed.setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
