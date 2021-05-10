@@ -15,7 +15,7 @@ module.exports = class dadjokeCommand extends Command {
     try {
       const options = {
         method: 'GET',
-        headers: { "Accept": "text/plain" }
+        headers: { "Accept": "application/json" }
       }
       const res = await fetch('https://icanhazdadjoke.com', options);
 
