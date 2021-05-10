@@ -117,9 +117,11 @@ class Command {
   /**
    * Gets avatar from author/user/member
    * @param {object} user/author/member
+   * @param {boolean} hard
    */
-  getAvatarURL(user) {
-    return user.user ? user.user.displayAvatarURL({ format: "png", size: 512 })  : user.displayAvatarURL({ format: "png", size: 512 })
+  getAvatarURL(user, hard = true) {
+    const link = user.user ? user.user.displayAvatarURL({ format: "png", size: 512 })  : user.displayAvatarURL({ format: "png", size: 512 })
+    return hard ? link.split('?')[0] : link;
   }
 
   /**
