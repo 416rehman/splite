@@ -14,7 +14,7 @@ module.exports = class dadjokeCommand extends Command {
   async run(message) {
     try {
       const options = {
-        headers: new Headers({'content-type': 'application-json'})
+        headers: { "Content-Type": "application/json" }
       }
       const res = await fetch('https://icanhazdadjoke.com', options);
       const joke = (await res.json()).joke;
