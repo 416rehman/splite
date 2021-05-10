@@ -3,7 +3,7 @@ const { reply } = require('./slashLibrary')
 
 module.exports = {
     createSlashView: function createSlashView(client, server) {
-        console.log(`createSlashView`)
+
         client.api.applications(client.user.id).guilds(server.id).commands.post({
             data: {
                 name: "view",
