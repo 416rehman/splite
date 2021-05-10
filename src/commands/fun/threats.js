@@ -6,7 +6,7 @@ module.exports = class threatsCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'threats',
-      aliases: [],
+      aliases: ['threat'],
       usage: 'threats <user mention/id>',
       description: 'Generates a threats image',
       type: client.types.FUN,
