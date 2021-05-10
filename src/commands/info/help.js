@@ -63,12 +63,12 @@ module.exports = class HelpCommand extends Command {
       const emojiMap = {
         [INFO]: `${emojis.info} ${capitalize(INFO)}`,
         [FUN]: `${emojis.fun} ${capitalize(FUN)}`,
+        [SMASHORPASS]: `${emojis.smashorpass} ${capitalize(SMASHORPASS)}`,
         [POINTS]: `${emojis.points} ${capitalize(POINTS)}`,
         [MISC]: `${emojis.misc} ${capitalize(MISC)}`,
         [MOD]: `${emojis.mod} ${capitalize(MOD)}`,
         [ADMIN]: `${emojis.admin} ${capitalize(ADMIN)}`,
-        [OWNER]: `${emojis.owner} ${capitalize(OWNER)}`,
-        [SMASHORPASS]: `${emojis.smashorpass} ${capitalize(SMASHORPASS)}`,
+        [OWNER]: `${emojis.owner} ${capitalize(OWNER)}`
       };
 
       message.client.commands.forEach(command => {
