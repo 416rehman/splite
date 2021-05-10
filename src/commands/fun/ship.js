@@ -2,26 +2,27 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
-module.exports = class clydeCommand extends Command {
+module.exports = class shipCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'clyde',
-      aliases: [''],
-      usage: 'clyde <text>',
-      description: 'Generates a clyde image with provided text',
+      name: 'ship',
+      aliases: [],
+      usage: 'ship <user mention/id>',
+      description: 'Generates a ship image',
       type: client.types.FUN,
-      examples: ['clyde Splite is the best bot!']
+      examples: ['ship @split']
     });
   }
   async run(message, args) {
     if (message.guild.funInProgress.has(message.author.id)) return message.channel.send(new MessageEmbed().setDescription(`${fail} Please wait, you already have a request pending.`))
-    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide some text');
     message.guild.funInProgress.set(message.author.id, 'fun');
+    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.author;
+    const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.author;
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.nekoApi.generate("clyde", { text: `${args.join(' ')}` })
-        const attachment = new MessageAttachment(buffer, "clyde.png");
+        const buffer = await msg.client.ameApi.generate("ship", { user1: this.getAvatarURL(member), user2: this.getAvatarURL(member2)});
+        const attachment = new MessageAttachment(buffer, "ship.png");
 
         await message.channel.send(attachment)
         await msg.delete()
