@@ -1,11 +1,14 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = (client, message) => {
-
+try
+{
   if (message.guild.snipes.has(message.channel.id) && (!message.author.bot)) message.guild.snipes.delete(message.channel.id)
   message.guild.snipes.set(message.channel.id, message)
   // Check for webhook and that message is not empty
   if (message.webhookID || (!message.content && message.embeds.length === 0)) return;
+} catch (e){}
+
 
   const embed = new MessageEmbed()
     .setTitle('Message Update: `Delete`')
