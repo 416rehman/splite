@@ -24,6 +24,7 @@ module.exports = class pickupCommand extends Command {
       line = line.trim()
 
       const embed = new MessageEmbed()
+          .setAuthor(`Pickup lines used at your own risk`, this.getAvatarURL(member))
         .setDescription(`<@${member.id}>,|| ${line} ||`)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
