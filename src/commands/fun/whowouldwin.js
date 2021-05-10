@@ -22,7 +22,7 @@ module.exports = class whowouldwinCommand extends Command {
     console.log(this.getAvatarURL(member2))
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.ameApi.generate("whowouldwin", { user1: this.getAvatarURL(member), user2: this.getAvatarURL(member2)});
+        const buffer = await msg.client.ameApi.generate("whowouldwin", { user1: this.getAvatarURL(member) }, { user2: this.getAvatarURL(member2) });
         const attachment = new MessageAttachment(buffer, "whowouldwin.png");
 
         await message.channel.send(attachment)
