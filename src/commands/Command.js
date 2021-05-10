@@ -177,8 +177,8 @@ class Command {
    */
   checkNSFW(message) {
     if (!this.nsfwOnly) return true
-    const nsfw = message.channel.nsfw
-    if (nsfw) return true
+    const channelIsNSFW = message.channel.nsfw
+    if (channelIsNSFW) return true
     else
     {
       const embed = new MessageEmbed()

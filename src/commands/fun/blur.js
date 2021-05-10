@@ -9,7 +9,7 @@ module.exports = class blurCommand extends Command {
       aliases: [],
       usage: 'blur <user mention/id>',
       description: 'Generates a blur image',
-      type: client.types.NSFW,
+      type: client.types.FUN,
       examples: ['blur @split']
     });
   }
