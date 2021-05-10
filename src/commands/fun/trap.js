@@ -21,7 +21,7 @@ module.exports = class trapCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const res = await fetch(encodeURI(`https://nekobot.xyz/api/imagegen?type=trap&name=${member2 || member.username}&author=${member2 ? member.username : message.author.username}`));
+        const res = await fetch(encodeURI(`https://nekobot.xyz/api/imagegen?type=trap&name=${member2 || member.username}&author=${member2 ? member.username : message.author.username}&image=${this.getAvatarURL(member2) || this.getAvatarURL(member)}`));
         const json = await res.json();
         const attachment = new MessageAttachment(json.message, "trap.png");
 
