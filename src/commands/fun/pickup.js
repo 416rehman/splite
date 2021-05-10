@@ -20,7 +20,8 @@ module.exports = class pickupCommand extends Command {
       const res = await fetch('http://www.pickuplinegen.com/');
       const pickup = (await res.text())
       const dom = new JSDOM(pickup)
-      console.log(dom.window.document.getElementById('content').textContent)
+      let line = dom.window.document.getElementById('content').textContent
+      line = line.trim()
 
       const embed = new MessageEmbed()
         .setDescription(`<@${member.id}>, ${line}`)
