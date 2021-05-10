@@ -24,7 +24,7 @@ module.exports = class thighsCommand extends Command {
           if (types.includes(args[0])) chosen = types.find(e => e === args[0])
           else {
             const description = types.join('\n')
-            return msg.edit(new MessageEmbed().setDescription(`${fail} Category **${args[0]}** Invalid!\n\nSupported Categories:\n${description}`))
+            return msg.edit(new MessageEmbed().setDescription(`${fail} Category **${args[0]}** Invalid!\n\n**Supported Categories:**\n${description}`))
           }
         }
         else chosen = types[Math.floor(Math.random() * types.length)];
