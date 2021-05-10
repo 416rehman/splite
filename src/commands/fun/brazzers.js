@@ -14,7 +14,7 @@ module.exports = class BrazzersCommand extends Command {
     });
   }
   async run(message, args) {
-    // Get message
+    console.log(args)
     let member = message.author;
 
     if (args[0]) member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]);
