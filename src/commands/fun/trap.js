@@ -6,7 +6,7 @@ module.exports = class trapCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'trap',
-      aliases: [],
+      aliases: ['trapcard'],
       usage: 'trap <user mention/id>',
       description: 'Generates a trap image',
       type: client.types.FUN,

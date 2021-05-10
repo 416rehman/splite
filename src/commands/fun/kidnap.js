@@ -2,15 +2,15 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
-module.exports = class awooifyCommand extends Command {
+module.exports = class kidnapCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'awooify',
-      aliases: ['awooo'],
-      usage: 'awooify <user mention/id>',
-      description: 'awooify an image',
+      name: 'kidnap',
+      aliases: [],
+      usage: 'kidnap <user mention/id>',
+      description: 'generate a kidnap image',
       type: client.types.FUN,
-      examples: ['awooify @split']
+      examples: ['kidnap @split']
     });
   }
   async run(message, args) {
@@ -20,8 +20,8 @@ module.exports = class awooifyCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.nekoApi.generate("awooify", { url: this.getAvatarURL(member, false) })
-        const attachment = new MessageAttachment(buffer, "awooify.png");
+        const buffer = await msg.client.nekoApi.generate("kidnap", { url: this.getAvatarURL(member, false) })
+        const attachment = new MessageAttachment(buffer, "kidnap.png");
 
         await message.channel.send(attachment)
         await msg.delete()
