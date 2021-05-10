@@ -10,11 +10,16 @@ try
 } catch (e){}
 
 
-  const embed = new MessageEmbed()
-    .setTitle('Message Update: `Delete`')
-    .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL({ dynamic: true }))
-    .setTimestamp()
-    .setColor("RANDOM");
+  const embed = new MessageEmbed();
+try{
+  embed.setTitle('Message Update: `Delete`')
+      .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL({ dynamic: true }))
+      .setTimestamp()
+      .setColor("RANDOM");
+}catch (e) {
+  return;
+}
+
   
   // Message delete
   if (message.content) {

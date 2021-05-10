@@ -24,7 +24,7 @@ module.exports = class pickupCommand extends Command {
       line = line.trim()
 
       const embed = new MessageEmbed()
-        .setDescription(`<@${member.id}>, ${line}`)
+        .setDescription(`<@${member.id}>,|| ${line} ||`)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
