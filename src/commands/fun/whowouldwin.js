@@ -18,7 +18,8 @@ module.exports = class whowouldwinCommand extends Command {
     message.guild.funInProgress.set(message.author.id, 'fun');
     const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.author;
     const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.author;
-
+    console.log(this.getAvatarURL(member))
+    console.log(this.getAvatarURL(member2))
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
         const buffer = await msg.client.ameApi.generate("whowouldwin", { user1: this.getAvatarURL(member), user2: this.getAvatarURL(member2)});
