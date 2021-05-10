@@ -1,20 +1,20 @@
 const { reply } = require('./slashLibrary')
 module.exports = {
     createSlashReport: function createSlashReport(client, server) {
-        console.log(`createSlashReport`)
+
         client.api.applications(client.user.id).guilds(server.id).commands.post({
             data: {
                 name: "report",
                 description: "report a ToS-breaking or hateful confession",
                 options: [
                     {
-                        "name": "ID",
+                        "name": "id",
                         "description": "ID of the confession you wish to report.",
                         "type": 4,
                         "required": true,
                     },
                     {
-                        "name": "Reason",
+                        "name": "reason",
                         "description": "Optional: Reason",
                         "type": 3,
                         "required": true,

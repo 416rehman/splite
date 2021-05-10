@@ -10,7 +10,7 @@ module.exports = {
                 description: "RESTRICTED COMMAND: View details of a confession",
                 options: [
                     {
-                        "name": "confessionID",
+                        "name": "id",
                         "description": "Type the ID of confession",
                         "type": 4,
                         "required": true,

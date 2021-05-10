@@ -9,7 +9,7 @@ module.exports = {
                 description: "Post an anonymous confession",
                 options: [
                     {
-                        "name": "Confession",
+                        "name": "confession",
                         "description": "Type your confession",
                         "type": 3,
                         "required": true,
