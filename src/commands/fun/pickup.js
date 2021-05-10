@@ -21,7 +21,7 @@ module.exports = class pickupCommand extends Command {
       const soup = new JSSoup(pickup);
 
       let line = soup.find('div', { 'id': 'content' })
-      console.log(line.contents._text)
+      console.log(line.contents.text())
       const embed = new MessageEmbed()
         .setDescription(`<@${member.id}>, ${pickup}`)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
