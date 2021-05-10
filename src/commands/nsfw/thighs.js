@@ -20,8 +20,7 @@ module.exports = class thighsCommand extends Command {
         console.log(buffer)
         const attachment = new MessageAttachment(buffer, "thighs.png");
 
-        await message.channel.send(attachment)
-        await msg.delete()
+        await msg.edit(new MessageEmbed().setDescription(`\u200b`).setImage(buffer))
       }
       catch (e) {
         await msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
