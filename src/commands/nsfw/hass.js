@@ -8,7 +8,7 @@ module.exports = class hassCommand extends Command {
       name: 'hass',
       aliases: [],
       usage: 'hass <user mention/id>',
-      description: 'Random image of hass',
+      description: 'Random hentai/ass image',
       type: client.types.NSFW,
       examples: ['hass']
     });
