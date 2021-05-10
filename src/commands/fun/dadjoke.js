@@ -2,22 +2,24 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 
-module.exports = class biryaniCommand extends Command {
+module.exports = class dadjokeCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'biryani',
-      usage: 'biryani',
-      description: 'Finds a random biryani for your viewing pleasure.',
+      name: 'dadjoke',
+      usage: 'dadjoke',
+      description: 'Finds a random dadjoke.',
       type: client.types.FUN
     });
   }
   async run(message) {
     try {
-      const res = await fetch('https://biriyani.anoram.com/get');
-      const img = (await res.json()).image;
+      const options = {
+        headers: new Headers({'content-type': 'application-json'})
+      }
+      const res = await fetch('https://icanhazdadjoke.com', options);
+      const joke = (await res.json()).joke;
       const embed = new MessageEmbed()
-        .setTitle('🤤  Biryani!  🍽')
-        .setImage(img)
+        .setDescription(joke)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
