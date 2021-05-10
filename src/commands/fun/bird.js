@@ -14,7 +14,6 @@ module.exports = class BirdCommand extends Command {
   async run(message) {
     try {
       const res = await fetch('http://shibe.online/api/birds');
-      console.log(res)
       const img = (await res.json())[0];
       const embed = new MessageEmbed()
         .setTitle('🐦  Chirp!  🐦')
