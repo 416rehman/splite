@@ -140,7 +140,7 @@ module.exports = async (client) => {
   //Slash Commands
   console.log("Setting up slash commands")
   client.guilds.cache.forEach(server => {
-    // client.api.applications(client.user.id).guilds(server.id).commands('832797960407744513').delete()
+    client.api.applications(client.user.id).guilds(server.id).commands.forEach(cmd => console.log(`Deleted ${cmd}`, cmd.delete))
     client.utils.registerSlashCommands(client, server);
     });
 
