@@ -2,15 +2,15 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
-module.exports = class magikCommand extends Command {
+module.exports = class threatsCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'magik',
+      name: 'threats',
       aliases: [],
-      usage: 'wasted <user mention/id>',
-      description: 'Generates a magik image',
+      usage: 'threats <user mention/id>',
+      description: 'Generates a threats image',
       type: client.types.FUN,
-      examples: ['magik @split']
+      examples: ['threats @split']
     });
   }
   async run(message, args) {
@@ -20,8 +20,8 @@ module.exports = class magikCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.nekoApi.generate("magik", { image: this.getAvatarURL(member) })
-        const attachment = new MessageAttachment(buffer, "magik.png");
+        const buffer = await msg.client.nekoApi.generate("threats", { image: this.getAvatarURL(member) })
+        const attachment = new MessageAttachment(buffer, "threats.png");
 
         await message.channel.send(attachment)
         await msg.delete()
