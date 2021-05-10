@@ -116,5 +116,5 @@ module.exports = async (client, guild) => {
 
   // Create Slash Commands
   client.utils.registerSlashCommands(client, guild)
-  client.utils.setInProgressCommands(client, guild)
+  client.utils.createCollections(client, guild)
 };

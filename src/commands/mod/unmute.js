@@ -5,7 +5,7 @@ module.exports = class UnmuteCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'unmute',
-      aliases: ['unjail', 'ungulag'],
+      aliases: ['ungulag'],
       usage: 'unmute <user mention/ID>',
       description: 'Unmutes the specified user.',
       type: client.types.MOD,

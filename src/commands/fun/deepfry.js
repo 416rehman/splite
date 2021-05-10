@@ -2,15 +2,15 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
-module.exports = class challengerCommand extends Command {
+module.exports = class deepfryCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'challenger',
+      name: 'deepfry',
       aliases: [],
-      usage: 'challenger <user mention/id>',
-      description: 'Generates a challenger image',
+      usage: 'deepfry <user mention/id>',
+      description: 'Generates a deepfry image',
       type: client.types.FUN,
-      examples: ['challenger @split']
+      examples: ['deepfry @split']
     });
   }
   async run(message, args) {
@@ -20,8 +20,8 @@ module.exports = class challengerCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.ameApi.generate("challenger", { url: this.getAvatarURL(member) });
-        const attachment = new MessageAttachment(buffer, "challenger.png");
+        const buffer = await msg.client.ameApi.generate("deepfry", { url: this.getAvatarURL(member) });
+        const attachment = new MessageAttachment(buffer, "deepfry.png");
 
         await message.channel.send(attachment)
         await msg.delete()

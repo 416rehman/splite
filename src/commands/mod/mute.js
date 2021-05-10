@@ -7,7 +7,7 @@ module.exports = class MuteCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'mute',
-      aliases: ['jail', 'gulag'],
+      aliases: ['gulag'],
       usage: 'mute <user mention/ID> <time> [reason]',
       description: 'Mutes a user for the specified amount of time (max is 14 days).',
       type: client.types.MOD,

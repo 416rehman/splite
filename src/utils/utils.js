@@ -264,8 +264,9 @@ function scheduleCrown(client, guild) {
   }
 }
 
-function setInProgressCommands(client, guild) {
+function createCollections(client, guild) {
 
+  guild.snipes = new Collection()
     guild.betsInProgress = new Collection();
     console.log(`${guild.name}: betsInProgress Cleared`)
 
@@ -273,6 +274,7 @@ function setInProgressCommands(client, guild) {
     console.log(`${guild.name}: gamblesInProgress Cleared`)
 
     guild.roleRetrieval = new Collection();
+    guild.funInProgress = new Collection();
 }
 
 module.exports = {
@@ -291,5 +293,5 @@ module.exports = {
   registerSlashCommands,
   callSlashCommand,
   getEmojiForJoinVoting,
-  setInProgressCommands
+  createCollections
 };
