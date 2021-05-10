@@ -18,13 +18,13 @@ module.exports = class pickupCommand extends Command {
     try {
       const res = await fetch('http://www.pickuplinegen.com/');
       const pickup = (await res.text())
-      const soup = new JSSoup(pickup);
 
+      const soup = new JSSoup(pickup);
       let line = (soup.find('div', { 'id': 'content' })).contents[0]._text
       line = line.trim();
-      console.log(line)
+
       const embed = new MessageEmbed()
-        .setDescription(`<@${member.id}>, ${pickup}`)
+        .setDescription(`<@${member.id}>, ${line}`)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
