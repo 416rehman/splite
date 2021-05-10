@@ -20,8 +20,8 @@ module.exports = class animefaceCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.nekoApi.generate("animeface", { image: this.getAvatarURL(member, false) })
-        const attachment = new MessageAttachment(buffer, "animeface.png");
+        const buffer = await msg.client.nekoApi.generate("awooify", { url: this.getAvatarURL(member, false) })
+        const attachment = new MessageAttachment(buffer, "awooify.png");
 
         await message.channel.send(attachment)
         await msg.delete()
