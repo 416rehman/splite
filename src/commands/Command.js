@@ -81,7 +81,7 @@ class Command {
      * If command can only be used by owner
      * @type {boolean}
      */
-    this.nsfwOnly = options.nsfwOnly || this.type == NSFW;
+    this.nsfwOnly = options.nsfwOnly || this.type === NSFW;
 
     /**
      * If command is enabled
