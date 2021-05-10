@@ -140,13 +140,13 @@ module.exports = async (client) => {
   //Slash Commands
   console.log("Setting up slash commands")
   client.guilds.cache.forEach(server => {
-    client.api.applications(client.user.id).guilds(server.id).commands.forEach(cmd => console.log(`Deleted ${cmd}`, cmd.delete))
-    //client.utils.registerSlashCommands(client, server);
+    //client.api.applications(client.user.id).guilds(server.id).commands.forEach(cmd => console.log(`Deleted ${cmd}`, cmd.delete))
+    client.utils.registerSlashCommands(client, server);
     });
 
   client.ws.on('INTERACTION_CREATE', async interaction => {
         const command = interaction.data.name.toLowerCase();
-        //client.utils.callSlashCommand(command, client, interaction)
+        client.utils.callSlashCommand(command, client, interaction)
   })
 
   //Reset timers/cooldowns/blockers
