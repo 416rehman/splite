@@ -146,7 +146,7 @@ module.exports = async (client) => {
 
   client.ws.on('INTERACTION_CREATE', async interaction => {
         const command = interaction.data.name.toLowerCase();
-        //client.utils.callSlashCommand(command, client, interaction)
+        client.utils.callSlashCommand(command, client, interaction)
   })
 
   //Reset timers/cooldowns/blockers
