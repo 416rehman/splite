@@ -1,6 +1,7 @@
 const { reply } = require('./slashLibrary')
 module.exports = {
     createSlashReport: function createSlashReport(client, server) {
+        console.log(`createSlashReport`)
         client.api.applications(client.user.id).guilds(server.id).commands.post({
             data: {
                 name: "report",

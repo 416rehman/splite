@@ -5,6 +5,7 @@ const cost = 50;
 
 module.exports = {
     createSlashAnonymous: function createSlashAnonymous(client, server) {
+        console.log(`createSlashAnonymous`)
         client.api.applications(client.user.id).guilds(server.id).commands.post({
             data: {
                 name: "anonymous",

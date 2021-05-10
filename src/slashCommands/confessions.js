@@ -2,6 +2,7 @@ const { MessageEmbed } = require('discord.js');
 const { reply } = require('./slashLibrary')
 module.exports = {
     createSlashConfess: function createSlashConfess(client, server) {
+        console.log(`createSlashConfess`)
         client.api.applications(client.user.id).guilds(server.id).commands.post({
             data: {
                 name: "confess",
