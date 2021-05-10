@@ -16,8 +16,8 @@ module.exports = class pickupCommand extends Command {
     const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.author;
     try {
       const res = await fetch('http://www.pickuplinegen.com/');
-      const pickup = (await res.text()).match(new RegExp(`<div id="content">` + "(.*)" + `<div id="generate">`))[1];
-      console.log(pickup)
+      const pickup = (await res.text())
+      console.log(pickup.match(new RegExp(`<div id="content">` + "(.*)" + `<div id="generate">`)))
 
       const embed = new MessageEmbed()
         .setDescription(`<@${member.id}>, ${pickup}`)
