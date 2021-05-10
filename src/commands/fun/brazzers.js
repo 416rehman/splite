@@ -18,7 +18,7 @@ module.exports = class BrazzersCommand extends Command {
     let member;
 
     if (!args[0]) member = message.author
-    else member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+    else member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]);
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
