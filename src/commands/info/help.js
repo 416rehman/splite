@@ -27,7 +27,7 @@ module.exports = class HelpCommand extends Command {
     const all = (args[0] === 'all') ? args[0] : '';
     const embed = new MessageEmbed();
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id); // Get prefix
-    const { INFO, FUN, SMASHORPASS, POINTS, MISC, MOD, ADMIN, OWNER } = message.client.types;
+    const { INFO, FUN, SMASHORPASS, NSFW, POINTS, MISC, MOD, ADMIN, OWNER } = message.client.types;
     const { capitalize } = message.client.utils;
     
     const command = message.client.commands.get(args[0]) || message.client.aliases.get(args[0]);
@@ -64,6 +64,7 @@ module.exports = class HelpCommand extends Command {
         [INFO]: `${emojis.info} ${capitalize(INFO)}`,
         [FUN]: `${emojis.fun} ${capitalize(FUN)}`,
         [SMASHORPASS]: `${emojis.smashorpass} ${capitalize(SMASHORPASS)}`,
+        [NSFW]: `${emojis.nsfw} ${capitalize(NSFW)}`,
         [POINTS]: `${emojis.points} ${capitalize(POINTS)}`,
         [MISC]: `${emojis.misc} ${capitalize(MISC)}`,
         [MOD]: `${emojis.mod} ${capitalize(MOD)}`,

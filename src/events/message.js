@@ -73,8 +73,8 @@ module.exports = (client, message) => {
 
       // Check permissions
       const permission = command.checkPermissions(message);
-      if (permission) {
-
+      const nsfw = command.checkNSFW(message)
+      if (permission && nsfw) {
         // Update points with commandPoints value
         if (pointTracking)
           client.db.users.updatePoints.run({ points: commandPoints }, message.author.id, message.guild.id);

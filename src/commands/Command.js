@@ -1,6 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const permissions = require('../utils/permissions.json');
-const { fail } = require('../utils/emojis.json');
+const { fail, nsfw } = require('../utils/emojis.json');
 
 /**
  * Splite's custom Command class
@@ -76,6 +76,12 @@ class Command {
      * @type {boolean}
      */
     this.ownerOnly = options.ownerOnly || false;
+
+    /**
+     * If command can only be used by owner
+     * @type {boolean}
+     */
+    this.nsfwOnly = options.nsfwOnly || this.type == NSFW;
 
     /**
      * If command is enabled
@@ -161,6 +167,27 @@ class Command {
     const userPermission = this.checkUserPermissions(message, ownerOverride);
     if (clientPermission && userPermission) return true;
     else return false;
+  }
+
+  /**
+   * Helper method to check channel NSFW status
+   * @param {Message} message
+   * @param {boolean} ownerOverride
+   */
+  checkNSFW(message) {
+    if (!this.nsfwOnly) return true
+    const nsfw = message.channel.nsfw
+    if (nsfw) return true
+    else
+    {
+      const embed = new MessageEmbed()
+          .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+          .setDescription(`${nsfw} NSFW Commands can only be run in NSFW channels.`)
+          .setTimestamp()
+          .setColor("RED");
+      message.channel.send(embed);
+      return false;
+    }
   }
 
   /**
