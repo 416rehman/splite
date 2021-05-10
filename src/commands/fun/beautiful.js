@@ -2,15 +2,15 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
-module.exports = class approvedCommand extends Command {
+module.exports = class beautifulCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'approved',
+      name: 'beautiful',
       aliases: [],
-      usage: 'approved <user mention/id>',
-      description: 'Generates an approved image',
+      usage: 'beautiful <user mention/id>',
+      description: 'Generates a beautiful image',
       type: client.types.FUN,
-      examples: ['approved @split']
+      examples: ['beautiful @split']
     });
   }
   async run(message, args) {
@@ -19,8 +19,8 @@ module.exports = class approvedCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.ameApi.generate("approved", { url: this.getAvatarURL(member) });
-        const attachment = new MessageAttachment(buffer, "approved.png");
+        const buffer = await msg.client.ameApi.generate("beautiful", { url: this.getAvatarURL(member) });
+        const attachment = new MessageAttachment(buffer, "beautiful.png");
 
         await message.channel.send(attachment)
         await msg.delete()
