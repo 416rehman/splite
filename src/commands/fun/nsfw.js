@@ -17,8 +17,20 @@ module.exports = class thighsCommand extends Command {
   async run(message, args) {
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.nekoApi.get("thigh")
-        await msg.edit(new MessageEmbed().setDescription(`\u200b`).setImage(buffer))
+        var types = Array('hass', 'hmidriff', 'pgif', '4k', 'hentai', 'holo', 'hneko', 'neko', 'hkitsune', 'kemonomimi', 'anal', 'hanal', 'gonewild', 'kanna', 'ass', 'pussy', 'thigh', 'hthigh', 'gah','paizuri', 'tentacle', 'boobs', 'hboobs', 'yaoi');
+        let chosen
+        if (args[0])
+        {
+          if (types.includes(args[0])) chosen = types.find(e => e === args[0])
+          else {
+            const description = types.join('\n')
+            return msg.edit(new MessageEmbed().setDescription(`${fail} Image Type **${args[0]}** Invalid!\nSupported Image Types:\n${description}`))
+          }
+        }
+        else chosen = types[Math.floor(Math.random() * types.length)];
+
+        const buffer = await msg.client.nekoApi.get(chosen)
+        await msg.edit(new MessageEmbed().setDescription(`Image Type: ${chosen}`).setImage(buffer))
       }
       catch (e) {
         await msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
