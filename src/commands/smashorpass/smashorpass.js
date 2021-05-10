@@ -19,7 +19,7 @@ module.exports = class smashOrPassCommand extends Command {
         Cost: 5 points per smash
         To opt-out of the game, use the command "toggleSmashOrPass"
       `,
-      type: client.types.FUN,
+      type: client.types.SMASHORPASS,
       examples: ['smashorpass', 'sop', 'smash']
     });
   }

@@ -14,7 +14,7 @@ module.exports = class unmatchCommand extends Command {
         
         Cost: Free
       `,
-      type: client.types.FUN,
+      type: client.types.SMASHORPASS,
       examples: ['smashorpass', 'sop', 'smash']
     });
   }

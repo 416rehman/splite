@@ -17,7 +17,7 @@ module.exports = class resetSmashOrPassCommand extends Command {
         
         Cost: 500 points
       `,
-      type: client.types.FUN,
+      type: client.types.SMASHORPASS,
       examples: ['smashorpass', 'sop', 'smash']
     });
   }

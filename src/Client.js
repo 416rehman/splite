@@ -41,7 +41,8 @@ class Client extends Discord.Client {
       MISC: 'misc',
       MOD: 'mod',
       ADMIN: 'admin',
-      OWNER: 'owner'
+      OWNER: 'owner',
+      SMASHORPASS: 'smashorpass'
     };
 
     /** 

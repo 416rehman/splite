@@ -12,7 +12,7 @@ module.exports = class toggleSmashOrPassCommand extends Command {
       description: oneLine`
         Opt out/in of 🔥 Smash or Pass 👎. If you opt-out you will not be shown to other users in the game.
       `,
-      type: client.types.FUN,
+      type: client.types.SMASHORPASS,
       examples: ['togglesmashorpass']
     });
   }

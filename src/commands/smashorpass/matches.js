@@ -14,7 +14,7 @@ module.exports = class MatchesCommand extends Command {
       description: oneLine`
         Displays your Smash Or Pass matches ${emojis.matches}.
       `,
-      type: client.types.FUN,
+      type: client.types.SMASHORPASS,
       examples: ['matches']
     });
   }
