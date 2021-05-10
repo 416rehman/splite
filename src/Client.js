@@ -4,6 +4,7 @@ const { join, resolve } = require('path');
 const AsciiTable = require('ascii-table');
 const { fail } = require('./utils/emojis.json');
 const amethyste = require('amethyste-api')
+const { NekoBot } = require("nekobot-api");
 
 /**
  * Splite's custom client
@@ -80,6 +81,12 @@ class Client extends Discord.Client {
      * @type {Object}
      */
     this.ameApi = new amethyste(config.apiKeys.amethyste)
+
+    /**
+     * Neko API
+     * @type {Object}
+     */
+    this.nekoApi = new NekoBot()
 
     /** 
      * Splite's owner ID
