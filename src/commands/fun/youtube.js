@@ -29,7 +29,7 @@ module.exports = class YoutubeCommand extends Command {
     if (!result) 
       return this.sendErrorMessage(message, 0, 'Unable to find video, please provide a different YouTube video name');
     const decodedTitle = he.decode(result.title);
-    console.log()
+
     const embed = new MessageEmbed()
       .setTitle(decodedTitle)
       .setURL(result.link)

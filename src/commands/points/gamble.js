@@ -18,7 +18,7 @@ module.exports = class gambleCommand extends Command {
   }
   run(message, args) {
     if (message.guild.gamblesInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already gambling. Please try again later`)
-      console.log(message.guild.betsInProgress)
+
     const amount = parseInt(args[0]);
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     if (isNaN(amount) === true || !amount)

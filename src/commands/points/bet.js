@@ -68,7 +68,7 @@ module.exports = class betCommand extends Command {
             msg.delete()
             setTimeout(() => {
                       const d = weightedRandom({0: 50, 1: 50})
-                      console.log(d)
+
                       let winner = message.author
                       if (d == 1) winner = member.user
 
@@ -77,8 +77,6 @@ module.exports = class betCommand extends Command {
                       const loser = winner.id === member.id ? message.author : member.user;
                       const loserPoints = winner.id === member.id ? points : otherPoints;
 
-                      console.log(`winner ` + winner.username)
-                      console.log(`loser ` + loser.username)
                       message.client.db.users.updatePoints.run({points: -amount}, loser.id, message.guild.id);
                       message.client.db.users.updatePoints.run({points: amount}, winner.id, message.guild.id);
 

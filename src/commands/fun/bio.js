@@ -83,7 +83,7 @@ module.exports = class BioCommand extends Command {
       else
       {
         const biotext = args.join(' ')
-        console.log(biotext)
+
         message.client.db.users.updateBio.run(biotext, message.author.id)
 
         const embed = new MessageEmbed()

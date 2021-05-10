@@ -26,14 +26,12 @@ module.exports = class unmatchCommand extends Command {
         if (args[0].startsWith("<@")) member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
         else if ((/^[0-9]{18}$/g).test(args[0]))
         {
-            console.log('ID')
             member = message.guild.members.cache.get(args[0]);
             if (member === undefined)
             {
                 const mRow = await message.client.db.users.selectRowUserOnly.get(args[0])
                 const mGuild = await message.client.guilds.cache.get(mRow.guild_id)
                 member = await mGuild.members.cache.get(mRow.user_id)
-                console.log(member)
             }
         }
         else member = message.guild.members.cache.find(r=> r.user.username.toLowerCase().startsWith(args[0].toLowerCase()))
