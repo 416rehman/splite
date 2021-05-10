@@ -19,7 +19,7 @@ module.exports = class pickupCommand extends Command {
       const pickup = (await res.text())
       var part = pickup.substring(
           pickup.lastIndexOf("id=\"content\">") + "id=\"content\">".length,
-          pickup.lastIndexOf("<div id=\"generate\">")
+          pickup.lastIndexOf("<\div>")
       );
       console.log(part)
       const embed = new MessageEmbed()
