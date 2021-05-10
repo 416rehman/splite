@@ -38,11 +38,11 @@ class Client extends Discord.Client {
       INFO: 'info',
       FUN: 'fun',
       POINTS: 'points',
+      SMASHORPASS: 'Smash or Pass',
       MISC: 'misc',
       MOD: 'mod',
       ADMIN: 'admin',
       OWNER: 'owner',
-      SMASHORPASS: 'smashorpass'
     };
 
     /** 
