@@ -82,7 +82,7 @@ class Command {
      * @type {boolean}
      */
     console.log(typeof this.type)
-    this.nsfwOnly = options.nsfwOnly || false;
+    this.nsfwOnly = options.nsfwOnly || this.type == 'NSFW 18+';
 
     /**
      * If command is enabled
