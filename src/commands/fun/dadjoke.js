@@ -19,8 +19,8 @@ module.exports = class dadjokeCommand extends Command {
       }
       const res = await fetch('https://icanhazdadjoke.com', options);
 
-      const joke = (await res.json());
-      console.log(joke)
+      const joke = (await res.json()).joke;
+
       const embed = new MessageEmbed()
         .setDescription(joke)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
