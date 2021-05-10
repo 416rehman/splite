@@ -2,15 +2,15 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
-module.exports = class shipCommand extends Command {
+module.exports = class whowouldwinCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'ship',
+      name: 'whowouldwin',
       aliases: [],
-      usage: 'ship <user mention/id>',
-      description: 'Generates a ship image',
+      usage: 'whowouldwin <user mention/id>',
+      description: 'Generates a whowouldwin image',
       type: client.types.FUN,
-      examples: ['ship @split']
+      examples: ['whowouldwin @split']
     });
   }
   async run(message, args) {
@@ -21,8 +21,8 @@ module.exports = class shipCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.ameApi.generate("ship", { user1: this.getAvatarURL(member), user2: this.getAvatarURL(member2)});
-        const attachment = new MessageAttachment(buffer, "ship.png");
+        const buffer = await msg.client.ameApi.generate("whowouldwin", { user1: this.getAvatarURL(member), user2: this.getAvatarURL(member2)});
+        const attachment = new MessageAttachment(buffer, "whowouldwin.png");
 
         await message.channel.send(attachment)
         await msg.delete()
