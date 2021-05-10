@@ -2,15 +2,15 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
-module.exports = class animefaceCommand extends Command {
+module.exports = class awooifyCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'animeface',
-      aliases: [],
-      usage: 'animeface <user mention/id>',
-      description: 'Generates a animeface image',
+      name: 'awooify',
+      aliases: ['awooo'],
+      usage: 'awooify <user mention/id>',
+      description: 'awooify a animeface image',
       type: client.types.FUN,
-      examples: ['animeface @split']
+      examples: ['awooify @split']
     });
   }
   async run(message, args) {
