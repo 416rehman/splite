@@ -20,7 +20,7 @@ module.exports = class threatsCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.nekoApi.generate("threats", { image: `${this.getAvatarURL(member)}` })
+        const buffer = await msg.client.nekoApi.generate("threats", { url: this.getAvatarURL(member) })
         const attachment = new MessageAttachment(buffer, "threats.png");
 
         await message.channel.send(attachment)
