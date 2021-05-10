@@ -2,13 +2,14 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 
-module.exports = class dadjokeCommand extends Command {
+module.exports = class insultCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'dadjoke',
-      usage: 'dadjoke',
-      description: 'Finds a random dadjoke.',
-      type: client.types.FUN
+      name: 'insult',
+      usage: 'insult',
+      description: 'Insult someone',
+      type: client.types.FUN,
+      examples: ['insult @split']
     });
   }
   async run(message, args) {
