@@ -17,8 +17,11 @@ module.exports = class pickupCommand extends Command {
     try {
       const res = await fetch('http://www.pickuplinegen.com/');
       const pickup = (await res.text())
-      console.log(pickup.match(new RegExp(`<div id="content">` + "(.*)" + `<div id="generate">`)))
-
+      var part = pickup.substring(
+          pickup.lastIndexOf("id=\"content\">") + 1,
+          pickup.lastIndexOf("<div id=\"generate\">")
+      );
+      console.log(part)
       const embed = new MessageEmbed()
         .setDescription(`<@${member.id}>, ${pickup}`)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
