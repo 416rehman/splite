@@ -26,7 +26,7 @@ module.exports = class BrazzersCommand extends Command {
         await msg.delete()
       }
       catch (e) {
-        await msg.edit(new MessageEmbed().setDescription(`${e}`))
+        await msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
       }
     })
   }
