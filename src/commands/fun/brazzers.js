@@ -15,12 +15,11 @@ module.exports = class BrazzersCommand extends Command {
   }
   async run(message, args) {
     // Get message
-    let member;
+    let member = message.author;
 
-    if (!args[0]) member = message.author
-    else member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]);
+    if (args[0]) member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]);
     console.log(member)
-    console.log(member.avatarURL())
+
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
         const buffer = await msg.client.ameApi.generate("brazzers", { url: member.avatarURL() });
