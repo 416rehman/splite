@@ -19,10 +19,10 @@ module.exports = class BrazzersCommand extends Command {
 
     if (!args[0]) member = message.author
     else member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]);
-
+    console.log(member.avatarURL())
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.ameApi.generate("brazzers", { url: member.avatarURL({ format: "png", size: 512 }) });
+        const buffer = await msg.client.ameApi.generate("brazzers", { url: member.avatarURL() });
         const attachment = new MessageAttachment(buffer, "brazzers.png");
 
         await message.channel.send(attachment)
