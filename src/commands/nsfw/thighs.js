@@ -16,7 +16,7 @@ module.exports = class thighsCommand extends Command {
   async run(message, args) {
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.nekoApi.get("thighs")
+        const buffer = await msg.client.nekoApi.get("thigh")
         console.log(buffer)
         const attachment = new MessageAttachment(buffer, "thighs.png");
 
