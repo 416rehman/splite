@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
-const JSSoup =  require('jssoup')
+const JSSoup =  require('jssoup').default;
 
 module.exports = class pickupCommand extends Command {
   constructor(client) {
@@ -18,7 +18,7 @@ module.exports = class pickupCommand extends Command {
     try {
       const res = await fetch('http://www.pickuplinegen.com/');
       const pickup = (await res.text())
-      const soup = new JSSoup('<html><head>hello</head></html>');
+      const soup = new JSSoup(pickup);
 
       let line = soup.find('div', { 'id': 'content' })
       console.log(line)
