@@ -18,7 +18,7 @@ module.exports = class pickupCommand extends Command {
       const res = await fetch('http://www.pickuplinegen.com/');
       const pickup = (await res.text())
       var part = pickup.substring(
-          pickup.lastIndexOf("id=\"content\">") + 1,
+          pickup.lastIndexOf("id=\"content\">") + "id=\"content\">".length,
           pickup.lastIndexOf("<div id=\"generate\">")
       );
       console.log(part)
