@@ -88,6 +88,7 @@ class Command {
      * @type {Array<string>}
      */
     this.errorTypes = ['Invalid Argument', 'Command Failure'];
+
   }
 
   /**
