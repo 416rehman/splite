@@ -24,7 +24,8 @@ module.exports = class whowouldwinCommand extends Command {
       try {
         const buffer = await msg.client.ameApi.generate("whowouldwin", {
           user1: this.getAvatarURL(member),
-          user2: this.getAvatarURL(member2)
+          user2: this.getAvatarURL(member2),
+          raw: 1
         });
         const attachment = new MessageAttachment(buffer, "whowouldwin.png");
 
