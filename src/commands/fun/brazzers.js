@@ -19,7 +19,7 @@ module.exports = class BrazzersCommand extends Command {
     console.log(typeof member)
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.ameApi.generate("brazzers", { url: member.displayAvatarURL({ format: "png", size: 512 }) });
+        const buffer = await msg.client.ameApi.generate("brazzers", { url: member.user.displayAvatarURL({ format: "png", size: 512 }) });
         const attachment = new MessageAttachment(buffer, "brazzers.png");
 
         await message.channel.send(attachment)
