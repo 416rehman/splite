@@ -16,10 +16,10 @@ module.exports = class BrazzersCommand extends Command {
   async run(message, args) {
 
     const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.author;
-    console.log(typeof member)
+
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const buffer = await msg.client.ameApi.generate("brazzers", { url: member.user.displayAvatarURL({ format: "png", size: 512 }) });
+        const buffer = await msg.client.ameApi.generate("brazzers", { url: this.getAvatarURL(member) });
         const attachment = new MessageAttachment(buffer, "brazzers.png");
 
         await message.channel.send(attachment)

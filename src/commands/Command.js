@@ -115,6 +115,14 @@ class Command {
   }
 
   /**
+   * Gets avatar from author/user/member
+   * @param {object} user/author/member
+   */
+  getAvatarURL(user) {
+    return user.user ? user.user.displayAvatarURL({ format: "png", size: 512 })  : user.displayAvatarURL({ format: "png", size: 512 })
+  }
+
+  /**
    * Gets role from mention
    * @param {Message} message 
    * @param {string} mention 
