@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageAttachment } = require('discord.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 
 module.exports = class BrazzersCommand extends Command {
