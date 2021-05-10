@@ -5,13 +5,13 @@ const {fail, load} = require("../../utils/emojis.json")
 module.exports = class thighsCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'thighs',
-      aliases: ['thigh'],
+      name: 'nsfw',
+      aliases: ['nsfw'],
       usage: 'thighs <user mention/id>',
-      description: 'Random image of thighs',
+      description: 'Random nsfw image',
       type: client.types.FUN,
       nsfwOnly: true,
-      examples: ['thighs']
+      examples: ['nsfw']
     });
   }
   async run(message, args) {
