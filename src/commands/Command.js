@@ -126,6 +126,7 @@ class Command {
    * @param {boolean} hard
    */
   getAvatarURL(user, hard = true) {
+    console.log(user)
     const link = user.user ? user.user.displayAvatarURL({ size: 512, format: "png" })  : user.displayAvatarURL({ size: 512, format: "png" })
     return hard ? link.split('?')[0] : link;
   }
