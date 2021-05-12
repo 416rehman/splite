@@ -46,8 +46,6 @@ module.exports = class shipCommand extends Command {
             else ships.push({userId: member.id, shipScore})
           }
         }
-        console.log(member)
-        console.log()
 
         const progress = message.client.utils.createProgressBar(shipScore)
         const b62 = await mergeImages([
