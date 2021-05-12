@@ -35,5 +35,14 @@
   "crown" : "<a:crown:838586395874033684>",
   "nep" : "<a:nep:838600479553880126>",
   "unmatch"  : "<a:unmatch:838594771798065202>",
-  "nsfw" : "<a:18:841249872514646026>"
+  "nsfw" : "<a:18:841249872514646026>",
+  "EmptyBegin": "<:EmptyBegin:842019616322617404>",
+  "EmptyMid": "<:EmptyFull:842019616226017310>",
+  "EmptyEnd": "<:EmptyEnd:842019616204783637>",
+  "FillBegin": "<:FillBegin:842019616372817960>",
+  "FillMid": "<:FillFull:842019615806849066>",
+  "FillEnd": "<:FillEnd:842019616246464543>",
+  "HalfBegin": "<:HalfBegin:842021960661860422>",
+  "HalfMid": "<:HalfMid:842019616427606036>",
+  "HalfEnd": "<:HalfEnd:842019616318029854>"
 }

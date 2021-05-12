@@ -275,6 +275,61 @@ function createCollections(client, guild) {
 
     guild.roleRetrieval = new Collection();
     guild.funInProgress = new Collection();
+    guild.ships = new Collection();
+}
+
+function createProgressBar(percentage)
+{
+  if (percentage > 100) percentage = 100;
+  if (percentage < 5) percentage = 5;
+  let progressBar = ``;
+  const fives = Math.floor(percentage/5)
+  //Empty
+  if (fives === 0) {
+    progressBar += emojis.EmptyBegin
+    let i = 0;
+    while (i < 8) progressBar += emojis.EmptyMid, i++;
+    progressBar += emojis.EmptyEnd;
+  }
+  else {
+    if (fives > 1)
+    {
+      let tens = Math.floor(fives/2)
+      let endWithHalfMid = fives % 2;
+
+      for (let i = 0; i < tens; i++)
+      {
+        if (i === 0) progressBar += emojis.FillBegin
+        else if (i === 9) progressBar += emojis.FillEnd
+        else progressBar += emojis.FillMid;
+      }
+
+      const empties = 10 - tens;
+      if (empties > 0)
+      {
+        if (empties === 1 && endWithHalfMid) progressBar += emojis.HalfEnd; //90+
+        else {
+          if (endWithHalfMid) progressBar+= emojis.HalfMid
+          for (let i = 0; i < empties - endWithHalfMid; i++)
+          {
+            if (i === empties - endWithHalfMid - 1) progressBar += emojis.EmptyEnd
+            else progressBar += emojis.EmptyMid
+          }
+        }
+      }
+    }
+    else {
+      progressBar += emojis.HalfBegin
+      let i = 0;
+      while (i < 8) progressBar += emojis.EmptyMid, i++;
+      progressBar += emojis.EmptyEnd;
+    }
+  }
+  return progressBar;
+}
+
+function getRandomInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 module.exports = {
@@ -293,5 +348,7 @@ module.exports = {
   registerSlashCommands,
   callSlashCommand,
   getEmojiForJoinVoting,
-  createCollections
+  createCollections,
+  createProgressBar,
+  getRandomInt
 };
