@@ -36,8 +36,8 @@ module.exports = class shipCommand extends Command {
             else ships.push({userId: member.id, shipScore})
           }
         }
-        console.log(this.getAvatarURL(member, false))
-        console.log(this.getAvatarURL(member2, false))
+        console.log(member2)
+        console.log()
 
         const progress = message.client.utils.createProgressBar(shipScore)
         const b62 = await mergeImages([
