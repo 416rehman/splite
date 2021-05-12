@@ -32,17 +32,11 @@ module.exports = class shipCommand extends Command {
         }
         else
         {
-          console.log(`Exists`)
           let ships = message.guild.ships.get(member2.id)
-          console.log(ships)
           if (ships)
           {
             const matchedBefore = ships.find( u=> u.userId === member.id)
-            if (matchedBefore)
-            {
-              console.log('Matched Before')
-              shipScore = matchedBefore.shipScore;
-            }
+            if (matchedBefore) shipScore = matchedBefore.shipScore;
             else ships.push({userId: member.id, shipScore})
           }
         }
