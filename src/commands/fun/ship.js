@@ -42,8 +42,8 @@ module.exports = class shipCommand extends Command {
         const progress = message.client.utils.createProgressBar(shipScore)
         const b62 = await mergeImages([
           { src: '../../../data/ship/bgt.png', x:0, y:0 },
-          { src: this.getAvatarURL(member, false), x: 2, y: 25 },
-          { src: this.getAvatarURL(member2, false), x: 607, y: 25 },
+          { src: message.author.displayAvatarURL({size: 512, format: "png"}), x: 2, y: 25 },
+          { src: message.author.displayAvatarURL({size: 512, format: "png"}), x: 607, y: 25 },
           shipScore < 50 ? '../../../data/ship/bOverlay.png' : '../../../data/ship/overlay.png'
         ], {
           Canvas: Canvas,
