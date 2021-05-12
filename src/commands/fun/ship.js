@@ -24,16 +24,16 @@ module.exports = class shipCommand extends Command {
     message.channel.send(new MessageEmbed().setDescription(`${load} Shipping...`)).then(async msg=>{
       let shipScore = message.client.utils.getRandomInt(0, 100);
       try {
-        if (message.guild.ships.has(message.author.id) == false) message.guild.ships.set(message.author.id, [{userId: member2.id, shipScore}])
+        if (message.guild.ships.has(member2.id) == false) message.guild.ships.set(message.author.id, [{userId: member.id, shipScore}])
         else
         {
-          let ships = message.guild.ships.get(message.author.id)
+          let ships = message.guild.ships.get(member2.id)
           console.log(ships)
           if (ships)
           {
-            const matchedBefore = ships.find( u=> u.userId = member2.id)
+            const matchedBefore = ships.find( u=> u.userId = member.id)
             if (matchedBefore) shipScore = matchedBefore.shipScore;
-            else ships.push({userId: member2.id, shipScore})
+            else ships.push({userId: member.id, shipScore})
           }
         }
         console.log(this.getAvatarURL(member, false))
