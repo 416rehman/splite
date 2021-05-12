@@ -132,14 +132,6 @@ class Command {
   }
 
   /**
-   * Gets username from user/member
-   * @param {Object} user
-   */
-  getUserName(user) {
-    return user.user ? user.user.username  : user.username
-  }
-
-  /**
    * Gets role from mention
    * @param {Message} message 
    * @param {string} mention 
