@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 const mergeImages = require('merge-images');
-const Discord = require("discord.js");
+const Discord = require("");
 const { Canvas, Image } = require('canvas');
 
 module.exports = class shipCommand extends Command {
@@ -40,10 +40,10 @@ module.exports = class shipCommand extends Command {
 
         const progress = message.client.utils.createProgressBar(shipScore)
         const b62 = await mergeImages([
-          { src: './ship/bgt.png', x:0, y:0 },
+          { src: '../../../data/ship/bgt.png', x:0, y:0 },
           { src: this.getAvatarURL(member), x: 2, y: 25 },
           { src: this.getAvatarURL(member2), x: 607, y: 25 },
-          shipScore < 50 ? './ship/bOverlay.png' : './ship/overlay.png'
+          shipScore < 50 ? '../../../data/ship/bOverlay.png' : '../../../data/ship/overlay.png'
         ], {
           Canvas: Canvas,
           Image: Image
@@ -55,6 +55,7 @@ module.exports = class shipCommand extends Command {
             .setImage('attachment://bg.png'))
       }
       catch(e) {
+        console.log(e)
         msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
       }
       const ships = message.guild.ships.get(message.author.id)
