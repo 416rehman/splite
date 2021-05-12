@@ -57,7 +57,7 @@ module.exports = class shipCommand extends Command {
         msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
       }
       const ships = message.guild.ships.get(message.author.id)
-      ships.add({userId: member2.id, shipScore})
+      if (ships) ships.add({userId: member2.id, shipScore})
     })
     message.guild.funInProgress.delete(message.author.id)
   }
