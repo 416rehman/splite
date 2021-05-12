@@ -130,6 +130,10 @@ class Command {
     return hard ? link.split('?')[0] : link;
   }
 
+  getUserName(user) {
+    return user.user ? user.user.username  : user.username
+  }
+
   /**
    * Gets role from mention
    * @param {Message} message 
