@@ -24,20 +24,19 @@ module.exports = class shipCommand extends Command {
     message.channel.send(new MessageEmbed().setDescription(`${load} Shipping...`)).then(async msg=>{
       let shipScore = message.client.utils.getRandomInt(0, 100);
       try {
-        if (message.guild.ships.has(message.author.id))
-        {
-          console.log('ship exists')
-          let ships = message.guild.ships.get(message.author.id)
-          console.log(typeof ships)
-          const matchedBefore = ships.find( u=> u.userId = member2.id)
-          shipScore = matchedBefore.shipScore;
-        }
+        if (message.guild.ships.has(message.author.id) == false) message.guild.ships.set(message.author.id, [{userId: member2.id, shipScore}])
         else
         {
-          console.log('adding to ships')
-          message.guild.ships.set(message.author.id, new Set())
+          let ships = message.guild.ships.get(message.author.id)
+          console.log(ships)
+          if (ships)
+          {
+            const matchedBefore = ships.find( u=> u.userId = member2.id)
+            if (matchedBefore) shipScore = matchedBefore.shipScore;
+            else ships.push({userId: member2.id, shipScore})
+          }
         }
-          console.log(this.getAvatarURL(member, false))
+        console.log(this.getAvatarURL(member, false))
         console.log(this.getAvatarURL(member2, false))
 
         const progress = message.client.utils.createProgressBar(shipScore)
@@ -52,7 +51,7 @@ module.exports = class shipCommand extends Command {
         })
         const buff = new Buffer.from(b62.split(",")[1], "base64")
         await msg.edit(new MessageEmbed()
-            .setDescription(`\`${member.displayName}\` X \`${member2.displayName}\` **${shipScore}** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
+            .setDescription(`\`${member.username}\` X \`${member2.displayName}\` **${shipScore}** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
             .attachFiles(new MessageAttachment(buff, 'bg.png'))
             .setImage('attachment://bg.png'))
       }
@@ -61,7 +60,7 @@ module.exports = class shipCommand extends Command {
         msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
       }
       const ships = message.guild.ships.get(message.author.id)
-      if (ships) ships.add({userId: member2.id, shipScore})
+      if (ships) ships.push({userId: member2.id, shipScore})
     })
     message.guild.funInProgress.delete(message.author.id)
   }
