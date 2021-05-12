@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
 const mergeImages = require('merge-images');
+const Discord = require("discord.js");
 const { Canvas, Image } = require('canvas');
 
 module.exports = class shipCommand extends Command {
@@ -50,7 +51,7 @@ module.exports = class shipCommand extends Command {
         const buff = new Buffer.from(b62.split(",")[1], "base64")
         await message.channel.send(new MessageEmbed()
             .setDescription(`\u200b\u200b\u200b\u200b\u200b\u200b\u200b\u200b\u200b**${shipScore}** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
-            .attachFiles(new MessageAttachment(buff, 'bg.png'))
+            .attachFiles(new Discord.MessageAttachment(buff, 'bg.png'))
             .setImage('attachment://bg.png'))
       }
       catch(e) {
