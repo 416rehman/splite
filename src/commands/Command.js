@@ -130,7 +130,11 @@ class Command {
     const link = user.user ? user.user.displayAvatarURL({ size: 512, format: "png", dynamic: true })  : user.displayAvatarURL({ size: 512, format: "png", dynamic: true })
     return hard ? link.split('?')[0] : link;
   }
-$sh
+
+  /**
+   * Gets username from user/member
+   * @param {Object} user
+   */
   getUserName(user) {
     return user.user ? user.user.username  : user.username
   }
