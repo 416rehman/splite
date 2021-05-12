@@ -50,8 +50,8 @@ module.exports = class shipCommand extends Command {
         const progress = message.client.utils.createProgressBar(shipScore)
         const b62 = await mergeImages([
           { src: '/root/splite/data/ship/bgt.png', x:0, y:0 },
-          { src: this.getAvatarURL(member, false), x: 2, y: 25 },
-          { src: this.getAvatarURL(member2, false), x: 607, y: 25 },
+          { src: this.getAvatarURL(member), x: 2, y: 25 },
+          { src: this.getAvatarURL(member2), x: 607, y: 25 },
           shipScore < 50 ? '/root/splite/data/ship/bOverlay.png' : '/root/splite/data/ship/overlay.png'
         ], {
           Canvas: Canvas,
@@ -62,6 +62,7 @@ module.exports = class shipCommand extends Command {
             .setDescription(`\`${this.getUserName(member)}\` X \`${this.getUserName(member2)}\`\n **${shipScore}%** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
             .attachFiles(new MessageAttachment(buff, 'bg.png'))
             .setImage('attachment://bg.png'))
+        message.channel.send(new MessageAttachment(buff, 'bg.png'))
       }
       catch(e) {
         console.log(e)
