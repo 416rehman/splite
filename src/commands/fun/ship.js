@@ -32,12 +32,24 @@ module.exports = class shipCommand extends Command {
         }
         else
         {
+          let matchedBefore
           let ships = message.guild.ships.get(member2.id)
           if (ships)
           {
-            const matchedBefore = ships.find( u=> u.userId === member.id)
+            matchedBefore = ships.find( u=> u.userId === member.id)
             if (matchedBefore) shipScore = matchedBefore.shipScore;
             else ships.push({userId: member.id, shipScore})
+
+            if (!matchedBefore)
+            {
+              let ships2 = message.guild.ships.get(member.id)
+              if (ships2)
+              {
+                matchedBefore = ships2.find( u=> u.userId === member2.id)
+                if (matchedBefore) shipScore = matchedBefore.shipScore;
+                else ships2.push({userId: member2.id, shipScore})
+              }
+            }
           }
         }
 
@@ -62,8 +74,6 @@ module.exports = class shipCommand extends Command {
         console.log(e)
         msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
       }
-      const ships = message.guild.ships.get(message.author.id)
-      if (ships) ships.push({userId: member2.id, shipScore})
     })
     message.guild.funInProgress.delete(message.author.id)
   }
