@@ -23,7 +23,7 @@ module.exports = class shipCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Shipping...`)).then(async msg=>{
       try {
-        let shipScore = this.getRandomInt(0, 100);
+        let shipScore = message.client.utils.getRandomInt(0, 100);
         if (message.guild.ships.has(message.author.id))
         {
           console.log('ship exists')
