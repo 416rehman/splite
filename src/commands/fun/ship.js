@@ -37,7 +37,7 @@ module.exports = class shipCommand extends Command {
           console.log(ships)
           if (ships)
           {
-            const matchedBefore = ships.find( u=> u.userId = member.id)
+            const matchedBefore = ships.find( u=> u.userId === member.id)
             if (matchedBefore)
             {
               console.log('Matched Before')
