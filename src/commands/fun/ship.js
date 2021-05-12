@@ -42,12 +42,15 @@ module.exports = class shipCommand extends Command {
 
             if (!matchedBefore)
             {
-              let ships2 = message.guild.ships.get(member.id)
-              if (ships2)
-              {
-                matchedBefore = ships2.find( u=> u.userId === member2.id)
-                if (matchedBefore) shipScore = matchedBefore.shipScore;
-                else ships2.push({userId: member2.id, shipScore})
+              if (message.guild.ships.has(member2.id) == false) message.guild.ships.set(member.id, [{userId: member2.id, shipScore}])
+              else {
+                let ships2 = message.guild.ships.get(member.id)
+                if (ships2)
+                {
+                  matchedBefore = ships2.find( u=> u.userId === member2.id)
+                  if (matchedBefore) shipScore = matchedBefore.shipScore;
+                  else ships2.push({userId: member2.id, shipScore})
+                }
               }
             }
           }
