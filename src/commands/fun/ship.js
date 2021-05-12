@@ -22,8 +22,8 @@ module.exports = class shipCommand extends Command {
     const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.guild.members.cache.random();
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Shipping...`)).then(async msg=>{
+      let shipScore = message.client.utils.getRandomInt(0, 100);
       try {
-        let shipScore = message.client.utils.getRandomInt(0, 100);
         if (message.guild.ships.has(message.author.id))
         {
           console.log('ship exists')
