@@ -53,11 +53,8 @@ module.exports = class shipCommand extends Command {
   }
 
   addToCollection(message, owner, child, shipScore) {
-    if (message.guild.ships.has(owner.id) == false) {
-      console.log(`first run`)
-      message.guild.ships.set(owner.id, [{userId: child.id, shipScore}])
-      console.log(`Added userto collection`)
-    } else {
+    if (message.guild.ships.has(owner.id) == false)  message.guild.ships.set(owner.id, [{userId: child.id, shipScore}])
+    else {
       let matchedBefore
       let ships = message.guild.ships.get(owner.id)
       if (ships) {
