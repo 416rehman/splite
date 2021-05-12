@@ -37,7 +37,7 @@ module.exports = class shipCommand extends Command {
           message.guild.ships.set(message.author.id, new Set())
         }
 
-        const progress = this.createProgressBar(shipScore)
+        const progress = message.client.utils.createProgressBar(shipScore)
         const b62 = await mergeImages([
           { src: './ship/bgt.png', x:0, y:0 },
           { src: this.getAvatarURL(member), x: 2, y: 25 },
