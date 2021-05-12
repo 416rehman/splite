@@ -36,7 +36,7 @@ module.exports = class shipCommand extends Command {
             else ships.push({userId: member.id, shipScore})
           }
         }
-        console.log(member2)
+        console.log(member)
         console.log()
 
         const progress = message.client.utils.createProgressBar(shipScore)
@@ -51,7 +51,7 @@ module.exports = class shipCommand extends Command {
         })
         const buff = new Buffer.from(b62.split(",")[1], "base64")
         await msg.edit(new MessageEmbed()
-            .setDescription(`\`${member.username}\` X \`${member2.displayName}\`\n **${shipScore}%** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
+            .setDescription(`\`${member.username}\` X \`${member2.username}\`\n **${shipScore}%** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
             .attachFiles(new MessageAttachment(buff, 'bg.png'))
             .setImage('attachment://bg.png'))
       }
