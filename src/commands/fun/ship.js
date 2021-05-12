@@ -1,8 +1,7 @@
 const Command = require('../Command.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
-const mergeImages = require('merge-images');
-const { Canvas, Image } = require('canvas');
+const jimp = require('jimp')
 
 module.exports = class shipCommand extends Command {
   constructor(client) {
@@ -28,21 +27,26 @@ module.exports = class shipCommand extends Command {
         this.addToCollection(message, member, member2, shipScore);
 
         const progress = message.client.utils.createProgressBar(shipScore)
-        const b62 = await mergeImages([
-          { src: '/root/splite/data/ship/bgt.png', x:0, y:0 },
-          { src: this.getAvatarURL(member, false), x: 2, y: 25, width: 512, height: 512 },
-          { src: this.getAvatarURL(member2, false), x: 607, y: 25, width: 512, height: 512 },
-          shipScore < 50 ? '/root/splite/data/ship/bOverlay.png' : '/root/splite/data/ship/overlay.png'
-        ], {
-          Canvas: Canvas,
-          Image: Image
+        const bg = await jimp.read('../../../data/ship/bgt.png')
+        const av1 = await jimp.read(this.getAvatarURL(member2))
+        const av2 = await jimp.read(this.getAvatarURL(member))
+        const overlay = await jimp.read('../../../data/ship/bOverlay.png')
+
+        av1.resize(512,512);
+        av2.resize(512,512);
+
+        await bg.composite(av1, 0,25)
+        await bg.composite(av2, 610,25)
+        await bg.composite(overlay, 0, 0)
+
+        bg.getBase64(jimp.AUTO, async function (e, img64) {
+          const buff = new Buffer.from(img64.split(",")[1], "base64")
+          await msg.delete()
+          await msg.channel.send(new MessageEmbed()
+              .setDescription(`\`${this.getUserName(member)}\` **x** \`${this.getUserName(member2)}\`\n\n **${shipScore}%** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
+              .attachFiles(new MessageAttachment(buff, 'ship.png'))
+              .setImage('attachment://ship.png'))
         })
-        const buff = new Buffer.from(b62.split(",")[1], "base64")
-        await msg.delete()
-        await msg.channel.send(new MessageEmbed()
-            .setDescription(`\`${this.getUserName(member)}\` **x** \`${this.getUserName(member2)}\`\n\n **${shipScore}%** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
-            .attachFiles(new MessageAttachment(buff, 'bg.png'))
-            .setImage('attachment://bg.png'))
       }
       catch(e) {
         console.log(e)
