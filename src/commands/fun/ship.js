@@ -27,7 +27,7 @@ module.exports = class shipCommand extends Command {
         if (message.guild.ships.has(member2.id) == false)
         {
           console.log(`first run`)
-          message.guild.ships.set(message.author.id, [{userId: member.id, shipScore}])
+          message.guild.ships.set(member2.id, [{userId: member.id, shipScore}])
           console.log(`Added userto collection`)
         }
         else
