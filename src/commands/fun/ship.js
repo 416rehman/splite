@@ -26,11 +26,16 @@ module.exports = class shipCommand extends Command {
         let shipScore = this.getRandomInt(0, 100);
         if (message.guild.ships.has(message.author.id))
         {
+          console.log('ship exists')
           const ships = message.guild.ships.get(message.author.id)
           const matchedBefore = ships.find( u=> u.userId = member2.id)
           shipScore = matchedBefore.shipScore;
         }
-        else message.guild.ships.set(message.author.id, new Set())
+        else
+        {
+          console.log('adding to ships')
+          message.guild.ships.set(message.author.id, new Set())
+        }
 
         const progress = this.createProgressBar(shipScore)
         const b62 = await mergeImages([
