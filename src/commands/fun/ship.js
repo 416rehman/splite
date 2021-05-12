@@ -24,15 +24,25 @@ module.exports = class shipCommand extends Command {
     message.channel.send(new MessageEmbed().setDescription(`${load} Shipping...`)).then(async msg=>{
       let shipScore = message.client.utils.getRandomInt(0, 100);
       try {
-        if (message.guild.ships.has(member2.id) == false) message.guild.ships.set(message.author.id, [{userId: member.id, shipScore}])
+        if (message.guild.ships.has(member2.id) == false)
+        {
+          console.log(`first run`)
+          message.guild.ships.set(message.author.id, [{userId: member.id, shipScore}])
+          console.log(`Added userto collection`)
+        }
         else
         {
+          console.log(`Exists`)
           let ships = message.guild.ships.get(member2.id)
           console.log(ships)
           if (ships)
           {
             const matchedBefore = ships.find( u=> u.userId = member.id)
-            if (matchedBefore) shipScore = matchedBefore.shipScore;
+            if (matchedBefore)
+            {
+              console.log('Matched Before')
+              shipScore = matchedBefore.shipScore;
+            }
             else ships.push({userId: member.id, shipScore})
           }
         }
