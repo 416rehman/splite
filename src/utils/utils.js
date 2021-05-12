@@ -6,6 +6,7 @@ const report = require("../slashCommands/report")
 const anonymous = require("../slashCommands/anonymous")
 const view = require("../slashCommands/view")
 const Collection = require("@discordjs/collection");
+const emojis = require("./emojis.json")
 
 /**
  * Capitalizes a string
