@@ -127,7 +127,7 @@ class Command {
    */
   getAvatarURL(user, hard = true) {
     console.log(user)
-    const link = user.user ? user.user.displayAvatarURL({ size: 512, format: "png", dynamic: true })  : user.displayAvatarURL({ size: 512, format: "png", dynamic: true })
+    const link = user.user ? user.user.displayAvatarURL({ size: 512, format: "png", dynamic: true })  : user.displayAvatarURL({ size: 1024, format: "png", dynamic: true })
     return hard ? link.split('?')[0] : link;
   }
 
