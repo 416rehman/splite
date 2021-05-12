@@ -24,37 +24,8 @@ module.exports = class shipCommand extends Command {
     message.channel.send(new MessageEmbed().setDescription(`${load} Shipping...`)).then(async msg=>{
       let shipScore = message.client.utils.getRandomInt(0, 100);
       try {
-        if (message.guild.ships.has(member2.id) == false)
-        {
-          console.log(`first run`)
-          message.guild.ships.set(member2.id, [{userId: member.id, shipScore}])
-          console.log(`Added userto collection`)
-        }
-        else
-        {
-          let matchedBefore
-          let ships = message.guild.ships.get(member2.id)
-          if (ships)
-          {
-            matchedBefore = ships.find( u=> u.userId === member.id)
-            if (matchedBefore) shipScore = matchedBefore.shipScore;
-            else ships.push({userId: member.id, shipScore})
-
-            if (!matchedBefore)
-            {
-              if (message.guild.ships.has(member2.id) == false) message.guild.ships.set(member.id, [{userId: member2.id, shipScore}])
-              else {
-                let ships2 = message.guild.ships.get(member.id)
-                if (ships2)
-                {
-                  matchedBefore = ships2.find( u=> u.userId === member2.id)
-                  if (matchedBefore) shipScore = matchedBefore.shipScore;
-                  else ships2.push({userId: member2.id, shipScore})
-                }
-              }
-            }
-          }
-        }
+        shipScore = this.addToCollection(message, member2, member, shipScore);
+        this.addToCollection(message, member, member2, shipScore);
 
         const progress = message.client.utils.createProgressBar(shipScore)
         const b62 = await mergeImages([
@@ -79,5 +50,22 @@ module.exports = class shipCommand extends Command {
       }
     })
     message.guild.funInProgress.delete(message.author.id)
+  }
+
+  addToCollection(message, owner, child, shipScore) {
+    if (message.guild.ships.has(owner.id) == false) {
+      console.log(`first run`)
+      message.guild.ships.set(owner.id, [{userId: child.id, shipScore}])
+      console.log(`Added userto collection`)
+    } else {
+      let matchedBefore
+      let ships = message.guild.ships.get(owner.id)
+      if (ships) {
+        matchedBefore = ships.find(u => u.userId === child.id)
+        if (matchedBefore) shipScore = matchedBefore.shipScore;
+        else ships.push({userId: child.id, shipScore})
+      }
+    }
+    return shipScore;
   }
 };
