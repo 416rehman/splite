@@ -18,8 +18,8 @@ module.exports = class shipCommand extends Command {
   async run(message, args) {
     if (message.guild.funInProgress.has(message.author.id)) return message.channel.send(new MessageEmbed().setDescription(`${fail} Please wait, you already have a request pending.`))
     message.guild.funInProgress.set(message.author.id, 'fun');
-    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.author;
-    const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.guild.members.cache.random();
+    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.guild.members.cache.random();
+    const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.author;
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Shipping...`)).then(async msg=>{
       let shipScore = message.client.utils.getRandomInt(0, 100);
