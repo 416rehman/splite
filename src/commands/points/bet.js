@@ -6,19 +6,6 @@ const emojis = require('../../utils/emojis.json')
 
 const limit = 1000;
 
-function weightedRandom(input) {
-  const array = []; // Just Checking...
-  for (let item in input) {
-    if (input.hasOwnProperty(item)) { // Safety
-      for (let i = 0; i < input[item]; i++) {
-        array.push(item);
-      }
-    }
-  }
-  // Probability Fun
-  return array[Math.floor(Math.random() * array.length)];
-}
-
 module.exports = class betCommand extends Command {
   constructor(client) {
     super(client, {
@@ -67,7 +54,7 @@ module.exports = class betCommand extends Command {
           message.channel.send(embed).then(msg2 => {
             msg.delete()
             setTimeout(() => {
-                      const d = weightedRandom({0: 50, 1: 50})
+                      const d = message.client.utils.weightedRandom({0: 50, 1: 50})
 
                       let winner = message.author
                       if (d == 1) winner = member.user

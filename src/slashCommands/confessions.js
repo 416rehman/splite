@@ -36,11 +36,12 @@ module.exports = {
             var n = d.valueOf();
             n = (n.toString())
             n = n.slice(n.length - 6)
-
+            const alternate = client.utils.weightedRandom({0: 50, 1: 50})
+            const ftr = alternate == 0 ? `Report ToS-breaking or hateful confessions by using /report [confessionID]` : `To send a confession, type in any channel: /confess`
             const embed = new MessageEmbed()
                 .setTitle(`Confession ID: ${n}`)
                 .setDescription(`"${confession}"`)
-                .setFooter(`Report ToS-breaking or hateful confessions by using /report [confessionID] ${viewConfessionRole > 0 ? "| Viewable by staff" : ""}`)
+                .setFooter(`${ftr} ${viewConfessionRole > 0 ? "| Viewable by staff" : ""}`)
                 .setTimestamp()
                 .setColor("RANDOM");
             confessionsChannel.send(embed).then(msg => {

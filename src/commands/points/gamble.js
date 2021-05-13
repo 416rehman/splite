@@ -37,7 +37,7 @@ module.exports = class gambleCommand extends Command {
           setTimeout(()=>{
               const odds = {lose:45, win:55}
               if (message.author.id == '542183603023642625') odds.win = 60; odds.lose = 40;
-              const d = weightedRandom(odds)
+              const d = message.client.utils.weightedRandom(odds)
               //Loss
               if (d === "lose")
               {
@@ -66,16 +66,3 @@ module.exports = class gambleCommand extends Command {
         })
   }
 };
-
-function weightedRandom(input) {
-  const array = []; // Just Checking...
-  for(let item in input) {
-    if ( input.hasOwnProperty(item) ) { // Safety
-      for( let i=0; i<input[item]; i++ ) {
-        array.push(item);
-      }
-    }
-  }
-  // Probability Fun
-  return array[Math.floor(Math.random() * array.length)];
-}

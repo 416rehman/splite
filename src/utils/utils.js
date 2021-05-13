@@ -333,6 +333,19 @@ function getRandomInt(min, max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function weightedRandom(input) {
+  const array = []; // Just Checking...
+  for(let item in input) {
+    if ( input.hasOwnProperty(item) ) { // Safety
+      for( let i=0; i<input[item]; i++ ) {
+        array.push(item);
+      }
+    }
+  }
+  // Probability Fun
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 module.exports = {
   capitalize,
   removeElement,
@@ -351,5 +364,6 @@ module.exports = {
   getEmojiForJoinVoting,
   createCollections,
   createProgressBar,
-  getRandomInt
+  getRandomInt,
+  weightedRandom
 };
