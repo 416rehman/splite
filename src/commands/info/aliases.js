@@ -97,7 +97,7 @@ module.exports = class AliasesCommand extends Command {
 
       embed.addField(
         '**Links**', 
-        '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=0&scope=bot%20applications.commands) | ' +
+        '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=8&scope=bot%20applications.commands) | ' +
         'Developed By Split#0420**'
       );
     }

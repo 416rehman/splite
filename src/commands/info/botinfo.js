@@ -34,7 +34,7 @@ module.exports = class BotInfoCommand extends Command {
       .addField('Tech', `\`\`\`asciidoc\n${tech}\`\`\``)
       .addField(
         'Links', 
-        '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=0&scope=bot%20applications.commands) | ' +
+        '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=8&scope=bot%20applications.commands) | ' +
         'Developed By Split**'
       )
       .setImage('https://i.imgur.com/B0XSinY.png')

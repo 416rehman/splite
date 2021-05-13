@@ -17,7 +17,7 @@ module.exports = class InviteMeCommand extends Command {
       .setTitle('Invite Me')
       .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(oneLine`
-        Click [here](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=0&scope=bot%20applications.commands)
+        Click [here](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=8&scope=bot%20applications.commands)
         to invite me to your server!
       `)
       .addField('Developed By',
