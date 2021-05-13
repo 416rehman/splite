@@ -37,7 +37,7 @@ module.exports = {
             n = (n.toString())
             n = n.slice(n.length - 6)
             const alternate = client.utils.weightedRandom({0: 50, 1: 50})
-            const ftr = alternate == 0 ? `Report ToS-breaking or hateful confessions by using /report [confessionID]` : `To send a confession, type in any channel: /confess`
+            const ftr = alternate == 0 ? `Report ToS-breaking or hateful confessions by using /report [confessionID]` : `Type "/confess" in any channel to post a confession here. `
             const embed = new MessageEmbed()
                 .setTitle(`Confession ID: ${n}`)
                 .setDescription(`"${confession}"`)
