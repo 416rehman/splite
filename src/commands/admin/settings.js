@@ -212,7 +212,7 @@ module.exports = class SettingsCommand extends Command {
       .addField('Points', '`3` settings', true)
       .addField('Crown', '`4` settings', true)
       .addField('JoinVoting', '`5` settings', true)
-      .addField('Invite Me', '[Click Here](https://discord.com/api/oauth2/authorize?client_id=832753795854237697&permissions=8&scope=bot%20applications.commands)', true);
+      .addField('Invite Me', '[Click Here](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=0&scope=bot%20applications.commands)', true);
     message.channel.send(embed);
   }
 };
