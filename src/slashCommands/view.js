@@ -42,8 +42,8 @@ module.exports = {
 
                 if (row && row.guild_id === interaction.guild_id)
                 {
-                    console.log(sender)
                     const sender = guild.members.cache.get(row.author_id);
+                    console.log(sender)
                     reply(interaction, `Confession ID: **\`${row.confession_id}\`** \
                     \nContent: **\`${row.content}\`**\
                     \nSent By: **${sender || "Someone not in the server"} [${sender.username}] (ID: ${row.author_id})**\
