@@ -47,6 +47,7 @@ module.exports = class messageCountCommand extends Command {
                   await this.sendMultipleMessageCount(args, target.members, message, msg, embed);
                   break
                 default:
+                  msg.edit(`${emojis.fail} Failed! Please try again later.`)
                   break
               }
             }
