@@ -69,8 +69,11 @@ module.exports = class messageCountCommand extends Command {
 
     await inPlaceSort(lb).desc(u => u.count)
 
+    let i = 1
     const descriptions = lb.map(e => {
-      return `${e.user}: **\`${e.count}\`**`
+      const desc = `${i} - ${e.user}: **\`${e.count}\`**`
+      i++;
+      return desc;
     })
 
     if (descriptions.length <= max) {
