@@ -40,13 +40,15 @@ module.exports = {
             else {
                 const row = client.db.confessions.selectConfessionByID.get(interaction.data.options[0].value)
 
+
                 if (row && row.guild_id === interaction.guild_id)
                 {
                     const sender = guild.members.cache.get(row.author_id);
+                    const tag = guild.members.cache.get(row.author_id).tag
                     console.log(sender)
                     reply(interaction, `Confession ID: **\`${row.confession_id}\`** \
                     \nContent: **\`${row.content}\`**\
-                    \nSent By: **${sender || "Someone not in the server"} [${sender.username}] (ID: ${row.author_id})**\
+                    \nSent By: **${sender || "Someone not in the server"} ${tag?`[${tag}]`:""} (ID: ${row.author_id})**\
                     \nDate/Time: **\`${row.timeanddate}\`**`, client)
                 }
                 else reply(interaction, `Error: Can't find that confession! Please check the confession ID`, client)
