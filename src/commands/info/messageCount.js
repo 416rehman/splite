@@ -18,7 +18,7 @@ module.exports = class messageCountCommand extends Command {
   async run(message, args) {
     if (!args[0])  //All server messages
     {
-
+      console.log(`AUTHOR: ` + message.author.constructor.name)
     } else if (args[0]) //User/Role messages
     {
       const target = this.getRoleFromMention(message, args[0]) ||
@@ -26,7 +26,7 @@ module.exports = class messageCountCommand extends Command {
           await this.getMemberFromMention(message, args[0]) ||
           await message.guild.members.cache.get(args[0]) ||
           message.author;
-
+      console.log(target.constructor.name)
       switch (target.constructor.name) {
         case 'User':
         {

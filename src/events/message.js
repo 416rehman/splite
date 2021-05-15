@@ -6,6 +6,9 @@ const { oneLine } = require('common-tags');
 module.exports = (client, message) => {
   if (message.channel.type === 'dm' || !message.channel.viewable || message.author.bot) return;
 
+  //Update MessageCount
+  client.db.users.updateMessageCount.run({ messageCount: 1 }, message.author.id, message.guild.id);
+
   const {
     afk: currentStatus,
     afk_time: afkTime
