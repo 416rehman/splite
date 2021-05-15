@@ -7,12 +7,12 @@ const {inPlaceSort} = require("fast-sort");
 module.exports = class messageCountCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'messagecount',
-      aliases: ['count', 'messages', 'activity'],
-      usage: 'messageCount',
-      description: 'Fetches number of messages sent by users.',
+      name: 'activity',
+      aliases: ['count', 'messages', 'messagecount'],
+      usage: 'activity <user> / <role> / all',
+      description: 'Fetches number of messages sent by users, by role, or all.',
       type: client.types.INFO,
-      examples: ['messageCount @splite', 'messageCount @CoolRole']
+      examples: ['activity all', 'activity @CoolRole', 'activity @split']
     });
   }
   async run(message, args) {
