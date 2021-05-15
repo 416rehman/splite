@@ -7,7 +7,7 @@ const { stripIndent } = require('common-tags');
 module.exports = class ServerInfoCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'messageCount',
+      name: 'messagecount',
       aliases: ['count', 'messages', 'activity'],
       usage: 'messageCount',
       description: 'Fetches number of messages sent by users.',
