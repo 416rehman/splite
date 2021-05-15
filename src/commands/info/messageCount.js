@@ -27,7 +27,7 @@ module.exports = class messageCountCommand extends Command {
             //All server messages
             if (args[0].toLowerCase() === 'all')
             {
-              await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed);
+              await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `All Activity`);
             }
             else //User/Role messages
             {
@@ -44,7 +44,7 @@ module.exports = class messageCountCommand extends Command {
                   break
 
                 case 'Role':
-                  await this.sendMultipleMessageCount(args, target.members, message, msg, embed);
+                  await this.sendMultipleMessageCount(args, target.members, message, msg, embed, `${target.name}'s Activity`);
                   break
                 default:
                   msg.edit(`${emojis.fail} Failed! Please try again later.`)
@@ -56,7 +56,7 @@ module.exports = class messageCountCommand extends Command {
     )
   }
 
-  async sendMultipleMessageCount(args, collection, message, msg, embed) {
+  async sendMultipleMessageCount(args, collection, message, msg, embed, title) {
     let max = parseInt(args[0]);
     if (!max || max < 0) max = 10;
     else if (max > 25) max = 25;
@@ -76,13 +76,13 @@ module.exports = class messageCountCommand extends Command {
     if (descriptions.length <= max) {
       const range = (descriptions.length == 1) ? '[1]' : `[1 - ${descriptions.length}]`;
       await msg.edit(embed
-          .setTitle(`${collection.constructor.name === 'Role' ? `${collection.name}'s` : "All" } Activity ${range}`)
+          .setTitle(`${title} ${range}`)
           .setDescription(descriptions.join('\n'))
       );
     } else {
       const position = lb.findIndex(p => p.user.id === message.author.id)
       embed
-          .setTitle(`${collection.constructor.name === 'Role' ? `${collection.name}'s` : "All" } Activity`)
+          .setTitle(title)
           .setFooter(
               'Expires after two minutes.\n' + `${message.member.displayName}'s position: ${position + 1}`,
               message.author.displayAvatarURL({dynamic: true})
