@@ -7,11 +7,12 @@ const { stripIndent } = require('common-tags');
 module.exports = class ServerInfoCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'serverinfo',
-      aliases: ['server', 'si'],
-      usage: 'serverinfo',
-      description: 'Fetches information and statistics about the server.',
-      type: client.types.INFO
+      name: 'messageCount',
+      aliases: ['count', 'messages', 'activity'],
+      usage: 'messageCount',
+      description: 'Fetches number of messages sent by users.',
+      type: client.types.INFO,
+      examples: ['messageCount @splite', 'messageCount @CoolRole']
     });
   }
   async run(message, args) {
