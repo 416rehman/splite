@@ -27,7 +27,22 @@ module.exports = class messageCountCommand extends Command {
           await message.guild.members.cache.get(args[0]) ||
           message.author;
 
-      console.log(target.constructor.name)
+      switch (target.constructor.name) {
+        case 'User':
+        {
+          const messages = message.client.db.users.selectMessageCount.get(target.id, message.guild.id);
+          console.log(messages)
+        }
+        case 'Role':
+        {
+          const messages = message.client.db.users.selectMessageCount.get(target.id, message.guild.id);
+          console.log(messages)
+        }
+        default:
+        {
+
+        }
+      }
     }
   }
 };
