@@ -1,9 +1,8 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
-const moment = require('moment');
+const ReactionMenu = require('../ReactionMenu.js');
 const emojis = require('../../utils/emojis.json');
 const {inPlaceSort} = require("fast-sort");
-const { stripIndent } = require('common-tags');
 
 module.exports = class messageCountCommand extends Command {
   constructor(client) {
@@ -45,19 +44,40 @@ module.exports = class messageCountCommand extends Command {
                   break
 
                 case 'Role':
-                  const lb = [];
+                  let max = parseInt(args[0]);
+                  if (!max || max < 0) max = 10;
+                  else if (max > 25) max = 25;
 
+                  const lb = [];
                   await target.members.forEach(m=>{
                     const count = message.client.db.users.selectMessageCount.pluck().get(m.id, message.guild.id);
                     lb.push({user: m, count})
                   });
+
                   await inPlaceSort(lb).desc(u=>u.count)
-                    let desc = ``
-                    lb.forEach(e=>{
-                      desc += `${e.user} has sent **${e.count} messages** so far!`
-                    })
-                    embed.setDescription(desc)
-                    msg.edit(embed)
+
+                  const descriptions = lb.map(e=>{
+                    return `${e.user}: **${e.count}**\n`
+                  })
+
+                  if (descriptions.length <= max) {
+                    const range = (descriptions.length == 1) ? '[1]' : `[1 - ${descriptions.length}]`;
+                    await msg.edit(embed
+                        .setTitle(`${target.name}'s Message Count ${range}`)
+                        .setDescription(descriptions.join('\n'))
+                    );
+                  }
+                  else {
+                    const position = lb.findIndex(p=>p.user.id === message.author.id)
+                    embed
+                        .setTitle(`${target.name}'s Message Count`)
+                        .setFooter(
+                            'Expires after two minutes.\n' + `${message.member.displayName}'s position: ${position + 1}`,
+                            message.author.displayAvatarURL({ dynamic: true })
+                        );
+
+                    new ReactionMenu(message.client, message.channel, message.member, embed, members, max);
+                  }
                   break
 
                 default:
