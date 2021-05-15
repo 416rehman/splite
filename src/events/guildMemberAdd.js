@@ -105,7 +105,8 @@ module.exports = async (client, member) => {
       null, //BIO
       null, //VoteRunning
       0,   //Smashrunning
-      0    //OptOutSmashOrPass
+      0,    //OptOutSmashOrPass
+      0     //messageCount
   );
   
   // If member already in users table

@@ -80,6 +80,7 @@ db.prepare(`
     voteRunning INTEGER,
     SmashRunning INTEGER,
     optOutSmashOrPass INTEGER,
+    messageCount INTEGER,
     PRIMARY KEY (user_id, guild_id)
   );
 `).run();
@@ -242,8 +243,9 @@ const users = {
       bio,
       voteRunning,
       SmashRunning,
-      optOutSmashOrPass
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?, ?);
+      optOutSmashOrPass,
+      messageCount
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -260,6 +262,7 @@ const users = {
   selectVoteRunning: db.prepare('SELECT voteRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectSmashRunning: db.prepare('SELECT SmashRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectOptOutSmashOrPass: db.prepare('SELECT optOutSmashOrPass FROM users WHERE user_id = ? limit 1;'),
+  selectMessageCount: db.prepare('SELECT messageCount FROM users WHERE user_id = ? AND guild_id = ?;'),
 
   // Updates
   updateGuildName: db.prepare('UPDATE users SET guild_name = ? WHERE guild_id = ?;'),
@@ -286,7 +289,11 @@ const users = {
   resetTimers: db.prepare(`
     update users set voteRunning = 0,
                  SmashRunning = 0;`),
-  updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;')
+  updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;'),
+  updateMessageCount: db.prepare(`
+    UPDATE users 
+    SET messageCount = messageCount + @messageCount WHERE user_id = ? AND guild_id = ?;
+  `),
 };
 
 // BOT CONFESSIONS TABLE

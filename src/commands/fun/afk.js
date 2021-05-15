@@ -34,7 +34,5 @@ module.exports = class AfkCommand extends Command {
   catch (err) {
     return this.sendErrorMessage(message, 1, 'Failed to set your afk', err.message);
   }
-
-
   }
 };
