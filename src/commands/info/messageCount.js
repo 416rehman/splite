@@ -27,7 +27,7 @@ module.exports = class messageCountCommand extends Command {
             //All server messages
             if (args[0].toLowerCase() === 'all')
             {
-
+              await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed);
             }
             else //User/Role messages
             {
@@ -44,42 +44,8 @@ module.exports = class messageCountCommand extends Command {
                   break
 
                 case 'Role':
-                  let max = parseInt(args[0]);
-                  if (!max || max < 0) max = 10;
-                  else if (max > 25) max = 25;
-
-                  const lb = [];
-                  await target.members.forEach(m=>{
-                    const count = message.client.db.users.selectMessageCount.pluck().get(m.id, message.guild.id);
-                    lb.push({user: m, count})
-                  });
-
-                  await inPlaceSort(lb).desc(u=>u.count)
-
-                  const descriptions = lb.map(e=>{
-                    return `${e.user}: **\`${e.count}\`**`
-                  })
-
-                  if (descriptions.length <= max) {
-                    const range = (descriptions.length == 1) ? '[1]' : `[1 - ${descriptions.length}]`;
-                    await msg.edit(embed
-                        .setTitle(`${target.name}'s Activity ${range}`)
-                        .setDescription(descriptions.join('\n'))
-                    );
-                  }
-                  else {
-                    const position = lb.findIndex(p=>p.user.id === message.author.id)
-                    embed
-                        .setTitle(`${target.name}'s Message Count`)
-                        .setFooter(
-                            'Expires after two minutes.\n' + `${message.member.displayName}'s position: ${position + 1}`,
-                            message.author.displayAvatarURL({ dynamic: true })
-                        );
-
-                    new ReactionMenu(message.client, message.channel, message.member, embed, descriptions, max);
-                  }
+                  await this.sendMultipleMessageCount(args, target.members, message, msg, embed);
                   break
-
                 default:
                   break
               }
@@ -87,6 +53,42 @@ module.exports = class messageCountCommand extends Command {
           }
         }
     )
+  }
+
+  async sendMultipleMessageCount(args, collection, message, msg, embed) {
+    let max = parseInt(args[0]);
+    if (!max || max < 0) max = 10;
+    else if (max > 25) max = 25;
+
+    const lb = [];
+    await collection.forEach(m => {
+      const count = message.client.db.users.selectMessageCount.pluck().get(m.id, message.guild.id);
+      lb.push({user: m, count})
+    });
+
+    await inPlaceSort(lb).desc(u => u.count)
+
+    const descriptions = lb.map(e => {
+      return `${e.user}: **\`${e.count}\`**`
+    })
+
+    if (descriptions.length <= max) {
+      const range = (descriptions.length == 1) ? '[1]' : `[1 - ${descriptions.length}]`;
+      await msg.edit(embed
+          .setTitle(`${collection.constructor.name === 'Role' ? `${collection.name}'s` : "All" } Activity ${range}`)
+          .setDescription(descriptions.join('\n'))
+      );
+    } else {
+      const position = lb.findIndex(p => p.user.id === message.author.id)
+      embed
+          .setTitle(`${collection.constructor.name === 'Role' ? `${collection.name}'s` : "All" } Activity`)
+          .setFooter(
+              'Expires after two minutes.\n' + `${message.member.displayName}'s position: ${position + 1}`,
+              message.author.displayAvatarURL({dynamic: true})
+          );
+
+      new ReactionMenu(message.client, message.channel, message.member, embed, descriptions, max);
+    }
   }
 
   sendUserMessageCount(message, target, embed, msg) {
