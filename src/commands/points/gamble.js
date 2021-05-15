@@ -19,11 +19,15 @@ module.exports = class gambleCommand extends Command {
   run(message, args) {
     if (message.guild.gamblesInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already gambling. Please try again later`)
 
-    const amount = parseInt(args[0]);
+    let amount = parseInt(args[0]);
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     if (isNaN(amount) === true || !amount)
-      return this.sendErrorMessage(message, 0, `Please provide a valid point count`);
-    if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`);
+    {
+        if (args[0] === 'all') amount = limit
+        else return this.sendErrorMessage(message, 0, `Please provide a valid point count`);
+    }
+
+    if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have **${points} points** ${emojis.point}`);
     if (amount > limit) return message.reply(`${emojis.fail} You can't bet more than ${limit} points ${emojis.point} at a time. Please try again!`);
 
     message.guild.gamblesInProgress.set(message.author.id, new Date().getTime().toString())
