@@ -4,7 +4,7 @@ const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
 const { stripIndent } = require('common-tags');
 
-module.exports = class ServerInfoCommand extends Command {
+module.exports = class messageCountCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'messagecount',
