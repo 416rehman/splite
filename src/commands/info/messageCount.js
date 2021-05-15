@@ -57,13 +57,13 @@ module.exports = class messageCountCommand extends Command {
                   await inPlaceSort(lb).desc(u=>u.count)
 
                   const descriptions = lb.map(e=>{
-                    return `${e.user}: **${e.count}**\n`
+                    return `${e.user}: **\`${e.count}\`**`
                   })
 
                   if (descriptions.length <= max) {
                     const range = (descriptions.length == 1) ? '[1]' : `[1 - ${descriptions.length}]`;
                     await msg.edit(embed
-                        .setTitle(`${target.name}'s Message Count ${range}`)
+                        .setTitle(`${target.name}'s Activity ${range}`)
                         .setDescription(descriptions.join('\n'))
                     );
                   }
