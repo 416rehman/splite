@@ -23,7 +23,6 @@ module.exports = class messageCountCommand extends Command {
     message.channel.send(embed).then(async msg=>
         {
           if (!args[0]) this.sendUserMessageCount(message, message.author, embed, msg);
-
           else if (args[0])
           {
             //All server messages
@@ -50,10 +49,15 @@ module.exports = class messageCountCommand extends Command {
 
                   await target.members.forEach(m=>{
                     const count = message.client.db.users.selectMessageCount.pluck().get(m.id, message.guild.id);
-                    lb.push({id: m.id, count})
+                    lb.push({user: m, count})
                   });
                   await inPlaceSort(lb).desc(u=>u.count)
-                    console.log(lb)
+                    let desc = ``
+                    lb.forEach(e=>{
+                      desc += `${e.user} has sent **${e.count} messages** so far!`
+                    })
+                    embed.setDescription(desc)
+                    msg.edit(embed)
                   break
 
                 default:
