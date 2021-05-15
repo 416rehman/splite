@@ -86,7 +86,7 @@ module.exports = class messageCountCommand extends Command {
               'Expires after two minutes.\n' + `${message.member.displayName}'s position: ${position + 1}`,
               message.author.displayAvatarURL({dynamic: true})
           );
-
+      msg.delete()
       new ReactionMenu(message.client, message.channel, message.member, embed, descriptions, max);
     }
   }
