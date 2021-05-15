@@ -71,7 +71,7 @@ module.exports = class messageCountCommand extends Command {
 
     let i = 1
     const descriptions = lb.map(e => {
-      const desc = `${i} - ${e.user}: **\`${e.count}\`**`
+      const desc = `**${i}.** ${e.user}: **\`${e.count}\`**`
       i++;
       return desc;
     })
