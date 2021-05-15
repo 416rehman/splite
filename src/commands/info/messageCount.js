@@ -35,7 +35,7 @@ module.exports = class messageCountCommand extends Command {
               case 'GuildMember':
               case 'User':
               {
-                const messages = message.client.db.users.selectMessageCount.get(target.id, message.guild.id);
+                const messageCount = message.client.db.users.selectMessageCount.pluck().get(target.id, message.guild.id);
                 console.log(messages)
               }
               case 'Role':
