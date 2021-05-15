@@ -76,7 +76,7 @@ module.exports = class messageCountCommand extends Command {
                             message.author.displayAvatarURL({ dynamic: true })
                         );
 
-                    new ReactionMenu(message.client, message.channel, message.member, embed, members, max);
+                    new ReactionMenu(message.client, message.channel, message.member, embed, descriptions, max);
                   }
                   break
 
