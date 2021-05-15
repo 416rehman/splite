@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
+const {inPlaceSort} = require("fast-sort");
 const { stripIndent } = require('common-tags');
 
 module.exports = class messageCountCommand extends Command {
@@ -21,37 +22,52 @@ module.exports = class messageCountCommand extends Command {
         .setColor("RANDOM")
     message.channel.send(embed).then(async msg=>
         {
-          if (!args[0])  //All server messages
-          {
+          if (!args[0]) this.sendUserMessageCount(message, message.author, embed, msg);
 
-          } else if (args[0]) //User/Role messages
+          else if (args[0])
           {
-            const target = this.getRoleFromMention(message, args[0]) ||
-                await message.guild.roles.cache.get(args[0]) ||
-                await this.getMemberFromMention(message, args[0]) ||
-                await message.guild.members.cache.get(args[0]) ||
-                message.author;
-            console.log(target.constructor.name)
-            switch (target.constructor.name) {
-              case 'GuildMember':
-              case 'User':
-              {
-                const messages = message.client.db.users.selectMessageCount.pluck().get(target.id, message.guild.id);
-                embed.setDescription(`${target} has sent **${messages} messages** so far!`)
-                msg.edit(embed)
-              }
-              case 'Role':
-              {
-                const messages = message.client.db.users.selectMessageCount.get(target.id, message.guild.id);
-                console.log(messages)
-              }
-              default:
-              {
+            //All server messages
+            if (args[0].toLowerCase() === 'all')
+            {
 
+            }
+            else //User/Role messages
+            {
+              const target = this.getRoleFromMention(message, args[0]) ||
+                  await message.guild.roles.cache.get(args[0]) ||
+                  await this.getMemberFromMention(message, args[0]) ||
+                  await message.guild.members.cache.get(args[0]) ||
+                  message.author;
+
+              switch (target.constructor.name) {
+                case 'GuildMember':
+                case 'User':
+                  this.sendUserMessageCount(message, target, embed, msg);
+                  break
+
+                case 'Role':
+                  const lb = [];
+
+                  await target.members.forEach(m=>{
+                    const count = message.client.db.users.selectMessageCount.pluck().get(m.id, message.guild.id);
+                    lb.push({id: m.id, count})
+                  });
+                  await inPlaceSort(lb).desc(u=>u.count)
+                    console.log(lb)
+                  break
+
+                default:
+                  break
               }
             }
           }
         }
     )
+  }
+
+  sendUserMessageCount(message, target, embed, msg) {
+    const messages = message.client.db.users.selectMessageCount.pluck().get(target.id, message.guild.id);
+    embed.setDescription(`${target} has sent **${messages} messages** so far!`)
+    msg.edit(embed)
   }
 };
