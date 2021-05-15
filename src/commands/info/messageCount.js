@@ -18,6 +18,7 @@ module.exports = class messageCountCommand extends Command {
   async run(message, args) {
     const embed = new MessageEmbed()
         .setDescription(`${emojis.load} Fetching Message Count...`)
+        .setColor("RANDOM")
     message.channel.send(embed).then(async msg=>
         {
           if (!args[0])  //All server messages
@@ -36,7 +37,8 @@ module.exports = class messageCountCommand extends Command {
               case 'User':
               {
                 const messages = message.client.db.users.selectMessageCount.pluck().get(target.id, message.guild.id);
-                console.log(messages)
+                embed.setDescription(`${target} has sent **${messages} messages** so far!`)
+                msg.edit(embed)
               }
               case 'Role':
               {
