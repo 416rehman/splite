@@ -23,7 +23,7 @@ module.exports = class gambleCommand extends Command {
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     if (isNaN(amount) === true || !amount)
     {
-        if (args[0] === 'all') amount = limit
+        if (args[0] === 'all') amount = points
         else return this.sendErrorMessage(message, 0, `Please provide a valid point count`);
     }
 
