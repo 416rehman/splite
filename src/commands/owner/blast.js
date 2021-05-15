@@ -29,7 +29,8 @@ module.exports = class BlastCommand extends Command {
           .setThumbnail('https://i.imgur.com/B0XSinY.png')
           .setDescription(msg)
           .setTimestamp()
-          .setColor(message.guild.me.displayHexColor);
+          .setColor(message.guild.me.displayHexColor)
+          .setFooter(`Don't want this message here? Use the "setsystemchannel" command to change it`);
         systemChannel.send(embed);
       } else guilds.push(guild.name);
     });
