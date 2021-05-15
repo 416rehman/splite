@@ -29,7 +29,7 @@ module.exports = (client, message) => {
       if (currentStatus != null)
       {
         const d = new Date(afkTime)
-        message.channel.send(`${dnd} ${user.username} is afk!\n||${currentStatus}|| - ${moment(d).fromNow()}`)
+        message.channel.send(`${dnd} ${user.username} is afk! ||${currentStatus}|| - ${moment(d).fromNow()}`)
       }
     })
   }
