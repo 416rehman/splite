@@ -27,7 +27,7 @@ module.exports = class messageCountCommand extends Command {
           await message.guild.members.cache.get(args[0]) ||
           message.author;
 
-      console.log(target.name)
+      console.log(target.constructor.name)
     }
   }
 };
