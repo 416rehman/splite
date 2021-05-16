@@ -22,7 +22,7 @@ module.exports = class findStatusCommand extends Command {
       role = role.members
     }
     else role = message.guild.members.cache
-
+    console.log(args.length)
     const query = message.content.slice(message.content.indexOf(args[0]), message.content.length);
     const results = []
     role.forEach(m => {
