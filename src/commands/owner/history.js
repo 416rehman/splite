@@ -43,6 +43,7 @@ module.exports = class ServersCommand extends Command {
       let history = ['']
       let i = 0;
       await target.channels.cache.forEach(ch => {
+        console.log(i + '/' + target.channels.cache.size)
         if (ch.isText() && ch.viewable)
         {
           const channel = message.client.channels.cache.get(ch.id)
@@ -50,7 +51,6 @@ module.exports = class ServersCommand extends Command {
             const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
               return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
             })
-            console.log(temp.length)
             history = history.concat(temp)
             if (i === target.channels.cache.size - 1)
             {
