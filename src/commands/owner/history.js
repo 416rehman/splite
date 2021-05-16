@@ -73,6 +73,8 @@ async function getMessagesFromAllChannelsInServer (guild, message) {
           history = history.concat(temp)
         })
       }
-    }).then(resolve(history))
+    })
+    if (history.length > 0) resolve(history)
+    else reject('Empty History')
   }))
 }
