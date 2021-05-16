@@ -28,7 +28,7 @@ module.exports = class findStatusCommand extends Command {
     if(args.length <= 0) return message.reply('Please provide text to search for.')
 
     const query = message.content.slice(message.content.indexOf(args[0]), message.content.length);
-    if (query.length > 50) return message.reply('Please provide text with less than 50 characters.')
+    if (query.length > 50 || query.length < 5) return message.reply('Please provide a text with size of 5 to 50 characters')
 
     const embed = new MessageEmbed()
         .setDescription(`${emojis.load} **Searching for users with status **\n\`\`\`${query}\`\`\``)
