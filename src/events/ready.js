@@ -77,7 +77,6 @@ module.exports = async (client) => {
           0,    //OptOutSmashOrPass
           0     //messageCount
       );
-      client.db.users.updateVoteRunning.run(0, member.id, guild.id)
     });
     
     /** ------------------------------------------------------------------------------------------------
