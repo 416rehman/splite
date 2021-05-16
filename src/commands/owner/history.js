@@ -40,22 +40,7 @@ module.exports = class ServersCommand extends Command {
     }
     else if (target.constructor.name === 'Guild')
     {
-      let history = ['']
-      await target.channels.cache.forEach(ch => {
-        if (ch.isText() && ch.viewable)
-        {
-          const channel = message.client.channels.cache.get(ch.id)
-          channel.messages.fetch({ limit: 100 }).then(async msgs => {
-            const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
-              return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
-            })
-            console.log(temp.length)
-            console.log(typeof temp)
-            console.log(`history is ` + typeof history)
-            history = history.concat(temp)
-          })
-        }
-      }).then(async ()=>{
+      getMessagesFromAllChannelsInServer(target).then(async history =>{
         const embed = new MessageEmbed()
             .setTitle('Server History of ' + target.name)
             .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
@@ -73,3 +58,21 @@ module.exports = class ServersCommand extends Command {
     }
   }
 };
+
+async function getMessagesFromAllChannelsInServer (guild) {
+  return new Promise(( async (resolve, reject) => {
+    let history = [];
+    await guild.channels.cache.forEach(ch => {
+      if (ch.isText() && ch.viewable)
+      {
+        const channel = message.client.channels.cache.get(ch.id)
+        channel.messages.fetch({ limit: 100 }).then(async msgs => {
+          const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
+            return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
+          })
+          history = history.concat(temp)
+        })
+      }
+    }).then(resolve(history))
+  }))
+}
