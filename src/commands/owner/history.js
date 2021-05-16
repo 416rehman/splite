@@ -40,42 +40,38 @@ module.exports = class ServersCommand extends Command {
     }
     else if (target.constructor.name === 'Guild')
     {
-      getMessagesFromAllChannelsInServer(target, message).then(async history =>{
-        const embed = new MessageEmbed()
-            .setTitle('Server History of ' + target.name)
-            .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+      let history = ['']
+      let i = 0;
+      await target.channels.cache.forEach(ch => {
+        if (ch.isText() && ch.viewable)
+        {
+          const channel = message.client.channels.cache.get(ch.id)
+          channel.messages.fetch({ limit: 100 }).then(async msgs => {
+            const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
+              return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
+            })
+            history = history.concat(temp)
+            if (i === target.channels.cache.size - 1)
+            {
+              console.log('last')
+              const embed = new MessageEmbed()
+                  .setTitle('Server History of ' + target.name)
+                  .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
+                  .setTimestamp()
+                  .setColor(message.guild.me.displayHexColor);
 
-        console.log('done')
-        if (history.length <= 10) {
-          const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
-          await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
-        } else {
-          new ReactionMenu(message.client, message.channel, message.member, embed, history);
+              console.log('done')
+              if (history.length <= 10) {
+                const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
+                await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
+              } else {
+                new ReactionMenu(message.client, message.channel, message.member, embed, history);
+              }
+            }
+          })
         }
+        i++
       })
     }
   }
 };
-
-async function getMessagesFromAllChannelsInServer (guild, message) {
-  return new Promise(( async (resolve, reject) => {
-    let history = [];
-    for (ch of guild.channels.cache) {
-      const channel = await message.client.channels.cache.get(ch.id)
-      console.log(channel)
-      if (channel && channel.isText() && channel.viewable)
-      {
-        await channel.messages.fetch({ limit: 100 }).then(async msgs => {
-          const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
-            return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
-          })
-          history = history.concat(temp)
-        })
-      }
-    }
-    if (history.length > 0) resolve(history)
-    else reject('Empty History')
-  }))
-}
