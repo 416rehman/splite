@@ -50,6 +50,7 @@ module.exports = class ServersCommand extends Command {
             const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
               return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
             })
+            console.log(temp.length)
             history = history.concat(temp)
             if (i === target.channels.cache.size - 1)
             {
