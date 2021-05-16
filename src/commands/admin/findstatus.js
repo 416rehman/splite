@@ -8,6 +8,7 @@ module.exports = class findStatusCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'findstatus',
+      aliases: ['fs', 'status', 'find'],
       usage: 'findstatus <optional role> <text>',
       description: oneLine`
         Finds users whose status contains the provided text. If a role is provided, the search will be limited to members of that role.
