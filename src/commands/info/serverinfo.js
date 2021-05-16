@@ -62,7 +62,7 @@ module.exports = class ServerInfoCommand extends Command {
     const newsChannels = channels.filter(c => c.type === 'news').length;
     const categoryChannels = channels.filter(c => c.type === 'category').length;
 
-    const systemchannel = message.client.db.settings.selectSystemChannelId.pluck().get()(message.guild.id);
+    const systemchannel = message.client.db.settings.selectSystemChannelId.pluck().get(message.guild.id);
     const serverStats = stripIndent`
       Members  :: [ ${memberCount} ]
                :: ${online} Online
