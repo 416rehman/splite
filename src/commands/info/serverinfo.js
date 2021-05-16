@@ -61,7 +61,8 @@ module.exports = class ServerInfoCommand extends Command {
     const voiceChannels = channels.filter(c => c.type === 'voice').length;
     const newsChannels = channels.filter(c => c.type === 'news').length;
     const categoryChannels = channels.filter(c => c.type === 'category').length;
-    
+
+    const systemchannel = message.client.db.settings.selectSystemChannelId.pluck().get()(message.guild.id);
     const serverStats = stripIndent`
       Members  :: [ ${memberCount} ]
                :: ${online} Online
@@ -88,7 +89,7 @@ module.exports = class ServerInfoCommand extends Command {
         (message.guild.rulesChannel) ? `${message.guild.rulesChannel}` : '`None`', true
       )
       .addField('System Channel', 
-        (message.guild.systemChannel) ? `${message.guild.systemChannel}` : '`None`', true
+        (systemchannel) ? `<#${systemchannel}>` : '`None`', true
       )
       .addField('AFK Channel', 
         (message.guild.afkChannel) ? `${voice} ${message.guild.afkChannel.name}` : '`None`', true
