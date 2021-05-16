@@ -41,7 +41,7 @@ module.exports = class ServersCommand extends Command {
     else if (target.constructor.name === 'Guild')
     {
       let history = []
-      target.channels.cache.forEach(ch => {
+      await target.channels.cache.forEach(ch => {
         if (ch.isText() && ch.viewable)
         {
           const channel = message.client.channels.cache.get(ch.id)
