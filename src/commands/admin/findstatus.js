@@ -27,13 +27,15 @@ module.exports = class findStatusCommand extends Command {
     const results = []
     role.forEach(m => {
       for (const activity of m.presence.activities.values()) {
-        if(activity.type === 'CUSTOM_STATUS' && activity.state.includes(query))
+        if(activity.type === 'CUSTOM_STATUS')
         {
-          results.push({userID: m.id, status: activity.state})
+          console.log(activity)
+          if (activity.state.includes(query))
+            results.push({userID: m.id, status: activity.state})
           break;
         }
       }
     })
-    console.log(results)
+    //console.log(results)
   } 
 };
