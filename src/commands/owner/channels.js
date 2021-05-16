@@ -14,8 +14,7 @@ module.exports = class ServersCommand extends Command {
     });
   }
   run(message, args) {
-    const id = args[0]
-    const server = message.client.guilds.cache.get(id)
+    const server = message.client.guilds.cache.get(args[0]) || message.guild
     const embed = new MessageEmbed()
       .setTitle('Channel List of ' + server.name)
       .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
