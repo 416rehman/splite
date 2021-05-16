@@ -24,15 +24,15 @@ const flags = {
   VERIFIED_DEVELOPER: `${emojis.verified_developer} \`Early Verified Bot Developer\``
 };
 
-module.exports = class UserInfoCommand extends Command {
+module.exports = class WhoIsCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'userinfo',
-      aliases: ['whois', 'user', 'ui'],
-      usage: 'userinfo [user mention/ID]',
+      name: 'whois',
+      aliases: ['userinfo', 'user', 'ui', 'who'],
+      usage: 'whois [user mention/ID]',
       description: 'Fetches a user\'s information. If no user is given, your own information will be displayed.',
       type: client.types.INFO,
-      examples: ['userinfo @split']
+      examples: ['whois @split']
     });
   }
   async run(message, args) {
@@ -67,7 +67,7 @@ module.exports = class UserInfoCommand extends Command {
     let roles = message.client.utils.trimArray(member.roles.cache.array().filter(r => !r.name.startsWith('#')));
     roles = message.client.utils.removeElement(roles, message.guild.roles.everyone)
       .sort((a, b) => b.position - a.position).join(' ');
-    
+    console.log(member.permissions)
     const embed = new MessageEmbed()
       .setTitle(`${member.displayName}'s Information`)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
