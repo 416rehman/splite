@@ -25,15 +25,15 @@ module.exports = class findStatusCommand extends Command {
       role = role.members
     }
     else role = message.guild.members.cache
-    if(args.length <= 0) return message.reply('Please provide text to search for.')
+    if(args.length <= 0) return message.reply(`${emojis.fail} Please provide text to search for.`)
 
     const query = (message.content.slice(message.content.indexOf(args[0]), message.content.length)).toLowerCase();
-    if (query.length > 50 || query.length < 3) return message.reply('Please provide a text with length of 3 to 50 characters')
+    if (query.length > 50 || query.length < 3) return message.reply(`${emojis.fail} Please provide a text with length of 3 to 50 characters`)
 
     const embed = new MessageEmbed()
         .setDescription(`${emojis.load} **Searching for users with status **\n\`\`\`${query}\`\`\``)
     message.channel.send(embed).then(async msg=>{
-      const max = 20
+      const max = 5
 
       let results = []
       role.forEach(m => {
