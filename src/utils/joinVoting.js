@@ -5,7 +5,7 @@ module.exports = {
         if (reaction.message.id === messageID) {
             if (reaction.emoji.id && reaction.emoji.id === emoji || reaction.emoji.name === emoji) {
                 if (reaction.message.guild.JoinVotingInProgress.has(user.id)) return;
-                reaction.message.guild.gamblesInProgress.set(user.id, new Date().getTime().toString())
+                reaction.message.guild.JoinVotingInProgress.set(user.id, new Date().getTime().toString())
                 let time = duration*1000;
                 await user.send("Please wait, server members are deciding your fate.").catch(() => console.log("Can't send DM to your user!"));
 
@@ -47,7 +47,7 @@ module.exports = {
                             const reaction = collected.first();
                         })
                         .catch(async collected => {
-                            reaction.message.guild.gamblesInProgress.delete(message.author.id)
+                            reaction.message.guild.JoinVotingInProgress.delete(user.id)
                             clearInterval(myinterval)
                             let yesVotes = (msg.reactions.cache.get('👍').count)
                             let noVotes = (msg.reactions.cache.get('👎').count)

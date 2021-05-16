@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const { verify } = require('../utils/emojis.json');
 const { stripIndent } = require('common-tags');
-const { joinvoting } = require("../utils/entryFunctions")
+const { joinvoting } = require("../utils/joinVoting")
 module.exports = async (client, messageReaction, user) => {
   if (client.user === user) return;
 
