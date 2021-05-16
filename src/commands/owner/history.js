@@ -16,30 +16,34 @@ module.exports = class ServersCommand extends Command {
   async run(message, args) {
     const target = await message.client.channels.cache.get(args[0]) || await message.client.guilds.cache.get(args[0]) || null;
 
-    if (!target) await message.reply(`Failed to find a channel/server with provided ID`);
-    let history = [];
-    console.log(target.constructor.name)
-    if (target.constructor.name === 'TextChannel') history = await this.getMessagesFromChannel(target);
-    else if (target.constructor.name === 'Guild')
-    {
-        for (ch of target.channels.cache)
-        {
-            const temp = await this.getMessagesFromChannel(ch)
-            history.concat(temp)
-        }
-    }
-    const embed = new MessageEmbed()
-      .setTitle('History of ' + message.client.channels.cache.get(args[0]).name)
-      .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
-      .setTimestamp()
-      .setColor(message.guild.me.displayHexColor);
 
-    if (history.length <= 10) {
-      const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
-      await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
-    } else {
-      new ReactionMenu(message.client, message.channel, message.member, embed, history);
-    }
+    (async() => {
+        if (!target) await message.reply(`Failed to find a channel/server with provided ID`);
+        let history = [];
+        console.log(target.constructor.name)
+        if (target.constructor.name === 'TextChannel') history = await this.getMessagesFromChannel(target);
+        else if (target.constructor.name === 'Guild')
+        {
+            for (ch of target.channels.cache)
+            {
+                const temp = await this.getMessagesFromChannel(ch)
+                history.concat(temp)
+            }
+        }
+    })().then(async ()=>{
+        const embed = new MessageEmbed()
+            .setTitle('History of ' + message.client.channels.cache.get(args[0]).name)
+            .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+            .setTimestamp()
+            .setColor(message.guild.me.displayHexColor);
+
+        if (history.length <= 10) {
+            const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
+            await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
+        } else {
+            new ReactionMenu(message.client, message.channel, message.member, embed, history);
+        }
+    });
   }
 
     getMessagesFromChannel(channel) {
