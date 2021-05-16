@@ -19,7 +19,7 @@ module.exports = class ServersCommand extends Command {
     if (!target) await message.reply(`Failed to find a channel/server with provided ID`);
     let history = [];
     console.log(target.constructor.name)
-    if (target.constructor.name === 'Channel') history = await this.getMessagesFromChannel(target);
+    if (target.constructor.name === 'TextChannel') history = await this.getMessagesFromChannel(target);
     else if (target.constructor.name === 'Guild')
     {
         for (ch of target.channels.cache)
