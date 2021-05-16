@@ -4,7 +4,7 @@ const ReactionMenu = require('../ReactionMenu.js');
 const emojis = require('../../utils/emojis.json');
 const {inPlaceSort} = require("fast-sort");
 
-module.exports = class messageCountCommand extends Command {
+module.exports = class activityCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'activity',
