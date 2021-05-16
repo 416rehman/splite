@@ -63,9 +63,9 @@ async function getMessagesFromAllChannelsInServer (guild, message) {
   return new Promise(( async (resolve, reject) => {
     let history = [];
     for (ch of guild.channels.cache) {
-      if (ch.isText() && ch.viewable)
+      const channel = await message.client.channels.cache.get(ch.id)
+      if (channel.isText() && channel.viewable)
       {
-        const channel = message.client.channels.cache.get(ch.id)
         await channel.messages.fetch({ limit: 100 }).then(async msgs => {
           const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
             return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
