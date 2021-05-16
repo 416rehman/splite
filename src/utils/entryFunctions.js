@@ -47,6 +47,7 @@ module.exports = {
                             const reaction = collected.first();
                         })
                         .catch(async collected => {
+                            reaction.message.guild.gamblesInProgress.delete(message.author.id)
                             clearInterval(myinterval)
                             let yesVotes = (msg.reactions.cache.get('👍').count)
                             let noVotes = (msg.reactions.cache.get('👎').count)
@@ -81,7 +82,6 @@ module.exports = {
                                     .setFooter(' ')
                                 msg.edit(embed)
                             }
-                            reaction.message.guild.gamblesInProgress.delete(message.author.id)
                         });
                 })
             }
