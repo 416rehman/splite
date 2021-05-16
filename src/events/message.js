@@ -29,10 +29,9 @@ module.exports = (client, message) => {
         afk: currentStatus,
         afk_time: afkTime
       } = message.client.db.users.selectAfk.get(message.guild.id, user.id);
-      if (currentStatus != null)
-      {
+      if (currentStatus != null) {
         const d = new Date(afkTime)
-        message.channel.send(`${dnd} ${user.username} is afk! ||${currentStatus}|| - ${moment(d).fromNow()}`)
+        message.channel.send(`${dnd} ${user.username} is afk! ${currentStatus ? `||${currentStatus}|| -` : ''} ${moment(d).fromNow()}`)
       }
     })
   }
