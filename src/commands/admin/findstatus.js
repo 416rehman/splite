@@ -49,7 +49,10 @@ module.exports = class findStatusCommand extends Command {
       results = results.map(m=> {
         return `<@${m.userID}>\n\`\`\`${m.status}\`\`\``
       })
-
+      if (results.length <= 0) {
+        embed.setDescription(`${emojis.fail} None of the online members have matching status!`);
+        return msg.edit(embed)
+      }
       if (results.length <= max) {
         const range = (results.length === 1) ? '[1]' : `[1 - ${results.length}]`;
         await msg.edit(embed
