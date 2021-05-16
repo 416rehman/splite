@@ -27,7 +27,7 @@ module.exports = class findStatusCommand extends Command {
     else role = message.guild.members.cache
     if(args.length <= 0) return message.reply('Please provide text to search for.')
 
-    const query = message.content.slice(message.content.indexOf(args[0]), message.content.length);
+    const query = (message.content.slice(message.content.indexOf(args[0]), message.content.length)).toLowerCase();
     if (query.length > 50 || query.length < 5) return message.reply('Please provide a text with size of 5 to 50 characters')
 
     const embed = new MessageEmbed()
@@ -38,7 +38,7 @@ module.exports = class findStatusCommand extends Command {
       let results = []
       role.forEach(m => {
         for (const activity of m.presence.activities.values()) {
-          if(activity.type === 'CUSTOM_STATUS' && activity.state && activity.state.includes(query))
+          if(activity.type === 'CUSTOM_STATUS' && activity.state && activity.state.toLowerCase().includes(query))
           {
             results.push({userID: m.id, status: activity.state})
             break;
