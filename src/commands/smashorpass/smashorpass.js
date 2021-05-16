@@ -40,7 +40,7 @@ module.exports = class smashOrPassCommand extends Command {
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
       message.guild.SmashOrPassInProgress.delete(message.author.id)
-      return await message.reply(`${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``).delete({timeout: 15000})
+      return await message.reply(`${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``).then(m=>m.delete({timeout: 15000}))
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
     const NumOfSuggestions = suggested.length;
