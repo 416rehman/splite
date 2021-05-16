@@ -1,3 +1,5 @@
+//THIS IS SOOOO MESSY
+// but it works
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const { confirm } = require("djs-reaction-collector")
