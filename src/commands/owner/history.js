@@ -70,8 +70,8 @@ async function getMessagesFromAllChannelsInServer (guild, message) {
           const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
             return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
           })
+          history = history.concat(temp)
         })
-        history = history.concat(temp)
       }
     }
     if (history.length > 0) resolve(history)
