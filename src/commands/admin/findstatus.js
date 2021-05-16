@@ -59,12 +59,13 @@ module.exports = class findStatusCommand extends Command {
         await msg.edit(embed
             .setTitle(`Status Search Results ${range}`)
             .setDescription(results.join('\n'))
+            .setFooter(`Only displays online users`)
         );
       } else {
         embed
             .setTitle(`Status Search Results`)
             .setFooter(
-                'Expires after two minutes.',
+                'Expires after two minutes. Only displays online users',
                 message.author.displayAvatarURL({dynamic: true})
             );
         await msg.delete()
