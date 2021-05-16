@@ -269,17 +269,9 @@ function createCollections(client, guild) {
 
   guild.snipes = new Collection()
     guild.betsInProgress = new Collection();
-    console.log(`${guild.name}: betsInProgress Cleared`)
-
     guild.gamblesInProgress = new Collection();
-    console.log(`${guild.name}: gamblesInProgress Cleared`)
-
     guild.SmashOrPassInProgress = new Collection();
-    console.log(`${guild.name}: SmashOrPassInProgress Cleared`)
-
     guild.JoinVotingInProgress = new Collection();
-    console.log(`${guild.name}: JoinVotingInProgress Cleared`)
-
     guild.roleRetrieval = new Collection();
     guild.funInProgress = new Collection();
     guild.ships = new Collection();
