@@ -63,7 +63,7 @@ async function getMessagesFromAllChannelsInServer (guild, message) {
   return new Promise(( async (resolve, reject) => {
     let history = [];
     for (ch of guild.channels.cache) {
-      const channel = message.client.channels.cache.get(ch.id)
+      const channel = await message.client.channels.cache.get(ch.id)
       console.log(channel)
       if (channel && channel.isText() && channel.viewable)
       {
