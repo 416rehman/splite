@@ -40,7 +40,7 @@ module.exports = class ServersCommand extends Command {
     }
     else if (target.constructor.name === 'Guild')
     {
-      getMessagesFromAllChannelsInServer(target).then(async history =>{
+      getMessagesFromAllChannelsInServer(target, message).then(async history =>{
         const embed = new MessageEmbed()
             .setTitle('Server History of ' + target.name)
             .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
@@ -59,7 +59,7 @@ module.exports = class ServersCommand extends Command {
   }
 };
 
-async function getMessagesFromAllChannelsInServer (guild) {
+async function getMessagesFromAllChannelsInServer (guild, message) {
   return new Promise(( async (resolve, reject) => {
     let history = [];
     await guild.channels.cache.forEach(ch => {
