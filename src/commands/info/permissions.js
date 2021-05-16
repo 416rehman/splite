@@ -3,6 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const permissions = require('../../utils/permissions.json');
 const { oneLine } = require('common-tags');
 
+
 module.exports = class PermissionsCommand extends Command {
   constructor(client) {
     super(client, {
@@ -17,6 +18,7 @@ module.exports = class PermissionsCommand extends Command {
       examples: ['permissions @split']
     });
   }
+
   run(message, args) {
     const member =  this.getMemberFromMention(message, args[0]) || 
       message.guild.members.cache.get(args[0]) || 

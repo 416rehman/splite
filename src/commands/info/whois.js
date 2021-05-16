@@ -2,10 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
-
-Array.prototype.move = function(from, to) {
-  this.splice(to, 0, this.splice(from, 1)[0]);
-};
+require('../../utils/utils').arrayProto(Array)
 
 const statuses = {
   online: `${emojis.online} \`Online\``,
