@@ -71,9 +71,9 @@ module.exports = class WhoIsCommand extends Command {
     }
     //Key Perms
     const KeyPerms = member.permissions.toArray().filter(p => elevatedPerms.includes(p))
-    if (KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex('ADMINISTRATOR'), 0)
-    if (KeyPerms.includes('MANAGE_GUILD') && KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex('MANAGE_GUILD'), 1)
-    else if (KeyPerms.includes('MANAGE_GUILD')) KeyPerms.move(KeyPerms.findIndex('MANAGE_GUILD'), 0)
+    if (KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex(p=> p === 'ADMINISTRATOR'), 0)
+    if (KeyPerms.includes('MANAGE_GUILD') && KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex(p=> p === 'MANAGE_GUILD'), 1)
+    else if (KeyPerms.includes('MANAGE_GUILD')) KeyPerms.move(KeyPerms.findIndex(p=> p === 'MANAGE_GUILD'), 0)
     // Trim roles
     let roles = message.client.utils.trimArray(member.roles.cache.array().filter(r => !r.name.startsWith('#')));
     roles = message.client.utils.removeElement(roles, message.guild.roles.everyone)
