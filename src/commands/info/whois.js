@@ -2,7 +2,6 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
-require('../../utils/utils').arrayProto(Array)
 
 const statuses = {
   online: `${emojis.online} \`Online\``,
