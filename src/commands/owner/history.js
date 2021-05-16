@@ -50,7 +50,8 @@ module.exports = class ServersCommand extends Command {
               return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
             })
             console.log(temp.length)
-            history = history.concat(temp.array())
+            console.log(typeof temp)
+            history = history.concat(temp)
           })
         }
       })
