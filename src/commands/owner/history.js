@@ -52,6 +52,7 @@ module.exports = class ServersCommand extends Command {
               return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
             })
             history = history.concat(temp)
+            console.log(i === target.channels.cache.size - 1)
             if (i === target.channels.cache.size - 1)
             {
               console.log('last')
@@ -69,7 +70,6 @@ module.exports = class ServersCommand extends Command {
                 new ReactionMenu(message.client, message.channel, message.member, embed, history);
               }
             }
-            else console.log('nothing')
           })
         }
         i++
