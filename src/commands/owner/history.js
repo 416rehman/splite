@@ -40,7 +40,7 @@ module.exports = class ServersCommand extends Command {
     }
     else if (target.constructor.name === 'Guild')
     {
-      let history = []
+      let history = ['']
       await target.channels.cache.forEach(ch => {
         if (ch.isText() && ch.viewable)
         {
