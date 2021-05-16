@@ -51,6 +51,7 @@ module.exports = class ServersCommand extends Command {
             })
             console.log(temp.length)
             console.log(typeof temp)
+            console.log(`history is ` + typeof history)
             history = history.concat(temp)
           })
         }
