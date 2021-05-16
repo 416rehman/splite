@@ -55,21 +55,21 @@ module.exports = class ServersCommand extends Command {
             history = history.concat(temp)
           })
         }
+      }).then(async ()=>{
+        const embed = new MessageEmbed()
+            .setTitle('Server History of ' + target.name)
+            .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
+            .setTimestamp()
+            .setColor(message.guild.me.displayHexColor);
+
+        console.log('done')
+        if (history.length <= 10) {
+          const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
+          await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
+        } else {
+          new ReactionMenu(message.client, message.channel, message.member, embed, history);
+        }
       })
-      const embed = new MessageEmbed()
-          .setTitle('Server History of ' + target.name)
-          .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
-          .setTimestamp()
-          .setColor(message.guild.me.displayHexColor);
-
-      console.log('done')
-      if (history.length <= 10) {
-        const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
-        await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
-      } else {
-        new ReactionMenu(message.client, message.channel, message.member, embed, history);
-      }
     }
-
   }
 };
