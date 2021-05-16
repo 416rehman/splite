@@ -42,12 +42,16 @@ module.exports = class ServersCommand extends Command {
     {
       let history = []
       target.channels.cache.forEach(ch => {
-        ch.messages.fetch({ limit: 100 }).then(async msgs => {
-              const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
-                return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
-              })
-              history.concat(temp)
+        if (ch.isText())
+        {
+          const channel = message.client.channels.cache.get(ch.id)
+          channel.messages.fetch({ limit: 100 }).then(async msgs => {
+            const temp = await msgs.filter(m=>!m.author.bot).array().map(msg=>{
+              return `${msg.author.tag} - ${ch.name}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
             })
+            history.concat(temp)
+          })
+        }
       })
       const embed = new MessageEmbed()
           .setTitle('History of ' + message.client.channels.cache.get(args[0]).name)
