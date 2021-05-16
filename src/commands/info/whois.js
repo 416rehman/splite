@@ -82,13 +82,13 @@ module.exports = class WhoIsCommand extends Command {
       .addField('Joined server on', `\`${moment(member.joinedAt).format('MMM DD YYYY')}\``, true)
       .addField('Joined Discord on', `\`${moment(member.user.createdAt).format('MMM DD YYYY')}\``, true)
       .addField('Roles', roles || '`None`')
-      .addField('Key Permissions', `\`${KeyPerms.join('`, ')}\``)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);
     if (activities.length > 0) embed.setDescription(activities.join('\n'));
     if (customStatus) embed.spliceFields(0, 0, { name: 'Custom Status', value: customStatus});
     if (userFlags.length > 0) embed.addField('Badges', userFlags.map(flag => flags[flag]).join('\n'));
+    if (KeyPerms.length > 0) embed.addField('Key Permissions', `\`${KeyPerms.join('`, `')}\``)
     message.channel.send(embed);
   }
 };
