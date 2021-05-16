@@ -67,7 +67,7 @@ module.exports = class WhoIsCommand extends Command {
     let roles = message.client.utils.trimArray(member.roles.cache.array().filter(r => !r.name.startsWith('#')));
     roles = message.client.utils.removeElement(roles, message.guild.roles.everyone)
       .sort((a, b) => b.position - a.position).join(' ');
-    console.log(member.permissions.toArray)
+    console.log(member.permissions.toArray())
     const embed = new MessageEmbed()
       .setTitle(`${member.displayName}'s Information`)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
