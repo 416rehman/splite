@@ -12,6 +12,7 @@ module.exports = class findStatusCommand extends Command {
       usage: 'findstatus <optional role> <text>',
       description: oneLine`
         Finds users whose custom status contains the provided text. If a role is provided, the search will be limited to members of that role.
+        *Searches only online members.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
