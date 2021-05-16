@@ -42,7 +42,7 @@ module.exports = class ServersCommand extends Command {
     {
       let history = []
       target.channels.cache.forEach(ch => {
-        if (ch.isText())
+        if (ch.isText() && ch.viewable)
         {
           const channel = message.client.channels.cache.get(ch.id)
           channel.messages.fetch({ limit: 100 }).then(async msgs => {
