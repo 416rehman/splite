@@ -25,7 +25,7 @@ module.exports = class ServersCommand extends Command {
               return `${msg.author.tag}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${ msg.attachments ? msg.attachments.array().map(att=>{return att.url}).join('\n'):'no attachments'}\n--------------------------------`
             })
             const embed = new MessageEmbed()
-                .setTitle('History of ' + message.client.channels.cache.get(args[0]).name)
+                .setTitle('Channel History of ' + target.name)
                 .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
@@ -54,7 +54,7 @@ module.exports = class ServersCommand extends Command {
         }
       })
       const embed = new MessageEmbed()
-          .setTitle('History of ' + message.client.channels.cache.get(args[0]).name)
+          .setTitle('Server History of ' + target.name)
           .setFooter(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
