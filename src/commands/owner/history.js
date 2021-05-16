@@ -38,7 +38,7 @@ module.exports = class ServersCommand extends Command {
             .setColor(message.guild.me.displayHexColor);
 
         if (history.length <= 10) {
-            const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
+            const range = (history.length === 1) ? '[1]' : `[1 - ${history.length}]`;
             await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
         } else {
             new ReactionMenu(message.client, message.channel, message.member, embed, history);
@@ -49,12 +49,11 @@ module.exports = class ServersCommand extends Command {
     getMessagesFromChannel(channel) {
         channel.messages.fetch({limit: 100})
             .then(async msgs => {
-                const history = msgs.filter(m => !m.author.bot).array().map(msg => {
+                return msgs.filter(m => !m.author.bot).array().map(msg => {
                     return `${msg.author.tag}\n${msg.content.length > 0 ? `\`\`\`${msg.content}\`\`\`` : ''}${msg.attachments ? msg.attachments.array().map(att => {
                         return att.url
                     }).join('\n') : 'no attachments'}\n--------------------------------`
-                })
-                return history;
+                });
             })
     }
 };
