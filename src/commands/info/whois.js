@@ -82,7 +82,7 @@ module.exports = class WhoIsCommand extends Command {
       .addField('Joined server on', `\`${moment(member.joinedAt).format('MMM DD YYYY')}\``, true)
       .addField('Joined Discord on', `\`${moment(member.user.createdAt).format('MMM DD YYYY')}\``, true)
       .addField('Roles', roles || '`None`')
-      .addField('Key Permissions', `\`${KeyPerms.join(' | ')}\``)
+      .addField('Key Permissions', `\`${KeyPerms.join('`, ')}\``)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);
