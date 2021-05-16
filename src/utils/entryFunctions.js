@@ -8,8 +8,9 @@ module.exports = {
             else if(reaction.emoji.name === emoji) proceed = true;
 
             if (proceed) {
-                if (reaction.message.guild.JoinVotingInProgress.has(user.id)) return
-
+                console.log('proceeding')
+                if (reaction.message.guild.JoinVotingInProgress.has(user.id)) return;
+                console.log('Good')
                 let time = duration*1000;
                 await user.send("Please wait, server members are deciding your fate.").catch(() => console.log("Can't send DM to your user!"));
                 let embed = new MessageEmbed()
