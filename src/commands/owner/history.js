@@ -69,6 +69,7 @@ module.exports = class ServersCommand extends Command {
                 new ReactionMenu(message.client, message.channel, message.member, embed, history);
               }
             }
+            else console.log('nothing')
           })
         }
         i++
