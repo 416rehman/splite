@@ -6,7 +6,7 @@ module.exports = {
             let proceed = false;
             if (reaction.emoji.id) if(reaction.emoji.id === emoji) proceed = true;
             else if(reaction.emoji.name === emoji) proceed = true;
-
+            console.log('before proceed')
             if (proceed) {
                 console.log('proceeding')
                 if (reaction.message.guild.JoinVotingInProgress.has(user.id)) return;
