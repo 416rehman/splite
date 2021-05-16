@@ -62,12 +62,15 @@ module.exports = class WhoIsCommand extends Command {
           break;
       }
     }
-    
+    //Key Perms
+    const elevatedPerms = ['KICK_MEMBERS', 'BAN_MEMBERS', 'ADMINISTRATOR', 'MANAGE_CHANNELS', 'MANAGE_GUILD', 'MANAGE_MESSAGES', 'MANAGE_ROLES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS']
+    const KeyPerms = member.permissions.toArray().map(p => {
+      if (elevatedPerms.includes(p)) return p;
+    })
     // Trim roles
     let roles = message.client.utils.trimArray(member.roles.cache.array().filter(r => !r.name.startsWith('#')));
     roles = message.client.utils.removeElement(roles, message.guild.roles.everyone)
       .sort((a, b) => b.position - a.position).join(' ');
-    console.log(member.permissions.toArray())
     const embed = new MessageEmbed()
       .setTitle(`${member.displayName}'s Information`)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
@@ -81,6 +84,7 @@ module.exports = class WhoIsCommand extends Command {
       .addField('Joined server on', `\`${moment(member.joinedAt).format('MMM DD YYYY')}\``, true)
       .addField('Joined Discord on', `\`${moment(member.user.createdAt).format('MMM DD YYYY')}\``, true)
       .addField('Roles', roles || '`None`')
+      .addField('Key Permissions', `\`${KeyPerms.join(' ')}\``)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);
