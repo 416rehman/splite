@@ -62,6 +62,7 @@ module.exports = class ServersCommand extends Command {
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
 
+      console.log('done')
       if (history.length <= 10) {
         const range = (history.length == 1) ? '[1]' : `[1 - ${history.length}]`;
         await message.channel.send(embed.setTitle(`History ${range}`).setDescription(history.join('\n')));
