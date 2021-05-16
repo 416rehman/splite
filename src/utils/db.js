@@ -241,11 +241,9 @@ const users = {
       afk,
       afk_time,
       bio,
-      voteRunning,
-      SmashRunning,
       optOutSmashOrPass,
       messageCount
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?, ?, ?);
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -259,8 +257,6 @@ const users = {
   selectMissingMembers: db.prepare('SELECT * FROM users WHERE guild_id = ? AND current_member = 0;'),
   selectAfk: db.prepare('SELECT afk, afk_time FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectBio: db.prepare('SELECT bio FROM users WHERE guild_id = ? AND user_id = ?;'),
-  selectVoteRunning: db.prepare('SELECT voteRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
-  selectSmashRunning: db.prepare('SELECT SmashRunning FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectOptOutSmashOrPass: db.prepare('SELECT optOutSmashOrPass FROM users WHERE user_id = ? limit 1;'),
   selectMessageCount: db.prepare('SELECT messageCount FROM users WHERE user_id = ? AND guild_id = ?;'),
 
@@ -283,12 +279,7 @@ const users = {
   updateAfk: db.prepare('UPDATE users SET afk = ? WHERE user_id = ? AND guild_id = ?;'),
   updateAfkTime: db.prepare('UPDATE users SET afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
   updateBio: db.prepare('UPDATE users SET bio = ? WHERE user_id = ?;'),
-  updateVoteRunning: db.prepare('UPDATE users SET voteRunning = ? WHERE user_id = ? AND guild_id = ?;'),
-  updateSmashRunning: db.prepare('UPDATE users SET SmashRunning = ? WHERE user_id = ? AND guild_id = ?;'),
   resetSmashOrPass: db.prepare('delete from matches where userID = ?'),
-  resetTimers: db.prepare(`
-    update users set voteRunning = 0,
-                 SmashRunning = 0;`),
   updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;'),
   updateMessageCount: db.prepare(`
     UPDATE users 

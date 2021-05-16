@@ -106,8 +106,6 @@ module.exports = async (client, guild) => {
       null, //AFK
       0,  //Afk_time
       null, //BIO
-      null, //VoteRunning
-      0,   //Smashrunning
       0,    //OptOutSmashOrPass
       0     //messageCount
     );

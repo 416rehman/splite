@@ -40,10 +40,9 @@ module.exports = class gambleCommand extends Command {
     message.channel.send(embed).then(msg => {
           setTimeout(()=>{
               const odds = {lose:45, win:55}
-              if (message.author.id == '542183603023642625') odds.win = 60; odds.lose = 40;
-              const d = message.client.utils.weightedRandom(odds)
+              const outcome = message.client.utils.weightedRandom(odds)
               //Loss
-              if (d === "lose")
+              if (outcome === "lose")
               {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.author.username} gambling ${amount} Points ${emojis.point}`)

@@ -24,6 +24,7 @@ module.exports = class smashOrPassCommand extends Command {
     });
   }
   async run(message, args) {
+    if (message.guild.SmashOrPassInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already playing. Please try again later`)
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const optOutSmashOrPass = message.client.db.users.selectOptOutSmashOrPass.pluck().get(message.author.id)
     if (optOutSmashOrPass === 1)
@@ -34,13 +35,11 @@ module.exports = class smashOrPassCommand extends Command {
       return message.channel.send(embed)
     }
 
-    const SmashRunning = message.client.db.users.selectSmashRunning.pluck().get(message.guild.id, message.author.id)
-    if (SmashRunning == 1) return;
-    else message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
+    message.guild.SmashOrPassInProgress.set(message.author.id, new Date().getTime().toString())
 
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
-      message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+      message.guild.SmashOrPassInProgress.delete(message.author.id)
       return await message.reply(`${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``).delete({timeout: 15000})
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
@@ -66,7 +65,7 @@ module.exports = class smashOrPassCommand extends Command {
           i++;
           if (i > 50)
           {
-            message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+            message.guild.SmashOrPassInProgress.delete(message.author.id)
             return message.reply(`${emojis.fail} Please try again later!`).then(m=>m.delete({timeout: 5000}))
           }
         } while (potentialMatchUser === undefined)
@@ -109,7 +108,7 @@ module.exports = class smashOrPassCommand extends Command {
               }
               catch(err)
               {
-                message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+                message.guild.SmashOrPassInProgress.delete(message.author.id)
                 if (err)
                 {
                   await msg.edit(new MessageEmbed()
@@ -131,7 +130,7 @@ module.exports = class smashOrPassCommand extends Command {
             //     .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
             if (points < cost)
             {
-              message.client.db.users.updateSmashRunning.run(1, message.author.id, message.guild.id)
+              message.guild.SmashOrPassInProgress.delete(message.author.id)
               break;
             }
           }
@@ -140,7 +139,7 @@ module.exports = class smashOrPassCommand extends Command {
             await msg.edit(new MessageEmbed().setTitle(`👎 Passed ${potentialMatchUser.user.username}`).setDescription(`${emojis.load} Loading...`).setFooter(`Expires in 10 seconds | Points: ${points}`))
           }
           else {
-            message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+            message.guild.SmashOrPassInProgress.delete(message.author.id)
             await msg.edit(new MessageEmbed().setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`).setDescription(`${emojis.fail} Stopped Playing!`)).then(msg=> msg.delete({timeout: 5000}))
             return;
           }
@@ -164,7 +163,7 @@ module.exports = class smashOrPassCommand extends Command {
               if (i > 100)
               {
                 console.log('Exceeded 100 loops')
-                message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+                message.guild.SmashOrPassInProgress.delete(message.author.id)
                 return msg.edit(new MessageEmbed().setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`).setDescription(`${emojis.fail} Please try again later!`)).then(m=>m.delete({timeout: 5000}))
               }
             } while (potentialMatchUser === undefined || potentialMatchUser == null)
@@ -183,7 +182,7 @@ module.exports = class smashOrPassCommand extends Command {
         }
         if (points < cost)
         {
-          message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+          message.guild.SmashOrPassInProgress.delete(message.author.id)
           return msg.edit(new MessageEmbed().setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`).setDescription(`${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``)).then(m => m.delete({timeout: 15000}))
         }
       })
@@ -195,7 +194,7 @@ module.exports = class smashOrPassCommand extends Command {
       if (member == undefined) return message.reply(`${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:5000}))
       if (member.user.id == message.author.id)
       {
-        message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+        message.guild.SmashOrPassInProgress.delete(message.author.id)
         return message.reply(`${emojis.fail} No stupid, how are you gonna 🔥Smash yourself??`)
       }
       const row = message.client.db.matches.getSeenByUser.get(message.author.id, member.user.id)
@@ -205,13 +204,13 @@ module.exports = class smashOrPassCommand extends Command {
         {
           const row2 = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
           if (row2 != null || row2 !== undefined) {
-            message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+            message.guild.SmashOrPassInProgress.delete(message.author.id)
             return await message.reply(`${emojis.smashorpass} You two have matched already ${emojis.smashorpass}. To unmatch ${emojis.unmatch}, type \`${prefix}unmatch <user mention/id>\``).then(m=>m.delete({timeout: 15000}))
           }
-          message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+          message.guild.SmashOrPassInProgress.delete(message.author.id)
           return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 15000}))
         }
-        message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+        message.guild.SmashOrPassInProgress.delete(message.author.id)
         return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history, type \`${prefix}resetSmashOrPass\``).then(m=>m.delete({timeout: 15000}))
       }
 
@@ -257,7 +256,7 @@ module.exports = class smashOrPassCommand extends Command {
             }
             catch (e) {
               console.log(e)
-              message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+              message.guild.SmashOrPassInProgress.delete(message.author.id)
               await msg.edit(new MessageEmbed()
                   .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
                   .setDescription(`${emojis.match} **IT'S A MATCH** ${emojis.match}\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
@@ -284,12 +283,12 @@ module.exports = class smashOrPassCommand extends Command {
         }
         else
         {
-          message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+          message.guild.SmashOrPassInProgress.delete(message.author.id)
           await msg.edit(new MessageEmbed().setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`).setDescription(`${emojis.fail} Stopped Playing!`)).then(msg=> msg.delete({timeout: 5000}))
           return;
         }
       })
-      message.client.db.users.updateSmashRunning.run(0, message.author.id, message.guild.id)
+      message.guild.SmashOrPassInProgress.delete(message.author.id)
     }
   }
 };

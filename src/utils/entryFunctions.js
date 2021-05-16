@@ -6,11 +6,10 @@ module.exports = {
             let proceed = false;
             if (reaction.emoji.id) if(reaction.emoji.id === emoji) proceed = true;
             else if(reaction.emoji.name === emoji) proceed = true;
+
             if (proceed) {
-                const {
-                    voteRunning: voteStatus
-                } = client.db.users.selectVoteRunning.get(reaction.message.channel.guild.id, user.id)
-                if(voteStatus) return;
+                if (reaction.message.guild.JoinVotingInProgress.has(user.id)) return
+
                 let time = duration*1000;
                 await user.send("Please wait, server members are deciding your fate.").catch(() => console.log("Can't send DM to your user!"));
                 let embed = new MessageEmbed()
@@ -20,10 +19,9 @@ module.exports = {
                     .setDescription(`Vote and decide their fate.\n
                 **Should they stay?**\n`)
                     .setFooter(`Voting will end in ${duration} seconds...`);
-
                 const channel = client.channels.cache.find(channel => channel.id === votingChannelID)
                 channel.send(embed).then(msg => {
-                    client.db.users.updateVoteRunning.run(1, user.id, msg.guild.id)
+                    reaction.message.guild.gamblesInProgress.set(user.id, new Date().getTime().toString())
                     msg.react('👍').then(() => msg.react('👎'));
 
                     embed = new MessageEmbed()
@@ -52,13 +50,13 @@ module.exports = {
                             const reaction = collected.first();
                         })
                         .catch(async collected => {
-                            client.db.users.updateVoteRunning.run(0, user.id, reaction.message.channel.guild.id)
+                            reaction.message.guild.gamblesInProgress.delete(message.author.id)
                             clearInterval(myinterval)
                             let yesVotes = (msg.reactions.cache.get('👍').count)
                             let noVotes = (msg.reactions.cache.get('👎').count)
                             if (noVotes > yesVotes) {
                                 await user.send(`Sorry, you were voted off of the server. You received ${yesVotes} 👍 and ${noVotes} 👎`).catch(() => console.log("Can't send DM to your user!"));
-                                try {await msg.guild.members.cache.get(user.id).ban({days: 0, reason: 'Minor - Voted Off'})}
+                                try {await msg.guild.members.cache.get(user.id).ban({days: 0, reason: 'Splite JoinVoting - Voted Off'})}
                                 catch{
                                     embed = new MessageEmbed()
                                         .setColor("RED")
