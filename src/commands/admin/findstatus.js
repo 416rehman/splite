@@ -46,7 +46,7 @@ module.exports = class findStatusCommand extends Command {
         }
       })
       results = results.map(m=> {
-        return `<#${m.userID}>\n\`\`\`${m.status}\`\`\``
+        return `<@${m.userID}>\n\`\`\`${m.status}\`\`\``
       })
 
       if (results.length <= max) {
