@@ -2,6 +2,11 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
+
+Array.prototype.move = function(from, to) {
+  this.splice(to, 0, this.splice(from, 1)[0]);
+};
+
 const statuses = {
   online: `${emojis.online} \`Online\``,
   idle: `${emojis.idle} \`AFK\``,
@@ -23,6 +28,8 @@ const flags = {
   VERIFIED_BOT: `${emojis.verified_bot} \`Verified Bot\``,
   VERIFIED_DEVELOPER: `${emojis.verified_developer} \`Early Verified Bot Developer\``
 };
+
+const elevatedPerms = ['ADMINISTRATOR', 'MANAGE_GUILD', 'MANAGE_ROLES', 'MANAGE_CHANNELS', 'BAN_MEMBERS', 'KICK_MEMBERS', 'MANAGE_MESSAGES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS']
 
 module.exports = class WhoIsCommand extends Command {
   constructor(client) {
@@ -63,8 +70,10 @@ module.exports = class WhoIsCommand extends Command {
       }
     }
     //Key Perms
-    const elevatedPerms = ['ADMINISTRATOR', 'MANAGE_GUILD', 'MANAGE_ROLES', 'MANAGE_CHANNELS', 'BAN_MEMBERS', 'KICK_MEMBERS', 'MANAGE_MESSAGES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS']
     const KeyPerms = member.permissions.toArray().filter(p => elevatedPerms.includes(p))
+    if (KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex('ADMINISTRATOR'), 0)
+    if (KeyPerms.includes('MANAGE_GUILD') && KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex('MANAGE_GUILD'), 1)
+    else if (KeyPerms.includes('MANAGE_GUILD')) KeyPerms.move(KeyPerms.findIndex('MANAGE_GUILD'), 0)
     // Trim roles
     let roles = message.client.utils.trimArray(member.roles.cache.array().filter(r => !r.name.startsWith('#')));
     roles = message.client.utils.removeElement(roles, message.guild.roles.everyone)
