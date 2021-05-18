@@ -8,11 +8,11 @@ module.exports = class AddRoleCommand extends Command {
       name: 'addemoji',
       aliases: ['em', 'emoji', 'emojiadd'],
       usage: 'addemoji <emoji> <name>',
-      description: 'Add any of your preferred emoji from any server',
+      description: 'Add any of your preferred emoji from any server, or an image link.\nMultiple emojis can be added by typing all of them at once (Emoji name cannot be set if adding multiple).',
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_EMOJIS'],
       userPermissions: ['MANAGE_ROLES'],
-      examples: ['addemoji <:peperip:797063171789160458>']
+      examples: ['addemoji 🙄 feelsbad', 'em https://i.imgur.com/iYU1mgQ.png coolEmoji', 'em 😂 😙 😎']
     });
   }
   async run(message, args){
