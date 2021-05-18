@@ -21,8 +21,9 @@ module.exports = class AddRoleCommand extends Command {
       args = args.join(' ')
       console.log(args)
       args = args.replace(/</g , ' <')
+      args = args.trim()
       console.log(args)
-      args = args.split('%^')
+      args = args.split(/\s+/)
       console.log(args)
       // if (args.length > 2)
       // {
