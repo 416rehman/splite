@@ -8,7 +8,7 @@ module.exports = class AddRoleCommand extends Command {
       name: 'addemoji',
       aliases: ['em', 'emoji', 'emojiadd'],
       usage: 'addemoji <emoji> <name>',
-      description: 'Add emoji from a server, or an image link.\nMultiple emojis can be added by typing all of them at once.',
+      description: 'Add emoji from a server, or an image link.\nMultiple emojis can be added by typing all of them at once seperated by spaces.',
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_EMOJIS'],
       userPermissions: ['MANAGE_ROLES'],
@@ -17,18 +17,13 @@ module.exports = class AddRoleCommand extends Command {
   }
   async run(message, args){
     try {
-      console.log(args)
-      args = args.join(' ')
-      console.log(args)
-      args = args.split(/\<(.*?)\>/gm)
-      console.log(args)
-      // if (args.length > 2)
-      // {
-      //   args.forEach(emoji => {
-      //     addEmoji(emoji, message, this)
-      //   })
-      // }
-      // else addEmoji(args[0], message, this, args.slice(1).join("_"))
+      if (args.length > 2)
+      {
+        args.forEach(emoji => {
+          addEmoji(emoji, message, this)
+        })
+      }
+      else addEmoji(args[0], message, this, args.slice(1).join("_"))
 
     } catch (err) {
       this.client.logger.error(err)
