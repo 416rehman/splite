@@ -39,12 +39,6 @@ module.exports = class EmojifyCommand extends Command {
       msg = msg.slice(0, msg.lastIndexOf(':')) + '**...**';
     }
 
-    const embed = new MessageEmbed()
-      .setTitle('Emojify')
-      .setDescription(msg)
-      .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send(msg);
   }
 };
