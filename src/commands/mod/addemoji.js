@@ -17,9 +17,7 @@ module.exports = class AddRoleCommand extends Command {
   }
   async run(message, args){
     try {
-      let name;
-      const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/)
-
+      console.log(args)
       if (args.length > 2)
       {
         args.forEach(emoji => {
@@ -37,6 +35,8 @@ module.exports = class AddRoleCommand extends Command {
 
 async function addEmoji(emoji, message, emojiName)
 {
+  console.log(emojiName)
+  const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/)
   if (!emoji) this.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
   let name
   let customemoji = Discord.Util.parseEmoji(emoji) //Check if it's a emoji
@@ -51,7 +51,8 @@ async function addEmoji(emoji, message, emojiName)
         `${name || `${customemoji.name}`}`
     );
     return message.channel.send(`${emoji} added with name "${customemoji.name}"`);
-  } else if (urlRegex.test(emoji)) { //check for image urls
+  }
+  else if (urlRegex.test(emoji)) { //check for image urls
     name = emojiName || Math.random().toString(36).slice(2) //make the name compatible or just choose a random string
     const addedEmoji = await message.guild.emojis.create(
         `${emoji}`,
