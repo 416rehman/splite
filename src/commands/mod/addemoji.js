@@ -6,7 +6,7 @@ module.exports = class AddRoleCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'addemoji',
-      aliases: ['em', 'emoji', 'emojiadd'],
+      aliases: ['em', 'emoji', 'emoji', 'addemote'],
       usage: 'addemoji <emoji> <name>',
       description: 'Add emoji from a server, or an image link.\nMultiple emojis can be added by typing all of them at once seperated by spaces.',
       type: client.types.MOD,
