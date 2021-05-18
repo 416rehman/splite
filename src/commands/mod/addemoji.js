@@ -62,6 +62,6 @@ async function addEmoji(emoji, message, command, emojiName)
   else {
     let CheckEmoji = parse(emoji, { assetType: "png" });
     if (!CheckEmoji[0])
-      return command.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
+      return command.sendErrorMessage(message, 0, `Please mention a valid emoji. ${emoji} is invalid`);
   }
 }
