@@ -21,10 +21,10 @@ module.exports = class AddRoleCommand extends Command {
       if (args.length > 2)
       {
         args.forEach(emoji => {
-          addEmoji(emoji, message)
+          addEmoji(emoji, message, this)
         })
       }
-      else addEmoji(args[0], message, args.slice(1).join("_"))
+      else addEmoji(args[0], message, this, args.slice(1).join("_"))
 
     } catch (err) {
       this.client.logger.error(err)
@@ -33,11 +33,11 @@ module.exports = class AddRoleCommand extends Command {
   }
 }
 
-async function addEmoji(emoji, message, emojiName)
+async function addEmoji(emoji, message, command, emojiName)
 {
   console.log(emojiName)
   const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/)
-  if (!emoji) this.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
+  if (!emoji) command.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
   let name
   let customemoji = Discord.Util.parseEmoji(emoji) //Check if it's a emoji
 
@@ -61,8 +61,8 @@ async function addEmoji(emoji, message, emojiName)
     return message.channel.send(`${addedEmoji} added with name "${addedEmoji.name}"`);
   }
   else {
-      let CheckEmoji = parse(emoji, { assetType: "png" });
-      if (!CheckEmoji[0])
-        return this.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
-    }
+    let CheckEmoji = parse(emoji, { assetType: "png" });
+    if (!CheckEmoji[0])
+      return command.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
+  }
 }
