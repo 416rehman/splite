@@ -45,12 +45,12 @@ async function addEmoji(emoji, message, emojiName)
     const Link = `https://cdn.discordapp.com/emojis/${customemoji.id}.${
         customemoji.animated ? "gif" : "png"
     }`
-    name = emojiName
+    name = emojiName || customemoji.name;
     const emoji = await message.guild.emojis.create(
         `${Link}`,
-        `${name || `${customemoji.name}`}`
+        `${name}`
     );
-    return message.channel.send(`${emoji} added with name "${customemoji.name}"`);
+    return message.channel.send(`${emoji} added with name "${name}"`);
   }
   else if (urlRegex.test(emoji)) { //check for image urls
     name = emojiName || Math.random().toString(36).slice(2) //make the name compatible or just choose a random string
