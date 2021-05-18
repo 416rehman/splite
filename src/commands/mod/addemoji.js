@@ -18,9 +18,9 @@ module.exports = class AddRoleCommand extends Command {
   async run(message, args){
     try {
       console.log(args)
-      args = args.join('%^')
+      args = args.join(' ')
       console.log(args)
-      args = args.replace('<' , '%^<')
+      args = args.replaceAll('<' , ' <')
       console.log(args)
       args = args.split('%^')
       console.log(args)
