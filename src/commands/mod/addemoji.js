@@ -20,7 +20,7 @@ module.exports = class AddRoleCommand extends Command {
       console.log(args)
       args = args.join(' ')
       console.log(args)
-      args = args.replaceAll('<' , ' <')
+      args = args.replace(/</g , ' <')
       console.log(args)
       args = args.split('%^')
       console.log(args)
