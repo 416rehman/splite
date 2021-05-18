@@ -17,13 +17,18 @@ module.exports = class AddRoleCommand extends Command {
   }
   async run(message, args){
     try {
-      if (args.length > 2)
-      {
-        args.forEach(emoji => {
-          addEmoji(emoji, message, this)
-        })
-      }
-      else addEmoji(args[0], message, this, args.slice(1).join("_"))
+      console.log(args)
+      args = args.join(' ')
+      console.log(args)
+      args = args.split(/<(.*)>/)
+      console.log(args)
+      // if (args.length > 2)
+      // {
+      //   args.forEach(emoji => {
+      //     addEmoji(emoji, message, this)
+      //   })
+      // }
+      // else addEmoji(args[0], message, this, args.slice(1).join("_"))
 
     } catch (err) {
       this.client.logger.error(err)
