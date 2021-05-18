@@ -23,10 +23,10 @@ module.exports = class AddRoleCommand extends Command {
       if (args.length > 2)
       {
         args.forEach(emoji => {
-          addEmoji(emoji)
+          addEmoji(emoji, message)
         })
       }
-      else addEmoji(args[0], args.slice(1).join("_"))
+      else addEmoji(args[0], message, args.slice(1).join("_"))
 
     } catch (err) {
       this.client.logger.error(err)
@@ -35,7 +35,7 @@ module.exports = class AddRoleCommand extends Command {
   }
 }
 
-async function addEmoji(emoji, emojiName)
+async function addEmoji(emoji, message, emojiName)
 {
   if (!emoji) this.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
   let name
