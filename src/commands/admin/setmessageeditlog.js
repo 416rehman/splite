@@ -15,7 +15,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setmessageeditlog #bot-log']
+      examples: ['setmessageeditlog #bot-log','clearmessageeditlog']
     });
   }
   run(message, args) {

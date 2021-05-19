@@ -18,7 +18,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setverificationrole @Verified']
+      examples: ['setverificationrole @Verified','clearverificationrole']
     });
   }
   async run(message, args) {

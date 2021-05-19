@@ -16,7 +16,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setwelcomechannel #general']
+      examples: ['setwelcomechannel #general','clearwelcomechannel']
     });
   }
   run(message, args) {

@@ -16,7 +16,7 @@ module.exports = class SetCrownRoleCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setcrownrole @Crowned']
+      examples: ['setcrownrole @Crowned','clearcrownrole']
     });
   }
   run(message, args) {

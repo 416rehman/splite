@@ -15,7 +15,7 @@ module.exports = class SetStarboardChannelCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setstarboardchannel #starboard']
+      examples: ['setstarboardchannel #starboard','clearstarboardchannel']
     });
   }
   run(message, args) {

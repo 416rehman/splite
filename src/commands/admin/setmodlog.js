@@ -15,7 +15,7 @@ module.exports = class SetModLogCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setmodlog #mod-log']
+      examples: ['setmodlog #mod-log','clearmodlog']
     });
   }
   run(message, args) {

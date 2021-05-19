@@ -11,7 +11,7 @@ module.exports = class SetMuteRoleCommand extends Command {
       description: 'Sets the `mute role` your server. Use \`clearmuterole\` to clear the current `mute role`.',
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setmuterole @Muted']
+      examples: ['setmuterole @Muted','clearmuterole']
     });
   }
   run(message, args) {

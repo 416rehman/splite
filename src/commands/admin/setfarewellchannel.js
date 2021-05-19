@@ -16,7 +16,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setfarewellchannel #general']
+      examples: ['setfarewellchannel #general','clearfarewellchannel']
     });
   }
   run(message, args) {

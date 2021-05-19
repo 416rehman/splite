@@ -20,7 +20,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setfarewellmessage ?member has left the server.']
+      examples: ['setfarewellmessage ?member has left the server.','clearfarewellmessage']
     });
   }
   run(message, args) {

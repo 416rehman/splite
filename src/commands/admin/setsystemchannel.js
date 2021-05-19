@@ -16,7 +16,7 @@ module.exports = class SetSystemChannelCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setsystemchannel #general']
+      examples: ['setsystemchannel #general','clearsystemchannel']
     });
   }
   run(message, args) {

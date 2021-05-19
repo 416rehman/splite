@@ -16,7 +16,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setviewconfessionsrole @admins']
+      examples: ['setviewconfessionsrole @admins','clearviewconfessionsrole']
     });
   }
   async run(message, args) {

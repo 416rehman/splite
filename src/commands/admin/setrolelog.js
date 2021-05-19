@@ -15,7 +15,7 @@ module.exports = class SetRoleLogCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setrolelog #bot-log']
+      examples: ['setrolelog #bot-log','clearrolelog']
     });
   }
   run(message, args) {

@@ -15,7 +15,7 @@ module.exports = class SetNicknameLogCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setnicknamelog #bot-log']
+      examples: ['setnicknamelog #bot-log','clearnicknamelog']
     });
   }
   run(message, args) {

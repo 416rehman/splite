@@ -20,7 +20,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setwelcomemessage ?member has joined the server!']
+      examples: ['setwelcomemessage ?member has joined the server!','clearwelcomemessage']
     });
   }
   run(message, args) {

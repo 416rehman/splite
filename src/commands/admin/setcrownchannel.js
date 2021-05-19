@@ -16,7 +16,7 @@ module.exports = class SetCrownChannelCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setcrownchannel #general']
+      examples: ['setcrownchannel #general','clearcrownchannel']
     });
   }
   run(message, args) {

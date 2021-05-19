@@ -11,7 +11,7 @@ module.exports = class SetModRoleCommand extends Command {
       description: 'Sets the `mod role` for your server. Use \`clearmodrole\` to clear the current `mod role`.',
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setmodrole @Mod']
+      examples: ['setmodrole @Mod','clearmodrole']
     });
   }
   run(message, args) {

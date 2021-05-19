@@ -15,7 +15,7 @@ module.exports = class SetAutoRoleCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setautorole @Member']
+      examples: ['setautorole @Member','clearautorole']
     });
   }
   run(message, args) {

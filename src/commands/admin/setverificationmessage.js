@@ -18,7 +18,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setverificationmessage Please read the server rules, then react to this message.']
+      examples: ['setverificationmessage Please read the server rules, then react to this message.','clearverificationmessage']
     });
   }
   async run(message, args) {

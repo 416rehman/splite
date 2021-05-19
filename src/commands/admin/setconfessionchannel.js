@@ -15,7 +15,7 @@ module.exports = class setconfessionchannelCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setconfessionchannel #general']
+      examples: ['setconfessionchannel #general','clearconfessionchannel']
     });
   }
   run(message, args) {

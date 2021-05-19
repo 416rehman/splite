@@ -91,7 +91,6 @@ module.exports = class HelpCommand extends Command {
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`
           ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n
-          \`Set\` commands can be cleared using the word \`clear\`, i.e. \`setadminrole\` can be cleared with \`clearadminrole\`\n
         `)
         .setFooter(
           (!all && size != total) ? 
@@ -107,7 +106,7 @@ module.exports = class HelpCommand extends Command {
         if (commands[type][0])
         {
           console.log(emojiMap[type])
-          embed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, commands[type].join(' '));
+          embed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, commands[type].join(', '));
         }
 
       }

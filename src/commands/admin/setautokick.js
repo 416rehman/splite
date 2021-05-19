@@ -15,7 +15,7 @@ module.exports = class SetAutoKickCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setautokick 3']
+      examples: ['setautokick 3','clearautokick']
     });
   }
   run(message, args) {

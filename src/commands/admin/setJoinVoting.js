@@ -14,7 +14,7 @@ module.exports = class setJoinVoting extends Command {
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setjoinvoting 832878346979377193 🦶 #generalChannel']
+      examples: ['setjoinvoting 832878346979377193 🦶 #generalChannel','clearjoinvoting']
     });
   }
   async run(message, args) {

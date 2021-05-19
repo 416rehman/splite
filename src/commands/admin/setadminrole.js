@@ -11,7 +11,7 @@ module.exports = class SetAdminRoleCommand extends Command {
       description: 'Sets the `admin role` for your server.\nTo clear the `admin role`, type `clearadminrole`',
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setadminrole @Admin']
+      examples: ['setadminrole @Admin','clearadminrole']
     });
   }
   run(message, args) {

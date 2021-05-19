@@ -20,7 +20,7 @@ module.exports = class SetVerificationChannelCommand extends Command {
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setverificationchannel #verification']
+      examples: ['setverificationchannel #verification','clearverificationchannel']
     });
   }
   async run(message, args) {

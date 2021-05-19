@@ -17,7 +17,7 @@ module.exports = class SetModChannelsCommand extends Command {
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
-      examples: ['setmodchannels #general #memes #off-topic']
+      examples: ['setmodchannels #general #memes #off-topic','clearmodchannels']
     });
   }
   run(message, args) {
