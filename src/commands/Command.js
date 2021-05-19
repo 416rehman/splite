@@ -121,6 +121,15 @@ class Command {
   }
 
   /**
+   * Gets member from text
+   * @param {Message} message
+   * @param {string} text
+   */
+  getMemberFromText(message, text) {
+    return message.guild.members.cache.find(m => m.displayName.toLowerCase().startsWith(text.toLowerCase()));
+  }
+
+  /**
    * Gets avatar from author/user/member
    * @param {object} user/author/member
    * @param {boolean} hard
@@ -141,6 +150,22 @@ class Command {
     if (!matches) return;
     const id = matches[1];
     return message.guild.roles.cache.get(id);
+  }
+
+  /**
+   * Gets role from text, mention, or ID
+   * @param {Message} message
+   * @param {string} text
+   */
+  getRole(message, text) {
+    if (text)
+    {
+      let role;
+      if (text.startsWith("<@&") || (/^[0-9]{18}$/g).test(text)) role = this.getRoleFromMention(message, text) || message.guild.roles.cache.get(text);
+      else role = message.guild.roles.cache.find(r => r.name.toLowerCase().startsWith(text.toLowerCase()))
+      if (!role) role = message.guild.roles.cache.find(r => r.name.toLowerCase().includes(text.toLowerCase()))
+      return role;
+    }
   }
 
   /**

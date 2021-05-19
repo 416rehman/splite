@@ -16,15 +16,15 @@ module.exports = class RoleCommand extends Command {
   }
   async run(message, args) {
     const memberArg = args.shift()
-    const member = this.getMemberFromMention(message, memberArg) || message.guild.members.cache.get(memberArg) || message.guild.members.cache.find(m => m.displayName.includes(memberArg));
+    const member = this.getMemberFromMention(message, memberArg) || message.guild.members.cache.get(memberArg) || this.getMemberFromText(message, memberArg);
     if (!member)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
     // if (member.roles.highest.position > message.member.roles.highest.position)
     //   return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
 
     if (!args[0]) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
-
-    let role = this.getRole(args.join(' '), message);
+  console.log(`role 1 is ${this.getRole(args[0])}\nrole 2 is ${this.getRole(args[1])}`)
+    let role = this.getRole(message, args.join(' '));
 
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
     else if (member.roles.cache.has(role.id)) // If member already has role
@@ -74,16 +74,5 @@ module.exports = class RoleCommand extends Command {
         return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
       }
     }  
-  }
-
-  getRole(args, message) {
-    if (args)
-    {
-      let role;
-      if (args.startsWith("<@&") || (/^[0-9]{18}$/g).test(args)) role = this.getRoleFromMention(message, args) || message.guild.roles.cache.get(args);
-      else role = message.guild.roles.cache.find(r => r.name.toLowerCase().startsWith(args.toLowerCase()))
-      if (!role) role = message.guild.roles.cache.find(r => r.name.toLowerCase().includes(args.toLowerCase()))
-      return role;
-    }
   }
 };
