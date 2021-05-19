@@ -61,7 +61,6 @@ module.exports = class RoleCommand extends Command {
           .addField('Moderator', message.member, true)
           .addField('Member', member, true)
           .addField('Role', role, true)
-          .addField('Reason', reason)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
