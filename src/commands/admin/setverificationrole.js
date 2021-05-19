@@ -10,10 +10,10 @@ module.exports = class SetVerificationRoleCommand extends Command {
       aliases: ['setvr', 'svr'],
       usage: 'setverificationrole <role mention/ID>',
       description: oneLine`
-        Sets the role Splite will give members who are verified.
-        Use \`clearverificationrole\` role to clear the current \`verification role\`.
+        Sets the role Splite will give members who are verified.        
         A \`verification role\`, a \`verification channel\`, 
         and a \`verification message\` must be set to enable server verification.
+        \nUse \`clearverificationrole\` role to clear the current \`verification role\`.
       `,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
@@ -59,7 +59,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
     }
 
     // Update role
-    embed.setDescription(`The \`verification role\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`verification role\` was successfully updated. ${success}\nUse \`clearverificationrole\` role to clear the current \`verification role\`.`)
     const verificationRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!verificationRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateVerificationRoleId.run(verificationRole.id, message.guild.id);

@@ -11,7 +11,7 @@ module.exports = class SetAutoRoleCommand extends Command {
       usage: 'setautorole <role mention/ID>',
       description: oneLine`
         Sets the role all new members will receive upon joining your server.
-        Use \`clearautorole\` to clear the current \`auto role\`.
+        \nUse \`clearautorole\` to clear the current \`auto role\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -35,7 +35,7 @@ module.exports = class SetAutoRoleCommand extends Command {
     }
 
     // Update role
-    embed.setDescription(`The \`auto role\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`auto role\` was successfully updated. ${success}\nUse \`clearautorole\` to clear the current \`auto role\`.`)
     const autoRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!autoRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateAutoRoleId.run(autoRole.id, message.guild.id);

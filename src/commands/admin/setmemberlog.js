@@ -11,7 +11,7 @@ module.exports = class SetMemberLogCommand extends Command {
       usage: 'setmemberlog <channel mention/ID>',
       description: oneLine`
         Sets the member join/leave log text channel for your server. 
-        Use \`clearmemberlog\` to clear the current \`member log\`.
+        \nUse \`clearmemberlog\` to clear the current \`member log\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -34,7 +34,7 @@ module.exports = class SetMemberLogCommand extends Command {
       return message.channel.send(embed.addField('Member Log', `${oldMemberLog}`));
     }
 
-    embed.setDescription(`The \`member log\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`member log\` was successfully updated. ${success}\nUse \`clearmemberlog\` to clear the current \`member log\`.`)
     const memberLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!memberLog || memberLog.type != 'text' || !memberLog.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

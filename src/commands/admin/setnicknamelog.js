@@ -11,7 +11,7 @@ module.exports = class SetNicknameLogCommand extends Command {
       usage: 'setnicknamelog <channel mention/ID>',
       description: oneLine`
         Sets the nickname change log text channel for your server. 
-        Use \`clearnicknamelog\` to clear the current \`nickname log\`.
+        \nUse \`clearnicknamelog\` to clear the current \`nickname log\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -32,7 +32,7 @@ module.exports = class SetNicknameLogCommand extends Command {
     if (args.length === 0) {
       return message.channel.send(embed.addField('Nickname Log', `${oldNicknameLog}`));
     }
-    embed.setDescription(`The \`nickname log\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`nickname log\` was successfully updated. ${success}\nUse \`clearnicknamelog\` to clear the current \`nickname log\`.`)
     const nicknameLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!nicknameLog || nicknameLog.type != 'text' || !nicknameLog.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

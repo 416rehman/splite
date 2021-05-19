@@ -14,9 +14,9 @@ module.exports = class SetWelcomeMessageCommand extends Command {
         You may use \`?member\` to substitute for a user mention,
         \`?username\` to substitute for someone's username,
         \`?tag\` to substitute for someone's full Discord tag (username + discriminator),
-        and \`?size\` to substitute for your server's current member count.
-        Use \`clearwelcomemessage\` to clear the current \`welcome message\`.
+        and \`?size\` to substitute for your server's current member count.        
         A \`welcome channel\` must also be set to enable welcome messages.
+        \nUse \`clearwelcomemessage\` to clear the current \`welcome message\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -47,7 +47,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
       );
     }
 
-    embed.setDescription(`The \`welcome message\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`welcome message\` was successfully updated. ${success}\nUse \`clearwelcomemessage\` to clear the current \`welcome message\`.`)
     let welcomeMessage = message.content.slice(message.content.indexOf(args[0]), message.content.length);
     message.client.db.settings.updateWelcomeMessage.run(welcomeMessage, message.guild.id);
     if (welcomeMessage.length > 1024) welcomeMessage = welcomeMessage.slice(0, 1021) + '...';

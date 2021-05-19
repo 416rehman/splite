@@ -33,7 +33,7 @@ module.exports = class SetSystemChannelCommand extends Command {
     if (args.length === 0) {
       return message.channel.send(embed.addField('System Channel', `${oldSystemChannel}`));
     }
-    embed.setDescription(`The \`system channel\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`system channel\` was successfully updated. ${success}\n Use \`clearsystemchannel\` to clear the current \`system channel\``)
     const systemChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!systemChannel || (systemChannel.type != 'text' && systemChannel.type != 'news') || !systemChannel.viewable)
       return this.sendErrorMessage(message, 0, stripIndent`

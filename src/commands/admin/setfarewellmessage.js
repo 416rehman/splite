@@ -15,7 +15,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
         \`?username\` to substitute for someone's username,
         \`?tag\` to substitute for someone's full Discord tag (username + discriminator),
         and \`?size\` to substitute for your server's current member count.
-        Use \`clearfarewellmessage\` to clear the current \`farewell message\`.
+        \nUse \`clearfarewellmessage\` to clear the current \`farewell message\`.
         A \`farewell channel\` must also be set to enable farewell messages.
       `,
       type: client.types.ADMIN,
@@ -53,7 +53,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
     if (farewellMessage.length > 1024) farewellMessage = farewellMessage.slice(0, 1021) + '...';
 
     // Update status
-    embed.setDescription(`The \`farewell message\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`farewell message\` was successfully updated. ${success}\nUse \`clearfarewellmessage\` to clear the current \`farewell message\`.`)
     const status =  message.client.utils.getStatus(farewellChannel, farewellMessage);
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
     

@@ -11,9 +11,9 @@ module.exports = class SetVerificationMessageCommand extends Command {
       usage: 'setverificationmessage <message>',
       description: oneLine`
         Sets the message Splite will post in the \`verification channel\`.
-        Use \`clearverificationmessage\` to clear the verification message.
         A \`verification role\`, a \`verification channel\`, 
         and a \`verification message\` must be set to enable server verification.
+        \nUse \`clearverificationmessage\` to clear the verification message.
       `,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
@@ -55,7 +55,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
       );
     }
 
-    embed.setDescription(`The \`verification message\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`verification message\` was successfully updated. ${success}\nUse \`clearverificationmessage\` to clear the verification message.`)
     let verificationMessage = message.content.slice(message.content.indexOf(args[0]), message.content.length);
     message.client.db.settings.updateVerificationMessage.run(verificationMessage, message.guild.id);
     if (verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';

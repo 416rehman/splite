@@ -11,7 +11,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
       usage: 'setfarewellchannel <channel mention/ID>',
       description: oneLine`
         Sets the farewell message text channel for your server. 
-        Use \`clearfarewellchannel\` to clear the current \`farewell channel\`.
+        \nUse \`clearfarewellchannel\` to clear the current \`farewell channel\`.
         A \`farewell message\` must also be set to enable farewell messages.
       `,
       type: client.types.ADMIN,
@@ -46,7 +46,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
         .spliceFields(1, 0, { name: 'Status', value: oldStatus, inline: true })
       );
     }
-    embed.setDescription(`The \`farewell channel\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`farewell channel\` was successfully updated. ${success}\nUse \`clearfarewellchannel\` to clear the current \`farewell channel\`.`)
     const farewellChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!farewellChannel || (farewellChannel.type != 'text' && farewellChannel.type != 'news') || !farewellChannel.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

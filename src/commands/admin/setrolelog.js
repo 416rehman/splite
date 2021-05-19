@@ -11,7 +11,7 @@ module.exports = class SetRoleLogCommand extends Command {
       usage: 'setrolelog <channel mention/ID>',
       description: oneLine`
         Sets the role change log text channel for your server. 
-        Use \`clearrolelog\` to clear the current \`role log\`.
+        \nUse \`clearrolelog\` to clear the current \`role log\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -19,6 +19,7 @@ module.exports = class SetRoleLogCommand extends Command {
     });
   }
   run(message, args) {
+    console.log(this.constructor.description)
     const roleLogId = message.client.db.settings.selectRoleLogId.pluck().get(message.guild.id);
     const oldRoleLog = message.guild.channels.cache.get(roleLogId) || '`None`';
     const embed = new MessageEmbed()
@@ -33,7 +34,7 @@ module.exports = class SetRoleLogCommand extends Command {
     if (args.length === 0) {
       return message.channel.send(embed.addField('Role Log', `${oldRoleLog}`));
     }
-    embed.setDescription(`The \`role log\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`role log\` was successfully updated. ${success}\nUse \`clearrolelog\` to clear the current \`role log\`.`)
     const roleLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!roleLog || roleLog.type != 'text' || !roleLog.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

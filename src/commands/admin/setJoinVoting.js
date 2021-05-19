@@ -106,7 +106,7 @@ module.exports = class setJoinVoting extends Command {
       const embed = new MessageEmbed()
           .setTitle('Settings: `Join Voting`')
           .setThumbnail(message.guild.iconURL({ dynamic: true }))
-          .setDescription(`The \`join voting system\` was successfully updated. ${success}`)
+          .setDescription(`The \`join voting system\` was successfully updated. ${success}\nUse \`clearJoinVoting\` to disable`)
           .addField('Status', "\`enabled\`", true)
           .addField('message ID', `\`${args[0]}\``)
           .addField('Voting Channel', `${args[2]}`)

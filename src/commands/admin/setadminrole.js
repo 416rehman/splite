@@ -32,7 +32,7 @@ module.exports = class SetAdminRoleCommand extends Command {
     }
 
     // Update role
-    embed.setDescription(`The \`admin role\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`admin role\` was successfully updated. ${success}\nTo clear the \`admin role\`, type \`clearadminrole\``)
     const adminRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!adminRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateAdminRoleId.run(adminRole.id, message.guild.id);

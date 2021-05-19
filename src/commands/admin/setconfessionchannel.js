@@ -11,7 +11,7 @@ module.exports = class setconfessionchannelCommand extends Command {
       usage: 'setconfessionchannel <channel mention/ID>',
       description: oneLine`
         Sets the confessions text channel for your server. This is where confessions will be sent. 
-        Use \`clearconfessionschannel\` to clear the current \`confessions channel\`.
+        \nUse \`clearconfessionschannel\` to clear the current \`confessions channel\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -33,7 +33,7 @@ module.exports = class setconfessionchannelCommand extends Command {
       return message.channel.send(embed.addField('Confessions Channel', `${oldConfessionsChannel}`));
     }
 
-    embed.setDescription(`The \`confessions channel\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`confessions channel\` was successfully updated. ${success}\nUse \`clearconfessionschannel\` to clear the current \`confessions channel\`.`)
     const confessionsChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!confessionsChannel || (confessionsChannel.type != 'text' && confessionsChannel.type != 'news') || !confessionsChannel.viewable)
       return this.sendErrorMessage(message, 0, stripIndent`

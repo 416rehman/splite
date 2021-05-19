@@ -11,7 +11,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
       usage: 'setmessagedeletelog <channel mention/ID>',
       description: oneLine`
         Sets the message delete log text channel for your server. 
-        Use \`clearmessagedeletelog\` to clear the current \`message delete log\`.
+        \nUse \`clearmessagedeletelog\` to clear the current \`message delete log\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -33,7 +33,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
       return message.channel.send(embed.addField('Message Delete Log', `${oldMessageDeleteLog}`));
     }
 
-    embed.setDescription(`The \`message delete log\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`message delete log\` was successfully updated. ${success}\nUse \`clearmessagedeletelog\` to clear the current \`message delete log\`.`)
     const messageDeleteLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!messageDeleteLog || messageDeleteLog.type != 'text' || !messageDeleteLog.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

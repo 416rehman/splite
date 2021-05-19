@@ -11,7 +11,7 @@ module.exports = class SetCrownRoleCommand extends Command {
       usage: 'setcrownrole <role mention/ID>',
       description: oneLine`
         Sets the role Splite will give to the member with the most points each 24 hours.
-        Use \`clearcrownrole\` to clear the current \`crown role\`.
+        \nUse \`clearcrownrole\` to clear the current \`crown role\`.
         To disable the crown feature, run this command without providing a role.
       `,
       type: client.types.ADMIN,
@@ -54,7 +54,7 @@ module.exports = class SetCrownRoleCommand extends Command {
     }
 
     // Update role
-    embed.setDescription(`The \`crown role\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`crown role\` was successfully updated. ${success}\nUse \`clearcrownrole\` to clear the current \`crown role\`.`)
     const crownRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!crownRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateCrownRoleId.run(crownRole.id, message.guild.id);

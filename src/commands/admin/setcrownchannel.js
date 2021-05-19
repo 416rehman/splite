@@ -11,7 +11,7 @@ module.exports = class SetCrownChannelCommand extends Command {
       usage: 'setcrownchannel <channel mention/ID>',
       description: oneLine`
         Sets the crown message text channel for your server. 
-        Use \`clearcrownchannel\` to clear the current \`crown channel\`.
+        \nUse \`clearcrownchannel\` to clear the current \`crown channel\`.
         A \`crown message\` will only be sent if a \`crown channel\`, and \`crown role\` are set.
       `,
       type: client.types.ADMIN,
@@ -54,7 +54,7 @@ module.exports = class SetCrownChannelCommand extends Command {
         inline: true
       }));
     }
-    embed.setDescription(`The \`crown role\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`crown role\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`)
     const crownChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!crownChannel || (crownChannel.type != 'text' && crownChannel.type != 'news') || !crownChannel.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

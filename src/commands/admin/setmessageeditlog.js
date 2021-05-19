@@ -11,7 +11,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
       usage: 'setmessageeditlog <channel mention/ID>',
       description: oneLine`
         Sets the message edit log text channel for your server. 
-        Use \`clearmessageeditlog\` to clear the current \`message edit log\`.
+        \nUse \`clearmessageeditlog\` to clear the current \`message edit log\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -34,7 +34,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
       return message.channel.send(embed.addField('Message Edit Log', `${oldMessageEditLog}`));
     }
 
-    embed.setDescription(`The \`message edit log\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`message edit log\` was successfully updated. ${success}\nUse \`clearmessageeditlog\` to clear the current \`message edit log\`.`)
     const messageEditLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!messageEditLog || messageEditLog.type != 'text' || !messageEditLog.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

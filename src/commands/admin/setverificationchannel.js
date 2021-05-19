@@ -15,7 +15,7 @@ module.exports = class SetVerificationChannelCommand extends Command {
         Please ensure that new members are not able access other server channels for proper verification.
         A \`verification channel\`, a \`verification message\`, 
         and an \`verification role\` must be set to enable server verification.
-        Use \`clearverificationchannel\` to clear current \`verification channel\`.
+        \nUse \`clearverificationchannel\` to clear current \`verification channel\`.
       `,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
@@ -60,7 +60,7 @@ module.exports = class SetVerificationChannelCommand extends Command {
         .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true })
       );
     }
-    embed.setDescription(`The \`verification channel\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`verification channel\` was successfully updated. ${success}\nUse \`clearverificationchannel\` to clear current \`verification channel\`.`)
     const verificationChannel = 
       this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!verificationChannel || verificationChannel.type != 'text' || !verificationChannel.viewable)

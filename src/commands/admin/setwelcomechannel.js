@@ -10,9 +10,9 @@ module.exports = class SetWelcomeChannelCommand extends Command {
       aliases: ['setwc', 'swc'],
       usage: 'setwelcomechannel <channel mention/ID>',
       description: oneLine`
-        Sets the welcome message text channel for your server. 
-        Use \`clearwelcomechannel\` to clear the current \`welcome channel\`.
+        Sets the welcome message text channel for your server.      
         A \`welcome message\` must also be set to enable welcome messages.
+        \nUse \`clearwelcomechannel\` to clear the current \`welcome channel\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -47,7 +47,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
       );
     }
 
-    embed.setDescription(`The \`welcome channel\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`welcome channel\` was successfully updated. ${success}\nUse \`clearwelcomechannel\` to clear the current \`welcome channel\`.`)
     const welcomeChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!welcomeChannel || (welcomeChannel.type != 'text' && welcomeChannel.type != 'news') || !welcomeChannel.viewable)
       return this.sendErrorMessage(message, 0, stripIndent`

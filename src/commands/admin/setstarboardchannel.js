@@ -11,7 +11,7 @@ module.exports = class SetStarboardChannelCommand extends Command {
       usage: 'setstarboardchannel <channel mention/ID>',
       description: oneLine`
         Sets the starboard text channel for your server.
-        Use \`clearstarboardchannel\` to clear the current \`starboard channel\`.
+        \nUse \`clearstarboardchannel\` to clear the current \`starboard channel\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -34,7 +34,7 @@ module.exports = class SetStarboardChannelCommand extends Command {
       return message.channel.send(embed.addField('Starboard Channel', `${oldStarboardChannel}`));
     }
 
-    embed.setDescription(`The \`starboard channel\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`starboard channel\` was successfully updated. ${success}\nUse \`clearstarboardchannel\` to clear the current \`starboard channel\``)
     const starboardChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (
       !starboardChannel || 

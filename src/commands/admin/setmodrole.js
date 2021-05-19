@@ -8,7 +8,7 @@ module.exports = class SetModRoleCommand extends Command {
       name: 'setmodrole',
       aliases: ['setmr', 'smr'],
       usage: 'setmodrole <role mention/ID>',
-      description: 'Sets the `mod role` for your server. Use \`clearmodrole\` to clear the current `mod role`.',
+      description: 'Sets the `mod role` for your server.\nUse \`clearmodrole\` to clear the current `mod role`.',
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
       examples: ['setmodrole @Mod','clearmodrole']
@@ -32,7 +32,7 @@ module.exports = class SetModRoleCommand extends Command {
     }
 
     // Update role
-    embed.setDescription(`The \`mod role\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`mod role\` was successfully updated. ${success}\nUse \`clearmodrole\` to clear the current \`mod role\`.`)
     const modRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!modRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateModRoleId.run(modRole.id, message.guild.id);

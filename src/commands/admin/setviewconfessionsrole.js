@@ -11,7 +11,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
       usage: 'setviewconfessionsrole <role mention/ID>',
       description: oneLine`
         Sets the role whose members can use /view command to view details about a confession.
-        Use \`clearviewconfessionsrole\` to clear the current \`view-confessions role\`
+        \nUse \`clearviewconfessionsrole\` to clear the current \`view-confessions role\`
       `,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
@@ -43,7 +43,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
     }
 
     // Update role
-    embed.setDescription(`The \`view confessions role\` was successfully updated. ${success}`)
+    embed.setDescription(`The \`view confessions role\` was successfully updated. ${success}\nUse \`clearviewconfessionsrole\` to clear the current \`view-confessions role\``)
     const confessionsRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!confessionsRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateViewConfessionsRole.run(confessionsRole.id, message.guild.id);
