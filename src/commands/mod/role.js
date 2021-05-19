@@ -27,7 +27,7 @@ module.exports = class RoleCommand extends Command {
     let role;
     if (args[1].startsWith("<@&") || (/^[0-9]{18}$/g).test(args[1])) role = this.getRoleFromMention(message, args[1]) || message.guild.roles.cache.get(args[1]);
     else role = message.guild.roles.cache.find(r=> r.name.toLowerCase().startsWith(args[1].toLowerCase()))
-    
+    if (!role) role = message.guild.roles.cache.find(r=> r.name.toLowerCase().includes(args[1].toLowerCase()))
     let reason = args.slice(2).join(' ');
     if (!reason) reason = '`None`';
     if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
