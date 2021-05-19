@@ -7,7 +7,7 @@ module.exports = class clearSystemChannelCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'clearsystemchannel',
-      aliases: ['clearsc', 'ssc'],
+      aliases: ['clearsc', 'csc'],
       usage: 'clearsystemchannel',
       description: oneLine`
         Clears the system text channel for your server.
