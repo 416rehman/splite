@@ -104,7 +104,11 @@ module.exports = class HelpCommand extends Command {
       for (const type of Object.values(message.client.types)) {
         if (type === OWNER && !message.client.isOwner(message.member)) continue;
         if (commands[type][0])
+        {
+          console.log(emojiMap[type])
           embed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, commands[type].join(' '));
+        }
+
       }
 
       let viewHelp = ''
