@@ -89,8 +89,9 @@ module.exports = class HelpCommand extends Command {
         .setTitle('Splite\'s Commands')
         .setDescription(stripIndent`
           **Prefix:** \`${prefix}\`
-          **More Information:** \`${prefix}help [command]\`
+          **Command Information:** \`${prefix}help [command]\`
           ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}
+          *\`Set\` commands can be cleared using the word \`clear\`, i.e. **\`set\`**\`adminrole\` can be cleared with **\`clear\`**\`adminrole\`*
         `)
         .setFooter(
           (!all && size != total) ? 
