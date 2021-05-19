@@ -7,7 +7,7 @@ module.exports = class clearViewConfessionsRoleCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'clearviewconfessionsrole',
-      aliases: ['clearvcr', 'cvcr', 'clearviewconfessionrole'],
+      aliases: ['clearvcr', 'cvcr', 'clearviewconfessionrole', 'clearviewconfession', 'clearviewconfessions'],
       usage: 'clearviewconfessionsrole',
       description: oneLine`
         Clears the role whose members can use /view command to view details about a confession.
