@@ -7,11 +7,11 @@ module.exports = class setconfessionchannelCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'setconfessionchannel',
-      aliases: ['setconfessions', 'sconfessions'],
+      aliases: ['setconfessions', 'sconfessions','setconfessionschannel'],
       usage: 'setconfessionchannel <channel mention/ID>',
       description: oneLine`
         Sets the confessions text channel for your server. This is where confessions will be sent. 
-        Provide no channel to clear the current \`confessions channel\`.
+        Use \`clearconfessionschannel\` to clear the current \`confessions channel\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -24,17 +24,16 @@ module.exports = class setconfessionchannelCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `Confessions`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`confessions channel\` was successfully updated. ${success}`)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
     // Clear if no args provided
     if (args.length === 0) {
-      message.client.db.settings.updateConfessionsChannelId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Confessions Channel', `${oldConfessionsChannel} ➔ \`None\``));
+      return message.channel.send(embed.addField('Confessions Channel', `\`${oldConfessionsChannel}\``));
     }
 
+    embed.setDescription(`The \`confessions channel\` was successfully updated. ${success}`)
     const confessionsChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!confessionsChannel || (confessionsChannel.type != 'text' && confessionsChannel.type != 'news') || !confessionsChannel.viewable)
       return this.sendErrorMessage(message, 0, stripIndent`

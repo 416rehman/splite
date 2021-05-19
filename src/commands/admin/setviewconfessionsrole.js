@@ -11,6 +11,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
       usage: 'setviewconfessionsrole <role mention/ID>',
       description: oneLine`
         Sets the role whose members can use /view command to view details about a confession.
+        Use \`clearviewconfessionsrole\` to clear the current \`view-confessions role\`
       `,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
@@ -28,26 +29,21 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `Confessions`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`view confessions role\` was successfully updated. ${success}`)
+
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
     // Clear role
     if (args.length === 0) {
-      message.client.db.settings.updateViewConfessionsRole.run(null, message.guild.id);
-      
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-
       return message.channel.send(embed
-        .spliceFields(0, 0, { name: 'Role', value: `${oldViewConfessionsRole} ➔ \`None\``, inline: true })
-        .spliceFields(2, 0, { name: 'Status', value: statusUpdate, inline: true })
+        .spliceFields(0, 0, { name: 'Role', value: `${oldViewConfessionsRole}`, inline: true })
+        .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true })
       );
     }
 
     // Update role
+    embed.setDescription(`The \`view confessions role\` was successfully updated. ${success}`)
     const confessionsRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!confessionsRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateViewConfessionsRole.run(confessionsRole.id, message.guild.id);

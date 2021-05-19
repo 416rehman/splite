@@ -10,7 +10,7 @@ module.exports = class setJoinVoting extends Command {
       aliases: ['joingate', 'joinvoting', 'sjv'],
       usage: `setjoinvoting <messageID> <emoji> <votingChannel>`,
       description: oneLine`
-        Reacts to the provided message with the specified emoji\nIf someone reacts to the emoji, a vote will start in the votingChannel.\nThe person that reacted will either be banned or \nleft alone depending on how many votes they received.\n\n**Useful if you are setting an 18+ server, anyone that\n reacts to the -18 emoji will initiate a vote`,
+        Reacts to the provided message with the specified emoji\nIf someone reacts to the emoji, a vote will start in the votingChannel.\nThe person that reacted will either be banned or \nleft alone depending on how many votes they received.\n\n**Useful if you are setting an 18+ server, anyone that\n reacts to the -18 emoji will initiate a vote.\nUse \`clearJoinVoting\` to disable`,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
       userPermissions: ['MANAGE_GUILD'],
@@ -30,25 +30,19 @@ module.exports = class setJoinVoting extends Command {
       );
 
     if (!args[0]) {
-      message.client.db.settings.updateJoinVotingEmoji.run(null, message.guild.id);
-      message.client.db.settings.updateJoinVotingMessageId.run(null, message.guild.id);
-      message.client.db.settings.updateVotingChannelID.run(null, message.guild.id);
-
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
-
       const embed = new MessageEmbed()
-          .setTitle('Settings: `Join Voting Has Been Disabled`')
+          .setTitle('Settings: `Join Voting`')
           .setThumbnail(message.guild.iconURL({ dynamic: true }))
-          .setDescription(`The \`join voting system\` has been disabled. ${fail}`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
 
+      const emoji = await message.guild.emojis.cache.find(e => e.id === joinvotingEmoji) || joinvotingEmoji
       return message.channel.send(embed
-        .addField('Status', statusUpdate, true)
-        .addField('Message', '`None`')
+        .addField('Status', oldStatus, true)
+        .addField('MessageID', `\`${joinvotingMessageId || 'None'}\``)
+        .addField('Emoji', `${emoji || '`None`'}`)
+        .addField('ChannelID', `${'<#'+ votingChannelID +'>' || '`None`'}`)
       );
     }
     else if (args.length > 2)

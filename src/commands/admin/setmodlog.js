@@ -11,7 +11,7 @@ module.exports = class SetModLogCommand extends Command {
       usage: 'setmodlog <channel mention/ID>',
       description: oneLine`
         Sets the mod log text channel for your server. 
-        Provide no channel to clear the current \`mod log\`.
+        Use \`clearmodlog\` to clear the current \`mod log\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -24,17 +24,16 @@ module.exports = class SetModLogCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `Logging`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`mod log\` was successfully updated. ${success}`)
+
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
     // Clear if no args provided
     if (args.length === 0) {
-      message.client.db.settings.updateModLogId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Mod Log', `${oldModLog} ➔ \`None\``));
+      return message.channel.send(embed.addField('Mod Log', `${oldModLog}`));
     }
-
+    embed.setDescription(`The \`mod log\` was successfully updated. ${success}`)
     const modLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!modLog || modLog.type != 'text' || !modLog.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

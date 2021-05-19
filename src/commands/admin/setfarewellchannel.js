@@ -11,7 +11,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
       usage: 'setfarewellchannel <channel mention/ID>',
       description: oneLine`
         Sets the farewell message text channel for your server. 
-        Provide no channel to clear the current \`farewell channel\`.
+        Use \`clearfarewellchannel\` to clear the current \`farewell channel\`.
         A \`farewell message\` must also be set to enable farewell messages.
       `,
       type: client.types.ADMIN,
@@ -32,7 +32,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
     
     const embed = new MessageEmbed()
       .setTitle('Settings: `Farewells`')
-      .setDescription(`The \`farewell channel\` was successfully updated. ${success}`)
+
       .addField('Message', message.client.utils.replaceKeywords(farewellMessage) || '`None`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
@@ -41,18 +41,12 @@ module.exports = class SetFarewellChannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      message.client.db.settings.updateFarewellChannelId.run(null, message.guild.id);
-
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-      
       return message.channel.send(embed
         .spliceFields(0, 0, { name: 'Channel', value: `${oldFarewellChannel} ➔ \`None\``, inline: true })
-        .spliceFields(1, 0, { name: 'Status', value: statusUpdate, inline: true })
+        .spliceFields(1, 0, { name: 'Status', value: oldStatus, inline: true })
       );
     }
-
+    embed.setDescription(`The \`farewell channel\` was successfully updated. ${success}`)
     const farewellChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!farewellChannel || (farewellChannel.type != 'text' && farewellChannel.type != 'news') || !farewellChannel.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`

@@ -11,7 +11,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
       usage: 'setverificationrole <role mention/ID>',
       description: oneLine`
         Sets the role Splite will give members who are verified.
-        Provide no role to clear the current \`verification role\`.
+        Use \`clearverificationrole\` role to clear the current \`verification role\`.
         A \`verification role\`, a \`verification channel\`, 
         and a \`verification message\` must be set to enable server verification.
       `,
@@ -43,7 +43,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `Verification`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`verification role\` was successfully updated. ${success}`)
+
       .addField('Channel', verificationChannel || '`None`', true)
       .addField('Message', verificationMessage || '`None`')
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
@@ -52,28 +52,14 @@ module.exports = class SetVerificationRoleCommand extends Command {
 
     // Clear role
     if (args.length === 0) {
-      message.client.db.settings.updateVerificationRoleId.run(null, message.guild.id);
-      message.client.db.settings.updateVerificationMessageId.run(null, message.guild.id);
-
-      if (verificationChannel && verificationMessageId) {
-        try {
-          await verificationChannel.messages.delete(verificationMessageId);
-        } catch (err) { // Message was deleted
-          message.client.logger.error(err);
-        }
-      }
-      
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-
       return message.channel.send(embed
-        .spliceFields(0, 0, { name: 'Role', value: `${oldVerificationRole} ➔ \`None\``, inline: true })
-        .spliceFields(2, 0, { name: 'Status', value: statusUpdate, inline: true })
+        .spliceFields(0, 0, { name: 'Role', value: `${oldVerificationRole}`, inline: true })
+        .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true })
       );
     }
 
     // Update role
+    embed.setDescription(`The \`verification role\` was successfully updated. ${success}`)
     const verificationRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!verificationRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateVerificationRoleId.run(verificationRole.id, message.guild.id);

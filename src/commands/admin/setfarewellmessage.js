@@ -15,7 +15,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
         \`?username\` to substitute for someone's username,
         \`?tag\` to substitute for someone's full Discord tag (username + discriminator),
         and \`?size\` to substitute for your server's current member count.
-        Enter no message to clear the current \`farewell message\`.
+        Use \`clearfarewellmessage\` to clear the current \`farewell message\`.
         A \`farewell channel\` must also be set to enable farewell messages.
       `,
       type: client.types.ADMIN,
@@ -35,22 +35,16 @@ module.exports = class SetFarewellMessageCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `Farewells`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`farewell message\` was successfully updated. ${success}`)
+
       .addField('Channel', farewellChannel || '`None`', true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
     if (!args[0]) {
-      message.client.db.settings.updateFarewellMessage.run(null, message.guild.id);
-
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-
       return message.channel.send(embed
-        .addField('Status', statusUpdate, true)
-        .addField('Message', '`None`')
+        .addField('Status', oldStatus, true)
+        .addField('Message', `${oldFarewellMessage}`)
       );
     }
     
@@ -59,6 +53,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
     if (farewellMessage.length > 1024) farewellMessage = farewellMessage.slice(0, 1021) + '...';
 
     // Update status
+    embed.setDescription(`The \`farewell message\` was successfully updated. ${success}`)
     const status =  message.client.utils.getStatus(farewellChannel, farewellMessage);
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
     

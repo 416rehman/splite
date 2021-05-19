@@ -15,6 +15,7 @@ module.exports = class SetVerificationChannelCommand extends Command {
         Please ensure that new members are not able access other server channels for proper verification.
         A \`verification channel\`, a \`verification message\`, 
         and an \`verification role\` must be set to enable server verification.
+        Use \`clearverificationchannel\` to clear current \`verification channel\`.
       `,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
@@ -44,7 +45,6 @@ module.exports = class SetVerificationChannelCommand extends Command {
     
     const embed = new MessageEmbed()
       .setTitle('Settings: `Verification`')
-      .setDescription(`The \`verification channel\` was successfully updated. ${success}`)
       .addField('Role', verificationRole || '`None`', true)
       .addField('Message', verificationMessage || '`None`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
@@ -54,27 +54,13 @@ module.exports = class SetVerificationChannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      message.client.db.settings.updateVerificationChannelId.run(null, message.guild.id);
-      message.client.db.settings.updateVerificationMessageId.run(null, message.guild.id);
-
-      if (oldVerificationChannel && verificationMessageId) {
-        try {
-          await oldVerificationChannel.messages.delete(verificationMessageId);
-        } catch (err) { // Message was deleted
-          message.client.logger.error(err);
-        }
-      }
-
       // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-      
       return message.channel.send(embed
-        .spliceFields(1, 0, { name: 'Channel', value: `${oldVerificationChannel} ➔ \`None\``, inline: true })
-        .spliceFields(2, 0, { name: 'Status', value: statusUpdate, inline: true })
+        .spliceFields(1, 0, { name: 'Channel', value: `${oldVerificationChannel}`, inline: true })
+        .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true })
       );
     }
-
+    embed.setDescription(`The \`verification channel\` was successfully updated. ${success}`)
     const verificationChannel = 
       this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!verificationChannel || verificationChannel.type != 'text' || !verificationChannel.viewable)

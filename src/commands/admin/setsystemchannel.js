@@ -12,7 +12,7 @@ module.exports = class SetSystemChannelCommand extends Command {
       description: oneLine`
         Sets the system text channel for your server. This is where Splite's system messages will be sent. 
         Provide no channel to clear the current \`system channel\`. Clearing this setting is **not recommended** 
-        as Splite requires a \`system channel\` to notify you about important errors.
+        as Splite requires a \`system channel\` to notify you about important errors. \n Use \`clearsystemchannel\` to clear the current \`system channel\`
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -25,17 +25,15 @@ module.exports = class SetSystemChannelCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `System`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`system channel\` was successfully updated. ${success}`)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
     // Clear if no args provided
     if (args.length === 0) {
-      message.client.db.settings.updateSystemChannelId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('System Channel', `${oldSystemChannel} ➔ \`None\``));
+      return message.channel.send(embed.addField('System Channel', `${oldSystemChannel}`));
     }
-
+    embed.setDescription(`The \`system channel\` was successfully updated. ${success}`)
     const systemChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!systemChannel || (systemChannel.type != 'text' && systemChannel.type != 'news') || !systemChannel.viewable)
       return this.sendErrorMessage(message, 0, stripIndent`

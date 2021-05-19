@@ -11,7 +11,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
       usage: 'setwelcomechannel <channel mention/ID>',
       description: oneLine`
         Sets the welcome message text channel for your server. 
-        Provide no channel to clear the current \`welcome channel\`.
+        Use \`clearwelcomechannel\` to clear the current \`welcome channel\`.
         A \`welcome message\` must also be set to enable welcome messages.
       `,
       type: client.types.ADMIN,
@@ -33,7 +33,6 @@ module.exports = class SetWelcomeChannelCommand extends Command {
 
     const embed = new MessageEmbed()
       .setTitle('Settings: `Welcomes`')
-      .setDescription(`The \`welcome channel\` was successfully updated. ${success}`)
       .addField('Message', message.client.utils.replaceKeywords(welcomeMessage) || '`None`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
@@ -42,18 +41,13 @@ module.exports = class SetWelcomeChannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      message.client.db.settings.updateWelcomeChannelId.run(null, message.guild.id);
-
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-      
       return message.channel.send(embed
-        .spliceFields(0, 0, { name: 'Channel', value: `${oldWelcomeChannel} ➔ \`None\``, inline: true })
-        .spliceFields(1, 0, { name: 'Status', value: statusUpdate, inline: true })
+        .spliceFields(0, 0, { name: 'Channel', value: `${oldWelcomeChannel}`, inline: true })
+        .spliceFields(1, 0, { name: 'Status', value: oldStatus, inline: true })
       );
     }
 
+    embed.setDescription(`The \`welcome channel\` was successfully updated. ${success}`)
     const welcomeChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!welcomeChannel || (welcomeChannel.type != 'text' && welcomeChannel.type != 'news') || !welcomeChannel.viewable)
       return this.sendErrorMessage(message, 0, stripIndent`

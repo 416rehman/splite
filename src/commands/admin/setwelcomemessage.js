@@ -15,7 +15,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
         \`?username\` to substitute for someone's username,
         \`?tag\` to substitute for someone's full Discord tag (username + discriminator),
         and \`?size\` to substitute for your server's current member count.
-        Enter no message to clear the current \`welcome message\`.
+        Use \`clearwelcomemessage\` to clear the current \`welcome message\`.
         A \`welcome channel\` must also be set to enable welcome messages.
       `,
       type: client.types.ADMIN,
@@ -35,25 +35,19 @@ module.exports = class SetWelcomeMessageCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `Welcomes`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`welcome message\` was successfully updated. ${success}`)
       .addField('Channel', welcomeChannel || '`None`', true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
     if (!args[0]) {
-      message.client.db.settings.updateWelcomeMessage.run(null, message.guild.id);
-
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-
       return message.channel.send(embed
-        .addField('Status', statusUpdate, true)
-        .addField('Message', '`None`')
+        .addField('Status', oldStatus, true)
+        .addField('Message', `${oldWelcomeMessage}`)
       );
     }
-    
+
+    embed.setDescription(`The \`welcome message\` was successfully updated. ${success}`)
     let welcomeMessage = message.content.slice(message.content.indexOf(args[0]), message.content.length);
     message.client.db.settings.updateWelcomeMessage.run(welcomeMessage, message.guild.id);
     if (welcomeMessage.length > 1024) welcomeMessage = welcomeMessage.slice(0, 1021) + '...';

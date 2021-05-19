@@ -13,7 +13,7 @@ module.exports = class SetModChannelsCommand extends Command {
         Sets the moderator only text channels for your server.
         Only \`${client.utils.capitalize(client.types.MOD)}\` type commands will work in these channels,
         and Splite will only respond to members with permission to use those commands.
-        Provide no channels to clear the current \`mod channels\`.
+        Use \`clearmodchannels\` to clear the current \`mod channels\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],
@@ -34,17 +34,16 @@ module.exports = class SetModChannelsCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `System`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`mod channels\` were successfully updated. ${success}`)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
     // Clear if no args provided
     if (args.length === 0) {
-      message.client.db.settings.updateModChannelIds.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Mod Channels', `${oldModChannels} ➔ \`None\``));
+      return message.channel.send(embed.addField('Mod Channels', `${oldModChannels}`));
     }
 
+    embed.setDescription(`The \`mod channels\` were successfully updated. ${success}`)
     let channels = [];
     for (const arg of args) {
       const channel = this.getChannelFromMention(message, arg) || message.guild.channels.cache.get(arg);

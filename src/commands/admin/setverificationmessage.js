@@ -11,7 +11,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
       usage: 'setverificationmessage <message>',
       description: oneLine`
         Sets the message Splite will post in the \`verification channel\`.
-        Enter no message to clear the verification message.
+        Use \`clearverificationmessage\` to clear the verification message.
         A \`verification role\`, a \`verification channel\`, 
         and a \`verification message\` must be set to enable server verification.
       `,
@@ -40,7 +40,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Settings: `Verification`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .setDescription(`The \`verification message\` was successfully updated. ${success}`)
+
       .addField('Role', verificationRole || '`None`', true)
       .addField('Channel', verificationChannel || '`None`', true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
@@ -48,27 +48,14 @@ module.exports = class SetVerificationMessageCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
 
     if (!args[0]) {
-      message.client.db.settings.updateVerificationMessage.run(null, message.guild.id);
-      message.client.db.settings.updateVerificationMessageId.run(null, message.guild.id);
-
-      if (verificationChannel && verificationMessageId) {
-        try {
-          await verificationChannel.messages.delete(verificationMessageId);
-        } catch (err) { // Message was deleted
-          message.client.logger.error(err);
-        }
-      }
-
-      // Update status
-      const status = 'disabled';
-      const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
-
       return message.channel.send(embed
-        .addField('Status', statusUpdate, true)
-        .addField('Message', '`None`')
+          .addField('Status', oldStatus, true)
+          .addField('Message ID', `\`${verificationMessageId}\``)
+          .addField('Message', `\`${oldVerificationMessage}\``)
       );
     }
-    
+
+    embed.setDescription(`The \`verification message\` was successfully updated. ${success}`)
     let verificationMessage = message.content.slice(message.content.indexOf(args[0]), message.content.length);
     message.client.db.settings.updateVerificationMessage.run(verificationMessage, message.guild.id);
     if (verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
