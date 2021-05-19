@@ -90,8 +90,8 @@ module.exports = class HelpCommand extends Command {
         .setDescription(stripIndent`
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`
-          ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n\n
-          \`Set\` commands can be cleared using the word \`clear\`, i.e. **\`setadminrole\` can be cleared with **\`clearadminrole\`
+          ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n
+          \`Set\` commands can be cleared using the word \`clear\`, i.e. \`setadminrole\` can be cleared with \`clearadminrole\`\n
         `)
         .setFooter(
           (!all && size != total) ? 
