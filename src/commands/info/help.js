@@ -77,7 +77,10 @@ module.exports = class HelpCommand extends Command {
           if (command.userPermissions && command.userPermissions.every(p => message.member.hasPermission(p)) && !all)
             commands[command.type].push(`\`${command.name}\``);
           else if (!command.userPermissions || all) {
-            commands[command.type].push(`\`${command.name}\``);
+            if (!(command.name.includes('clear')))
+            {
+              commands[command.type].push(`\`${command.name}\``);
+            }
           }
         }
       });

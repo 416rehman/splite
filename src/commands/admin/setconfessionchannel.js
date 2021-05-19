@@ -30,7 +30,7 @@ module.exports = class setconfessionchannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Confessions Channel', `\`${oldConfessionsChannel}\``));
+      return message.channel.send(embed.addField('Confessions Channel', `${oldConfessionsChannel}`));
     }
 
     embed.setDescription(`The \`confessions channel\` was successfully updated. ${success}`)
