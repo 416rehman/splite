@@ -7,7 +7,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'setviewconfessionsrole',
-      aliases: ['setvcr', 'svcr'],
+      aliases: ['setvcr', 'svcr', 'setviewconfessions', 'setviewconfession'],
       usage: 'setviewconfessionsrole <role mention/ID>',
       description: oneLine`
         Sets the role whose members can use /view command to view details about a confession.
