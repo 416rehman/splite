@@ -19,7 +19,7 @@ module.exports = class SetRoleLogCommand extends Command {
     });
   }
   run(message, args) {
-    console.log(this.constructor.description)
+    console.log(this.description)
     const roleLogId = message.client.db.settings.selectRoleLogId.pluck().get(message.guild.id);
     const oldRoleLog = message.guild.channels.cache.get(roleLogId) || '`None`';
     const embed = new MessageEmbed()
