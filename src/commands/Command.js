@@ -125,8 +125,9 @@ class Command {
    * @param {Message} message
    * @param {string} text
    */
-  getMemberFromText(message, text) {
-    return message.guild.members.cache.find(m => m.displayName.toLowerCase().startsWith(text.toLowerCase()));
+  async getMemberFromText(message, text) {
+    return await message.guild.members.cache.find(m => m.displayName.toLowerCase().startsWith(text.toLowerCase()))
+        || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().includes(text.toLowerCase()));
   }
 
   /**
