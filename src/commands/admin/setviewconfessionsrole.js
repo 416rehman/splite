@@ -24,7 +24,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
     const oldViewConfessionsRole = message.guild.roles.cache.get(view_confessions_role) || '`None`';
     
     // Get status
-    const oldStatus = message.client.utils.getStatus(oldViewConfessionsRole);
+    const oldStatus = message.client.utils.getStatus(view_confessions_role);
 
     const embed = new MessageEmbed()
       .setTitle('Settings: `Confessions`')
