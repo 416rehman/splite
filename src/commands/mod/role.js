@@ -44,7 +44,7 @@ module.exports = class RoleCommand extends Command {
         message.channel.send(embed);
 
         // Update mod log
-        this.sendModLogMessage(message, reason, {Member: member, Role: role});
+        this.sendModLogMessage(message, ' ', {Member: member, Role: role});
       } catch (err) {
         message.client.logger.error(err.stack);
         return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
