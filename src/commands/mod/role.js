@@ -21,9 +21,10 @@ module.exports = class RoleCommand extends Command {
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
     // if (member.roles.highest.position > message.member.roles.highest.position)
     //   return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
-
+    const role1 = await this.getRole(message, args[0])
+    const role2 = await this.getRole(message, args[1])
     if (!args[0]) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
-  console.log(`role 1 is ${await this.getRole(args[0])}\nrole 2 is ${ await this.getRole(args[1])}`)
+  console.log(`role 1 is ${role1}\nrole 2 is ${role2}`)
     let role = this.getRole(message, args.join(' '));
 
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
