@@ -6,7 +6,7 @@ module.exports = class RoleCommand extends Command {
     super(client, {
       name: 'role',
       aliases: ['giverole'],
-      usage: 'role <user mention/ID> <role mention/ID> [reason]',
+      usage: 'role <user mention/ID> <role mention/ID>',
       description: 'Adds/Removes the specified role from the provided user.',
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
@@ -15,22 +15,16 @@ module.exports = class RoleCommand extends Command {
     });
   }
   async run(message, args) {
-
-    const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+    const memberArg = args.shift()
+    const member = this.getMemberFromMention(message, memberArg) || message.guild.members.cache.get(memberArg);
     if (!member)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
     // if (member.roles.highest.position > message.member.roles.highest.position)
     //   return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
 
-    if (!args[1]) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
+    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
 
-    let role;
-    if (args[1].startsWith("<@&") || (/^[0-9]{18}$/g).test(args[1])) role = this.getRoleFromMention(message, args[1]) || message.guild.roles.cache.get(args[1]);
-    else role = message.guild.roles.cache.find(r=> r.name.toLowerCase().startsWith(args[1].toLowerCase()))
-    if (!role) role = message.guild.roles.cache.find(r=> r.name.toLowerCase().includes(args[1].toLowerCase()))
-    let reason = args.slice(2).join(' ');
-    if (!reason) reason = '`None`';
-    if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
+    let role = this.getRole(args.join(' '), message);
 
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
     else if (member.roles.cache.has(role.id)) // If member already has role
@@ -44,7 +38,6 @@ module.exports = class RoleCommand extends Command {
             .addField('Moderator', message.member, true)
             .addField('Member', member, true)
             .addField('Role', role, true)
-            .addField('Reason', reason)
             .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
@@ -82,5 +75,16 @@ module.exports = class RoleCommand extends Command {
         return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
       }
     }  
+  }
+
+  getRole(args, message) {
+    if (args)
+    {
+      let role;
+      if (args.startsWith("<@&") || (/^[0-9]{18}$/g).test(args)) role = this.getRoleFromMention(message, args) || message.guild.roles.cache.get(args);
+      else role = message.guild.roles.cache.find(r => r.name.toLowerCase().startsWith(args.toLowerCase()))
+      if (!role) role = message.guild.roles.cache.find(r => r.name.toLowerCase().includes(args.toLowerCase()))
+      return role;
+    }
   }
 };
