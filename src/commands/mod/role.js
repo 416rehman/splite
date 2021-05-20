@@ -7,11 +7,11 @@ module.exports = class RoleCommand extends Command {
       name: 'role',
       aliases: ['giverole'],
       usage: 'role <user mention/ID> <role mention/ID>',
-      description: 'Adds/Removes the specified role from the provided user.',
+      description: 'Adds/Removes the specified role from the provided user.\nSeperate multiple roles with a comma ","\nUsing + at the beginning of the role adds the role but does not remove it\nUsing - at the beginning of the role removes the role but does not add it',
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
       userPermissions: ['MANAGE_ROLES'],
-      examples: ['role @split [@role or roleName or roleID]']
+      examples: ['role @split rolename', 'role @split rolename, +rolename2, -rolename3']
     });
   }
   async run(message, args) {
@@ -59,12 +59,11 @@ module.exports = class RoleCommand extends Command {
         .setDescription(`Changed roles for ${member}.`)
         .addField('Moderator', message.member, true)
         .addField('Member', member, true)
-        .addField('Role', changes.join('\n'), true)
+        .addField('Roles', changes.join('\n'), true)
         .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
     return message.channel.send(embed);
-
   }
 
   async RemoveRole(member, role, message) {
