@@ -367,7 +367,10 @@ const bios = {
     ) VALUES (?, ?);
   `),
   selectBio: db.prepare('SELECT bio FROM bios WHERE user_id = ?;'),
-  updateBio: db.prepare('UPDATE bios SET bio = ? WHERE user_id = ?;')
+  updateBio: db.prepare('INSERT INTO bios (user_id, bio)
+      VALUES (?, ?)
+      ON CONFLICT (user_id) DO
+      UPDATE SET bio=excluded.bio;')
 };
 
 module.exports = {
