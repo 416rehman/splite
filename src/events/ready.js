@@ -73,7 +73,6 @@ module.exports = async (client) => {
         member.user.bot ? 1 : 0,
           null, //AFK
           0,  //Afk_time
-          null, //BIO
           0,    //OptOutSmashOrPass
           0     //messageCount
       );

@@ -76,7 +76,6 @@ db.prepare(`
     current_member INTEGER NOT NULL,
     afk TEXT,
     afk_time INTEGER,
-    bio TEXT,
     voteRunning INTEGER,
     SmashRunning INTEGER,
     optOutSmashOrPass INTEGER,
@@ -106,6 +105,15 @@ db.prepare(`
     liked TEXT,
     dateandtime TEXT,
     PRIMARY KEY (matchID)
+  );
+`).run();
+
+// BIOS TABLE
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS users (
+    user_id TEXT,
+    bio TEXT,
+    PRIMARY KEY (user_id)
   );
 `).run();
 /** ------------------------------------------------------------------------------------------------
@@ -240,10 +248,9 @@ const users = {
       current_member,
       afk,
       afk_time,
-      bio,
       optOutSmashOrPass,
       messageCount
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?, ?);
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?);
   `),
 
   // Selects
@@ -256,7 +263,6 @@ const users = {
   selectCurrentMembers: db.prepare('SELECT * FROM users WHERE guild_id = ? AND current_member = 1;'),
   selectMissingMembers: db.prepare('SELECT * FROM users WHERE guild_id = ? AND current_member = 0;'),
   selectAfk: db.prepare('SELECT afk, afk_time FROM users WHERE guild_id = ? AND user_id = ?;'),
-  selectBio: db.prepare('SELECT bio FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectOptOutSmashOrPass: db.prepare('SELECT optOutSmashOrPass FROM users WHERE user_id = ? limit 1;'),
   selectMessageCount: db.prepare('SELECT messageCount FROM users WHERE user_id = ? AND guild_id = ?;'),
 
@@ -278,7 +284,6 @@ const users = {
   deleteGuild: db.prepare('DELETE FROM users WHERE guild_id = ?;'),
   updateAfk: db.prepare('UPDATE users SET afk = ? WHERE user_id = ? AND guild_id = ?;'),
   updateAfkTime: db.prepare('UPDATE users SET afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
-  updateBio: db.prepare('UPDATE users SET bio = ? WHERE user_id = ?;'),
   resetSmashOrPass: db.prepare('delete from matches where userID = ?'),
   updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;'),
   updateMessageCount: db.prepare(`
@@ -353,9 +358,22 @@ const matches = {
         and t1.shownUserID = ? and t1.liked = 'yes';`)
 };
 
+// BIOS TABLE
+const bios = {
+  insertRow: db.prepare(`
+    INSERT OR IGNORE INTO bios (
+      user_id,
+      bio
+    ) VALUES (?, ?);
+  `),
+  selectBio: db.prepare('SELECT bio FROM bios WHERE user_id = ?;'),
+  updateBio: db.prepare('UPDATE bios SET bio = ? WHERE user_id = ?;')
+};
+
 module.exports = {
   settings,
   users,
   confessions,
-  matches
+  matches,
+  bios
 };

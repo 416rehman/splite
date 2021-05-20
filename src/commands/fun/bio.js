@@ -22,7 +22,7 @@ module.exports = class BioCommand extends Command {
     {
       let {
         bio: Bio
-      } = message.client.db.users.selectBio.get(message.guild.id, message.author.id);
+      } = message.client.db.bios.selectBio.get(message.author.id);
       if (!Bio)
       {
         const embed = new MessageEmbed()
@@ -45,7 +45,7 @@ module.exports = class BioCommand extends Command {
       if (args[0] === 'clear' && args.length === 1)
       {
         try {
-          message.client.db.users.updateBio.run(null, message.author.id)
+          message.client.db.bios.updateBio.run(null, message.author.id)
 
           const embed = new MessageEmbed()
               .setTitle(`Bio Cleared ${success}`)
@@ -61,7 +61,7 @@ module.exports = class BioCommand extends Command {
         let userId = args[0].replace('<@!', '').replace('>','');
         let {
           bio: Bio
-        } = message.client.db.users.selectBio.get(message.guild.id, userId);
+        } = message.client.db.bios.selectBio.get(userId);
 
         if (!Bio)
         {
@@ -84,7 +84,7 @@ module.exports = class BioCommand extends Command {
       {
         const biotext = args.join(' ')
 
-        message.client.db.users.updateBio.run(biotext, message.author.id)
+        message.client.db.bios.updateBio.run(biotext, message.author.id)
 
         const embed = new MessageEmbed()
             .setTitle(`Bio Updated ${success}`)

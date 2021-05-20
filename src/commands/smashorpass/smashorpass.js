@@ -218,7 +218,7 @@ module.exports = class smashOrPassCommand extends Command {
 
       let {
         bio: Bio
-      } = message.client.db.users.selectBio.get(message.guild.id, member.user.id);
+      } = message.client.db.bios.selectBio.get(member.user.id);
 
       let bio = `*${member.user.username} has not set a bio yet. Use \`${prefix}bio\` to set one*`
       if (Bio != null) bio = `${member.user.username}'s Bio:\n${Bio}`
