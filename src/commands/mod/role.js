@@ -15,7 +15,7 @@ module.exports = class RoleCommand extends Command {
     });
   }
   async run(message, args) {
-    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide a valid user');
+    if (!args[0]) return this.sendHelpMessage(message);
     const memberArg = args.shift()
     const member = await this.getMemberFromMention(message, memberArg) || await message.guild.members.cache.get(memberArg) || await this.getMemberFromText(message, memberArg);
     if (!member)

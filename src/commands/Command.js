@@ -294,7 +294,7 @@ class Command {
    * Creates and sends command help embed
    * @param {Message} message
    */
-  sendErrorMessage(message) {
+  sendHelpMessage(message) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const embed = new MessageEmbed()
         .setTitle(`${this.name}`)
