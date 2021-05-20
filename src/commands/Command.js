@@ -291,6 +291,22 @@ class Command {
   }
 
   /**
+   * Creates and sends command help embed
+   * @param {Message} message
+   */
+  sendErrorMessage(message) {
+    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
+    const embed = new MessageEmbed()
+        .setTitle(`${this.name}`)
+        .setDescription(`${this.description}`)
+        .addField('Usage', `\`${prefix}${this.usage}\``)
+        .setTimestamp()
+        .setColor(message.guild.me.displayHexColor);
+    if (this.examples) embed.addField('Examples', this.examples.map(e => `\`${prefix}${e}\``).join('\n'));
+    message.channel.send(embed);
+  }
+
+  /**
    * Creates and sends mod log embed
    * @param {Message} message
    * @param {string} reason 
