@@ -84,9 +84,7 @@ module.exports = class BioCommand extends Command {
       {
         const biotext = args.join(' ')
 
-        message.client.db.bios.updateBio.run(biotext, message.author.id).then(arg1 => {
-          console.log(arg1)
-        })
+        message.client.db.bios.updateBio.run(biotext, message.author.id)
 
         const embed = new MessageEmbed()
             .setTitle(`Bio Updated ${success}`)

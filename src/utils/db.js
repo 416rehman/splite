@@ -367,7 +367,7 @@ const bios = {
     ) VALUES (?, ?);
   `),
   selectBio: db.prepare('SELECT bio FROM bios WHERE user_id = ?;'),
-  updateBio: db.prepare('UPDATE bios SET bio = ? WHERE user_id = ?;')
+  updateBio: db.prepare('UPDATE bios SET bio = ? WHERE user_id = ?;'),
 };
 
 module.exports = {
