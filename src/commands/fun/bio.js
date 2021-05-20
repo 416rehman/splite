@@ -20,9 +20,8 @@ module.exports = class BioCommand extends Command {
     // Get message
     if (!args[0])
     {
-      let {
-        bio: Bio
-      } = message.client.db.bios.selectBio.get(message.author.id);
+      let Bio = message.client.db.bios.selectBio.get(message.author.id);
+      console.log(Bio)
       if (!Bio)
       {
         const embed = new MessageEmbed()
