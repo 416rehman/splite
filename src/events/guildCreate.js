@@ -108,6 +108,10 @@ module.exports = async (client, guild) => {
       0,    //OptOutSmashOrPass
       0     //messageCount
     );
+    client.db.bios.insertRow.run(
+        member.id,
+        null //bio
+    )
   });
 
   await guild.me.setNickname(`[$] Splite`)

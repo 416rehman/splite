@@ -105,6 +105,8 @@ module.exports = async (client, member) => {
       0,    //OptOutSmashOrPass
       0     //messageCount
   );
+
+  client.db.bios.insertRow.run(member.id, null)
   
   // If member already in users table
   const missingMemberIds = client.db.users.selectMissingMembers.all(member.guild.id).map(row => row.user_id);
