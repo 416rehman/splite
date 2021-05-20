@@ -28,24 +28,26 @@ module.exports = class RoleCommand extends Command {
     args = args.split(',')
     args = args.map(arg=>{return arg.trim()})
 
-    if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
     const changes = [];
     for (const arg of args) {
       if (arg.startsWith('+'))
       {
         const cleanedArg = arg.replace('+');
         const role = this.getRole(message, cleanedArg);
+        if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role (${cleanedArg}), try using a role ID`);
         changes.push(await this.addRole(member, role, message))
       }
       else if (arg.startsWith('-'))
       {
         const cleanedArg = arg.replace('-');
         const role = this.getRole(message, cleanedArg);
+        if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role (${cleanedArg}), try using a role ID`);
         await this.RemoveRole(member, role, message)
         changes.push(await this.RemoveRole(member, role, message))
       }
       else{
         const role = this.getRole(message, arg);
+        if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role (${arg}), try using a role ID`);
         // If member already has role remove it, else add it.
         if (member.roles.cache.has(role.id)) changes.push(await this.RemoveRole(member, role, message));
         else changes.push(await this.addRole(member, role, message));
