@@ -294,10 +294,10 @@ class Command {
    * Creates and sends command help embed
    * @param {Message} message
    */
-  sendHelpMessage(message) {
+  sendHelpMessage(message, title) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const embed = new MessageEmbed()
-        .setTitle(`${this.name}`)
+        .setTitle(`${title || this.name.charAt(0).toUpperCase() + this.name.substring(1)}`)
         .setDescription(`${this.description}`)
         .addField('Usage', `\`${prefix}${this.usage}\``)
         .setTimestamp()
