@@ -27,9 +27,7 @@ module.exports = class RoleCommand extends Command {
     console.log(args)
     args = args.split(',')
     console.log(args)
-    args.forEach(arg => {
-      arg = arg.trim()
-    })
+    args = args.map(arg=>{return arg.trim()})
     console.log(args)
     let role = this.getRole(message, args.join(' '));
 
