@@ -6,7 +6,7 @@ module.exports = class wastedCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'wasted',
-      aliases: [],
+
       usage: 'wasted <user mention/id>',
       description: 'Generates a wasted image',
       type: client.types.FUN,

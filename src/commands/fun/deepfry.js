@@ -6,7 +6,7 @@ module.exports = class deepfryCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'deepfry',
-      aliases: [],
+
       usage: 'deepfry <user mention/id>',
       description: 'Generates a deepfry image',
       type: client.types.FUN,

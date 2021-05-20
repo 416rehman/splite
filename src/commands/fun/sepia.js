@@ -6,7 +6,7 @@ module.exports = class sepiaCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'sepia',
-      aliases: [],
+
       usage: 'sepia <user mention/id>',
       description: 'Generates a sepia image',
       type: client.types.FUN,

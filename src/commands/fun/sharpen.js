@@ -6,7 +6,7 @@ module.exports = class sharpenCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'sharpen',
-      aliases: [],
+
       usage: 'sharpen <user mention/id>',
       description: 'Generates a sharpen image',
       type: client.types.FUN,

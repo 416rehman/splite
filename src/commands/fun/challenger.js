@@ -6,7 +6,7 @@ module.exports = class challengerCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'challenger',
-      aliases: [],
+
       usage: 'challenger <user mention/id>',
       description: 'Generates a challenger image',
       type: client.types.FUN,

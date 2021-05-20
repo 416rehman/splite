@@ -6,7 +6,7 @@ module.exports = class pixelizeCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'pixelize',
-      aliases: [],
+
       usage: 'pixelize <user mention/id>',
       description: 'Generates a pixelize image',
       type: client.types.FUN,

@@ -6,7 +6,7 @@ module.exports = class glitchCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'glitch',
-      aliases: [],
+
       usage: 'glitch <user mention/id>',
       description: 'Generates a glitch image',
       type: client.types.FUN,

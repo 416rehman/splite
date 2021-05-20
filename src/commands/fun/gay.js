@@ -6,7 +6,7 @@ module.exports = class gayCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'gay',
-      aliases: [],
+
       usage: 'gay <user mention/id>',
       description: 'Generates a gay image',
       type: client.types.FUN,

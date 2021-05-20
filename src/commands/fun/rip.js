@@ -6,7 +6,7 @@ module.exports = class ripCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'rip',
-      aliases: [],
+
       usage: 'rip <user mention/id>',
       description: 'Generates a rip image',
       type: client.types.FUN,

@@ -6,7 +6,7 @@ module.exports = class embossCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'emboss',
-      aliases: [],
+
       usage: 'burn <user mention/id>',
       description: 'Generates a emboss image',
       type: client.types.FUN,

@@ -6,7 +6,7 @@ module.exports = class baguetteCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'baguette',
-      aliases: [],
+
       usage: 'baguette <user mention/id>',
       description: 'Generates a baguette image',
       type: client.types.FUN,

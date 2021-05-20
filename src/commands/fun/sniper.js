@@ -6,7 +6,7 @@ module.exports = class sniperCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'sniper',
-      aliases: [],
+
       usage: 'sniper <user mention/id>',
       description: 'Generates a sniper image',
       type: client.types.FUN,

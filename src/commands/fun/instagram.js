@@ -6,7 +6,7 @@ module.exports = class instagramCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'instagram',
-      aliases: [],
+
       usage: 'instagram <user mention/id>',
       description: 'Generates a instagram image',
       type: client.types.FUN,

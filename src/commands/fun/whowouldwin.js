@@ -6,7 +6,7 @@ module.exports = class whowouldwinCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'whowouldwin',
-      aliases: [],
+
       usage: 'whowouldwin <user mention/id>',
       description: 'Generates a whowouldwin image',
       type: client.types.FUN,

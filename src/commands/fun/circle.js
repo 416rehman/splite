@@ -6,7 +6,7 @@ module.exports = class circleCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'circle',
-      aliases: [],
+
       usage: 'burn <user mention/id>',
       description: 'Generates a circle image',
       type: client.types.FUN,

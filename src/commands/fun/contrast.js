@@ -6,7 +6,7 @@ module.exports = class contrastCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'contrast',
-      aliases: [],
+
       usage: 'contrast <user mention/id>',
       description: 'contrast a burn image',
       type: client.types.FUN,

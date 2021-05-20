@@ -6,7 +6,7 @@ module.exports = class posterizeCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'posterize',
-      aliases: [],
+
       usage: 'posterize <user mention/id>',
       description: 'Generates a posterize image',
       type: client.types.FUN,

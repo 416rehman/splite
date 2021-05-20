@@ -6,7 +6,7 @@ module.exports = class blurCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'blur',
-      aliases: [],
+
       usage: 'blur <user mention/id>',
       description: 'Generates a blur image',
       type: client.types.FUN,

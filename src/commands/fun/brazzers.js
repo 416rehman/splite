@@ -6,7 +6,7 @@ module.exports = class BrazzersCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'brazzers',
-      aliases: [],
+
       usage: 'brazzers <user mention/id>',
       description: 'Generates a brazzers image',
       type: client.types.FUN,

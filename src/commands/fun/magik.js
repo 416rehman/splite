@@ -6,7 +6,7 @@ module.exports = class magikCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'magik',
-      aliases: [],
+
       usage: 'magik <user mention/id>',
       description: 'Generates a magik image',
       type: client.types.FUN,

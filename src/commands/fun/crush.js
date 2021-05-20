@@ -6,7 +6,7 @@ module.exports = class crushCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'crush',
-      aliases: [],
+
       usage: 'crush <user mention/id>',
       description: 'Generates a crush image',
       type: client.types.FUN,

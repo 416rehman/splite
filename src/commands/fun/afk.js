@@ -5,7 +5,7 @@ module.exports = class AfkCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'afk',
-      aliases: [],
+
       usage: 'afk <message>',
       description: 'Set your afk status. While you are afk, everytime you get pinged, the user will see your afk status',
       type: client.types.FUN,

@@ -6,7 +6,7 @@ module.exports = class clydeCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'clyde',
-      aliases: [],
+
       usage: 'clyde <text>',
       description: 'Generates a clyde image with provided text',
       type: client.types.FUN,

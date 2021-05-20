@@ -6,7 +6,7 @@ module.exports = class unsharpenCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'unsharpen',
-      aliases: [],
+
       usage: 'unsharpen <user mention/id>',
       description: 'Generates a unsharpen image',
       type: client.types.FUN,

@@ -6,7 +6,7 @@ module.exports = class dictatorCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'dictator',
-      aliases: [],
+
       usage: 'dictator <user mention/id>',
       description: 'Generates a dictator image',
       type: client.types.FUN,

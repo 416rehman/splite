@@ -6,7 +6,7 @@ module.exports = class blurpleCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'blurple',
-      aliases: [],
+
       usage: 'blurple <user mention/id>',
       description: 'Generates a blurple image',
       type: client.types.FUN,

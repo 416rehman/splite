@@ -6,7 +6,7 @@ module.exports = class dungeonCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'dungeon',
-      aliases: [],
+
       usage: 'dungeon <user mention/id>',
       description: 'Generates a dungeon image',
       type: client.types.FUN,

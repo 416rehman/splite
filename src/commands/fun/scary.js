@@ -6,7 +6,7 @@ module.exports = class scaryCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'scary',
-      aliases: [],
+
       usage: 'scary <user mention/id>',
       description: 'Generates a scary image',
       type: client.types.FUN,

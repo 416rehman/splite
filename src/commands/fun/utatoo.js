@@ -6,7 +6,7 @@ module.exports = class tatooCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'tatoo',
-      aliases: [],
+
       usage: 'tatoo <user mention/id>',
       description: 'Generates a tatoo image',
       type: client.types.FUN,

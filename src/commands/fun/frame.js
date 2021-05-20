@@ -6,7 +6,7 @@ module.exports = class frameCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'frame',
-      aliases: [],
+
       usage: 'frame <user mention/id>',
       description: 'Generates a frame image',
       type: client.types.FUN,

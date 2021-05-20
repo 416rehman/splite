@@ -7,7 +7,6 @@ module.exports = class BioCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'bio',
-      aliases: [],
       usage: '`bio <message>` Set your bio\n`bio <@user>` Check out the mentioned user\'s bio\n`bio` View your bio\n`bio clear` Clear your bio',
       description: 'Set your bio or view others\'',
       type: client.types.FUN,

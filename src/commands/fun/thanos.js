@@ -6,7 +6,7 @@ module.exports = class thanosCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'thanos',
-      aliases: [],
+
       usage: 'thanos <user mention/id>',
       description: 'Generates a thanos image',
       type: client.types.FUN,

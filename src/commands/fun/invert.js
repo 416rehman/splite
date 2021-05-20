@@ -6,7 +6,7 @@ module.exports = class invertCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'invert',
-      aliases: [],
+
       usage: 'invert <user mention/id>',
       description: 'Generates a invert image',
       type: client.types.FUN,

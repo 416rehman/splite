@@ -6,7 +6,7 @@ module.exports = class ps4Command extends Command {
   constructor(client) {
     super(client, {
       name: 'ps4',
-      aliases: [],
+
       usage: 'ps4 <user mention/id>',
       description: 'Generates a ps4 image',
       type: client.types.FUN,

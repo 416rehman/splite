@@ -6,7 +6,7 @@ module.exports = class greypleCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'greyple',
-      aliases: [],
+
       usage: 'greyple <user mention/id>',
       description: 'Generates a greyple image',
       type: client.types.FUN,

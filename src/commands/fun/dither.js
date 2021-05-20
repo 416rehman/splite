@@ -6,7 +6,7 @@ module.exports = class ditherCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'dither',
-      aliases: [],
+
       usage: 'dither <user mention/id>',
       description: 'Generates a dither image',
       type: client.types.FUN,

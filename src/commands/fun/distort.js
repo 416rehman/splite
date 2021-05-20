@@ -6,7 +6,7 @@ module.exports = class distortCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'distort',
-      aliases: [],
+
       usage: 'distort <user mention/id>',
       description: 'Generates a distort image',
       type: client.types.FUN,

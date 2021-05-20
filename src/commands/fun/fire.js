@@ -6,7 +6,7 @@ module.exports = class fireCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'fire',
-      aliases: [],
+
       usage: 'fire <user mention/id>',
       description: 'Generates a fire image',
       type: client.types.FUN,
