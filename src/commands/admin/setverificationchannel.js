@@ -56,8 +56,8 @@ module.exports = class SetVerificationChannelCommand extends Command {
     if (args.length === 0) {
       // Update status
       return message.channel.send(embed
-        .spliceFields(1, 0, { name: 'Channel', value: `${oldVerificationChannel}`, inline: true })
-        .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true })
+        .spliceFields(1, 0, { name: 'Current Verification Channel', value: `${oldVerificationChannel}`, inline: true })
+        .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true }).setDescription(this.description)
       );
     }
     embed.setDescription(`The \`verification channel\` was successfully updated. ${success}\nUse \`clearverificationchannel\` to clear current \`verification channel\`.`)

@@ -28,7 +28,7 @@ module.exports = class SetModRoleCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Mod Role', `${oldModRole}`));
+      return message.channel.send(embed.addField('Current Mod Role', `${oldModRole}`).setDescription(this.description));
     }
 
     // Update role

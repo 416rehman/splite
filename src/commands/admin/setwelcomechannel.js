@@ -42,8 +42,8 @@ module.exports = class SetWelcomeChannelCommand extends Command {
     // Clear if no args provided
     if (args.length === 0) {
       return message.channel.send(embed
-        .spliceFields(0, 0, { name: 'Channel', value: `${oldWelcomeChannel}`, inline: true })
-        .spliceFields(1, 0, { name: 'Status', value: oldStatus, inline: true })
+        .spliceFields(0, 0, { name: 'Current Welcome Channel', value: `${oldWelcomeChannel}`, inline: true })
+        .spliceFields(1, 0, { name: 'Status', value: oldStatus, inline: true }).setDescription(this.description)
       );
     }
 

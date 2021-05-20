@@ -43,8 +43,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
 
     if (!args[0]) {
       return message.channel.send(embed
-        .addField('Status', oldStatus, true)
-        .addField('Message', `${oldFarewellMessage}`)
+        .addField('Current Farewell Message', `${oldFarewellMessage}`).addField('Status', oldStatus, true).setDescription(this.description)
       );
     }
     

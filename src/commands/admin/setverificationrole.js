@@ -53,8 +53,8 @@ module.exports = class SetVerificationRoleCommand extends Command {
     // Clear role
     if (args.length === 0) {
       return message.channel.send(embed
-        .spliceFields(0, 0, { name: 'Role', value: `${oldVerificationRole}`, inline: true })
-        .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true })
+        .spliceFields(0, 0, { name: 'Current Verification Role', value: `${oldVerificationRole}`, inline: true })
+        .spliceFields(2, 0, { name: 'Status', value: oldStatus, inline: true }).setDescription(this.description)
       );
     }
 

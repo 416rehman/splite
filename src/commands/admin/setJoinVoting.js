@@ -33,6 +33,7 @@ module.exports = class setJoinVoting extends Command {
       const embed = new MessageEmbed()
           .setTitle('Settings: `Join Voting`')
           .setThumbnail(message.guild.iconURL({ dynamic: true }))
+          .setDescription(this.description)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
@@ -40,9 +41,9 @@ module.exports = class setJoinVoting extends Command {
       const emoji = await message.guild.emojis.cache.find(e => e.id === joinvotingEmoji) || joinvotingEmoji
       return message.channel.send(embed
         .addField('Status', oldStatus, true)
-        .addField('MessageID', `\`${joinvotingMessageId || 'None'}\``)
-        .addField('Emoji', `${emoji || '`None`'}`)
-        .addField('ChannelID', `${'<#'+ votingChannelID +'>' || '`None`'}`)
+        .addField('Current MessageID', `\`${joinvotingMessageId || 'None'}\``)
+        .addField('Current Emoji', `${emoji || '`None`'}`)
+        .addField('Current ChannelID', `${'<#'+ votingChannelID +'>' || '`None`'}`)
       );
     }
     else if (args.length > 2)

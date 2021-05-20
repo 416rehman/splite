@@ -50,8 +50,8 @@ module.exports = class SetVerificationMessageCommand extends Command {
     if (!args[0]) {
       return message.channel.send(embed
           .addField('Status', oldStatus, true)
-          .addField('Message ID', `\`${verificationMessageId}\``)
-          .addField('Message', `\`${oldVerificationMessage}\``)
+          .addField('Current Message ID', `\`${verificationMessageId}\``)
+          .addField('Current Message', `\`${oldVerificationMessage}\``).setDescription(this.description)
       );
     }
 

@@ -48,8 +48,9 @@ module.exports = class SetCrownRoleCommand extends Command {
     // Clear role
     if (args.length === 0) {
       return message.channel.send(embed
-        .spliceFields(0, 0, { name: 'Role', value: `${oldCrownRole}`, inline: true })
+        .spliceFields(0, 0, { name: 'Current Crown Role', value: `${oldCrownRole}`, inline: true })
         .spliceFields(3, 0, { name: 'Status', value: oldStatus })
+        .setDescription(this.description)
       );
     }
 

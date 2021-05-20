@@ -30,7 +30,7 @@ module.exports = class SetNicknameLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Nickname Log', `${oldNicknameLog}`));
+      return message.channel.send(embed.addField('Current Nickname Log', `${oldNicknameLog}`).setDescription(this.description));
     }
     embed.setDescription(`The \`nickname log\` was successfully updated. ${success}\nUse \`clearnicknamelog\` to clear the current \`nickname log\`.`)
     const nicknameLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);

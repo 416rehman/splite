@@ -43,7 +43,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
     if (!args[0]) {
       return message.channel.send(embed
         .addField('Status', oldStatus, true)
-        .addField('Message', `${oldWelcomeMessage}`)
+        .addField('Current Welcome Message', `${oldWelcomeMessage}`).setDescription(this.description)
       );
     }
 

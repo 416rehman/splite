@@ -40,7 +40,7 @@ module.exports = class SetModChannelsCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Mod Channels', `${oldModChannels}`));
+      return message.channel.send(embed.addField('Current Mod Channels', `${oldModChannels}`).setDescription(this.description));
     }
 
     embed.setDescription(`The \`mod channels\` were successfully updated. ${success}\nUse \`clearmodchannels\` to clear the current \`mod channels\`.`)

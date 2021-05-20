@@ -49,10 +49,10 @@ module.exports = class SetCrownChannelCommand extends Command {
     // Clear channel
     if (args.length === 0) {
       return message.channel.send(embed.spliceFields(1, 0, { 
-        name: 'Channel', 
+        name: 'Current Crown Channel',
         value: `\`${oldCrownChannel}\``,
         inline: true
-      }));
+      }).spliceFields(3, 0, { name: 'Status', value: oldStatus }).setDescription(this.description));
     }
     embed.setDescription(`The \`crown role\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`)
     const crownChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
