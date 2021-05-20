@@ -15,14 +15,15 @@ module.exports = class RoleCommand extends Command {
     });
   }
   async run(message, args) {
+    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide a valid user');
     const memberArg = args.shift()
     const member = await this.getMemberFromMention(message, memberArg) || await message.guild.members.cache.get(memberArg) || await this.getMemberFromText(message, memberArg);
     if (!member)
-      return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
+      return this.sendErrorMessage(message, 0, 'Failed to find the user. Please try again');
     // if (member.roles.highest.position > message.member.roles.highest.position)
     //   return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
-    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
 
+    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide a valid role to assign');
     // Seperate roles by comma
     args = args.join(' ')
     args = args.split(',')
