@@ -22,44 +22,59 @@ module.exports = class RoleCommand extends Command {
     // if (member.roles.highest.position > message.member.roles.highest.position)
     //   return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
     if (!args[0]) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
-    console.log(args)
+
+    // Seperate roles by comma
     args = args.join(' ')
-    console.log(args)
     args = args.split(',')
-    console.log(args)
     args = args.map(arg=>{return arg.trim()})
-    console.log(args)
-    let role = this.getRole(message, args.join(' '));
 
     if (!role) return this.sendErrorMessage(message, 0, `Failed to find that role, try using a role ID`);
-    else if (member.roles.cache.has(role.id)) // If member already has role
-    {
-      return await this.RemoveRole(member, role, message);
+    const changes = [];
+    for (const arg of args) {
+      if (arg.startsWith('+'))
+      {
+        const cleanedArg = arg.replace('+');
+        const role = this.getRole(message, cleanedArg);
+        changes.push(await this.addRole(member, role, message))
+      }
+      else if (arg.startsWith('-'))
+      {
+        const cleanedArg = arg.replace('-');
+        const role = this.getRole(message, cleanedArg);
+        await this.RemoveRole(member, role, message)
+        changes.push(await this.RemoveRole(member, role, message))
+      }
+      else{
+        const role = this.getRole(message, arg);
+        // If member already has role remove it, else add it.
+        if (member.roles.cache.has(role.id)) changes.push(await this.RemoveRole(member, role, message));
+        else changes.push(await this.addRole(member, role, message));
+      }
     }
 
-    else {
-      return await this.addRole(member, role, message);
-    }  
+    const embed = new MessageEmbed()
+        .setTitle('Role')
+        .setDescription(`Changed roles for ${member}.`)
+        .addField('Moderator', message.member, true)
+        .addField('Member', member, true)
+        .addField('Role', changes.join('\n'), true)
+        .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+        .setTimestamp()
+        .setColor(message.guild.me.displayHexColor);
+    return message.channel.send(embed);
+
   }
 
   async RemoveRole(member, role, message) {
     try {
       //Remove role
       await member.roles.remove(role);
-      const embed = new MessageEmbed()
-          .setTitle('Role')
-          .setDescription(`${role} was successfully removed from ${member}.`)
-          .addField('Moderator', message.member, true)
-          .addField('Member', member, true)
-          .addField('Role', role, true)
-          .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
-          .setTimestamp()
-          .setColor(message.guild.me.displayHexColor);
-      message.channel.send(embed);
-
       // Update mod log
       this.sendModLogMessage(message, ' ', {Member: member, Role: role});
-    } catch (err) {
+
+      return `-${role}`
+    }
+    catch (err) {
       message.client.logger.error(err.stack);
       return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
     }
@@ -69,21 +84,12 @@ module.exports = class RoleCommand extends Command {
     try {
       // Add role
       await member.roles.add(role);
-      const embed = new MessageEmbed()
-          .setTitle('Role')
-          .setDescription(`${role} was successfully added to ${member}.`)
-          .addField('Moderator', message.member, true)
-          .addField('Member', member, true)
-          .addField('Role', role, true)
-          .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
-          .setTimestamp()
-          .setColor(message.guild.me.displayHexColor);
-      message.channel.send(embed);
-
       // Update mod log
       this.sendModLogMessage(message, '', {Member: member, Role: role});
 
-    } catch (err) {
+      return `+${role}`
+    }
+    catch (err) {
       message.client.logger.error(err.stack);
       return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
     }
