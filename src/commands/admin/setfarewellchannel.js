@@ -43,7 +43,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
     if (args.length === 0) {
       return message.channel.send(embed
         .spliceFields(0, 0, { name: 'Current Farewell Channel', value: `${oldFarewellChannel} ➔ \`None\``, inline: true })
-        .spliceFields(1, 0, { name: 'Status', value: oldStatus, inline: true }).setDescription(this.description)
+        .spliceFields(1, 0, { name: 'Status', value: `\`${oldStatus}\``, inline: true }).setDescription(this.description)
       );
     }
     embed.setDescription(`The \`farewell channel\` was successfully updated. ${success}\nUse \`clearfarewellchannel\` to clear the current \`farewell channel\`.`)

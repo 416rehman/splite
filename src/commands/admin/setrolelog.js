@@ -31,7 +31,7 @@ module.exports = class SetRoleLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Role Log', `${oldRoleLog}`).setDescription(this.description));
+      return message.channel.send(embed.addField('Current Role Log', `\`${oldRoleLog}\``).setDescription(this.description));
     }
     embed.setDescription(`The \`role log\` was successfully updated. ${success}\nUse \`clearrolelog\` to clear the current \`role log\`.`)
     const roleLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
