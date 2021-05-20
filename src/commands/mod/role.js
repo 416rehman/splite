@@ -16,7 +16,7 @@ module.exports = class RoleCommand extends Command {
   }
   async run(message, args) {
     const memberArg = args.shift()
-    const member = this.getMemberFromMention(message, memberArg) || message.guild.members.cache.get(memberArg) || this.getMemberFromText(message, memberArg);
+    const member = await this.getMemberFromMention(message, memberArg) || await message.guild.members.cache.get(memberArg) || await this.getMemberFromText(message, memberArg);
     if (!member)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
     // if (member.roles.highest.position > message.member.roles.highest.position)
