@@ -16,6 +16,7 @@ module.exports = class AddRoleCommand extends Command {
     });
   }
   async run(message, args){
+    if (!args[0]) return this.sendHelpMessage(message, `Add Emoji`);
     try {
       if (args.length > 2)
       {

@@ -15,6 +15,7 @@ module.exports = class UnmuteCommand extends Command {
     });
   }
   async run(message, args) {
+    if (!args[0]) return this.sendHelpMessage(message);
     const muteRoleId = message.client.db.settings.selectMuteRoleId.pluck().get(message.guild.id);
     let muteRole;
     if (muteRoleId) muteRole = message.guild.roles.cache.get(muteRoleId);

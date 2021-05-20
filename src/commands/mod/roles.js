@@ -20,6 +20,7 @@ module.exports = class rolesCommand extends Command {
     }
 
     async run(message, args) {
+
         if (message.guild.roleRetrieval.has(message.guild.id)) return message.reply(`Role count is already in progress. Please try later!`)
         message.guild.roleRetrieval.set(message.guild.id, true);
 

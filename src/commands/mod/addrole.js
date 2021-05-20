@@ -15,7 +15,7 @@ module.exports = class AddRoleCommand extends Command {
     });
   }
   async run(message, args) {
-  if (args.length <= 0) this.sendErrorMessage(message, 1, 'Please type a role name', "");
+  if (!args[0]) return this.sendHelpMessage(message, `Add Role`);
   else
     {
       if(args.join(' ').length > 30) return this.sendErrorMessage(message, 1, 'Your role name must not be longer than 30 characters', "");

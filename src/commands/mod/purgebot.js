@@ -23,7 +23,7 @@ module.exports = class PurgeBotCommand extends Command {
     });
   }
   async run(message, args) {
-    
+
     let channel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (channel) {
       args.shift();
