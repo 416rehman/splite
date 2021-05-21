@@ -1,5 +1,6 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
+const emojis = require('../../utils/emojis.json');
 
 module.exports = class WarnCommand extends Command {
   constructor(client) {
