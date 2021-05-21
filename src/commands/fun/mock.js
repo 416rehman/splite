@@ -15,13 +15,23 @@ module.exports = class MockCommand extends Command {
   }
   async run(message, args) {
     if (message.guild.funInProgress.has(message.author.id)) return message.channel.send(new MessageEmbed().setDescription(`${fail} Please wait, you already have a request pending.`))
-    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide some text');
+    if (!args[0] && !message.reference) return this.sendErrorMessage(message, 0, 'Please provide some text');
     message.guild.funInProgress.set(message.author.id, 'fun');
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const text1 = message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ': ''
-        let text2 = message.client.utils.spongebobText(args.join(' '))
+        let text1, text2;
+        if (message.reference)
+        {
+          message.channel.messages.fetch(message.reference.messageID).then(ref => {
+            text1 = ref.author.username
+            text2 = message.client.utils.spongebobText(ref.content)
+          })
+        }
+        else {
+          text1 = message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ': ''
+          text2 = message.client.utils.spongebobText(args.join(' '))
+        }
 
         if (text1.length > 0) text2 = text2.replace(`<@!${message.mentions.users.first().id}>`, '')
         const buffer = await msg.client.utils.generateImgFlipImage(102918669, `${text1}`, `${text2}`)
