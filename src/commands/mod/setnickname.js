@@ -6,11 +6,10 @@ module.exports = class SetNicknameCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'setnickname',
-      aliases: ['setnn', 'snn'],
-      usage: 'setnickname <user mention/ID> <nickname> [reason]',
+      aliases: ['setnn', 'snn', 'nickname', 'nn', 'changenickname'],
+      usage: 'setnickname <user mention/ID> <nickname>',
       description: oneLine`
         Changes the provided user's nickname to the one specified.
-        Surround the new nickname in quotes if it is more than one word.
         The nickname cannot be larger than 32 characters.
       `,
       type: client.types.MOD,
@@ -30,28 +29,15 @@ module.exports = class SetNicknameCommand extends Command {
       `);
 
     if (!args[1]) return this.sendErrorMessage(message, 0, 'Please provide a nickname');
-
+    args.shift()
     // Multi-word nickname
-    let nickname = args[1];
-    if (nickname.startsWith('"')) {
-      nickname = message.content.slice(message.content.indexOf(args[1]) + 1);
-      if (!nickname.includes('"')) 
-        return this.sendErrorMessage(message, 0, 'Please ensure the nickname is surrounded in quotes');
-      nickname = nickname.slice(0, nickname.indexOf('"'));
-      if (!nickname.replace(/\s/g, '').length) return this.sendErrorMessage(message, 0, 'Please provide a nickname');
-    }
+    let nickname = args.join(' ');
+    if (!nickname.length) return this.sendErrorMessage(message, 0, 'Please provide a nickname');
 
     if (nickname.length > 32) {
-      return this.sendErrorMessage(message, 0, 'Please ensure the nickname is no larger than 32 characters');
+      return this.sendErrorMessage(message, 0, 'Please ensure the nickname is not longer than 32 characters');
       
     } else {
-
-      let reason;
-      if (args[1].startsWith('"')) 
-        reason = message.content.slice(message.content.indexOf(nickname) + nickname.length + 1);
-      else reason = message.content.slice(message.content.indexOf(nickname) + nickname.length);
-      if (!reason) reason = '`None`';
-      if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
       try {
 
@@ -65,14 +51,13 @@ module.exports = class SetNicknameCommand extends Command {
           .addField('Moderator', message.member, true)
           .addField('Member', member, true)
           .addField('Nickname', nicknameStatus, true)
-          .addField('Reason', reason)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
         message.channel.send(embed);
 
         // Update mod log
-        this.sendModLogMessage(message, reason, { Member: member, Nickname: nicknameStatus });
+        this.sendModLogMessage(message, '', { Member: member, Nickname: nicknameStatus });
 
       } catch (err) {
         message.client.logger.error(err.stack);
