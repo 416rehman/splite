@@ -1,5 +1,6 @@
 const Command = require('../Command.js');
 const Discord = require("discord.js");
+const _emojis = require('../../utils/emojis.json')
 const { parse } = require("twemoji-parser");
 
 module.exports = class RemoveEmojiCommand extends Command {
@@ -37,7 +38,7 @@ async function removeemoji(emoji, message, command)
 
   if (customemoji.id) {
       customemoji.delete().then(()=>{
-        message.channel.send(`${emoji} Removed!`);
+        message.channel.send(new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} Removed!`));
       })
 
       await command.sendModLogMessage(message, '', {Member: message.member, 'Removed Emoji': `\`${emoji}\``});
