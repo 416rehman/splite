@@ -20,17 +20,15 @@ module.exports = class MockCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        let text1, text2;
-        const __ret = this.getTexts(message, text1, text2, args);
-        text1 = __ret.text1;
-        text2 = __ret.text2;
-        const buffer = await msg.client.utils.generateImgFlipImage(102918669, `${text1}`, `${text2}`)
+        const text = this.getTexts(message, args);
+
+        const buffer = await msg.client.utils.generateImgFlipImage(102918669, `${text.text1}`, `${text.text2}`)
 
         if (buffer)
         {
           const attachment = new MessageAttachment(buffer, "mocking.png");
 
-          await message.channel.send(text1 + text2, attachment)
+          await message.channel.send(text.text1 + text.text2, attachment)
           await msg.delete()
         }
       }
@@ -41,17 +39,17 @@ module.exports = class MockCommand extends Command {
     message.guild.funInProgress.delete(message.author.id)
   }
 
-  getTexts(message, text1, text2, args) {
+  getTexts(message, args) {
     return new Promise(((resolve, reject) => {
       if (message.reference) {
         message.channel.messages.fetch(message.reference.messageID).then(ref => {
-          text1 = ref.author.username + ': '
-          text2 = message.client.utils.spongebobText(ref.content)
+          const text1 = ref.author.username + ': '
+          const text2 = message.client.utils.spongebobText(ref.content)
           resolve ({text1, text2})
         })
       } else {
-        text1 = message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ' : ''
-        text2 = message.client.utils.spongebobText(args.join(' '))
+        const text1 = message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ' : ''
+        let text2 = message.client.utils.spongebobText(args.join(' '))
         if (text1.length > 0) text2 = text2.replace(`<@!${message.mentions.users.first().id}>`, '')
         resolve ({text1, text2})
       }
