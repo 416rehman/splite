@@ -369,6 +369,7 @@ function generateImgFlipImage(templateID, text0, text1) {
   };
   request(options, function (error, response) {
     const res = JSON.parse(response.body)
+    console.log(res)
     return res.data.url || error;
   });
 }
