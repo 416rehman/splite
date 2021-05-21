@@ -39,18 +39,18 @@ module.exports = class MockCommand extends Command {
   }
 
   async getTexts(message, args) {
-    return new Promise(((resolve, reject) => {
+    return new Promise((async (resolve, reject) => {
       if (message.reference) {
-        message.channel.messages.fetch(message.reference.messageID).then(ref => {
+        await message.channel.messages.fetch(message.reference.messageID).then(ref => {
           const text1 = ref.author.username + ': '
           const text2 = message.client.utils.spongebobText(ref.content)
-          resolve ({text1, text2})
+          resolve({text1, text2})
         })
       } else {
         const text1 = message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ' : ''
         let text2 = message.client.utils.spongebobText(args.join(' '))
         if (text1.length > 0) text2 = text2.replace(`<@!${message.mentions.users.first().id}>`, '')
-        resolve ({text1, text2})
+        resolve({text1, text2})
       }
       reject('Failed')
     }))
