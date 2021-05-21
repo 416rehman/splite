@@ -30,7 +30,7 @@ module.exports = class MockCommand extends Command {
         {
           const attachment = new MessageAttachment(buffer, "mocking.png");
 
-          await message.channel.send(text2, attachment)
+          await message.channel.send(text1 + text2, attachment)
           await msg.delete()
         }
       }
