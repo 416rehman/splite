@@ -50,7 +50,8 @@ module.exports = class MockCommand extends Command {
           resolve({text1, text2})
         })
       } else {
-        const text1 = message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ' : ''
+        const text1  = args[0].startsWith('<@') ? message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ' : '' : ''
+
         let text2 = message.client.utils.spongebobText(args.join(' '))
         if (text1.length > 0)
         {
