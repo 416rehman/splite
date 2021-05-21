@@ -401,6 +401,7 @@ function spongebobText(str) {
  */
 async function replaceMentionsWithNames(content, guild) {
   const mentionsInMsg = content.match(/<(@!?&?\d+)>/g)
+  console.log(mentionsInMsg)
   if (mentionsInMsg)
   {
     for (let i = 0; i < mentionsInMsg.length; i++) {
