@@ -347,7 +347,7 @@ function weightedRandom(input) {
 }
 
 /**
- * Schedule crown role rotation if checks pass
+ * Returns a generated meme url from imgflip
  * @param {Number} templateID
  * @param {String} text0
  * @param {String} text1
@@ -376,6 +376,17 @@ async function generateImgFlipImage(templateID, text0, text1) {
     })
   }))
 }
+/**
+ * Schedule crown role rotation if checks pass
+ * @param {string} str
+ */
+function spongebobText(str) {
+  let newStr = ''
+  str.split('').forEach((el, idx) => {
+    newStr += idx % 2 === 0 ? el.toLowerCase() : el.toUpperCase()
+  })
+  return newStr
+}
 
 module.exports = {
   capitalize,
@@ -397,5 +408,6 @@ module.exports = {
   createProgressBar,
   getRandomInt,
   weightedRandom,
-  generateImgFlipImage
+  generateImgFlipImage,
+  spongebobText
 };

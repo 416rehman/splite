@@ -21,7 +21,7 @@ module.exports = class MockCommand extends Command {
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
         const text1 = message.mentions.users.size > 0 ? message.mentions.users.first().username + ':': ''
-        const text2 = args.join(' ')
+        const text2 = message.client.utils.spongebobText(args.join(' '))
         const buffer = await msg.client.utils.generateImgFlipImage(102918669, `${text1}`, `${text2}`)
 
         if (buffer)
