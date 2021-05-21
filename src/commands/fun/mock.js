@@ -53,11 +53,9 @@ module.exports = class MockCommand extends Command {
         const text1  = args[0].startsWith('<@') ? message.mentions.users.size > 0 ? message.mentions.users.first().username + ': ' : '' : ''
 
         let text2 = message.client.utils.spongebobText(args.join(' '))
-        if (text1.length > 0)
-        {
-          text2 = text2.replace(`<@!${message.mentions.users.first().id}>`, '')
-          text2 = await message.client.utils.replaceMentionsWithNames(text2, message.guild)
-        }
+
+        if (text1.length > 0) text2 = text2.replace(`<@!${message.mentions.users.first().id}>`, '')
+        text2 = await message.client.utils.replaceMentionsWithNames(text2, message.guild)
         resolve({text1, text2})
       }
       reject('Failed')
