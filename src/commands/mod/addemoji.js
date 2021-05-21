@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const Discord = require("discord.js");
 const { parse } = require("twemoji-parser");
 
-module.exports = class AddRoleCommand extends Command {
+module.exports = class AddEmojiCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'addemoji',
