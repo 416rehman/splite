@@ -29,11 +29,6 @@ module.exports = class changemymindCommand extends Command {
           await message.channel.send(attachment)
           await msg.delete()
         }
-        else
-        {
-          this.sendErrorMessage(message, 0, '', `Failed to generate image. Err: ${buffer}`)
-        }
-
       }
       catch (e) {
         await msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
