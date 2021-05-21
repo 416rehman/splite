@@ -1,7 +1,6 @@
 const Command = require('../Command.js');
 const Discord = require("discord.js");
 const _emojis = require('../../utils/emojis.json')
-const { parse } = require("twemoji-parser");
 
 module.exports = class RemoveEmojiCommand extends Command {
   constructor(client) {

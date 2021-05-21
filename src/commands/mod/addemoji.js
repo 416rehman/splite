@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const Discord = require("discord.js");
 const { parse } = require("twemoji-parser");
+const _emojis = require('../../utils/emojis.json')
 
 module.exports = class AddEmojiCommand extends Command {
   constructor(client) {
@@ -55,7 +56,7 @@ async function addEmoji(emoji, message, command, emojiName)
         `${Link}`,
         `${name}`
     );
-    return message.channel.send(`${emoji} added with name "${name}"`);
+    return message.channel.send(new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} added with name "${name}"`));
   }
   else if (urlRegex.test(emoji)) { //check for image urls
     name = emojiName || Math.random().toString(36).slice(2) //make the name compatible or just choose a random string
