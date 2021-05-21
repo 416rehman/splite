@@ -37,7 +37,7 @@ module.exports = class testWelcomeCommand extends Command {
     }
     else {
       message.channel.send(new MessageEmbed()
-          .setDescription(`${emojis.fail} There is no welcome message set for this server.\nTo setup a welcome message, use the following commands:\n\`setwelcomemessage\` Sets a welcome message\n\`setwelcomechannel\` Sets the channel to post the welcome message to. `)
+          .setDescription(`${emojis.fail} There is no welcome message set for this server.\n\n\`setwelcomemessage\` Sets a welcome message\n\`setwelcomechannel\` Sets the channel to post the welcome message to. `)
           .setColor("RED")
           .setFooter(message.author.tag, message.author.displayAvatarURL())
           .setTimestamp()
