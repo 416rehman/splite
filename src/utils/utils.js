@@ -404,7 +404,7 @@ async function replaceMentionsWithNames(content, guild) {
   if (mentionsInMsg)
   {
     for (let i = 0; i < mentionsInMsg.length; i++) {
-      const id = mentionsInMsg[i].replace('<@', '').replace('!','').replace('>','')
+      const id = mentionsInMsg[i].replace('<@', '').replace('!','').replace('&', '').replace('>','')
       const mem = await guild.members.fetch(id)
       content = content.replace(mentionsInMsg[i], mem.displayName)
     }
