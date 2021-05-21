@@ -35,9 +35,13 @@ async function removeemoji(emoji, message, command)
 {
   if (!emoji) command.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
   let customemoji = Discord.Util.parseEmoji(emoji) //Check if it's a emoji
+  console.log(message.guild.emojis.cache.includes(emoji))
   if (customemoji.id) {
-    //emoji.delete()
-    return message.channel.send(`${emoji} Removed!`);
+    if (message.guild.emojis.cache.includes(emoji))
+    {
+      //emoji.delete()
+      return message.channel.send(`${emoji} Removed!`);
+    }
   }
   else {
     let CheckEmoji = parse(emoji, { assetType: "png" });
