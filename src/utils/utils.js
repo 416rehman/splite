@@ -351,8 +351,10 @@ function weightedRandom(input) {
  * @param {Number} templateID
  * @param {String} text0
  * @param {String} text1
+ * @param {string} [color = ''] color
+ * @param {string} [outlineColor = ''] outlineColor
  */
-async function generateImgFlipImage(templateID, text0, text1) {
+async function generateImgFlipImage(templateID, text0, text1, color = '', outlineColor = '') {
   return new Promise(((resolve, reject) => {
     let options = {
       'method': 'POST',
@@ -364,8 +366,12 @@ async function generateImgFlipImage(templateID, text0, text1) {
         'template_id': `${templateID}`,
         'username': config.apiKeys.imgflip.username,
         'password': config.apiKeys.imgflip.password,
-        'text0': text0,
-        'text1': text1
+        'boxes[0][text]': text0,
+        'boxes[1][text]': text1,
+        'boxes[0][color]': color,
+        'boxes[1][color]': color,
+        'boxes[0][outline_color]': outlineColor,
+        'boxes[1][outline_color]': outlineColor
       }
     };
     request(options, function (error, response) {
