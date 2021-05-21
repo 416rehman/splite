@@ -20,7 +20,7 @@ module.exports = class HateCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const text = await message.client.utils.replaceMentionsWithNames(message.content, message.guild)
+        const text = await message.client.utils.replaceMentionsWithNames(args.join(' '), message.guild)
         const buffer = await msg.client.utils.generateImgFlipImage(242461078, `${text}`, `${text}`, '#EBDBD1', '#2E251E')
 
         if (buffer)
