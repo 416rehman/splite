@@ -45,7 +45,7 @@ module.exports = class MockCommand extends Command {
         await message.channel.messages.fetch(message.reference.messageID).then(async ref => {
           const text1 = ref.member.displayName + ': '
           let text2 = await message.client.utils.replaceMentionsWithNames(ref.content, ref.guild)
-          console.log(text2)
+
           text2 = message.client.utils.spongebobText(text2)
           resolve({text1, text2})
         })
