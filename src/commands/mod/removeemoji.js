@@ -16,8 +16,8 @@ module.exports = class RemoveEmojiCommand extends Command {
     });
   }
   async run(message, args){
-    const emojis = await message.guild.emojis.cache
-    console.log(emojis[0])
+    const emojis = await message.guild.emojis
+    console.log(await emojis[0])
     if (!args[0]) return this.sendHelpMessage(message, `Remove Emoji`);
     try {
         args.forEach(emoji => {
