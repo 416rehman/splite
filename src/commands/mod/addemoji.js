@@ -18,11 +18,16 @@ module.exports = class AddEmojiCommand extends Command {
   async run(message, args){
     if (!args[0]) return this.sendHelpMessage(message, `Add Emoji`);
     try {
-      if (args.length > 2)
+      if (args.length > 1)
       {
-        args.forEach(emoji => {
-          addEmoji(emoji, message, this)
-        })
+        const isSecondArgEmoji = Discord.Util.parseEmoji(args[1]) || /^(ftp|http|https):\/\/[^ "]+$/.test(args[1])
+        if (isSecondArgEmoji)
+        {
+          args.forEach(emoji => {
+            addEmoji(emoji, message, this)
+          })
+        }
+        else addEmoji(args[0], message, this, args.slice(1).join("_"))
       }
       else addEmoji(args[0], message, this, args.slice(1).join("_"))
 
@@ -35,7 +40,6 @@ module.exports = class AddEmojiCommand extends Command {
 
 async function addEmoji(emoji, message, command, emojiName)
 {
-  console.log(emojiName)
   const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/)
   if (!emoji) command.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
   let name
