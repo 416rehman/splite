@@ -55,7 +55,7 @@ module.exports = class MockCommand extends Command {
         if (text1.length > 0)
         {
           text2 = text2.replace(`<@!${message.mentions.users.first().id}>`, '')
-          text2 = message.client.utils.replaceMentionsWithNames(text2, message.guild)
+          text2 = await message.client.utils.replaceMentionsWithNames(text2, message.guild)
         }
         resolve({text1, text2})
       }
