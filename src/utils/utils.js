@@ -352,7 +352,7 @@ function weightedRandom(input) {
  * @param {String} text0
  * @param {String} text1
  */
-function generateImgFlipImage(templateID, text0, text1) {
+async function generateImgFlipImage(templateID, text0, text1) {
   let options = {
     'method': 'POST',
     'url': 'https://api.imgflip.com/caption_image',
