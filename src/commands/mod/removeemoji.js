@@ -40,7 +40,7 @@ async function removeemoji(emoji, message, command)
       emoji.delete()
       return message.channel.send(`${emoji} Removed!`);
    }
-    else return command.sendErrorMessage(message, 0, `Please mention a custom emoji from THIS server.`);
+    else return command.sendErrorMessage(message, 0, `Please mention a custom emoji from THIS server. ${emoji} is invalid`);
   }
   else {
     let CheckEmoji = parse(emoji, { assetType: "png" });
