@@ -401,11 +401,14 @@ function spongebobText(str) {
  */
 async function replaceMentionsWithNames(content, guild) {
   const mentionsInMsg = content.match(/<(@!?\d+)>/g)
-  for (let i = 0; i < mentionsInMsg.length; i++) {
-    const id = mentionsInMsg[i].replace('<@', '').replace('!','').replace('>','')
-    console.log(guild)
-    const mem = await guild.members.fetch(id)
-    content = content.replace(mentionsInMsg[i], mem.displayName)
+  if (mentionsInMsg)
+  {
+    for (let i = 0; i < mentionsInMsg.length; i++) {
+      const id = mentionsInMsg[i].replace('<@', '').replace('!','').replace('>','')
+      console.log(guild)
+      const mem = await guild.members.fetch(id)
+      content = content.replace(mentionsInMsg[i], mem.displayName)
+    }
   }
   return content;
 }
