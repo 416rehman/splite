@@ -20,8 +20,7 @@ module.exports = class MockCommand extends Command {
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
-        const text = this.getTexts(message, args);
-
+        const text = await this.getTexts(message, args);
         const buffer = await msg.client.utils.generateImgFlipImage(102918669, `${text.text1}`, `${text.text2}`)
 
         if (buffer)
@@ -39,7 +38,7 @@ module.exports = class MockCommand extends Command {
     message.guild.funInProgress.delete(message.author.id)
   }
 
-  getTexts(message, args) {
+  async getTexts(message, args) {
     return new Promise(((resolve, reject) => {
       if (message.reference) {
         message.channel.messages.fetch(message.reference.messageID).then(ref => {
