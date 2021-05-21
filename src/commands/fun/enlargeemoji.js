@@ -7,7 +7,7 @@ module.exports = class enlargeCommand extends Command {
       name: 'enlarge',
       aliases: ['en', 'el', 'big', 'maximize', 'bigemoji', 'enemoji'],
       usage: 'en <emoji>',
-      description: 'Enlarges an emoji',
+      description: 'Enlarges a custom emoji',
       type: client.types.FUN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
       examples: ['enlarge 🙄']
@@ -24,7 +24,7 @@ module.exports = class enlargeCommand extends Command {
       return message.channel.send(new Discord.MessageAttachment(Link));
     }
     else {
-      this.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
+      this.sendErrorMessage(message, 0, 'Please mention a valid custom emoji.');
     }
     } catch (err) {
       this.client.logger.error(err)
