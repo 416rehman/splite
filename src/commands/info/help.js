@@ -105,7 +105,7 @@ module.exports = class HelpCommand extends Command {
         if (type === OWNER && !message.client.isOwner(message.member)) continue;
         if (commands[type][0])
         {
-          embed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, `${emojiMap[type].includes('Admin') ? 'Commands can be cleared by replacing "set" with "clear". i.e `setmodlog` ➔ `clearmodlog`\n-----------------------------------------------------\n' : ''} ${commands[type].join(', ')}`);
+          embed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, `${emojiMap[type].includes('Admin') ? 'Commands can be cleared by replacing "set" with "clear".\ni.e `setmodlog` ➔ `clearmodlog`\n-----------------------------------------------------\n' : ''} ${commands[type].join(', ')}`);
         }
 
       }
