@@ -42,7 +42,7 @@ module.exports = class MockCommand extends Command {
     return new Promise((async (resolve, reject) => {
       if (message.reference) {
         await message.channel.messages.fetch(message.reference.messageID).then(ref => {
-          const text1 = ref.author.username + ': '
+          const text1 = ref.member.displayName + ': '
           const text2 = message.client.utils.spongebobText(ref.content)
           resolve({text1, text2})
         })
