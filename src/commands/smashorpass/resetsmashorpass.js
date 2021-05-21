@@ -15,7 +15,7 @@ module.exports = class resetSmashOrPassCommand extends Command {
         Resets all your smash or pass matches, likes, and passes.
         Start Fresh!
         
-        Cost: 500 points
+        Cost: ${cost} points
       `,
       type: client.types.SMASHORPASS,
       examples: ['smashorpass', 'sop', 'smash']
