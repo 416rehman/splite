@@ -396,14 +396,15 @@ function spongebobText(str) {
 
 /**
  * Replaces all mentions in a message with display names
- * @param {object} message
+ * @param {string} content
+ * @param {object} guild
  */
-async function replaceMentionsWithNames(message) {
-  let content = message.content
-  const mentionsInMsg = message.content.match(/<((@!?\d+))>/g)
-  for (let i = 0; i < message.mentions.users.size; i++) {
-    const id = message.mentions.users.array()[i].id
-    const mem = await message.guild.members.fetch(id)
+async function replaceMentionsWithNames(content, guild) {
+  const mentionsInMsg = content.content.match(/<((@!?\d+))>/g)
+  for (let i = 0; i < mentionsInMsg.length; i++) {
+    const id = mentionsInMsg[i].replace('<@', '').replace('!','').replace('>','')
+    console.log(guild)
+    const mem = await guild.members.fetch(id)
     content = content.replace(mentionsInMsg[i], mem.displayName)
   }
   return content;
