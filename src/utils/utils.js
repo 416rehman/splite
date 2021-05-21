@@ -376,7 +376,7 @@ async function generateImgFlipImage(templateID, text0, text1, color = '', outlin
     };
     request(options, function (error, response) {
       const res = JSON.parse(response.body)
-      console.log(res)
+
       if (res.data.url) resolve(res.data.url || error);
       else reject(`${error}`)
     })
