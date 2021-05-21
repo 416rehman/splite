@@ -21,6 +21,7 @@ module.exports = class changemymindCommand extends Command {
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
         const buffer = msg.client.utils.generateImgFlipImage(242461078, `${args.join(' ')}`, `${args.join(' ')}`)
+        console.log(buffer)
         if (buffer)
         {
           const attachment = new MessageAttachment(buffer, "allmyhomieshate.png");
