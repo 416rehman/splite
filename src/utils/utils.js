@@ -353,25 +353,28 @@ function weightedRandom(input) {
  * @param {String} text1
  */
 async function generateImgFlipImage(templateID, text0, text1) {
-  let options = {
-    'method': 'POST',
-    'url': 'https://api.imgflip.com/caption_image',
-    'headers': {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
-    },
-    formData: {
-      'template_id': `${templateID}`,
-      'username': config.apiKeys.imgflip.username,
-      'password': config.apiKeys.imgflip.password,
-      'text0': text0,
-      'text1': text1
-    }
-  };
-  request(options, function (error, response) {
-    const res = JSON.parse(response.body)
-    console.log(res)
-    return res.data.url || error;
-  });
+  return new Promise(((resolve, reject) => {
+    let options = {
+      'method': 'POST',
+      'url': 'https://api.imgflip.com/caption_image',
+      'headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
+      },
+      formData: {
+        'template_id': `${templateID}`,
+        'username': config.apiKeys.imgflip.username,
+        'password': config.apiKeys.imgflip.password,
+        'text0': text0,
+        'text1': text1
+      }
+    };
+    request(options, function (error, response) {
+      const res = JSON.parse(response.body)
+      console.log(res)
+      if (res.data.url) resolve(res.data.url || error);
+      else reject(`${error}`)
+    })
+  }))
 }
 
 module.exports = {
