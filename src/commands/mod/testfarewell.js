@@ -38,7 +38,7 @@ module.exports = class WarnCommand extends Command {
       message.channel.send(new MessageEmbed()
           .setDescription(`${emojis.fail} **There is no farewell message set for this server.**\n\nTo setup a farewell message, use the following commands:\n\`setfarewellmessage\` Sets a farewell message\n\`setfarewellchannel\` Sets the channel to post the farewell message to. `)
           .setColor("RED")
-          .setFooter(message.author.username, message.author.displayAvatarURL())
+          .setFooter(message.author.tag, message.author.displayAvatarURL())
       )
     }
   }
