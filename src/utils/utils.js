@@ -402,11 +402,8 @@ async function replaceMentionsWithNames(message) {
   let content = message.content
   const mentionsInMsg = message.content.match(/<((@!?\d+))>/g)
   for (let i = 0; i < message.mentions.users.size; i++) {
-    console.log(message.mentions.users.array()[i].username)
     const id = message.mentions.users.array()[i].id
     const mem = await message.guild.members.fetch(id)
-    console.log('printing display name')
-    console.log(mem.displayName)
     content = content.replace(mentionsInMsg[i], mem.displayName)
   }
   return content;
