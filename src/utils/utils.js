@@ -7,6 +7,8 @@ const anonymous = require("../slashCommands/anonymous")
 const view = require("../slashCommands/view")
 const Collection = require("@discordjs/collection");
 const emojis = require("./emojis.json")
+const request = require('request')
+const config = require('../../config.json')
 
 /**
  * Capitalizes a string
@@ -344,6 +346,33 @@ function weightedRandom(input) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+/**
+ * Schedule crown role rotation if checks pass
+ * @param {Number} templateID
+ * @param {String} text0
+ * @param {String} text1
+ */
+function generateImgFlipImage(templateID, text0, text1) {
+  let options = {
+    'method': 'POST',
+    'url': 'https://api.imgflip.com/caption_image',
+    'headers': {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
+    },
+    formData: {
+      'template_id': `${templateID}`,
+      'username': config.apiKeys.imgflip.username,
+      'password': config.apiKeys.imgflip.password,
+      'text0': text0,
+      'text1': text1
+    }
+  };
+  request(options, function (error, response) {
+    const res = JSON.parse(response.body)
+    return res.data.url || error;
+  });
+}
+
 module.exports = {
   capitalize,
   removeElement,
@@ -363,5 +392,6 @@ module.exports = {
   createCollections,
   createProgressBar,
   getRandomInt,
-  weightedRandom
+  weightedRandom,
+  generateImgFlipImage
 };
