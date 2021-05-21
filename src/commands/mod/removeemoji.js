@@ -6,7 +6,7 @@ module.exports = class RemoveEmojiCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'removeemoji',
-      aliases: ['remove', 'rem', 'deleteemoji', 'dem', 'remoji'],
+      aliases: ['remove', 'rem', 'deleteemoji', 'dem', 'remoji', 'delete'],
       usage: 'removeemoji <emoji>',
       description: "Delete emojis from the server.",
       type: client.types.MOD,
