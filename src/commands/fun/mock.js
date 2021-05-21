@@ -43,7 +43,8 @@ module.exports = class MockCommand extends Command {
       if (message.reference) {
         await message.channel.messages.fetch(message.reference.messageID).then(ref => {
           const text1 = ref.member.displayName + ': '
-          const text2 = message.client.utils.spongebobText(ref.content)
+          let text2 = message.client.utils.replaceMentionsWithNames(ref)
+          text2 = message.client.utils.spongebobText(text2)
           resolve({text1, text2})
         })
       } else {
