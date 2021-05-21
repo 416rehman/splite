@@ -36,8 +36,9 @@ async function removeemoji(emoji, message, command)
   customemoji = await message.guild.emojis.cache.find(e => e.id === customemoji.id)
 
   if (customemoji.id) {
-      customemoji.delete()
-      message.channel.send(`${emoji} Removed!`);
+      customemoji.delete().then(()=>{
+        message.channel.send(`${emoji} Removed!`);
+      })
 
       await command.sendModLogMessage(message, '', {Member: message.member, 'Removed Emoji': `\`${emoji}\``});
   }
