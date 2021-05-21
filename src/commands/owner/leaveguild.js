@@ -7,6 +7,7 @@ module.exports = class LeaveGuildCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'leaveguild',
+      aliases: 'leave',
       usage: 'leaveguild <server ID>',
       description: 'Forces Splite to leave the specified server.',
       type: client.types.OWNER,
