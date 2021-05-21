@@ -94,6 +94,7 @@ module.exports = class smashOrPassCommand extends Command {
             message.client.db.matches.insertRow.run(message.author.id, potentialMatchUser.user.id, 'yes', d.toISOString())
             points = points - cost
             const matched = await message.client.db.matches.getMatch.get(message.author.id, potentialMatchUser.user.id, potentialMatchUser.user.id)
+            console.log(matched)
             if (matched != null)
             {
               try{
@@ -126,10 +127,7 @@ module.exports = class smashOrPassCommand extends Command {
                 .setDescription(`${emojis.load} Loading...`)
                 .setFooter(`Expires in 10 seconds | Points: ${points}`)
             )
-            // potentialMatchUser.user.send(new MessageEmbed()
-            //     .setTitle(`🔥 Smash or Pass 👎`)
-            //     .setDescription(`You just received a 🔥 Smash on **🔥 Smash or Pass 👎**. Play now using the command \`smashOrPass\` in **${guild.name}** to see if it's a match`)
-            //     .setFooter(`To opt-out of the game, use the command "toggleSmashOrPass"`)).catch(err => console.log(err))
+
             if (points < cost)
             {
               message.guild.SmashOrPassInProgress.delete(message.author.id)
@@ -239,6 +237,7 @@ module.exports = class smashOrPassCommand extends Command {
           await message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
           const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
+          console.log(matched)
           if (matched != null)
           {
             try
