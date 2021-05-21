@@ -17,6 +17,7 @@ module.exports = class RemoveEmojiCommand extends Command {
   }
   async run(message, args){
     const emojis = await message.guild.emojis.cache
+    console.log(emojis[0])
     if (!args[0]) return this.sendHelpMessage(message, `Remove Emoji`);
     try {
         args.forEach(emoji => {
@@ -34,7 +35,7 @@ async function removeemoji(emoji, message, command)
 {
   if (!emoji) command.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
   let customemoji = Discord.Util.parseEmoji(emoji) //Check if it's a emoji
-  console.log(message.guild.emojis.has(emoji))
+  //console.log(message.guild.emojis.has(emoji))
   if (customemoji.id) {
     if (message.guild.emojis.cache.includes(emoji))
     {
