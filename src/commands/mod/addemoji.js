@@ -21,6 +21,7 @@ module.exports = class AddEmojiCommand extends Command {
       if (args.length > 1)
       {
         const isSecondArgEmoji = Discord.Util.parseEmoji(args[1]) || /^(ftp|http|https):\/\/[^ "]+$/.test(args[1])
+        console.log(isSecondArgEmoji)
         if (isSecondArgEmoji)
         {
           args.forEach(emoji => {
