@@ -37,7 +37,7 @@ async function removeemoji(emoji, message, command)
   if (customemoji.id) {
     if (await message.guild.emojis.cache.has(customemoji.id))
     {
-      emoji.delete()
+      customemoji.delete()
       return message.channel.send(`${emoji} Removed!`);
    }
     else return command.sendErrorMessage(message, 0, `Please mention a custom emoji from THIS server. ${emoji} is invalid`);
