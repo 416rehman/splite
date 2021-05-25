@@ -49,7 +49,6 @@ module.exports = class urbanCommand extends Command {
               return `**${def.word}** \`\`\`fix\n${def.definition}\`\`\``
             })
                 embed
-                    .setThumbnail(message.guild.iconURL({ dynamic: true }))
                 .setFooter(
                     'Expires after two minutes.\n' + message.member.displayName,
                     message.author.displayAvatarURL({ dynamic: true })
