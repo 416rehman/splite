@@ -19,6 +19,7 @@ module.exports = class urbanCommand extends Command {
     const embed = new MessageEmbed()
         .setDescription(`${emoji.load} Fetching Definition`)
         .setTitle(`Urban Dictionary`)
+        .setTimestamp()
     message.channel.send(embed).then(msg=> {
       if (!args[0])
       {
