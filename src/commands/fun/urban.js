@@ -18,6 +18,7 @@ module.exports = class urbanCommand extends Command {
   async run(message, args) {
     const embed = new MessageEmbed()
         .setDescription(`${emoji.load} Fetching Definition`)
+        .setTitle(`Urban Dictionary`)
     message.channel.send(embed).then(msg=> {
       if (!args[0])
       {
@@ -25,7 +26,7 @@ module.exports = class urbanCommand extends Command {
           if (error) embed.setDescription(`${emoji.fail} ${error.message}`)
           else
           {
-            embed.setDescription(`**${result[0].word}** \`${error ? error : result[0].definition}\``)
+            embed.setDescription(`**${result[0].word}** \`\`\`${error ? error : result[0].definition}\`\`\``)
             embed.setFooter(message.member.displayName, message.author.displayAvatarURL())
           }
           msg.edit(embed)
@@ -48,7 +49,6 @@ module.exports = class urbanCommand extends Command {
               return `**${def.word}** \`\`\`${def.definition}\`\`\``
             })
                 embed
-                    .setTitle(`Urban Dictionary`)
                     .setThumbnail(message.guild.iconURL({ dynamic: true }))
                 .setFooter(
                     'Expires after two minutes.\n' + message.member.displayName,
