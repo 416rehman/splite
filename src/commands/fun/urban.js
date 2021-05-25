@@ -45,9 +45,11 @@ module.exports = class urbanCommand extends Command {
             const interval = 1;
 
             const definitions = result.map(def=> {
-              return `**${def.word} \`${def.definition}\``
+              return `**${def.word}** \`\`\`${def.definition}\`\`\``
             })
-                embed.setThumbnail(message.guild.iconURL({ dynamic: true }))
+                embed
+                    .setTitle(`Urban Dictionary`)
+                    .setThumbnail(message.guild.iconURL({ dynamic: true }))
                 .setFooter(
                     'Expires after two minutes.\n' + message.member.displayName,
                     message.author.displayAvatarURL({ dynamic: true })
