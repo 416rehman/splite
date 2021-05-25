@@ -6,8 +6,9 @@ module.exports = class insultCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'insult',
+      aliases: ['roast'],
       usage: 'insult',
-      description: 'Insult someone',
+      description: 'Insult/roast someone',
       type: client.types.FUN,
       examples: ['insult @split']
     });
