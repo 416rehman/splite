@@ -26,7 +26,7 @@ module.exports = class urbanCommand extends Command {
           if (error) embed.setDescription(`${emoji.fail} ${error.message}`)
           else
           {
-            embed.setDescription(`**${result[0].word}** \`\`\`fix\n${error ? error : result[0].definition}\`\`\``)
+            embed.setDescription(`**${result[0].word}** \`\`\`${error ? error : result[0].definition}\`\`\``)
             embed.setFooter(message.member.displayName, message.author.displayAvatarURL())
           }
           msg.edit(embed)
@@ -46,7 +46,7 @@ module.exports = class urbanCommand extends Command {
             const interval = 1;
 
             const definitions = result.map(def=> {
-              return `**${def.word}** \`\`\`fix\n${def.definition}\`\`\``
+              return `**${def.word}** \`\`\`${def.definition}\`\`\``
             })
                 embed
                 .setFooter(
