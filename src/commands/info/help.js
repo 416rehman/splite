@@ -124,9 +124,9 @@ module.exports = class HelpCommand extends Command {
             const collector = msg.createButtonCollector(filter, { time: 60000 }); //collector for 5 seconds
             let tempEmbed = new MessageEmbed()
             collector.on('collect', b => {
-                console.log()
-                const type = `${b.id}`.replace(/_/g, ' ')
 
+                const type = `${b.id}`.replace(/_/g, ' ')
+                tempEmbed.fields = []
                 tempEmbed.setTitle('Splite\'s Commands')
                     .setDescription(stripIndent`
           **Prefix:** \`${prefix}\`
