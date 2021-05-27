@@ -92,7 +92,7 @@ module.exports = class HelpCommand extends Command {
             for (const property in commands) {
                 if (commands[property].length){
 
-                    const button = new disbut.MessageButton().setLabel(`${capitalize(property)}`).setID(`${property.replace(/ /g, '_')}`).setStyle('red')
+                    const button = new disbut.MessageButton().setLabel(`${capitalize(property)}`).setID(`${property.replace(/ /g, '_')}`).setStyle('blurple')
                     if (emojiMap[property])
                     {
                         const animated = emojiMap[property].match(/(?<=\<)(.*?)(?=\:)/)[1] || '';

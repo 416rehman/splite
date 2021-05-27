@@ -8,7 +8,7 @@
     "ascii-table": "0.0.9",
     "better-sqlite3": "^7.1.0",
     "common-tags": "^1.8.0",
-    "discord-buttons": "github:watchdogsrox/enhanced-discord-buttons",
+    "discord-buttons": "github:watchdogsrox/discord-buttons-1",
     "discord-slash-commands-client": "^1.1.1",
     "discord.js": "^12.5.3",
     "djs-reaction-collector": "^2.9.3",
