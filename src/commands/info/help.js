@@ -156,7 +156,7 @@ module.exports = class HelpCommand extends Command {
                 buttons = buttons.map(row => {
                     row.forEach(button =>{
                         if (button.custom_id === b.id) button.style = 3;
-                        else button.style = 4
+                        else button.style = 1
                     })
                     return row
                 })
