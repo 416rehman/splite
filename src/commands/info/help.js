@@ -155,7 +155,7 @@ module.exports = class HelpCommand extends Command {
                 b.defer()
             });
             collector.on('end', () => {
-                tempEmbed.fields = []
+                if (tempEmbed.fields[0])tempEmbed.fields = []
                 tempEmbed.addField(`Expired!`, `To view text-only version of help command, type \`${prefix}texthelp\``)
                 msg.edit({ buttons: [], embed: tempEmbed })
             });
