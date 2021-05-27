@@ -144,6 +144,7 @@ module.exports = async (client) => {
     });
 
   client.ws.on('INTERACTION_CREATE', async interaction => {
+    if (interaction.type !== 2) return  //Slash Commands Only
         const command = interaction.data.name.toLowerCase();
         client.utils.callSlashCommand(command, client, interaction)
   })
