@@ -22,7 +22,8 @@ module.exports = class smashOrPassCommand extends Command {
         To opt-out of the game, use the command "toggleSmashOrPass"
       `,
       type: client.types.SMASHORPASS,
-      examples: ['smashorpass', 'sop', 'smash']
+      examples: ['smashorpass', 'sop', 'smash'],
+      clientPermissions: ['MANAGE_MESSAGES','SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS']
     });
   }
   async run(message, args) {
@@ -237,7 +238,7 @@ module.exports = class smashOrPassCommand extends Command {
           await message.client.db.matches.insertRow.run(message.author.id, member.user.id, 'yes', d.toISOString())
           points = points - cost
           const matched = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
-          console.log(matched)
+
           if (matched != null)
           {
             try
