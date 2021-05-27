@@ -95,7 +95,7 @@ module.exports = class HelpCommand extends Command {
                     const button = new disbut.MessageButton().setLabel(`${capitalize(property)}`).setID(`${property.replace(/ /g, '_')}`).setStyle('red')
                     const animated = emojiMap[property].toString().match(/(?<=\<)(.*?)(?=\:)/)[1] && true;
                     const name = emojiMap[property].toString().match(/(?<=\:)(.*?)(?=\:)/)[1]
-                    const id = emojiMap[property].toString().match(/(?<=\:)(.*?)(?=\>)/)[1]
+                    const id = emojiMap[property].toString().match(/(?<=\:)(.*?)(?=\>)/)[1].split(':')[1]
                     console.log({animated, name, id})
                     allButtons.push(button)
                 }}
