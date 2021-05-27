@@ -122,12 +122,12 @@ module.exports = class HelpCommand extends Command {
 
             const filter = (button) => button.clicker.user.id === message.author.id;
             const collector = msg.createButtonCollector(filter, { time: 60000 }); //collector for 5 seconds
-            let tempEmbed
+            let tempEmbed = new MessageEmbed()
             collector.on('collect', b => {
                 console.log()
                 const type = `${b.id}`.replace(/_/g, ' ')
 
-                tempEmbed = new MessageEmbed().setTitle('Splite\'s Commands')
+                tempEmbed.setTitle('Splite\'s Commands')
                     .setDescription(stripIndent`
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`
@@ -155,8 +155,9 @@ module.exports = class HelpCommand extends Command {
                 b.defer()
             });
             collector.on('end', () => {
-                if (tempEmbed.fields[0])tempEmbed.fields = []
-                tempEmbed.addField(`Expired!`, `To view text-only version of help command, type \`${prefix}texthelp\``)
+                tempEmbed.setFooter('Expired! For text-only help command, type \`${prefix}texthelp\` \n' + message.member.displayName ,
+                    message.author.displayAvatarURL({ dynamic: true })
+                )
                 msg.edit({ buttons: [], embed: tempEmbed })
             });
         }
