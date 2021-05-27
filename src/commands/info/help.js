@@ -91,6 +91,7 @@ module.exports = class HelpCommand extends Command {
 
             for (const property in commands) {
                 if (commands[property].length){
+                    console.log(property)
                     const button = new disbut.MessageButton().setLabel(`${capitalize(property)}`).setID(`${property.replace(/ /g, '_')}`).setStyle('red')
                     console.log(emojiMap[property])
                     allButtons.push(button)
