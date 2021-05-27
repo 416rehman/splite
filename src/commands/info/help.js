@@ -92,7 +92,7 @@ module.exports = class HelpCommand extends Command {
             for (const property in commands) {
                 if (commands[property].length){
                     const button = new disbut.MessageButton().setLabel(`${capitalize(property)}`).setID(`${property.replace(/ /g, '_')}`).setStyle('red')
-                    console.log(emojiMap[commands[property]])
+                    console.log(emojiMap[property])
                     allButtons.push(button)
                 }}
             const total = Object.values(commands).reduce((a, b) => a + b.length, 0) - commands[OWNER].length;
