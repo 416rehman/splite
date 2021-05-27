@@ -121,7 +121,7 @@ module.exports = class HelpCommand extends Command {
             let msg = await message.channel.send({ buttons: buttons, embed: embed });
 
             const filter = (button) => button.clicker.user.id === message.author.id;
-            const collector = msg.createButtonCollector(filter, { time: 3000 }); //collector for 5 seconds
+            const collector = msg.createButtonCollector(filter, { time: 60000 }); //collector for 5 seconds
             let tempEmbed
             collector.on('collect', b => {
                 console.log()
