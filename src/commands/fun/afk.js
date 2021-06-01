@@ -28,7 +28,7 @@ module.exports = class AfkCommand extends Command {
       message.client.db.users.updateAfk.run(args.join(' '), message.author.id, message.guild.id)
       message.client.db.users.updateAfkTime.run(d.valueOf(), message.author.id, message.guild.id )
       message.guild.members.cache.get(message.author.id).setNickname(`[AFK]${message.member.nickname ? message.member.nickname : message.member.displayName}`).catch(err=>console.log())
-      return message.channel.send(`${idle} ${message.author} You have gone afk! ${args.join(' ')}`)
+      return message.channel.send(`${idle} ${message.author} You have gone afk: ${args.join(' ')}`)
     }
   }
   catch (err) {
