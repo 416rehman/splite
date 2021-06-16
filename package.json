@@ -39,12 +39,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://sabattle@github.com/sabattle/SpliteBot.git"
+    "url": "git+https://github.com/watchdogsrox/spliteBot.git"
   },
   "author": "Sebastian Battle",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/sabattle/SpliteBot/issues"
+    "url": "https://github.com/watchdogsrox/spliteBot"
   },
-  "homepage": "https://github.com/sabattle/SpliteBot#readme"
+  "forkedFrom": "https://github.com/sabattle/CalypsoBot"
 }
