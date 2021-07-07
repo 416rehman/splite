@@ -4,7 +4,7 @@ Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 # Commands
 **![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [22]**
 
-`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`
+`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`
 
 **![:fun~1:](https://cdn.discordapp.com/emojis/838614336749568020.gif?v=1) Fun [84]**
 
