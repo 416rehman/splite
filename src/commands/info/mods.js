@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const ReactionMenu = require('../ReactionMenu.js');
+const { ReactionMenu } = require('../ReactionMenu.js');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = class ModsCommand extends Command {
