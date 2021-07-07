@@ -1,0 +1,18 @@
+{
+  "token": "",
+  "ownerId": "",
+  "bugReportChannelId": "",
+  "feedbackChannelId": "",
+  "serverLogId": "",
+  "confessionReportsID": "",
+  "apiKeys": {
+    "catApi": "",
+    "googleApi": "",
+    "amethyste": "",
+    "imgflip" : {
+      "username": "",
+      "password": ""
+    }
+  }
+}
+
