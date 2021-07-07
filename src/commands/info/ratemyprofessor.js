@@ -1,7 +1,6 @@
 const Command = require('../Command.js');
 const rmp = require('../../utils/ratemyprofessor')
 const { MessageEmbed } = require('discord.js');
-const { oneLine } = require('common-tags');
 const emojis = require('../../utils/emojis.json')
 const { EmbedReactionMenu } = require('../ReactionMenu.js');
 
