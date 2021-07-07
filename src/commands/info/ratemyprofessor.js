@@ -8,9 +8,7 @@ function generateRMPembed(prof, profQuery, schoolQuery, school) {
     return new MessageEmbed()
         .setTitle(`${prof.firstName} ${prof.lastName} | ${prof.department} `, '', `https://www.ratemyprofessors.com/campusRatings.jsp?sid=${prof.school.legacyId}`)
         .setAuthor(`${prof.school.name}`)
-        .setDescription(`**${prof.avgRating}/5** Average - Based On ${prof.numRatings} ratings\n
-                                    **${prof.wouldTakeAgainPercent > 0 ? `${prof.wouldTakeAgainPercent.toFixed()}%` : 'N/A'}** Would Take Again\n
-                                    ${prof.mostUsefulRating ? `😎 Most Helpful Rating - ${prof.mostUsefulRating.class}\`\`\`${prof.mostUsefulRating.comment}\`\`\`` : ''}`)
+        .setDescription(`**${prof.avgRating}/5** Average - Based On ${prof.numRatings} ratings\n**${prof.wouldTakeAgainPercent > 0 ? `${prof.wouldTakeAgainPercent.toFixed()}%` : 'N/A'}** Would Take Again\n${prof.mostUsefulRating ? `😎 Most Helpful Rating - ${prof.mostUsefulRating.class}\`\`\`${prof.mostUsefulRating.comment}\`\`\`` : ''}`)
         .setURL(`https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${prof.legacyId}`)
         .addField(`Avg Rating`, `${prof.avgRating}`, true)
         .addField(`Avg Difficulty`, `${prof.avgDifficulty}`, true)
