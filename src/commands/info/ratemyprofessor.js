@@ -16,7 +16,7 @@ function generateRMPembed(prof, profQuery, schoolQuery, school) {
         .addField(`Avg Difficulty`, `${prof.avgDifficulty}`, true)
         .addField(`# Of Ratings`, `${prof.numRatings}`, true)
         .setThumbnail(`https://i.imgur.com/7qt9vAg.png`)
-        .setFooter(`Search Query: "${profQuery}" ${schoolQuery ? `| School Filter: ${school.length ? `${school[0].node.name}` : 'No schools found with provided name'}` : ''}`)
+        .setFooter(`Search Query: "${profQuery}" ${schoolQuery ? `| School Filter: ${school.length ? `${school[0].node.name}` : 'No schools found with provided name'}` : 'To search specific schools "<profName> : <school>"'}`)
 
         .setColor("RANDOM");
 }
