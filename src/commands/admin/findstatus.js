@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { oneLine, stripIndent } = require('common-tags');
 const { MessageEmbed } = require('discord.js')
 const emojis = require('../../utils/emojis.json')
-const ReactionMenu = require('../ReactionMenu.js');
+const { ReactionMenu } = require('../ReactionMenu.js');
 
 module.exports = class findStatusCommand extends Command {
   constructor(client) {

@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
-const ReactionMenu = require('../ReactionMenu.js');
+const { ReactionMenu } = require('../ReactionMenu.js');
 const { stripIndent } = require('common-tags');
 const { inPlaceSort } = require ('fast-sort');
 const emojis = require('../../utils/emojis.json')

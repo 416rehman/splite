@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 /**
  * Splite's Reaction Menu class
  */
-module.exports = class ReactionMenu {
+class ReactionMenu {
 
   /**
    * Create new ReactionMenu
@@ -18,10 +18,10 @@ module.exports = class ReactionMenu {
    * @param {int} timeout
    */
   constructor(client, channel, member, embed, arr = null, interval = 10, overwrite = null, reactions = {
-    '⏪': this.first.bind(this), 
-    '◀️': this.previous.bind(this), 
-    '▶️': this.next.bind(this), 
-    '⏩': this.last.bind(this), 
+    '⏪': this.first.bind(this),
+    '◀️': this.previous.bind(this),
+    '▶️': this.next.bind(this),
+    '⏩': this.last.bind(this),
     '⏹️': this.stop.bind(this)
   }, timeout = 120000) {
 
@@ -100,21 +100,21 @@ module.exports = class ReactionMenu {
     const first = new MessageEmbed(this.json);
     const description = (this.arr) ? this.arr.slice(this.current, this.interval) : null;
     if (description) first
-      .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-      .setDescription(description);
+        .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
+        .setDescription(description);
 
 
-      this.channel.send(first).then(message => {
+    this.channel.send(first).then(message => {
 
-        /**
-         * The menu message
-         * @type {Message}
-         */
-        this.message = message;
+      /**
+       * The menu message
+       * @type {Message}
+       */
+      this.message = message;
 
-        this.addReactions();
-        this.createCollector();
-      });
+      this.addReactions();
+      this.createCollector();
+    });
   }
 
   /**
@@ -133,16 +133,16 @@ module.exports = class ReactionMenu {
     // Create collector
     const collector = this.message.createReactionCollector((reaction, user) => {
       return (this.emojis.includes(reaction.emoji.name) || this.emojis.includes(reaction.emoji.id)) &&
-        user.id == this.memberId;
+          user.id == this.memberId;
     }, { time: this.timeout });
-    
+
     // On collect
     collector.on('collect', async reaction => {
       let newPage =  this.reactions[reaction.emoji.name] || this.reactions[reaction.emoji.id];
       if (typeof newPage === 'function') newPage = newPage();
       if (newPage) await this.message.edit(newPage);
       await reaction.users.remove(this.memberId);
-    }); 
+    });
 
     // On end
     collector.on('end', () => {
@@ -159,8 +159,8 @@ module.exports = class ReactionMenu {
     if (this.current === 0) return;
     this.current = 0;
     return new MessageEmbed(this.json)
-      .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-      .setDescription(this.arr.slice(this.current, this.current + this.interval));
+        .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
+        .setDescription(this.arr.slice(this.current, this.current + this.interval));
   }
 
   /**
@@ -171,8 +171,8 @@ module.exports = class ReactionMenu {
     this.current -= this.interval;
     if (this.current < 0) this.current = 0;
     return new MessageEmbed(this.json)
-      .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-      .setDescription(this.arr.slice(this.current, this.current + this.interval));
+        .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
+        .setDescription(this.arr.slice(this.current, this.current + this.interval));
   }
 
   /**
@@ -185,8 +185,8 @@ module.exports = class ReactionMenu {
     if (this.current >= this.max) this.current = cap;
     const max = (this.current + this.interval >= this.max) ? this.max : this.current + this.interval;
     return new MessageEmbed(this.json)
-      .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-      .setDescription(this.arr.slice(this.current, max));
+        .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
+        .setDescription(this.arr.slice(this.current, max));
   }
 
   /**
@@ -198,8 +198,8 @@ module.exports = class ReactionMenu {
     this.current = cap;
     if (this.current === this.max) this.current -= this.interval;
     return new MessageEmbed(this.json)
-      .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-      .setDescription(this.arr.slice(this.current, this.max));
+        .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
+        .setDescription(this.arr.slice(this.current, this.max));
   }
 
   /**
@@ -208,4 +208,125 @@ module.exports = class ReactionMenu {
   stop() {
     this.collector.stop();
   }
+}
+class EmbedReactionMenu {
+
+  /**
+   * Create new ReactionMenu with provided embeds
+   * @param {Client} client
+   * @param {TextChannel} channel
+   * @param {GuildMember} member
+   * @param {MessageEmbed} embed
+   * @param {Array} array of embeds
+   * @param {int} interval
+   * @param {Message} overwrite
+   * @param {Object} reactions
+   * @param {int} timeout
+   */
+  constructor(client, channel, member, arr = null,
+              timeout = 120000) {
+
+    /**
+     * The Splite Client
+     * @type {Client}
+     */
+    this.client = client;
+
+    /**
+     * The text channel
+     * @type {TextChannel}
+     */
+    this.channel = channel;
+
+    /**
+     * The member ID snowflake
+     * @type {string}
+     */
+    this.memberId = member.id;
+
+    /**
+     * The array to be iterated over
+     * @type {Array}
+     */
+    this.arr = arr;
+
+    /**
+     * The current array window start
+     * @type {int}
+     */
+    this.current = 0;
+
+    /**
+     * The reactions for menu
+     * @type {Object}
+     */
+    this.reactions = ['◀️','▶️'];
+
+    /**
+     * The collector timeout
+     * @type {int}
+     */
+    this.timeout = timeout;
+
+    const first = arr[0]
+
+    this.channel.send(first).then(message => {
+
+      /**
+       * The menu message
+       * @type {Message}
+       */
+      this.message = message;
+
+      this.addReactions();
+      this.createCollector();
+    });
+  }
+
+  /**
+   * Adds reactions to the message
+   */
+  async addReactions() {
+    for (const emoji of this.reactions) {
+      await this.message.react(emoji);
+    }
+  }
+
+  /**
+   * Creates a reaction collector
+   */
+  createCollector() {
+    // Create collector
+    const collector = this.message.createReactionCollector((reaction, user) => {
+      return (this.reactions.includes(reaction.emoji.name) || this.reactions.includes(reaction.emoji.id)) &&
+          user.id == this.memberId;
+    }, { time: this.timeout });
+
+    // On collect
+    collector.on('collect', async reaction => {
+      if (reaction.emoji.name == '◀️' || reaction.emoji.id == '◀️') {
+        this.current = this.current-- < 0 ? 0 : this.current--;
+        await this.message.edit(this.arr[this.current])
+      }
+      else if (reaction.emoji.name == '▶️' || reaction.emoji.id == '▶️') {
+        this.current = this.current++ >= this.arr.length ? this.arr.length - 1 : this.current++;
+        console.log(this.arr[this.current])
+        await this.message.edit(this.arr[this.current])
+      }
+
+      await reaction.users.remove(this.memberId);
+    });
+
+    // On end
+    collector.on('end', () => {
+      this.message.reactions.removeAll();
+    });
+
+    this.collector = collector;
+  }
 };
+
+module.exports = {
+  ReactionMenu,
+  EmbedReactionMenu
+}

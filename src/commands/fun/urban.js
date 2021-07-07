@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const { MessageEmbed } = require('discord.js');
 const emoji = require('../../utils/emojis.json')
 const ud = require('urban-dictionary')
-const ReactionMenu = require('../ReactionMenu.js');
+const { ReactionMenu } = require('../ReactionMenu.js');
 
 module.exports = class urbanCommand extends Command {
   constructor(client) {

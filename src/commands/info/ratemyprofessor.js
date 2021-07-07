@@ -1,8 +1,16 @@
 const Command = require('../Command.js');
 const rmp = require('../../utils/ratemyprofessor')
 const { MessageEmbed } = require('discord.js');
+const { oneLine } = require('common-tags');
 const emojis = require('../../utils/emojis.json')
 const { EmbedReactionMenu } = require('../ReactionMenu.js');
+
+const noneFound = new MessageEmbed()
+    .setTitle(`Rate My Professor`)
+    .setDescription(`${emojis.fail} No Professors Found`)
+    .setThumbnail(`https://i.imgur.com/7qt9vAg.png`)
+    .setFooter(`Search Query: "${profQuery}" ${schoolQuery ? `| School Filter: ${schoolFilter.length > 0 ? `${school[0].node.name}` : 'No schools found with provided name'}`: ''}`)
+    .setColor("RED");
 
 function generateRMPembed(prof, profQuery, schoolQuery, school) {
     return new MessageEmbed()
@@ -43,13 +51,22 @@ module.exports = class RateMyProfessor extends Command {
             profQuery = profQuery.trim()
             console.log(schoolQuery)
             if (schoolQuery == 'seneca') schoolQuery = 'seneca all'
-            school = await rmp.searchSchool(schoolQuery)
-            school = (JSON.parse(school)).data?.newSearch?.schools?.edges
+            try {
+                school = await rmp.searchSchool(schoolQuery)
+                school = (JSON.parse(school)).data.newSearch.schools.edges
+            } catch (e) {
+                console.log(e)
+            }
             console.log(school);
         }
         const schoolFilter = school && school.length ? school[0].node.id : ''
         rmp.searchProfessors(profQuery, schoolFilter).then(async result=> {
-            let profs = (JSON.parse(result)).data?.newSearch?.teachers?.edges
+            let profs
+            try { profs = (JSON.parse(result)).data.newSearch.teachers.edges }
+            catch (e) {
+                console.log(e)
+                return message.channel.send(noneFound);
+            }
             if (profs.length > 10) profs.length = 10;
 
             profs = await Promise.all(profs.map(async (p) => {
@@ -68,13 +85,7 @@ module.exports = class RateMyProfessor extends Command {
                 new EmbedReactionMenu(message.client, message.channel, message.member, profEmbeds)
             }
             else {
-                const embed = new MessageEmbed()
-                    .setTitle(`Rate My Professor`)
-                    .setDescription(`${emojis.fail} No Professors Found`)
-                    .setThumbnail(`https://i.imgur.com/7qt9vAg.png`)
-                    .setFooter(`Search Query: "${profQuery}" ${schoolQuery ? `| School Filter: ${schoolFilter.length > 0 ? `${school[0].node.name}` : 'No schools found with provided name'}`: ''}`)
-                    .setColor("RED");
-                message.channel.send(embed)
+                message.channel.send(noneFound)
             }
         })
 
