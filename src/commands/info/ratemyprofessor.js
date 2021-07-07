@@ -4,13 +4,6 @@ const { MessageEmbed } = require('discord.js');
 const emojis = require('../../utils/emojis.json')
 const { EmbedReactionMenu } = require('../ReactionMenu.js');
 
-const noneFound = new MessageEmbed()
-    .setTitle(`Rate My Professor`)
-    .setDescription(`${emojis.fail} No Professors Found`)
-    .setThumbnail(`https://i.imgur.com/7qt9vAg.png`)
-    .setFooter(`Search Query: "${profQuery}" ${schoolQuery ? `| School Filter: ${schoolFilter.length > 0 ? `${school[0].node.name}` : 'No schools found with provided name'}`: ''}`)
-    .setColor("RED");
-
 function generateRMPembed(prof, profQuery, schoolQuery, school) {
     return new MessageEmbed()
         .setTitle(`${prof.firstName} ${prof.lastName} | ${prof.department} `, '', `https://www.ratemyprofessors.com/campusRatings.jsp?sid=${prof.school.legacyId}`)
@@ -60,6 +53,14 @@ module.exports = class RateMyProfessor extends Command {
         }
         const schoolFilter = school && school.length ? school[0].node.id : ''
         rmp.searchProfessors(profQuery, schoolFilter).then(async result=> {
+
+            const noneFound = new MessageEmbed()
+                .setTitle(`Rate My Professor`)
+                .setDescription(`${emojis.fail} No Professors Found`)
+                .setThumbnail(`https://i.imgur.com/7qt9vAg.png`)
+                .setFooter(`Search Query: "${profQuery}" ${schoolQuery ? `| School Filter: ${schoolFilter.length > 0 ? `${school[0].node.name}` : 'No schools found with provided name'}`: ''}`)
+                .setColor("RED");
+
             let profs
             try { profs = (JSON.parse(result)).data.newSearch.teachers.edges }
             catch (e) {
