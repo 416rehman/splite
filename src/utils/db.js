@@ -98,7 +98,7 @@ db.prepare(`
 
 // MATCHES TABLE
 db.prepare(`
-  CREATE TABLE IF NOT EXISTS confessions (
+  CREATE TABLE IF NOT EXISTS matches (
     matchID INTEGER,
     userID TEXT,
     shownUserID TEXT,
