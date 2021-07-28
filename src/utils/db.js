@@ -110,7 +110,7 @@ db.prepare(`
 
 // BIOS TABLE
 db.prepare(`
-  CREATE TABLE IF NOT EXISTS users (
+  CREATE TABLE IF NOT EXISTS bios (
     user_id TEXT,
     bio TEXT,
     PRIMARY KEY (user_id)
