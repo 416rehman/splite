@@ -54,7 +54,6 @@ module.exports = class textHelpCommand extends Command {
 
     } else
     {
-
       // Get commands
       const commands = {};
       for (const type of Object.values(message.client.types)) {

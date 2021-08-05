@@ -165,7 +165,7 @@ module.exports = class HelpCommand extends Command {
                 b.defer()
             });
             collector.on('end', () => {
-                tempEmbed.setFooter('Expired! For text-only help command, type \`${prefix}texthelp\` \n' + message.member.displayName ,
+                tempEmbed.setFooter(`Expired! For text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
                     message.author.displayAvatarURL({ dynamic: true })
                 )
                 msg.edit({ buttons: [], embed: tempEmbed })
