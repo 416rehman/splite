@@ -37,7 +37,6 @@ module.exports = class HelpCommand extends Command {
             (command.type != OWNER || message.client.isOwner(message.member)) &&
             !disabledCommands.includes(command.name)
         ) {
-
             embed // Build specific command help embed
                 .setTitle(`Command: \`${command.name}\``)
                 .setThumbnail('https://i.imgur.com/B0XSinY.png')
@@ -49,11 +48,12 @@ module.exports = class HelpCommand extends Command {
                 .setColor(message.guild.me.displayHexColor);
             if (command.aliases) embed.addField('Aliases', command.aliases.map(c => `\`${c}\``).join(' '));
             if (command.examples) embed.addField('Examples', command.examples.map(c => `\`${prefix}${c}\``).join('\n'));
-
+            return message.channel.send(embed);
         } else if (args.length > 0 && !all) {
             return this.sendErrorMessage(message, 0, 'Unable to find command, please check provided command');
 
-        } else {
+        } else
+        {
 
             // Get commands
             const commands = {};

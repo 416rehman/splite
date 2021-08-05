@@ -52,7 +52,8 @@ module.exports = class textHelpCommand extends Command {
     } else if (args.length > 0 && !all) {
       return this.sendErrorMessage(message, 0, 'Unable to find command, please check provided command');
 
-    } else {
+    } else
+    {
 
       // Get commands
       const commands = {};
