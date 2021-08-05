@@ -142,7 +142,7 @@ module.exports = class HelpCommand extends Command {
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`
           ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n`)
-                    .setFooter('Expires in 60 seconds \n' + message.member.displayName ,
+                    .setFooter(`Expires in 60 seconds \n For text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
                         message.author.displayAvatarURL({ dynamic: true })
                     )
                     .setTimestamp()
@@ -165,7 +165,7 @@ module.exports = class HelpCommand extends Command {
                 b.defer()
             });
             collector.on('end', () => {
-                tempEmbed.setFooter(`Expired! For text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
+                tempEmbed.setFooter(`Expired! \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
                     message.author.displayAvatarURL({ dynamic: true })
                 )
                 msg.edit({ buttons: [], embed: tempEmbed })
