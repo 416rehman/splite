@@ -28,10 +28,10 @@ module.exports = class shipCommand extends Command {
         this.addToCollection(message, member, member2, shipScore);
 
         const progress = message.client.utils.createProgressBar(shipScore)
-        const bg = await jimp.read('/root/splite/data/ship/bgt.png')
+        const bg = await jimp.read(__dirname + '/data/ship/bgt.png')
         const av1 = await jimp.read(this.getAvatarURL(member2))
         const av2 = await jimp.read(this.getAvatarURL(member))
-        const overlay = await jimp.read(shipScore > 50 ? '/root/splite/data/ship/overlay.png' : '/root/splite/data/ship/bOverlay.png')
+        const overlay = await jimp.read(shipScore > 50 ? __dirname + '/data/ship/overlay.png' : __dirname + '/data/ship/bOverlay.png')
 
         av1.resize(512,512);
         av2.resize(512,512);
