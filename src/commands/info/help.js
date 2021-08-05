@@ -113,7 +113,9 @@ module.exports = class HelpCommand extends Command {
           **Command Information:** \`${prefix}help [command]\`
           ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n
         `)
-                .setFooter('Expires in 60 seconds.\n' + message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+                .setFooter(`Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
+                    message.author.displayAvatarURL({ dynamic: true })
+                )
                 .setTimestamp()
                 .setThumbnail('https://i.imgur.com/B0XSinY.png')
                 .setColor(message.guild.me.displayHexColor)
@@ -142,7 +144,7 @@ module.exports = class HelpCommand extends Command {
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`
           ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n`)
-                    .setFooter(`Expires in 60 seconds \n For text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
+                    .setFooter(`Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
                         message.author.displayAvatarURL({ dynamic: true })
                     )
                     .setTimestamp()
