@@ -57,7 +57,7 @@ module.exports = class BioCommand extends Command {
       }
       else if ( args.length === 1 && args[0].startsWith('<@!') && args[0].endsWith('>'))
       {
-        let userId = args[0].replace('<@!', '').replace('>','');
+        let userId = args[0].replace('<@', '').replace('!', '').replace('>','');
         let {
           bio: Bio
         } = message.client.db.bios.selectBio.get(userId);
