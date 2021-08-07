@@ -34,7 +34,7 @@ module.exports = class BotInfoCommand extends Command {
       .addField('Tech', `\`\`\`asciidoc\n${tech}\`\`\``)
       .addField(
         'Links', 
-        `**[Invite Me](${message.message.client.link}) | ` +
+        `**[Invite Me](${message.client.link}) | ` +
         `Developed By ${message.client.ownerTag}**`
       )
       .setImage('https://i.imgur.com/B0XSinY.png')
