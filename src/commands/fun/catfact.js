@@ -12,7 +12,7 @@ module.exports = class CatFactCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await fetch('https://catfact.ninja/fact');
       const fact = (await res.json()).fact;

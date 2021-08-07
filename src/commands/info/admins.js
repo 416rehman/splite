@@ -12,7 +12,7 @@ module.exports = class AdminsCommand extends Command {
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS']
     });
   }
-  run(message) {
+  run(message, args) {
     
     // Get admin role
     const adminRoleId = message.client.db.settings.selectAdminRoleId.pluck().get(message.guild.id);

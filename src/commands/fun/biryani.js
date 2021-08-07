@@ -11,7 +11,7 @@ module.exports = class biryaniCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await fetch('https://biriyani.anoram.com/get');
       const img = (await res.json()).image;

@@ -12,7 +12,7 @@ module.exports = class InviteMeCommand extends Command {
       type: client.types.INFO
     });
   }
-  run(message) {
+  run(message, args) {
     const embed = new MessageEmbed()
       .setTitle('Invite Me')
       .setThumbnail('https://i.imgur.com/B0XSinY.png')

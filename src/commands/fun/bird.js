@@ -11,7 +11,7 @@ module.exports = class BirdCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await fetch('http://shibe.online/api/birds');
       const img = (await res.json())[0];

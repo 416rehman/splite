@@ -12,7 +12,7 @@ module.exports = class ServerCountCommand extends Command {
       type: client.types.INFO
     });
   }
-  run(message) {
+  run(message, args) {
     const counts = stripIndent`
       Servers :: ${message.client.guilds.cache.size}
       Users   :: ${message.client.users.cache.size}

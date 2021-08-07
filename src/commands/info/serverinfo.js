@@ -39,7 +39,7 @@ module.exports = class ServerInfoCommand extends Command {
       type: client.types.INFO
     });
   }
-  run(message) {
+  run(message, args) {
 
     // Get roles count
     const roleCount = message.guild.roles.cache.size - 1; // Don't count @everyone

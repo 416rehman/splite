@@ -12,7 +12,7 @@ module.exports = class EmojisCommand extends Command {
       type: client.types.INFO
     });
   }
-  run(message) {
+  run(message, args) {
 
     const emojis = [];
     message.guild.emojis.cache.forEach(e => emojis.push(`${e} **-** \`:${e.name}:\``));

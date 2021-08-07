@@ -11,7 +11,7 @@ module.exports = class FoxCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await fetch('https://randomfox.ca/floof/');
       const img = (await res.json()).image;

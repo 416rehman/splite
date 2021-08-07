@@ -11,7 +11,7 @@ module.exports = class PrefixCommand extends Command {
       type: client.types.INFO
     });
   }
-  run(message) {
+  run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id); // Get prefix
     const embed = new MessageEmbed()
       .setTitle(`${message.client.name}\'s Prefix`)

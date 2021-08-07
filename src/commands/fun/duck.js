@@ -11,7 +11,7 @@ module.exports = class DuckCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await fetch('https://random-d.uk/api/v2/random');
       const img = (await res.json()).url;

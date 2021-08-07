@@ -11,7 +11,7 @@ module.exports = class ShibeCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await fetch('http://shibe.online/api/shibes');
       const img = (await res.json())[0];

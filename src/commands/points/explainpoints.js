@@ -13,7 +13,7 @@ module.exports = class ExplainPointsCommand extends Command {
       type: client.types.POINTS
     });
   }
-  run(message) {
+  run(message, args) {
 
     // Get disabled leaderboard
     let disabledCommands = message.client.db.settings.selectDisabledCommands.pluck().get(message.guild.id) || [];

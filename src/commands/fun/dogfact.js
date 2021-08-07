@@ -12,7 +12,7 @@ module.exports = class DogFactCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await fetch('https://dog-api.kinduff.com/api/facts');
       const fact = (await res.json()).facts[0];

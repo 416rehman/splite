@@ -11,7 +11,7 @@ module.exports = class CoinFlipCommand extends Command {
       type: client.types.FUN
     });
   }
-  run(message) {
+  run(message, args) {
     const n = Math.floor(Math.random() * 2);
     let result;
     if (n === 1) result = 'heads';

@@ -11,7 +11,7 @@ module.exports = class MemeCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       let res = await fetch('https://meme-api.herokuapp.com/gimme');
       res = await res.json();

@@ -13,7 +13,7 @@ module.exports = class ServersCommand extends Command {
       ownerOnly: true
     });
   }
-  run(message) {
+  run(message, args) {
 
     const servers = message.client.guilds.cache.array().map(guild => {
       return `\`${guild.id}\` - **${guild.name}** - \`${guild.members.cache.size}\` members`;

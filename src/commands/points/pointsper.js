@@ -13,7 +13,7 @@ module.exports = class PointPerCommand extends Command {
       type: client.types.POINTS
     });
   }
-  run(message) {
+  run(message, args) {
     
     // Get points values
     const { message_points: messagePoints, command_points: commandPoints, voice_points: voicePoints } 

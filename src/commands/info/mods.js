@@ -12,7 +12,7 @@ module.exports = class ModsCommand extends Command {
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS']
     });
   }
-  run(message) {
+  run(message, args) {
     
     // Get mod role
     const modRoleId = message.client.db.settings.selectModRoleId.pluck().get(message.guild.id);

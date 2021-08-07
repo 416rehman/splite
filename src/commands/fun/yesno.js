@@ -12,7 +12,7 @@ module.exports = class YesNoCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const res = await (await fetch('http://yesno.wtf/api/')).json();
       let answer = message.client.utils.capitalize(res.answer);

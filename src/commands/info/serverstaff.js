@@ -11,7 +11,7 @@ module.exports = class ServerStaffCommand extends Command {
       type: client.types.INFO
     });
   }
-  run(message) {
+  run(message, args) {
     
     // Get mod role
     const modRoleId = message.client.db.settings.selectModRoleId.pluck().get(message.guild.id);

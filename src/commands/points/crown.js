@@ -12,7 +12,7 @@ module.exports = class CrownCommand extends Command {
       type: client.types.POINTS
     });
   }
-  run(message) {
+  run(message, args) {
     const { crown_role_id: crownRoleId, crown_schedule: crownSchedule } = 
       message.client.db.settings.selectCrown.get(message.guild.id);
     const crownRole = message.guild.roles.cache.get(crownRoleId) || '`None`';

@@ -11,7 +11,7 @@ module.exports = class dadjokeCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     try {
       const options = {
         method: 'GET',

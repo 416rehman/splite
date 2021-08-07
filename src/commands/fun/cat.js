@@ -12,7 +12,7 @@ module.exports = class CatCommand extends Command {
       type: client.types.FUN
     });
   }
-  async run(message) {
+  async run(message, args) {
     const apiKey = message.client.apiKeys.catApi;
     try {
       const res = await fetch('https://api.thecatapi.com/v1/images/search', { headers: { 'x-api-key': apiKey }});

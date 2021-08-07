@@ -12,7 +12,7 @@ module.exports = class SnipeCommand extends Command {
       type: client.types.INFO
     });
   }
-  async run(message) {
+  async run(message, args) {
     const embed = new MessageEmbed()
       .setDescription('`Sniping...`')
       .setColor("RANDOM");

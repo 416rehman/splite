@@ -11,7 +11,7 @@ module.exports = class ServerIconCommand extends Command {
       type: client.types.INFO
     });
   }
-  run(message) {
+  run(message, args) {
     const embed = new MessageEmbed()
       .setTitle(`${message.guild.name}'s Icon`)
       .setImage(message.guild.iconURL({ dynamic: true, size: 512 }))
