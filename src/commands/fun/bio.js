@@ -16,7 +16,7 @@ module.exports = class BioCommand extends Command {
   async run(message, args) {
 
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
-    // Get message
+    // Show currrent bio of the author
     if (!args[0])
     {
       let {
@@ -40,7 +40,7 @@ module.exports = class BioCommand extends Command {
       }
     }
     else
-    {
+    { //Clear the bio
       if (args[0] === 'clear' && args.length === 1)
       {
         try {
@@ -55,7 +55,8 @@ module.exports = class BioCommand extends Command {
           console.log(e)
         }
       }
-      else if ( args.length === 1 && args[0].startsWith('<@!') && args[0].endsWith('>'))
+
+      else if ( args.length === 1 && args[0].startsWith('<@') && args[0].endsWith('>'))
       {
         let userId = args[0].replace('<@', '').replace('!', '').replace('>','');
         let {
