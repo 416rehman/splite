@@ -10,7 +10,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
       aliases: ['setfarewellmsg', 'setfm', 'sfm'],
       usage: 'setfarewellmessage <message>',
       description: oneLine`
-        Sets the message Splite will say when someone leaves your server.
+        Sets the message ${client.name} will say when someone leaves your server.
         You may use \`?member\` to substitute for a user mention,
         \`?username\` to substitute for someone's username,
         \`?tag\` to substitute for someone's full Discord tag (username + discriminator),

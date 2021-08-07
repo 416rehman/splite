@@ -10,7 +10,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
       aliases: ['setvr', 'svr'],
       usage: 'setverificationrole <role mention/ID>',
       description: oneLine`
-        Sets the role Splite will give members who are verified.        
+        Sets the role ${client.name} will give members who are verified.        
         A \`verification role\`, a \`verification channel\`, 
         and a \`verification message\` must be set to enable server verification.
         \nUse \`clearverificationrole\` role to clear the current \`verification role\`.

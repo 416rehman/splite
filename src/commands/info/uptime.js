@@ -8,7 +8,7 @@ module.exports = class UptimeCommand extends Command {
       name: 'uptime',
       aliases: ['up'],
       usage: 'uptime',
-      description: 'Fetches Splite\'s current uptime.',
+      description: `Fetches ${client.name}\'s current uptime.`,
       type: client.types.INFO
     });
   }
@@ -20,7 +20,7 @@ module.exports = class UptimeCommand extends Command {
     const seconds = (d.seconds() == 1) ? `${d.seconds()} second` : `${d.seconds()} seconds`;
     const date = moment().subtract(d, 'ms').format('dddd, MMMM Do YYYY');
     const embed = new MessageEmbed()
-      .setTitle('Splite\'s Uptime')
+      .setTitle(`${message.client.name}\'s Uptime`)
       .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(`\`\`\`prolog\n${days}, ${hours}, ${minutes}, and ${seconds}\`\`\``)
       .addField('Date Launched', date) 

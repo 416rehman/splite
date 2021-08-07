@@ -3,7 +3,7 @@ const { fail } = require('../utils/emojis.json');
 
 module.exports = (client, guild) => {
 
-  client.logger.info(`Splite has left ${guild.name}`);
+  client.logger.info(`${client.name} has left ${guild.name}`);
   const serverLog = client.channels.cache.get(client.serverLogId);
   if (serverLog)
     serverLog.send(new MessageEmbed().setDescription(`${client.user} has left **${guild.name}** ${fail}`));

@@ -10,7 +10,7 @@ module.exports = class clydeCommand extends Command {
       usage: 'clyde <text>',
       description: 'Generates a clyde image with provided text',
       type: client.types.FUN,
-      examples: ['clyde Splite is the best bot!']
+      examples: [`clyde ${client.name} is the best bot!`]
     });
   }
   async run(message, args) {

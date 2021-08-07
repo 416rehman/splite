@@ -8,7 +8,7 @@ module.exports = class ServerCountCommand extends Command {
       name: 'servercount',
       aliases: ['usercount', 'sc', 'uc'],
       usage: 'servercount',
-      description: 'Fetches Splite\'s current server and user count.',
+      description: `Fetches ${client.name}\'s current server and user count.`,
       type: client.types.INFO
     });
   }
@@ -18,7 +18,7 @@ module.exports = class ServerCountCommand extends Command {
       Users   :: ${message.client.users.cache.size}
     `;
     const embed = new MessageEmbed()
-      .setTitle('Splite\'s Server Count')
+      .setTitle(`${message.client.name}\'s Server Count`)
       .setDescription(stripIndent`\`\`\`asciidoc\n${counts}\`\`\``)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()

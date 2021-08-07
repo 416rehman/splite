@@ -12,7 +12,7 @@ module.exports = class SetModChannelsCommand extends Command {
       description: oneLine`
         Sets the moderator only text channels for your server.
         Only \`${client.utils.capitalize(client.types.MOD)}\` type commands will work in these channels,
-        and Splite will only respond to members with permission to use those commands.
+        and ${client.name} will only respond to members with permission to use those commands.
         \nUse \`clearmodchannels\` to clear the current \`mod channels\`.
       `,
       type: client.types.ADMIN,

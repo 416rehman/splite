@@ -10,7 +10,7 @@ module.exports = class clearFarewellMessageCommand extends Command {
       aliases: ['clearfarewellmsg', 'clearfm', 'cfm'],
       usage: 'clearfarewellmessage',
       description: oneLine`
-        clears the message Splite will say when someone leaves your server.
+        clears the message ${client.name} will say when someone leaves your server.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],

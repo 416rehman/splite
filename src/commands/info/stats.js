@@ -10,7 +10,7 @@ module.exports = class StatsCommand extends Command {
       name: 'stats',
       aliases: ['statistics', 'metrics'],
       usage: 'stats',
-      description: 'Fetches Splite\'s statistics.',
+      description: `Fetches ${client.name}\'s statistics.`,
       type: client.types.INFO
     });
   }
@@ -35,7 +35,7 @@ module.exports = class StatsCommand extends Command {
       RAM Usage :: ${usedMemMb} MB 
     `;
     const embed = new MessageEmbed()
-      .setTitle('Splite\'s Statistics')
+      .setTitle(`${message.client.name}\'s Statistics`)
       .addField('Commands', `\`${message.client.commands.size}\` commands`, true)
       .addField('Aliases', `\`${message.client.aliases.size}\` aliases`, true)
       .addField('Command Types', `\`${Object.keys(message.client.types).length}\` command types`, true)
@@ -43,8 +43,8 @@ module.exports = class StatsCommand extends Command {
       .addField('Server', `\`\`\`asciidoc\n${serverStats}\`\`\``)
         .addField(
             '**Links**',
-            '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands) | ' +
-            'Developed By Split#0420**')
+            `**[Invite Me](${message.client.link}) | ` +
+            `Developed By ${message.client.ownerTag}**`)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);

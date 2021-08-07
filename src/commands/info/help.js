@@ -107,7 +107,7 @@ module.exports = class HelpCommand extends Command {
             const size = message.client.commands.size - commands[OWNER].length;
 
             embed // Build help embed
-                .setTitle('Splite\'s Commands')
+                .setTitle(`${message.client.name}\'s Commands`)
                 .setDescription(stripIndent`
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`
@@ -121,8 +121,8 @@ module.exports = class HelpCommand extends Command {
                 .setColor(message.guild.me.displayHexColor)
                 .addField(
                     '**Links**',
-                    '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands) | ' +
-                    'Developed By Split#0420**')
+                    `**[Invite Me](${message.client.link}) | ` +
+                    `Developed By ${message.client.ownerTag}**`)
 
             const chunks = 4 //tweak this to add more items per line
             let buttons = new Array(Math.ceil(allButtons.length / chunks))
@@ -139,7 +139,7 @@ module.exports = class HelpCommand extends Command {
 
                 const type = `${b.id}`.replace(/_/g, ' ')
                 tempEmbed.fields = []
-                tempEmbed = tempEmbed.setTitle('Splite\'s Commands')
+                tempEmbed = tempEmbed.setTitle(`${message.client.name}\'s Commands`)
                     .setDescription(stripIndent`
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`

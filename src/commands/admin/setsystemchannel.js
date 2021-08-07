@@ -10,9 +10,9 @@ module.exports = class SetSystemChannelCommand extends Command {
       aliases: ['setsc', 'ssc'],
       usage: 'setsystemchannel <channel mention/ID>',
       description: oneLine`
-        Sets the system text channel for your server. This is where Splite's system messages will be sent. 
+        Sets the system text channel for your server. This is where ${client.name}'s system messages will be sent. 
         Provide no channel to clear the current \`system channel\`. Clearing this setting is **not recommended** 
-        as Splite requires a \`system channel\` to notify you about important errors. \n Use \`clearsystemchannel\` to clear the current \`system channel\`
+        as ${client.name} requires a \`system channel\` to notify you about important errors. \n Use \`clearsystemchannel\` to clear the current \`system channel\`
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],

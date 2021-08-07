@@ -7,14 +7,14 @@ module.exports = class PrefixCommand extends Command {
       name: 'prefix',
       aliases: ['pre'],
       usage: 'prefix',
-      description: 'Fetches Splite\'s current prefix.',
+      description: `Fetches ${client.name}\'s current prefix.`,
       type: client.types.INFO
     });
   }
   run(message) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id); // Get prefix
     const embed = new MessageEmbed()
-      .setTitle('Splite\'s Prefix')
+      .setTitle(`${message.client.name}\'s Prefix`)
       .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .addField('Prefix', `\`${prefix}\``, true)
       .addField('Example', `\`${prefix}ping\``, true)

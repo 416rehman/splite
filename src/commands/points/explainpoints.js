@@ -9,7 +9,7 @@ module.exports = class ExplainPointsCommand extends Command {
       name: 'explainpoints',
       aliases: ['explainp', 'ep', 'howtopoints', 'h2points'],
       usage: 'explainpoints',
-      description: 'Explains the various aspects about Splite\'s points and crown systems.',
+      description: `Explains the various aspects about ${client.name}\'s points and crown systems.`,
       type: client.types.POINTS
     });
   }

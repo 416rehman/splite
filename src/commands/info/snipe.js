@@ -32,7 +32,7 @@ module.exports = class SnipeCommand extends Command {
     }
     else
     {
-      embed.setTitle(`Splite Sniper`)
+      embed.setTitle(`${message.client.name} Sniper`)
           .setDescription(`${fail} There is nothing to snipe!`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp();

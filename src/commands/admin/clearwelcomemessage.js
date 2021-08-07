@@ -10,7 +10,7 @@ module.exports = class clearWelcomeMessageCommand extends Command {
       aliases: ['clearwelcomemsg', 'clearwm', 'cwm'],
       usage: 'clearwelcomemessage <message>',
       description: oneLine`
-        Clears the message Splite will say when someone joins your server.
+        Clears the message ${client.name} will say when someone joins your server.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],

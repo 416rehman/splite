@@ -10,7 +10,7 @@ module.exports = class PurgeBotCommand extends Command {
       usage: 'purgebot [channel mention/ID] <message count> [reason]',
       description: oneLine`
         Sifts through the specified amount of messages in the provided channel
-        and deletes all Splite commands and messages from Splite.
+        and deletes all commands and messages from bots.
         If no channel is given, the messages will be deleted from the current channel.
         If no amount is specified, upto 100 messages will be deleted.
         No more than 100 messages may be sifted through at a time.

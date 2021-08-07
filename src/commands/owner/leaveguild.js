@@ -9,7 +9,7 @@ module.exports = class LeaveGuildCommand extends Command {
       name: 'leaveguild',
       aliases: ['leave'],
       usage: 'leaveguild <server ID>',
-      description: 'Forces Splite to leave the specified server.',
+      description: `Forces ${client.name} to leave the specified server.`,
       type: client.types.OWNER,
       ownerOnly: true,
       examples: ['leaveguild 709992782252474429']

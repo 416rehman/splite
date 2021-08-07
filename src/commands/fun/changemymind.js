@@ -10,7 +10,7 @@ module.exports = class changemymindCommand extends Command {
       usage: 'changemymind <text>',
       description: 'Generates a changemymind image with provided text',
       type: client.types.FUN,
-      examples: ['changemymind Splite is the best bot!']
+      examples: [`changemymind ${client.name} is the best bot!`]
     });
   }
   async run(message, args) {

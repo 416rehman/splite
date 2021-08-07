@@ -10,7 +10,7 @@ module.exports = class MockCommand extends Command {
       usage: 'mock <text>',
       description: 'Generates a "mocking-spongebob" image with provided text',
       type: client.types.FUN,
-      examples: ['mock Splite is the best bot!']
+      examples: [`mock ${client.name} is the best bot!`]
     });
   }
   async run(message, args) {

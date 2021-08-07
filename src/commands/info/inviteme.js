@@ -8,7 +8,7 @@ module.exports = class InviteMeCommand extends Command {
       name: 'inviteme',
       aliases: ['invite', 'invme', 'im'],
       usage: 'inviteme',
-      description: 'Generates a link you can use to invite Splite to your own server.',
+      description: `Generates a link you can use to invite ${client.name} to your own server.`,
       type: client.types.INFO
     });
   }
@@ -17,11 +17,11 @@ module.exports = class InviteMeCommand extends Command {
       .setTitle('Invite Me')
       .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(oneLine`
-        Click [here](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands)
+        Click [here](${message.client.link})
         to invite me to your server!
       `)
       .addField('Developed By',
-        '**Split#0420**'
+        `**${message.client.ownerTag}**`
       )
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()

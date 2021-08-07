@@ -8,9 +8,9 @@ module.exports = class FeedbackCommand extends Command {
       name: 'feedback',
       aliases: ['fb'],
       usage: 'feedback <message>',
-      description: 'Sends a message to the Splite developers feedback page.',
+      description: `Sends a message to the ${client.name} developers feedback page.`,
       type: client.types.MISC,
-      examples: ['feedback We love Splite!']
+      examples: [`feedback We love ${client.name}!`]
     });
   }
   run(message, args) {
@@ -39,7 +39,7 @@ module.exports = class FeedbackCommand extends Command {
       .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(oneLine`
         Successfully sent feedback!
-        Please contact the developer (split#0420) to further discuss your feedback.
+        Please contact the developer (${message.client.ownerTag}) to further discuss your feedback.
       `) 
       .addField('Member', message.member, true)
       .addField('Message', feedback)

@@ -10,7 +10,7 @@ module.exports = class SetCrownRoleCommand extends Command {
       aliases: ['setcr', 'scr'],
       usage: 'setcrownrole <role mention/ID>',
       description: oneLine`
-        Sets the role Splite will give to the member with the most points each 24 hours.
+        Sets the role ${client.name} will give to the member with the most points each 24 hours.
         \nUse \`clearcrownrole\` to clear the current \`crown role\`.
         To disable the crown feature, run this command without providing a role.
       `,

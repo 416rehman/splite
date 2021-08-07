@@ -10,7 +10,7 @@ module.exports = class HateCommand extends Command {
       usage: 'hate <text>',
       description: 'Generates an "all my homies hate" image with provided text',
       type: client.types.FUN,
-      examples: ['hate Splite is the best bot!']
+      examples: [`hate ${client.name} is the best bot!`]
     });
   }
   async run(message, args) {

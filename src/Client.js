@@ -20,6 +20,20 @@ class Client extends Discord.Client {
   constructor(config, options, partials = {}) {
     
     super({options, partials: ['MESSAGE', 'CHANNEL', 'REACTION']});
+    /**
+     * Bot name
+     */
+    this.name = config.botName;
+
+    /**
+     * Invite Link for this bot
+     */
+    this.link = config.inviteLink;
+
+    /**
+     * Discord tag of the owner. i.e Split#0420
+     */
+    this.ownerTag = config.ownerDiscordTag;
 
     /**
      * Create logger

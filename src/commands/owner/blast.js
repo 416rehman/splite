@@ -6,7 +6,7 @@ module.exports = class BlastCommand extends Command {
     super(client, {
       name: 'blast',
       usage: 'blast <message>',
-      description: 'Sends a message to every server that Splite is in that has a system channel.',
+      description: `Sends a message to every server that ${client.name} is in that has a system channel.`,
       type: client.types.OWNER,
       ownerOnly: true,
       examples: ['blast Hello World!']
@@ -25,7 +25,7 @@ module.exports = class BlastCommand extends Command {
         systemChannel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])
       ) {
         const embed = new MessageEmbed()
-          .setTitle('Splite System Message')
+          .setTitle(`${message.client.name} System Message`)
           .setThumbnail('https://i.imgur.com/B0XSinY.png')
           .setDescription(msg)
           .setTimestamp()

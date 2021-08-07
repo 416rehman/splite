@@ -8,7 +8,7 @@ module.exports = class ServersCommand extends Command {
       name: 'servers',
       aliases: ['servs'],
       usage: 'servers',
-      description: 'Displays a list of Splite\'s joined servers.',
+      description: `Displays a list of ${client.name}\'s joined servers.`,
       type: client.types.OWNER,
       ownerOnly: true
     });

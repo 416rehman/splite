@@ -9,7 +9,7 @@ module.exports = class AfkCommand extends Command {
       usage: 'afk <message>',
       description: 'Set your afk status. While you are afk, everytime you get pinged, the user will see your afk status',
       type: client.types.FUN,
-      examples: ['afk Checking out splite!']
+      examples: [`afk Checking out ${client.name}!`]
     });
   }
   async run(message, args) {

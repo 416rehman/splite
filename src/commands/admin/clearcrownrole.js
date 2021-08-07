@@ -10,7 +10,7 @@ module.exports = class clearCrownRoleCommand extends Command {
       aliases: ['clearcr', 'ccr'],
       usage: 'clearcrownrole',
       description: oneLine`
-        Clears the role Splite will give to the member with the most points each 24 hours.
+        Clears the role ${client.name} will give to the member with the most points each 24 hours.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],

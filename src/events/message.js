@@ -89,16 +89,16 @@ module.exports = (client, message) => {
         !modChannelIds.includes(message.channel.id)
     ) {
       const embed = new MessageEmbed()
-          .setTitle('Hi, I\'m Splite. Need help?')
+          .setTitle('Hi, I\'m ${client.name}. Need help?')
           .setThumbnail('https://i.imgur.com/B0XSinY.png')
           .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
           .addField('Invite Me', oneLine`
           You can add me to your server by clicking 
-          [here](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands)!
+          [here](${message.client.link})!
         `)
           .addField('Support', oneLine`
           If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`)
-          .setFooter('DM split#0420 to speak directly with the developer!')
+          .setFooter(`DM ${message.client.ownerTag} to speak directly with the developer!`)
           .setColor(message.guild.me.displayHexColor);
       message.channel.send(embed);
     }

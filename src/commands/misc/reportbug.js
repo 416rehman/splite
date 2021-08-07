@@ -9,7 +9,7 @@ module.exports = class ReportBugCommand extends Command {
       aliases: ['bugreport', 'report', 'bug', 'rb', 'br'],
       usage: 'reportbug <message>',
       description: oneLine`
-        Sends a message to the Splite developers bug report page.
+        Sends a message to the ${client.name} developers bug report page.
         When reporting a bug, please include as much information as possible.
       `,
       type: client.types.MISC,
@@ -42,7 +42,7 @@ module.exports = class ReportBugCommand extends Command {
       .setThumbnail('https://i.imgur.com/B0XSinY.png')
       .setDescription(oneLine`
         Successfully sent bug report!
-        Please contact the developer (split#0420) if you wish to further discuss your issue.
+        Please contact the developer (${message.client.ownerTag}) if you wish to further discuss your issue.
       `) 
       .addField('Member', message.member, true)
       .addField('Message', report)

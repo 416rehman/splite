@@ -10,7 +10,7 @@ module.exports = class SetAutoKickCommand extends Command {
       aliases: ['setak', 'sak'],
       usage: 'setautokick <warn count>',
       description: oneLine`
-        Sets the amount of warns needed before Splite will automatically kick someone from your server.\nUse \`clearautokick\` to disable \`auto kick\`.
+        Sets the amount of warns needed before ${client.name} will automatically kick someone from your server.\nUse \`clearautokick\` to disable \`auto kick\`.
       `,
       type: client.types.ADMIN,
       userPermissions: ['MANAGE_GUILD'],

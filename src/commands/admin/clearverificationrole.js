@@ -10,7 +10,7 @@ module.exports = class clearVerificationRoleCommand extends Command {
       aliases: ['clearvr', 'cvr'],
       usage: 'clearverificationrole',
       description: oneLine`
-        Clears the role Splite will give members who are verified.
+        Clears the role ${client.name} will give members who are verified.
       `,
       type: client.types.ADMIN,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],

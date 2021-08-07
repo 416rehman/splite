@@ -19,7 +19,7 @@ module.exports = class clearPrefixCommand extends Command {
     const defaultPrefix = '$';
 
     message.client.db.settings.updatePrefix.run(defaultPrefix, message.guild.id);
-    message.guild.me.setNickname(`[${message.client.db.settings.selectPrefix.pluck().get(message.guild.id)}] Splite`)
+    message.guild.me.setNickname(`[${message.client.db.settings.selectPrefix.pluck().get(message.guild.id)}] ${message.client.name}`)
     const embed = new MessageEmbed()
       .setTitle('Settings: `System`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))

@@ -1,8 +1,8 @@
 const Collection = require("@discordjs/collection");
 module.exports = async (client) => {
   const activities = [
-    { name: '@splite help', type: 'LISTENING' },
-    { name: '@Splite', type: 'LISTENING' }
+    { name: `@${client.name} help`, type: 'LISTENING' },
+    { name: `@${client.name}`, type: 'LISTENING' }
   ];
 
   // Update presence
@@ -133,7 +133,7 @@ module.exports = async (client) => {
     client.db.settings.deleteGuild.run(guild.guild_id);
     client.db.users.deleteGuild.run(guild.guild_id);
 
-    client.logger.info(`Splite has left ${guild.guild_name}`);
+    client.logger.info(`${client.name} has left ${guild.guild_name}`);
   }
 
   //Slash Commands
@@ -149,6 +149,6 @@ module.exports = async (client) => {
         client.utils.callSlashCommand(command, client, interaction)
   })
 
-  client.logger.info('Splite is now online');
-  client.logger.info(`Splite is running on ${client.guilds.cache.size} server(s)`);
+  client.logger.info(`${client.name} is now online`);
+  client.logger.info(`${client.name} is running on ${client.guilds.cache.size} server(s)`);
 };

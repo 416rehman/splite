@@ -53,7 +53,7 @@ module.exports = {
                             let noVotes = (msg.reactions.cache.get('👎').count)
                             if (noVotes > yesVotes) {
                                 await user.send(`Sorry, you were voted off of the server. You received ${yesVotes} 👍 and ${noVotes} 👎`).catch(() => console.log("Can't send DM to your user!"));
-                                try {await msg.guild.members.cache.get(user.id).ban({days: 0, reason: 'Splite JoinVoting - Voted Off'})}
+                                try {await msg.guild.members.cache.get(user.id).ban({days: 0, reason: `${client.name} JoinVoting - Voted Off`})}
                                 catch{
                                     embed
                                         .setColor("RED")

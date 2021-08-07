@@ -21,7 +21,7 @@ module.exports = class SetPrefixCommand extends Command {
     else if (prefix.length > 3) 
       return this.sendErrorMessage(message, 0, 'Please ensure the prefix is no larger than 3 characters');
     message.client.db.settings.updatePrefix.run(prefix, message.guild.id);
-    message.guild.me.setNickname(`[${message.client.db.settings.selectPrefix.pluck().get(message.guild.id)}] Splite`)
+    message.guild.me.setNickname(`[${message.client.db.settings.selectPrefix.pluck().get(message.guild.id)}] ${message.client.name}`)
     const embed = new MessageEmbed()
       .setTitle('Settings: `System`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))

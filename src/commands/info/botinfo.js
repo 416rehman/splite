@@ -10,12 +10,12 @@ module.exports = class BotInfoCommand extends Command {
       name: 'botinfo',
       aliases: ['bot', 'bi'],
       usage: 'botinfo',
-      description: 'Fetches Splite\'s bot information.',
+      description: `Fetches ${client.name}\'s bot information.`,
       type: client.types.INFO
     });
   }
   run(message) {
-    const botOwner = message.client.users.cache.get(message.client.ownerId);
+    const botOwner = message.client.ownerTag;
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const tech = stripIndent`
       Version     :: ${pkg.version}
@@ -24,9 +24,9 @@ module.exports = class BotInfoCommand extends Command {
       Database    :: SQLite
     `;
     const embed = new MessageEmbed()
-      .setTitle('Splite\'s Bot Information')
+      .setTitle(`${message.client.name}\'s Bot Information`)
       .setDescription(oneLine`
-        Splite a multi-purpose bot. Based on Calypso.
+        ${message.client.name} a multi-purpose bot. Based on Calypso.
       `)
       .addField('Prefix', `\`${prefix}\``, true)
       .addField('Client ID', `\`${message.client.user.id}\``, true)
@@ -34,8 +34,8 @@ module.exports = class BotInfoCommand extends Command {
       .addField('Tech', `\`\`\`asciidoc\n${tech}\`\`\``)
       .addField(
         'Links', 
-        '**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands) | ' +
-        'Developed By Split**'
+        `**[Invite Me](${message.message.client.link}) | ` +
+        `Developed By ${message.client.ownerTag}**`
       )
       .setImage('https://i.imgur.com/B0XSinY.png')
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))

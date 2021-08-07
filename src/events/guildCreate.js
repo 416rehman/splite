@@ -3,7 +3,7 @@ const { success } = require('../utils/emojis.json');
 
 module.exports = async (client, guild) => {
 
-  client.logger.info(`Splite has joined ${guild.name}`);
+  client.logger.info(`${client.name} has joined ${guild.name}`);
   const serverLog = client.channels.cache.get(client.serverLogId);
   if (serverLog)
     serverLog.send(new MessageEmbed().setDescription(`${client.user} has joined **${guild.name}** ${success}`));
@@ -114,7 +114,7 @@ module.exports = async (client, guild) => {
     )
   });
 
-  await guild.me.setNickname(`[$] Splite`)
+  await guild.me.setNickname(`[$] ${client.name}`)
 
   // Create Slash Commands
   client.utils.registerSlashCommands(client, guild)

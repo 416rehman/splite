@@ -10,7 +10,7 @@ module.exports = class BioCommand extends Command {
       usage: 'bio <message>',
       description: 'Set your bio\n`bio <@user>` Check out the mentioned user\'s bio\n`bio` View your bio\n`bio clear` Clear your bio',
       type: client.types.FUN,
-      examples: ['bio Splite is the best Discord Bot!', 'bio @splite', 'bio clear']
+      examples: [`bio ${client.name} is the best Discord Bot!`, `bio @${client.name}`, 'bio clear']
     });
   }
   async run(message, args) {
@@ -48,7 +48,7 @@ module.exports = class BioCommand extends Command {
 
           const embed = new MessageEmbed()
               .setTitle(`Bio Cleared ${success}`)
-              .setDescription(`Your bio has been cleared.\nTo set your bio again, type \`@splite bio <your bio here>\`.`)
+              .setDescription(`Your bio has been cleared.\nTo set your bio again, type \`@${message.client.name} bio <your bio here>\`.`)
               .setFooter(`Clear your bio by typing, ${prefix}bio clear`);
           return message.channel.send(embed)
         } catch (e) {
