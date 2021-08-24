@@ -89,7 +89,7 @@ module.exports = (client, message) => {
         !modChannelIds.includes(message.channel.id)
     ) {
       const embed = new MessageEmbed()
-          .setTitle('Hi, I\'m ${client.name}. Need help?')
+          .setTitle(`Hi, I\'m ${client.name}. Need help?`)
           .setThumbnail('https://i.imgur.com/B0XSinY.png')
           .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
           .addField('Invite Me', oneLine`
