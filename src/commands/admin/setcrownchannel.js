@@ -54,7 +54,7 @@ module.exports = class SetCrownChannelCommand extends Command {
         inline: true
       }).spliceFields(3, 0, { name: 'Status', value: `\`${oldStatus}\`` }).setDescription(this.description));
     }
-    embed.setDescription(`The \`crown role\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`)
+    embed.setDescription(`The \`crown channel\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`)
     const crownChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
     if (!crownChannel || (crownChannel.type != 'text' && crownChannel.type != 'news') || !crownChannel.viewable) 
       return this.sendErrorMessage(message, 0, stripIndent`
