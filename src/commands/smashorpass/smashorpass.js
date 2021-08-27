@@ -86,6 +86,7 @@ module.exports = class smashOrPassCommand extends Command {
             .setDescription(result.decision)
             .setFooter(`Expires in 10 seconds | Points: ${points}`))
         await msg.reactions.removeAll();
+        msg.guild.SmashOrPassInProgress.delete(message.author.id)
       })
     }
     else {
