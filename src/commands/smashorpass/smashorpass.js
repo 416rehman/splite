@@ -195,7 +195,11 @@ async function handleSmashOrPass(msg, author, points, currentUser){
       decision = `👎 Passed ${currentUser.user.username}`
       msg.client.db.SmashOrPass.insertRow.run(author.id, currentUser.user.id, 'no', date.toISOString())
     } catch (e) { await stopPlaying(msg, author.id) }
-  } else await stopPlaying(msg, author.id)
+  } else
+  {
+    await msg.reactions.removeAll();
+    await stopPlaying(msg, author.id)
+  }
 
   return {decision, points}
 }
