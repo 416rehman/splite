@@ -374,6 +374,7 @@ const SmashOrPass = {
         WHERE userid = $userId)
         AND bot = 0
         AND user_id != $userId
+        AND optoutsmashorpass != 1
     GROUP BY user_id
     ORDER BY random()
     LIMIT 100;`),
