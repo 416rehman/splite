@@ -27,7 +27,7 @@ module.exports = class resetSmashOrPassCommand extends Command {
     if (points < cost) {
       return (await message.reply(`${emojis.nep} **You need ${cost - points} more points ${emojis.point} in this server to reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history.**\n\nTo check your points ${emojis.point}, type \`${prefix}points\``)).delete({timeout: 5000})
     }
-    message.reply(`Your ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} matches, likes, and passes will be reset and 500 points ${emojis.point} will be deducted from you.\nDo you want to continue?`)
+    message.reply(`Your ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} matches, likes, and passes will be reset and ${cost} points ${emojis.point} will be deducted from you.\nDo you want to continue?`)
         .then(async msg=>{
           const reactions = await confirm(msg, message.author, ["✅", "❎"], 30000);
 
