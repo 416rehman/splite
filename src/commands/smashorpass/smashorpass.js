@@ -53,30 +53,27 @@ module.exports = class smashOrPassCommand extends Command {
     {
       let potentialMatchUser, guild, potentialMatchRow
       if (suggested.length > 0) {
-        console.log(`Suggested length is great`)
         potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
         x++;
       }
       if (!potentialMatchUser) {
-        console.log(`potentialMatchUser is NOT valid`)
         potentialMatchRow = await message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
         let i = 0;
         do {
+          console.log(i)
           guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
           potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
           i++;
           if (i > 50)
           {
-            console.log(`i is greater than 50`)
             message.guild.SmashOrPassInProgress.delete(message.author.id)
             return message.reply(`${emojis.fail} Please try again later!`).then(m=>m.delete({timeout: 5000}))
           }
         } while (potentialMatchUser === undefined)
       }
 
-      console.log(potentialMatchRow)
       let bio = `*${potentialMatchUser} has not set a bio yet. Use \`${prefix}bio\` to set one*`
       if (potentialMatchRow.bio != null) bio = `${potentialMatchUser}'s Bio:\n${potentialMatchRow.bio}`
 
