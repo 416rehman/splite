@@ -132,8 +132,8 @@ async function nextUser(message, usersQueue, points) {
     const guild = message.client.guilds.cache.get(newUser.guild_id)
 
     if (guild) {
-      currentUser = guild.members.cache.get(newUser.user_id);
-      if (!currentUser) nextUser(message, usersQueue);
+      currentUser = await guild.members.cache.get(newUser.user_id);
+      if (!currentUser) await nextUser(message, usersQueue);
       
       let bio = (message.client.db.bios.selectBio.get(currentUser.id)).bio || `*This user has not set a bio!*`;
       await message.edit(
