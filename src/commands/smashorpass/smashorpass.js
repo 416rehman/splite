@@ -48,7 +48,10 @@ module.exports = class smashOrPassCommand extends Command {
     // MENTIONED A USER
     if (args.length) {
       const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
-      if (member == undefined) return message.reply(`${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:5000}))
+      if (member == undefined) {
+        message.guild.SmashOrPassInProgress.delete(message.author.id)
+        return message.reply(`${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:5000}))
+      }
       if (member.user.id == message.author.id) {
         message.guild.SmashOrPassInProgress.delete(message.author.id)
         return message.reply(`${emojis.fail} No stupid, how are you gonna 🔥Smash yourself?? :neutral_face:`)
