@@ -6,7 +6,7 @@
   "dependencies": {
     "amethyste-api": "^1.1.5",
     "ascii-table": "0.0.9",
-    "better-sqlite3": "^7.1.0",
+    "better-sqlite3": "^7.4.3",
     "common-tags": "^1.8.0",
     "discord-buttons": "github:watchdogsrox/discord-buttons-1",
     "discord-slash-commands-client": "^1.1.1",
