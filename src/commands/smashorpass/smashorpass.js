@@ -29,7 +29,7 @@ module.exports = class smashOrPassCommand extends Command {
   }
   async run(message, args) {
     if (message.guild.SmashOrPassInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already playing. Please try again later`)
-    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
+    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id) | "";
     const optOutSmashOrPass = message.client.db.users.selectOptOutSmashOrPass.pluck().get(message.author.id)
     if (optOutSmashOrPass === 1) {
       const embed = new MessageEmbed()
@@ -106,7 +106,7 @@ module.exports = class smashOrPassCommand extends Command {
 
         message.channel.send(embed).then(async msg => {
           while (points >= cost && usersToBeShown.length) {
-            const currentUser = await nextUser(msg, usersToBeShown, points);
+            const currentUser = await nextUser(msg, usersToBeShown, points, prefix);
             if (currentUser) {
               let result = await handleSmashOrPass(msg, message.author, points, currentUser).catch(async e => {
                 console.log(e)
@@ -131,7 +131,7 @@ module.exports = class smashOrPassCommand extends Command {
   }
 };
 
-async function nextUser(message, usersQueue, points) {
+async function nextUser(message, usersQueue, points, prefix) {
   let currentUser;
   if (usersQueue.length) {
     const newUser = usersQueue.pop();
