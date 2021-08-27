@@ -40,7 +40,6 @@ module.exports = class gambleCommand extends Command {
     message.channel.send(embed).then(msg => {
           setTimeout(()=>{
               const odds = message.client.odds.get(message.author.id) || {lose:45, win:55}
-              console.log(odds)
               const outcome = message.client.utils.weightedRandom(odds)
               //Loss
               if (outcome === "lose")
