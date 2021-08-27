@@ -20,7 +20,7 @@ module.exports = class WipePointsCommand extends Command {
     message.client.odds.delete(member.id)
     const embed = new MessageEmbed()
         .setTitle('Clear Odds')
-        .setDescription(`Successfully cleared ${member}'s winning odds to default.`)
+        .setDescription(`Successfully cleared ${member}'s winning odds back to \`55%\`.`)
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);

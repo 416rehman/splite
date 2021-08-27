@@ -22,7 +22,7 @@ module.exports = class WipePointsCommand extends Command {
     message.client.odds.set(member.id, {lose: 100 - parseInt(args[1]), win:parseInt(args[1])})
     const embed = new MessageEmbed()
       .setTitle('Set Odds')
-      .setDescription(`Successfully set ${member}'s winning odds to ${args[1]}.`)
+      .setDescription(`Successfully set ${member}'s winning odds to \`${args[1]}%\`.`)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
