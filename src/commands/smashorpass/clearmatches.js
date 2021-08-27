@@ -8,7 +8,7 @@ const cost = 1000;
 module.exports = class resetSmashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'clearMatches',
+      name: 'clearmatches',
       aliases: ['clearsop', 'resetsop', 'resetsmash'],
       usage: 'clearmatches',
       description: oneLine`
