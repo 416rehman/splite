@@ -326,24 +326,28 @@ const SmashOrPass = {
    * getMatches({userId: 1234})
    */
   getMatches: db.prepare(`
-    SELECT p1.*
-    FROM matches p1 INNER JOIN matches p2 ON 
-        p1.shownuserid = p2.userid 
-            AND p2.shownuserid = $userId 
-            AND p1.liked = 'yes' AND p2.liked = 'yes'
-    WHERE p1.userid = $userId;`),
+    select distinct matches.*
+    from matches
+    inner join matches as AlsoLikesMe
+        on AlsoLikesMe.userID = matches.shownUserID
+            and AlsoLikesMe.liked = 'yes'
+            and AlsoLikesMe.shownUserID = $userId
+    where matches.userID = $userId and matches.liked = 'yes'
+    group by AlsoLikesMe.userID
+    order by AlsoLikesMe.dateandtime desc;`),
   /**
    * Check if 2 users match
    * getMatch({userId: 123, userId2: 234})
    */
   getMatch: db.prepare(`    
-    SELECT p1.*
-    FROM matches p1 INNER JOIN matches p2 ON
-        p1.shownuserid = $userId
-            AND p2.shownuserid = $userId2
-            AND p2.liked = 'yes'
-    WHERE p1.userid = $userId2 AND p1.liked = 'yes'
-    GROUP BY p1.shownuserid;`),
+    select distinct matches.userID, matches.dateandtime
+    from matches
+    inner join matches as AlsoLikesMe
+        on AlsoLikesMe.userID = $userId
+            and AlsoLikesMe.liked = 'yes'
+            and AlsoLikesMe.shownUserID = $userId2
+    where matches.userID = $userId2 and matches.liked = 'yes'
+    GROUP BY matches.userID;`),
 
   /**
    * Get all the users that liked this user.
