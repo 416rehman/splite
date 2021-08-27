@@ -45,7 +45,7 @@ module.exports = class MatchesCommand extends Command {
       const d = row.dateandtime
       members.push(oneLine`
         **${count}.** ${mUser.user_name}#${mUser.user_discriminator} - \`${moment(d).fromNow()}\`
-      `);$sop
+      `);
       count++;
     }
 
