@@ -78,7 +78,7 @@ module.exports = class smashOrPassCommand extends Command {
       }
 
       let bio = `*${potentialMatchUser} has not set a bio yet. Use \`${prefix}bio\` to set one*`
-      if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
+      if (potentialMatchRow.bio != null) bio = `${potentialMatchUser}'s Bio:\n${potentialMatchRow.bio}`
 
       let embed = new MessageEmbed()
           .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
