@@ -6,8 +6,8 @@ const { confirm } = require("djs-reaction-collector")
 module.exports = class toggleSmashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'togglesmashorpass',
-      aliases: ['tsmashorpass', 'tsmash', 'tsop'],
+      name: 'optout',
+      aliases: ['tsmashorpass', 'tsmash', 'tsop', 'togglesmash', 'optoutsmash'],
       usage: 'togglesmashorpass',
       description: oneLine`
         Opt out/in of 🔥 Smash or Pass 👎. If you opt-out you will not be shown to other users in the game.

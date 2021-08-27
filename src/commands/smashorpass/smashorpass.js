@@ -106,7 +106,7 @@ module.exports = class smashOrPassCommand extends Command {
 
         message.channel.send(embed).then(async msg => {
           while (points >= cost && usersToBeShown.length) {
-            const currentUser = await nextUser(msg, usersToBeShown);
+            const currentUser = await nextUser(msg, usersToBeShown, points);
             if (currentUser) {
               let result = await handleSmashOrPass(msg, message.author, points, currentUser).catch(async e => {
                 console.log(e)
@@ -140,13 +140,13 @@ async function nextUser(message, usersQueue, points) {
     if (guild) {
       currentUser = await guild.members.cache.get(newUser.user_id);
       if (currentUser) {
-        let bio = (message.client.db.bios.selectBio.get(currentUser.id)).bio || `*This user has not set a bio!*`;
+        let bio = (message.client.db.bios.selectBio.get(currentUser.id)).bio || `*This user has not set a bio!* Set a bio \`${prefix}bio\``;
         await message.edit(
             new MessageEmbed()
                 .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
                 .setDescription(`${currentUser.displayName} \n${bio}`)
                 .setImage(currentUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-                .setFooter(`Expires in 10 seconds ${points ? `| Points: ${points}` : ''}`)
+                .setFooter(`Expires in 10 seconds ${points ? `| Points: ${points}` : ''} | To Opt-Out: ${prefix}optout`)
         )
       }
     }
