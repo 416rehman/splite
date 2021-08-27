@@ -128,11 +128,11 @@ module.exports = class smashOrPassCommand extends Command {
 async function nextUser(message, usersQueue, points) {
   let currentUser;
   if (usersQueue.length) {
-    const nextUser = usersQueue.pop();
-    const guild = message.client.guilds.cache.get(nextUser.guild_id)
+    const newUser = usersQueue.pop();
+    const guild = message.client.guilds.cache.get(newUser.guild_id)
 
     if (guild) {
-      currentUser = guild.members.cache.get(nextUser.user_id);
+      currentUser = guild.members.cache.get(newUser.user_id);
       if (!currentUser) nextUser(message, usersQueue);
       
       let bio = (message.client.db.bios.selectBio.get(currentUser.id)).bio || `*This user has not set a bio!*`;
