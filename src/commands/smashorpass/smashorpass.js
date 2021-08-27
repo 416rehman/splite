@@ -55,16 +55,12 @@ module.exports = class smashOrPassCommand extends Command {
       if (suggested.length > 0) {
         console.log(`Suggested length is great`)
         potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
-      }
-      if (!!potentialMatchRow) {
-        console.log(`potentialMatchRow is valid`)
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
         x++;
       }
-      else
-      {
-        console.log(`potentialMatchRow is NOT valid`)
+      if (!potentialMatchUser) {
+        console.log(`potentialMatchUser is NOT valid`)
         potentialMatchRow = await message.client.db.matches.getPotentialMatch.get(message.author.id, message.author.id)
         let i = 0;
         do {
