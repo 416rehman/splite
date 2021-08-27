@@ -335,7 +335,7 @@ const matches = {
     order by AlsoLikesMe.dateandtime desc;`),
   //getMatch(arg0, arg1, arg1)
   getMatch: db.prepare(`    
-    select distinct AlsoLikesMe.userID, AlsoLikesMe.dateandtime
+    select distinct AlsoLikesMe.userID, matches.dateandtime
     from matches
     inner join matches as AlsoLikesMe
         on AlsoLikesMe.userID = ?
