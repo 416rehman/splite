@@ -47,13 +47,16 @@ module.exports = class smashOrPassCommand extends Command {
     }
     const suggested = message.client.db.matches.getSuggestedUsers.all(message.author.id,message.author.id)
     const NumOfSuggestions = suggested.length;
+    console.log(suggested)
+    console.log({NumOfSuggestions})
     let x = 0;
     if (args[0] == null || args[0] === undefined)
     {
       let potentialMatchUser, guild, potentialMatchRow
-      if (suggested !== undefined && suggested != null && suggested.length > 0)
+      if (suggested.length > 0)
       {
         potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
+        console.log(potentialMatchRow)
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
         x++;

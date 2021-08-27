@@ -135,6 +135,8 @@ class Client extends Discord.Client {
 
     this.logger.info('Initializing...');
 
+    this.odds = new Map()
+
   }
 
   /**

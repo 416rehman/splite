@@ -41,11 +41,11 @@ module.exports = class MatchesCommand extends Command {
     const members = [];
     let count = 1;
     for (const row of matches) {
-      const mUser = message.client.db.users.selectRowUserOnly.get(row.userID)
+      const mUser = await message.client.db.users.selectRowUserOnly.get(row.userID)
       const d = row.dateandtime
       members.push(oneLine`
         **${count}.** ${mUser.user_name}#${mUser.user_discriminator} - \`${moment(d).fromNow()}\`
-      `);
+      `);$sop
       count++;
     }
 
