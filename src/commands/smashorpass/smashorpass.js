@@ -55,7 +55,7 @@ module.exports = class smashOrPassCommand extends Command {
       if (suggested.length > 0) {
         potentialMatchRow = await message.client.db.users.selectRowUserOnly.get(suggested[0].userID)
       }
-      if (potentialMatchRow) {
+      if (!!potentialMatchRow) {
         guild = await message.client.guilds.cache.get(potentialMatchRow.guild_id)
         potentialMatchUser = await guild.members.cache.get(potentialMatchRow.user_id)
         x++;
