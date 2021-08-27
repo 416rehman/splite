@@ -37,8 +37,9 @@ module.exports = class unmatchCommand extends Command {
         else member = message.guild.members.cache.find(r=> r.user.username.toLowerCase().startsWith(args[0].toLowerCase()))
 
         if (member === undefined) return message.channel.send(`${emojis.fail} Failed to find the user. Please try again later.`)
-        if (member.user.id === message.author.id) return message.channel.send(`${emojis.fail} I am sorry, I can't do that.`)
-        const match = message.client.db.matches.getMatch.get(message.author.id, member.user.id, member.user.id)
+        if (member.user.id === message.author.id) return message.channel.send(`${emojis.fail} NO :neutral_face:`)
+
+        const match = message.client.db.SmashOrPass.getMatch.get({userId: member.user.id, userId2: message.author.id})
         if (match != null)
         {
             const embed = new MessageEmbed()
@@ -51,11 +52,11 @@ module.exports = class unmatchCommand extends Command {
 
                     if(reactions === '✅')
                     {
-                        message.client.db.matches.unmatchUser.run(message.author.id, member.user.id)
-                        msg.edit(new MessageEmbed()
+                        message.client.db.SmashOrPass.unmatchUser.run({userId: message.author.id, unmatchUser: member.user.id})
+                        await msg.edit(new MessageEmbed()
                             .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
                             .setDescription(`You have unmatched ${emojis.unmatch} with ${member.user.username}!`))
-                        msg.delete({timeout: 5000})
+                        await msg.delete({timeout: 5000})
                     }
                     else return msg.delete();
                 })
@@ -63,7 +64,7 @@ module.exports = class unmatchCommand extends Command {
         else {
             const embed = new MessageEmbed()
                 .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
-                .setDescription(`You can't unmatch ${emojis.unmatch} someone you haven't matched with.`)
+                .setDescription(`You can't unmatch ${emojis.unmatch} someone you aren't matched with.`)
 
            return message.channel.send(embed).then(m=>m.delete({timeout:5000}))
         }

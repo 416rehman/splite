@@ -284,7 +284,6 @@ const users = {
   deleteGuild: db.prepare('DELETE FROM users WHERE guild_id = ?;'),
   updateAfk: db.prepare('UPDATE users SET afk = ? WHERE user_id = ? AND guild_id = ?;'),
   updateAfkTime: db.prepare('UPDATE users SET afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
-  resetSmashOrPass: db.prepare('delete from matches where userID = ?'),
   updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;'),
   updateMessageCount: db.prepare(`
     UPDATE users 
@@ -311,7 +310,7 @@ const confessions = {
 };
 
 // MATCHES TABLE
-const matches = {
+const SmashOrPass = {
   insertRow: db.prepare(`
     INSERT OR IGNORE INTO matches (
       userID,
@@ -322,40 +321,72 @@ const matches = {
   `),
 
   // Selects
-  //getMatch(arg0, arg0)
-  getAllMatchesOfUser: db.prepare(`
-    select distinct AlsoLikesMe.userID, AlsoLikesMe.dateandtime
-    from matches
-    inner join matches as AlsoLikesMe
-        on AlsoLikesMe.userID = matches.shownUserID
-            and AlsoLikesMe.liked = 'yes'
-            and AlsoLikesMe.shownUserID = ?
-    where matches.userID = ? and matches.liked = 'yes'
-    group by AlsoLikesMe.userID
-    order by AlsoLikesMe.dateandtime desc;`),
-  //getMatch(arg0, arg1, arg1)
+  /**
+   * Get Matches of user
+   * getMatches({userId: 1234})
+   */
+  getMatches: db.prepare(`
+    SELECT p1.*
+    FROM matches p1 INNER JOIN matches p2 ON 
+        p1.shownuserid = p2.userid 
+            AND p2.shownuserid = $userId 
+            AND p1.liked = 'yes' AND p2.liked = 'yes'
+    WHERE p1.userid = $userId;`),
+  /**
+   * Check if 2 users match
+   * getMatch({userId: 123, userId2: 234})
+   */
   getMatch: db.prepare(`    
-    select distinct AlsoLikesMe.userID, matches.dateandtime
-    from matches
-    inner join matches as AlsoLikesMe
-        on AlsoLikesMe.userID = ?
-            and AlsoLikesMe.liked = 'yes'
-            and AlsoLikesMe.shownUserID = ?
-    where matches.userID = ? and matches.liked = 'yes';`),
-  getLikedByUsers: db.prepare(`select userID, dateandtime from matches where shownUserID = ? and liked = 'yes';`),
-  getPotentialMatch: db.prepare(`
-    SELECT * FROM users
-    WHERE (SELECT COUNT(*) FROM matches WHERE shownUserID = users.user_id and userID = ?) = 0 and bot = 0 and user_id != ?
-    ORDER BY RANDOM()
-    limit 1;`),
-  getAllUserLikes: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes';`),
-  getUserLike: db.prepare(`select shownUserID, dateandtime from matches where userID = ? and liked = 'yes' and shownUserID = ?;`),
+    SELECT p1.*
+    FROM matches p1 INNER JOIN matches p2 ON
+        p1.shownuserid = $userId
+            AND p2.shownuserid = $userId2
+            AND p2.liked = 'yes'
+    WHERE p1.userid = $userId2 AND p1.liked = 'yes'
+    GROUP BY p1.shownuserid;`),
+
+  /**
+   * Get all the users that liked this user.
+   * getLikedByUsers({userId: 1234})
+   */
+  getLikedByUsers: db.prepare(`
+    SELECT *
+    FROM users
+    WHERE user_id IN (
+    select u.userid
+    FROM matches u
+    WHERE shownuserid = $userId AND u.liked = 'yes')
+    GROUP BY user_id;`),
+
+  /**
+   * getUsersToShow({userId: 123})
+   */
+  getUnseenUsers: db.prepare(`
+    SELECT u.*
+    FROM users u
+    WHERE u.user_id NOT IN (
+        SELECT shownUserID
+        FROM matches
+        WHERE userid = $userId)
+        AND bot = 0
+        AND user_id != $userId
+    GROUP BY user_id
+    ORDER BY random()
+    LIMIT 100;`),
+  /**
+   * unmatchUser({userId: 123, unmatchUser: 235})
+   */
+  unmatchUser: db.prepare(`delete from matches where userID = $userId and shownUserID = $unmatchUser;`),
+
+  /**
+   * Clear Smash Or Pass
+   */
+  resetSmashOrPass: db.prepare('delete from matches where userID = ?'),
+
+  /**
+   * Check if user has already come across this user
+   */
   getSeenByUser: db.prepare(`select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;`),
-  unmatchUser: db.prepare(`delete from matches where userID = ? and shownUserID = ?;`),
-  getSuggestedUsers: db.prepare(`
-        select t1.* from matches t1
-        left outer join (select * from matches where userID = ?) t2 on t2.shownUserID = t1.userID where t2.shownUserID is null
-        and t1.shownUserID = ? and t1.liked = 'yes';`)
 };
 
 // BIOS TABLE
@@ -374,6 +405,6 @@ module.exports = {
   settings,
   users,
   confessions,
-  matches,
+  SmashOrPass,
   bios
 };

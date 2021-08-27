@@ -1,5 +1,4 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
 const { confirm } = require("djs-reaction-collector")
 const { oneLine } = require('common-tags');
 const emojis = require('../../utils/emojis.json')
@@ -8,9 +7,9 @@ const cost = 1000;
 module.exports = class resetSmashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'clearmatches',
-      aliases: ['clearsop', 'resetsop', 'resetsmash'],
-      usage: 'clearmatches',
+      name: 'resetsmashorpass',
+      aliases: ['clearsop', 'resetsop', 'resetsmash', 'clearmatches'],
+      usage: 'resetsmashorpass',
       description: oneLine`
         Resets all your smash or pass matches, likes, and passes.
         Start Fresh!
@@ -30,13 +29,16 @@ module.exports = class resetSmashOrPassCommand extends Command {
         .then(async msg=>{
           const reactions = await confirm(msg, message.author, ["✅", "❎"], 30000);
 
-          if(reactions === '✅')
-          {
-            message.client.db.users.updatePoints.run({points: -cost}, message.author.id, message.guild.id)
-            message.client.db.users.resetSmashOrPass.run(message.author.id)
-            msg.edit(`Your ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} history has been reset. Enjoy the fresh start!`)
+          if(reactions === '✅') {
+              try {
+                  message.client.db.SmashOrPass.resetSmashOrPass.run(message.author.id)
+                  message.client.db.users.updatePoints.run({points: -cost}, message.author.id, message.guild.id)
+                  await msg.edit(`Your ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} history has been reset. Enjoy the fresh start!`)
+              } catch (e) {
+                  console.log(e)
+                  await msg.edit(`Failed to clear ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} history`)
+              }
           }
-          else return;
         })
   }
 };
