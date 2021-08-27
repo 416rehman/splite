@@ -130,7 +130,7 @@ async function nextUser(message, usersQueue, points) {
   if (usersQueue.length) {
     const newUser = usersQueue.pop();
     const guild = await message.client.guilds.fetch(newUser.guild_id)
-    console.log(guild)
+    console.log(newUser)
 
     if (guild) {
       currentUser = await guild.members.fetch(newUser.user_id).then(async m => {
