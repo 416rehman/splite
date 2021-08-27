@@ -29,7 +29,7 @@ module.exports = class smashOrPassCommand extends Command {
   }
   async run(message, args) {
     if (message.guild.SmashOrPassInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already playing. Please try again later`)
-    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id) | "";
+    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const optOutSmashOrPass = message.client.db.users.selectOptOutSmashOrPass.pluck().get(message.author.id)
     if (optOutSmashOrPass === 1) {
       const embed = new MessageEmbed()
