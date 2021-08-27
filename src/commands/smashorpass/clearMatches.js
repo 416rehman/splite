@@ -8,17 +8,16 @@ const cost = 1000;
 module.exports = class resetSmashOrPassCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'resetsmashorpass',
-      aliases: ['rsop', 'rsmash', 'resetsmash'],
-      usage: 'resetsmashorpass',
+      name: 'clearMatches',
+      aliases: ['clearsop', 'resetsop', 'resetsmash'],
+      usage: 'clearmatches',
       description: oneLine`
         Resets all your smash or pass matches, likes, and passes.
         Start Fresh!
         
         Cost: ${cost} points
       `,
-      type: client.types.SMASHORPASS,
-      examples: ['smashorpass', 'sop', 'smash']
+      type: client.types.SMASHORPASS
     });
   }
   async run(message, args) {
