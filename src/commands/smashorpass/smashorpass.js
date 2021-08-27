@@ -132,17 +132,19 @@ async function nextUser(message, usersQueue, points) {
     const guild = message.client.guilds.cache.get(newUser.guild_id)
 
     if (guild) {
-      currentUser = await guild.members.cache.get(newUser.user_id);
-      console.log(currentUser)
+      currentUser = await guild.members.fetch(newUser.user_id).then(async m => {
+        currentUser = m;
+        console.log(currentUser)
 
-      let bio = (message.client.db.bios.selectBio.get(currentUser.id)).bio || `*This user has not set a bio!*`;
-      await message.edit(
-          new MessageEmbed()
-              .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
-              .setDescription(`${currentUser.displayName} \n${bio}`)
-              .setImage(currentUser.user.displayAvatarURL({ dynamic: true, size: 512 }))
-              .setFooter(`Expires in 10 seconds ${points ? `| Points: ${points}` : ''}`)
-      )
+        let bio = (message.client.db.bios.selectBio.get(currentUser.id)).bio || `*This user has not set a bio!*`;
+        await message.edit(
+            new MessageEmbed()
+                .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
+                .setDescription(`${currentUser.displayName} \n${bio}`)
+                .setImage(currentUser.user.displayAvatarURL({dynamic: true, size: 512}))
+                .setFooter(`Expires in 10 seconds ${points ? `| Points: ${points}` : ''}`)
+        )
+      });
     }
   }
   return currentUser;
