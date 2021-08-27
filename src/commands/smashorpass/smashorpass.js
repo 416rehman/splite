@@ -77,7 +77,7 @@ module.exports = class smashOrPassCommand extends Command {
         } while (potentialMatchUser === undefined)
       }
 
-      let bio = `*${potentialMatchUser.user.username} has not set a bio yet. Use \`${prefix}bio\` to set one*`
+      let bio = `*${potentialMatchUser} has not set a bio yet. Use \`${prefix}bio\` to set one*`
       if (potentialMatchRow.bio != null) bio = `${potentialMatchUser.user.username}'s Bio:\n${potentialMatchRow.bio}`
 
       let embed = new MessageEmbed()
