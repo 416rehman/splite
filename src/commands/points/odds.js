@@ -17,7 +17,7 @@ module.exports = class WipePointsCommand extends Command {
     const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
     if (!member)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
-    const odds = message.client.odds.get(member.id)?.win || 55;
+    const odds = message.client.odds.get(member.id).win || 55;
     const embed = new MessageEmbed()
         .setTitle('View Odds')
         .setDescription(`${member}'s gambling winning odds are: \`${odds}%\`.`)
