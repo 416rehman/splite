@@ -1,22 +1,36 @@
 # SPLITE - Discord Multi-Purpose Bot
-Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
+<div align=center>
+  
+  <a href="https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands">
+    <img src="https://i.imgur.com/Onde220.png" alt="shield.png">
+  </a>
+
+  <a href="https://discord.gg/pxnu3eF6DG">
+    <img src="https://discordapp.com/api/guilds/668625434157776896/widget.png?style=shield" alt="shield.png">
+  </a>
+
+  <a href="https://github.com/sabattle/CalypsoBot">
+    <img src="https://img.shields.io/badge/Based%20on-Calypso-green.svg" alt="shield.png">
+  </a>
+
+</div>
 
 # Commands
-**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [22]**
+**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [23]**
 
-`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`
+`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`, `vote`
 
 **![:fun~1:](https://cdn.discordapp.com/emojis/838614336749568020.gif?v=1) Fun [84]**
 
 `8ball`, `afk`, `approved`, `awooify`, `baguette`, `beautiful`, `bio`, `bird`, `biryani`, `blur`, `blurple`, `brazzers`, `burn`, `cat`, `catfact`, `challenger`, `changemymind`, `circle`, `clyde`, `coinflip`, `contrast`, `crush`, `dadjoke`, `deepfry`, `dictator`, `distort`, `dither`, `dog`, `dogfact`, `duck`, `dungeon`, `emboss`, `emojify`, `enlarge`, `fire`, `fox`, `frame`, `gay`, `geoguessr`, `glitch`, `greyple`, `greyscale`, `hate`, `instagram`, `insult`, `invert`, `jail`, `magik`, `meme`, `missionpassed`, `mock`, `moustache`, `nsfw`, `pickup`, `pixelize`, `posterize`, `ps4`, `redple`, `rejected`, `rip`, `roll`, `rps`, `scary`, `sepia`, `sharpen`, `shibe`, `ship`, `sniper`, `thanos`, `thouart`, `threats`, `tobecontinued`, `trap`, `triggered`, `trumptweet`, `unsharpen`, `urban`, `tatoo`, `wanted`, `wasted`, `whowouldwin`, `yesno`, `yomomma`, `youtube`
 
-**![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [10]**
+**![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [11]**
 
-`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `totalpoints`
+`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `totalpoints`, `odds`
 
 **![:smashorpass:](https://cdn.discordapp.com/emojis/838588533497266217.gif?v=1) Smash or Pass [4]**
 
-`matches`, `resetsmashorpass`, `togglesmashorpass`, `unmatch`
+`matches`, `optout`, `resetsmashorpass`, `smashorpass`, `unmatch`
 
 **![:misc~1:](https://cdn.discordapp.com/emojis/838614337928953886.gif?v=1) Misc [2]**
 
@@ -45,11 +59,13 @@ Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 # Setup
 
 1. Clone the repo
-2. Fill the config.js file
-3. Run `npm i` in the repo directory to install dependencies
-4. Run `node app.js` command to run the bot
+2. Add the emojis from emojis.zip to your server
+3. Update src/utils/emoji.json to use emojis from your server
+4. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
+5. Run `npm i` in the repo directory to install dependencies
+6. Run `node app.js` command to run the bot
 
-*If you wish to run the bot over pm2, use `pm2 ecosystem.config.js`*
+*If you wish to run the bot over pm2, use the command `pm2 ecosystem.config.js`*
 
 
 ## Modifying Functionality
