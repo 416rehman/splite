@@ -120,7 +120,8 @@ module.exports = class smashOrPassCommand extends Command {
             }
             await msg.reactions.removeAll();
           }
-          await stopPlaying(msg, message.author.id, `${emojis.fail} Maximum swipes reached per session. Try again later`);
+          if (points < cost) await stopPlaying(msg, message.author.id, `${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``);
+          else await stopPlaying(msg, message.author.id, `${emojis.fail} Maximum swipes reached per session. Try again later`);
         })
       }
       else {
