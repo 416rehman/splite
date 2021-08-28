@@ -5,7 +5,7 @@ Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 # Commands
 **![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [22]**
 
-`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`
+`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`, `vote`
 
 **![:fun~1:](https://cdn.discordapp.com/emojis/838614336749568020.gif?v=1) Fun [84]**
 
@@ -13,11 +13,11 @@ Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 
 **![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [10]**
 
-`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `totalpoints`
+`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `totalpoints`, `odds`
 
 **![:smashorpass:](https://cdn.discordapp.com/emojis/838588533497266217.gif?v=1) Smash or Pass [4]**
 
-`matches`, `resetsmashorpass`, `togglesmashorpass`, `unmatch`
+`matches`, `optout`, `resetsmashorpass`, `smashorpass`, `unmatch`
 
 **![:misc~1:](https://cdn.discordapp.com/emojis/838614337928953886.gif?v=1) Misc [2]**
 
