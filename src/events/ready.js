@@ -22,7 +22,6 @@ module.exports = async (client) => {
   client.logger.info('Updating database and scheduling jobs...');
   //FOR EACH GUILD
   for (const guild of client.guilds.cache.values()) {
-    const {prefix} = client.db.settings.selectPrefix.get(guild.id)
     /** ------------------------------------------------------------------------------------------------
      * FIND SETTINGS
      * ------------------------------------------------------------------------------------------------ */
@@ -123,7 +122,6 @@ module.exports = async (client) => {
      * RUNNING COMMANDS
      * ------------------------------------------------------------------------------------------------ */
     client.utils.createCollections(client, guild)
-
   }
 
   // Remove left guilds
