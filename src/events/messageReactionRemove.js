@@ -1,7 +1,4 @@
 module.exports = async (client, messageReaction, user) => {
-  console.log(user)
-  console.log(messageReaction)
-
   if (client.user === user) return;
 
   const { message, emoji } = messageReaction;
