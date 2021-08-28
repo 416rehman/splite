@@ -22,7 +22,6 @@ module.exports = class AvatarCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);
-    console.log(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
     message.channel.send(embed);
   }
 };

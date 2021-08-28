@@ -21,7 +21,6 @@ module.exports = {
     },
 
     view: function view(interaction, client) {
-        console.log(`Called View`)
         const prefix = client.db.settings.selectPrefix.pluck().get(interaction.guild_id)
         const viewConfessionsRole = client.db.settings.selectViewConfessionsRole.pluck().get(interaction.guild_id)
 

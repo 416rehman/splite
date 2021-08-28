@@ -114,7 +114,7 @@ module.exports = async (client, guild) => {
     )
   });
 
-  await guild.me.setNickname(`[$] ${client.name}`)
+  await guild.me.setNickname(`${client.config.defaultPrefix} ${client.name}`)
 
   // Create Slash Commands
   client.utils.registerSlashCommands(client, guild)

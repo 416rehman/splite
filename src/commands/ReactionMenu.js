@@ -310,7 +310,6 @@ class EmbedReactionMenu {
       }
       else if (reaction.emoji.name == '▶️' || reaction.emoji.id == '▶️') {
         this.current = this.current++ >= this.arr.length ? this.arr.length - 1 : this.current++;
-        console.log(this.arr[this.current])
         await this.message.edit(this.arr[this.current])
       }
 

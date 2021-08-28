@@ -7,6 +7,6 @@ data/emojis
 .directory
 config.json
 to-do.txt
-
+private
 # do not ignore
 !.gitkeep

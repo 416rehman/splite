@@ -15,7 +15,6 @@ module.exports = class BotInfoCommand extends Command {
     });
   }
   run(message, args) {
-    console.log(message.client)
     const botOwner = message.client.users.cache.get(message.client.ownerId) || message.client.ownerTag;
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const tech = stripIndent`

@@ -25,6 +25,7 @@ class Client extends Discord.Client {
      */
     this.name = config.botName;
 
+    this.config = config;
     /**
      * Invite Link for this bot
      */
@@ -137,6 +138,8 @@ class Client extends Discord.Client {
 
     this.odds = new Map()
 
+    this.votes = new Map()
+
   }
 
   /**
@@ -220,8 +223,7 @@ class Client extends Discord.Client {
    * @param {User} user 
    */
   isOwner(user) {
-    if (user.id === this.ownerId) return true;
-    else return false;
+    return user.id === this.ownerId;
   }
 
   /**

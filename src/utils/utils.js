@@ -382,6 +382,43 @@ async function generateImgFlipImage(templateID, text0, text1, color = '', outlin
     })
   }))
 }
+
+async function checkTopGGVote(client, userId) {
+  //If cache has 5 minute old version, send that
+  if (client.votes.has(userId)) {
+
+    let diff = (Math.abs(new Date() - client.votes.get(userId).time)) / 1000 / 60  ;
+    if (diff <= 5) return new Promise(((resolve, reject) => {
+      resolve(client.votes.get(userId).voted)
+    }))
+  }
+  //otherwise return check topgg api
+  return getTopGGVote(client, userId);
+}
+
+async function getTopGGVote(client, userId){
+
+  return new Promise(((resolve, reject) => {
+    let options = {
+      'method': 'GET',
+      'url': `https://top.gg/api/bots/${config.apiKeys.TopGGID}/check?userId=${userId}`,
+      'headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+        'Authorization': config.apiKeys.TopGGToken
+      }
+    };
+    request(options, function (error, response) {
+      const res = JSON.parse(response.body)
+      if (res) {
+
+        client.votes.set(userId, {time:new Date(), voted: res.voted})
+        resolve(res.voted);
+      }
+      else reject(`${error}`)
+    })
+  }))
+}
+
 /**
  * Schedule crown role rotation if checks pass
  * @param {string} str
@@ -436,5 +473,6 @@ module.exports = {
   weightedRandom,
   generateImgFlipImage,
   spongebobText,
-  replaceMentionsWithNames
+  replaceMentionsWithNames,
+  checkTopGGVote
 };

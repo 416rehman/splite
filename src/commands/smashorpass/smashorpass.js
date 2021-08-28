@@ -180,7 +180,7 @@ async function handleSmashOrPass(msg, author, points, currentUser){
       userId: currentUser.user.id,
       userId2: author.id
     })
-    console.log(matched)
+
     try {
       if (matched) {
         await author.send(new MessageEmbed()

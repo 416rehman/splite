@@ -39,7 +39,6 @@ module.exports = class RateMyProfessor extends Command {
             schoolQuery = args[1];
             schoolQuery = schoolQuery.trim()
             profQuery = profQuery.trim()
-            console.log(schoolQuery)
             if (schoolQuery == 'seneca') schoolQuery = 'seneca all'
             try {
                 school = await rmp.searchSchool(schoolQuery)
@@ -47,7 +46,6 @@ module.exports = class RateMyProfessor extends Command {
             } catch (e) {
                 console.log(e)
             }
-            console.log(school);
         }
         const schoolFilter = school && school.length ? school[0].node.id : ''
         rmp.searchProfessors(profQuery, schoolFilter).then(async result=> {

@@ -1,3 +1,4 @@
+const config = require('../../config.json')
 const Database = require('better-sqlite3');
 const db = new Database(__basedir + '/data/db.sqlite');
 
@@ -18,7 +19,7 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS settings (
     guild_id TEXT PRIMARY KEY,
     guild_name TEXT,
-    prefix TEXT DEFAULT "$" NOT NULL,
+    prefix TEXT DEFAULT "${config.defaultPrefix}" NOT NULL,
     system_channel_id TEXT,
     confessions_channel_id TEXT,
     starboard_channel_id TEXT,
