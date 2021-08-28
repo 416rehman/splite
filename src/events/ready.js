@@ -124,7 +124,6 @@ module.exports = async (client) => {
      * ------------------------------------------------------------------------------------------------ */
     client.utils.createCollections(client, guild)
 
-    await guild.me.setNickname(`[${prefix || client.config.defaultPrefix}] ${client.name}`)
   }
 
   // Remove left guilds
