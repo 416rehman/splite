@@ -47,9 +47,11 @@ Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 # Setup
 
 1. Clone the repo
-2. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
-3. Run `npm i` in the repo directory to install dependencies
-4. Run `node app.js` command to run the bot
+2. Add the emojis from emojis.zip to your server
+3. Update src/utils/emoji.json to use emojis from your server
+4. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
+5. Run `npm i` in the repo directory to install dependencies
+6. Run `node app.js` command to run the bot
 
 *If you wish to run the bot over pm2, use the command `pm2 ecosystem.config.js`*
 
