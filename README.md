@@ -3,7 +3,7 @@
 Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 
 # Commands
-**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [22]**
+**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [23]**
 
 `activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`, `vote`
 
@@ -11,7 +11,7 @@ Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 
 `8ball`, `afk`, `approved`, `awooify`, `baguette`, `beautiful`, `bio`, `bird`, `biryani`, `blur`, `blurple`, `brazzers`, `burn`, `cat`, `catfact`, `challenger`, `changemymind`, `circle`, `clyde`, `coinflip`, `contrast`, `crush`, `dadjoke`, `deepfry`, `dictator`, `distort`, `dither`, `dog`, `dogfact`, `duck`, `dungeon`, `emboss`, `emojify`, `enlarge`, `fire`, `fox`, `frame`, `gay`, `geoguessr`, `glitch`, `greyple`, `greyscale`, `hate`, `instagram`, `insult`, `invert`, `jail`, `magik`, `meme`, `missionpassed`, `mock`, `moustache`, `nsfw`, `pickup`, `pixelize`, `posterize`, `ps4`, `redple`, `rejected`, `rip`, `roll`, `rps`, `scary`, `sepia`, `sharpen`, `shibe`, `ship`, `sniper`, `thanos`, `thouart`, `threats`, `tobecontinued`, `trap`, `triggered`, `trumptweet`, `unsharpen`, `urban`, `tatoo`, `wanted`, `wasted`, `whowouldwin`, `yesno`, `yomomma`, `youtube`
 
-**![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [10]**
+**![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [11]**
 
 `bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `totalpoints`, `odds`
 
