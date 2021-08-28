@@ -1,6 +1,8 @@
 # SPLITE - Discord Multi-Purpose Bot
 [Add Splite to your Server](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands)
 
+[Join the support server](https://discord.gg/pxnu3eF6DG)
+
 Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 
 # Commands
