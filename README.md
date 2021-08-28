@@ -15,8 +15,6 @@
 
 </div>
 
-[Add Splite to your Server]()
-
 # Commands
 **![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [23]**
 
