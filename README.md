@@ -1,7 +1,19 @@
 # SPLITE - Discord Multi-Purpose Bot
+<div align=center>
+
+  <a href="https://discord.gg/pxnu3eF6DG">
+    <img src="https://discordapp.com/api/guilds/668625434157776896/widget.png?style=shield" alt="shield.png">
+  </a>
+
+  <a href="https://github.com/sabattle/CalypsoBot">
+    <img src="https://img.shields.io/badge/Based%20on-Calypso-green.svg" alt="shield.png">
+  </a>
+
+</div>
+
 [Add Splite to your Server](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands)
 
-[Join the support server](https://discord.gg/pxnu3eF6DG)
+[Join the support server]()
 
 Based on [CalypsoBot](https://github.com/sabattle/CalypsoBot)
 
