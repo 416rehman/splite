@@ -25,7 +25,7 @@ module.exports = class WipePointsCommand extends Command {
     const embed = new MessageEmbed()
         .setTitle('Gambling Odds')
         .setDescription(`${progress} **${odds}%** \n${member}'s gambling winning odds are: \`${odds}%\`. ${modifier ? `\n${Voted}**+10% odds** voting perk active.`:`\nBoost your gambling odds: \`${prefix}vote\``}`)
-        .setFooter(modifier ? `Boost your gambling odds: ${prefix}vote`:`${Voted}**+10% odds** voting perk active.`, message.author.displayAvatarURL({dynamic: true}))
+        .setFooter(modifier ? `Boost your gambling odds: ${prefix}vote`:`+10% odds voting perk active.`, message.author.displayAvatarURL({dynamic: true}))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
     message.channel.send(embed);

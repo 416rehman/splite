@@ -1,8 +1,9 @@
 {
   "botName": "Splite",
+  "defaultPrefix": "$",
   "token": "",
-  "inviteLink": "https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands",
-  "ownerDiscordTag": "Split#0420",
+  "inviteLink": "",
+  "ownerDiscordTag": "",
   "ownerId": "",
   "bugReportChannelId": "",
   "feedbackChannelId": "",
@@ -15,7 +16,9 @@
     "imgflip" : {
       "username": "",
       "password": ""
-    }
+    },
+    "TopGGToken": "",
+    "TopGGID": ""
   }
 }
 
