@@ -350,17 +350,16 @@ const SmashOrPass = {
     GROUP BY matches.userID;`),
 
   /**
-   * Get all the users that liked this user.
+   * Get all the users that this user hasnt seen yet and have liked this user.
    * getLikedByUsers({userId: 1234})
    */
   getLikedByUsers: db.prepare(`
     SELECT *
     FROM users
-    WHERE user_id IN (
-    select u.userid
-    FROM matches u
-    WHERE shownuserid = $userId AND u.liked = 'yes')
-    GROUP BY user_id;`),
+    WHERE user_id IN (select t1.userid from matches t1
+      left outer join (select * from matches where userID = $userId) t2 on t2.shownUserID = t1.userID where t2.shownUserID is null
+      and t1.shownUserID = $userId and t1.liked = 'yes')
+    GROUP BY user_id`),
 
   /**
    * getUsersToShow({userId: 123})
