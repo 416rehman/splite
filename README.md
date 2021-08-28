@@ -1,5 +1,9 @@
 # SPLITE - Discord Multi-Purpose Bot
 <div align=center>
+  
+  <a href="https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands">
+    <img src="https://i.imgur.com/Onde220.png" alt="shield.png">
+  </a>
 
   <a href="https://discord.gg/pxnu3eF6DG">
     <img src="https://discordapp.com/api/guilds/668625434157776896/widget.png?style=shield" alt="shield.png">
@@ -11,7 +15,7 @@
 
 </div>
 
-[Add Splite to your Server](https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands)
+[Add Splite to your Server]()
 
 # Commands
 **![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [23]**
