@@ -14,6 +14,7 @@ module.exports = class PointsCommand extends Command {
     });
   }
   run(message, args) {
+    const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id)
     const member =  this.getMemberFromMention(message, args[0]) || 
       message.guild.members.cache.get(args[0]) || 
       message.member;
@@ -25,7 +26,7 @@ module.exports = class PointsCommand extends Command {
       .setDescription(`${voted ? `${emojis.Voted}**+10%** Gambling Odds` : ''}`)
       .addField('Member', member, true)
       .addField(`Points ${emojis.point}`, `\`${points}\``, true)
-      .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+      .setFooter(`Boost your odds: ${prefix}vote`,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);
     message.channel.send(embed);
