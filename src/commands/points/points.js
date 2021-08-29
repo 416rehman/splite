@@ -18,9 +18,11 @@ module.exports = class PointsCommand extends Command {
       message.guild.members.cache.get(args[0]) || 
       message.member;
     const points = message.client.db.users.selectPoints.pluck().get(member.id, message.guild.id);
+    const voted = message.client.utils.checkTopGGVote(message.client, member.id);
     const embed = new MessageEmbed()
       .setTitle(`${member.displayName}'s ${emojis.point}`)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+      .setDescription(`${voted ? `${emojis.Voted}**+10%** Gambling Odds` : ''}`)
       .addField('Member', member, true)
       .addField(`Points ${emojis.point}`, `\`${points}\``, true)
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
