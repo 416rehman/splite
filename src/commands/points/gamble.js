@@ -48,7 +48,7 @@ module.exports = class gambleCommand extends Command {
               if (outcome === "lose") {
                   const embed = new MessageEmbed()
                       .setTitle(`${modifier ? emojis.Voted: ''}${message.author.username} gambling ${amount} Points ${emojis.point}`)
-                      .setDescription(`${emojis.fail} You lost! **You now have ${points - amount}** ${emojis.point}\n\n${modifier ? '' : emojis.Voted + 'Get a +10% boost to your odds: ' + '\`${prefix}vote\`'}`)
+                      .setDescription(`${emojis.fail} You lost! **You now have ${points - amount}** ${emojis.point}\n\n${modifier ? '' : emojis.Voted + `Get a +10% boost to your odds: \`${prefix}vote\``}`)
                       .setFooter(`Your points: ${points - amount}. ${modifier ? `+10% Odds Perk Active.`: `Increase your odds: ${prefix}vote`}`, message.author.displayAvatarURL({dynamic: true}))
                   message.client.db.users.updatePoints.run({points: -amount}, message.author.id, message.guild.id);
                   msg.edit(embed)
