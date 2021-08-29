@@ -19,7 +19,10 @@ module.exports = class InviteMeCommand extends Command {
             const embed = new MessageEmbed()
                 .setTitle('Vote On Top.gg')
                 .setThumbnail('https://top.gg/images/logoinverted.png')
-                .setDescription(`Click [here](https://top.gg/bot/${message.client.config.apiKeys.TopGGID}/vote) to vote. \n\n**Voting Perks**\n${emojis.Voted}**+10%** Gambling Odds - Check your odds: \`${prefix}odds\``)
+                .setDescription(`Click [here](https://top.gg/bot/${message.client.config.apiKeys.TopGGID}/vote) to vote. \n\n
+                **Voting Perks**\n${emojis.Voted}**+10%** Gambling Odds - Check your odds: \`${prefix}odds\` \
+                *Perks will be activated 5 mins after voting*
+                `)
                 .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
