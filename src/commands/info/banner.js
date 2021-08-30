@@ -1,4 +1,5 @@
 const Command = require('../Command.js');
+const {getUserBanner} = require("discord-banner");
 const { MessageEmbed } = require('discord.js');
 
 module.exports = class AvatarCommand extends Command {
@@ -16,12 +17,18 @@ module.exports = class AvatarCommand extends Command {
     const member = this.getMemberFromMention(message, args[0]) ||
         message.guild.members.cache.get(args[0]) ||
         message.member;
-    const embed = new MessageEmbed()
-        .setTitle(`${member.displayName}'s Avatar`)
-        .setImage(await member.user.avatarURL())
-        .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
-        .setTimestamp()
-        .setColor(member.displayHexColor);
-    await message.channel.send(embed);
+    getUserBanner(member.id || member.user.id, {
+      token: message.client.token,
+    }).then(async banner => {
+      if (banner.url) {
+        return await message.channel.send(new MessageEmbed()
+            .setTitle(`${member.displayName}'s Banner`)
+            .setImage(banner.url)
+            .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+            .setTimestamp()
+            .setColor(member.displayHexColor));
+      }
+      await message.reply(`${member} does not have a banner.`)
+    });
   }
 };
