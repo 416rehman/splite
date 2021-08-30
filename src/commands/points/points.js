@@ -13,22 +13,22 @@ module.exports = class PointsCommand extends Command {
       examples: ['points @split']
     });
   }
-  run(message, args) {
+  async run(message, args) {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id)
-    const member =  this.getMemberFromMention(message, args[0]) || 
-      message.guild.members.cache.get(args[0]) || 
-      message.member;
+    const member = this.getMemberFromMention(message, args[0]) ||
+        message.guild.members.cache.get(args[0]) ||
+        message.member;
     const points = message.client.db.users.selectPoints.pluck().get(member.id, message.guild.id);
-    const voted = message.client.utils.checkTopGGVote(message.client, member.id);
+    const voted = await message.client.utils.checkTopGGVote(message.client, member.id);
     const embed = new MessageEmbed()
-      .setTitle(`${member.displayName}'s ${emojis.point}`)
-      .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
-      .setDescription(`${voted ? `${emojis.Voted}**+10%** Gambling Odds` : ''}`)
-      .addField('Member', member, true)
-      .addField(`Points ${emojis.point}`, `\`${points}\``, true)
-      .setFooter(`Boost your odds: ${prefix}vote`,  message.author.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(member.displayHexColor);
+        .setTitle(`${member.displayName}'s ${emojis.point}`)
+        .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
+        .setDescription(`${voted ? `${emojis.Voted}**+10%** Gambling Odds` : ''}`)
+        .addField('Member', member, true)
+        .addField(`Points ${emojis.point}`, `\`${points}\``, true)
+        .setFooter(`Boost your odds: ${prefix}vote`, message.author.displayAvatarURL({dynamic: true}))
+        .setTimestamp()
+        .setColor(member.displayHexColor);
     message.channel.send(embed);
   }
 };
