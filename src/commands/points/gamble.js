@@ -35,7 +35,7 @@ module.exports = class gambleCommand extends Command {
       const embed = new MessageEmbed()
           .setTitle(`${modifier ? emojis.Voted: ''}${message.author.username} gambling ${amount} points ${emojis.point}`)
           .setDescription(`${emojis.point} **Rolling** ${emojis.point}\n${emojis.dices}${emojis.dices}${emojis.dices}`)
-          .setFooter(`Your points: ${points}. ${modifier ? `+10% Odds Perk Active.`: `Increase your odds: ${prefix}vote`}`, message.author.displayAvatarURL({dynamic: true}))
+          .setFooter(`Your points: ${points}.`, message.author.displayAvatarURL({dynamic: true}))
 
       message.channel.send(embed).then(msg => {
           setTimeout(async () => {
@@ -49,7 +49,7 @@ module.exports = class gambleCommand extends Command {
                   const embed = new MessageEmbed()
                       .setTitle(`${modifier ? emojis.Voted: ''}${message.author.username} gambling ${amount} Points ${emojis.point}`)
                       .setDescription(`${emojis.fail} You lost! **You now have ${points - amount}** ${emojis.point}\n\n${modifier ? '' : emojis.Voted + `Get a +10% boost to your odds: \`${prefix}vote\``}`)
-                      .setFooter(`Your points: ${points - amount}. ${modifier ? `+10% Odds Perk Active.`: `Increase your odds: ${prefix}vote`}`, message.author.displayAvatarURL({dynamic: true}))
+                      .setFooter(`Your points: ${points - amount}.`, message.author.displayAvatarURL({dynamic: true}))
                   message.client.db.users.updatePoints.run({points: -amount}, message.author.id, message.guild.id);
                   msg.edit(embed)
               }
@@ -58,7 +58,7 @@ module.exports = class gambleCommand extends Command {
                   const embed = new MessageEmbed()
                       .setTitle(`${modifier ? emojis.Voted: ''}${message.author.username} gambling ${amount} Points ${emojis.point}`)
                       .setDescription(`🎉 You Won! **You now have ${points + amount}** ${emojis.point}`)
-                      .setFooter(`Your points: ${points + amount}. ${modifier ? `+10% Odds Perk Active.`: `Increase your odds: ${prefix}vote`}`, message.author.displayAvatarURL({dynamic: true}))
+                      .setFooter(`Your points: ${points + amount}.`, message.author.displayAvatarURL({dynamic: true}))
                   message.client.db.users.updatePoints.run({points: amount}, message.author.id, message.guild.id);
                   msg.edit(embed)
               }
