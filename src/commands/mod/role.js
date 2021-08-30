@@ -88,7 +88,7 @@ module.exports = class RoleCommand extends Command {
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
     }
-    if (target.size) {
+    if (memberArg == 'humans' || memberArg == 'bots') {
       setTimeout(function () {
         return message.channel.send(embed);
       }, target.size*1.5*1000)
