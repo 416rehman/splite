@@ -8,6 +8,7 @@
     "ascii-table": "0.0.9",
     "better-sqlite3": "^7.4.3",
     "common-tags": "^1.8.0",
+    "discord-banner": "^1.6.7",
     "discord-buttons": "github:watchdogsrox/discord-buttons-1",
     "discord-slash-commands-client": "^1.1.1",
     "discord.js": "^12.5.3",

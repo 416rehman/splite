@@ -1,4 +1,5 @@
 //entry point
+require("discord-banner")();
 const config = require('./config.json');
 const Client = require('./src/Client.js');
 const { Intents } = require('discord.js');
