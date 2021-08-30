@@ -7,7 +7,7 @@ module.exports = class RoleCommand extends Command {
       name: 'role',
       aliases: ['giverole'],
       usage: 'role <user mention/ID> <role mention/ID>',
-      description: 'Adds/Removes the specified role from the provided user.\nSeperate multiple roles with a comma ","\nUsing + at the beginning of the role adds the role but does not remove it\nUsing - at the beginning of the role removes the role but does not add it',
+      description: 'Adds/Removes the specified role from the provided user.\nSeperate multiple roles with a comma ","\nUsing + at the beginning of the role adds the role but does not remove it\nUsing - at the beginning of the role removes the role but does not add it\nProvide the word "humans" or "bots" instead of a user to run the command on all humans or all bots.',
       type: client.types.MOD,
       clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
       userPermissions: ['MANAGE_ROLES'],
@@ -17,12 +17,58 @@ module.exports = class RoleCommand extends Command {
   async run(message, args) {
     if (!args[0]) return this.sendHelpMessage(message);
     const memberArg = args.shift()
-    const member = await this.getMemberFromMention(message, memberArg) || await message.guild.members.cache.get(memberArg) || await this.getMemberFromText(message, memberArg);
-    if (!member)
-      return this.sendErrorMessage(message, 0, 'Failed to find the user. Please try again');
-    // if (member.roles.highest.position > message.member.roles.highest.position)
-    //   return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
 
+    let embed, changes, i = 0;
+    if (memberArg == 'humans') {
+      message.guild.members.cache.forEach(m=>{
+        if (!m.user.bot) {
+          changes = this.handleRoleAssignment(args, message, m);
+          i++;
+        }
+      })
+      embed = new MessageEmbed()
+          .setTitle('Role')
+          .setDescription(`Changed roles for all humans.`)
+          .addField('Moderator', message.member, true)
+          .addField('Users Modified', i, true)
+          .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+          .setTimestamp()
+          .setColor(message.guild.me.displayHexColor);
+    }
+    else if (memberArg == 'bots') {
+      message.guild.members.cache.forEach(b=>{
+        if (b.user.bot) {
+          this.handleRoleAssignment(args, message, b);
+          i++;
+        }
+      })
+      embed = new MessageEmbed()
+          .setTitle('Role')
+          .setDescription(`Changed roles for all bots.`)
+          .addField('Moderator', message.member, true)
+          .addField('Users Modified', i, true)
+          .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+          .setTimestamp()
+          .setColor(message.guild.me.displayHexColor);
+    }
+    else {
+      const member = await this.getMemberFromMention(message, memberArg) || await message.guild.members.cache.get(memberArg) || await this.getMemberFromText(message, memberArg);
+      if (!member) return this.sendErrorMessage(message, 0, 'Failed to find the user. Please try again');
+      const changes = await this.handleRoleAssignment(args, message, member);
+      embed = new MessageEmbed()
+          .setTitle('Role')
+          .setDescription(`Changed roles for ${member}.`)
+          .addField('Moderator', message.member, true)
+          .addField('Member', member, true)
+          .addField('Roles', changes.join('\n'), true)
+          .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+          .setTimestamp()
+          .setColor(message.guild.me.displayHexColor);
+    }
+    return message.channel.send(embed);
+  }
+
+  async handleRoleAssignment(args, message, member) {
     if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide a valid role to assign');
     // Seperate roles by comma
     args = args.join(' ')
@@ -54,17 +100,7 @@ module.exports = class RoleCommand extends Command {
         else changes.push(await this.addRole(member, role, message));
       }
     }
-
-    const embed = new MessageEmbed()
-        .setTitle('Role')
-        .setDescription(`Changed roles for ${member}.`)
-        .addField('Moderator', message.member, true)
-        .addField('Member', member, true)
-        .addField('Roles', changes.join('\n'), true)
-        .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
-        .setTimestamp()
-        .setColor(message.guild.me.displayHexColor);
-    return message.channel.send(embed);
+    return changes;
   }
 
   async RemoveRole(member, role, message) {
