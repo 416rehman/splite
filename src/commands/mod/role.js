@@ -20,7 +20,7 @@ module.exports = class RoleCommand extends Command {
 
     let embed, failed = 0;
     if (memberArg == 'humans') {
-      const members = message.guild.members.cache.map(m=>{
+      const members = message.guild.members.cache.filter(m=>{
         if (!m.user.bot) return m;
       })
       await message.reply(`This command will take approximately ${(members.length)} seconds`)
@@ -38,14 +38,14 @@ module.exports = class RoleCommand extends Command {
           .setTitle('Role')
           .setDescription(`Changed roles for all humans.`)
           .addField('Moderator', message.member, true)
-          .addField('Users Modified', `${members.length - failed}${members.length}`, true)
+          .addField('Users Modified', `${members.length - failed}/${members.length}`, true)
           .addField(`Errors`, `${failed ? 'Please check the role hierarchy': 'None'}`)
           .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
     }
     else if (memberArg == 'bots') {
-      const bots = message.guild.members.cache.map(b=>{
+      const bots = message.guild.members.cache.filter(b=>{
         if (b.user.bot) return b;
       })
       await message.reply(`This command will take approximately ${(bots.length)} seconds`)
@@ -62,7 +62,7 @@ module.exports = class RoleCommand extends Command {
           .setTitle('Role')
           .setDescription(`Changed roles for all bots.`)
           .addField('Moderator', message.member, true)
-          .addField('Users Modified', `${bots.length - failed}${bots.length}`, true)
+          .addField('Users Modified', `${bots.length - failed}/${bots.length}`, true)
           .addField(`Errors`, `${failed ? 'Please check the role hierarchy': 'None'}`)
           .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
           .setTimestamp()
