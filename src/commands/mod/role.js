@@ -17,29 +17,12 @@ module.exports = class RoleCommand extends Command {
   async run(message, args) {
     if (!args[0]) return this.sendHelpMessage(message);
     const memberArg = args.shift()
-
     const member = await this.getMemberFromMention(message, memberArg) || await message.guild.members.cache.get(memberArg) || await this.getMemberFromText(message, memberArg);
-    if (!member) return this.sendErrorMessage(message, 0, 'Failed to find the user. Please try again');
-    let changes
-    try {
-      changes = await this.handleRoleAssignment(args, message, member);
-    } catch (e) {
-      return this.sendErrorMessage(message, 0, `Please check the role hierarchy`);
-    }
+    if (!member)
+      return this.sendErrorMessage(message, 0, 'Failed to find the user. Please try again');
+    // if (member.roles.highest.position > message.member.roles.highest.position)
+    //   return this.sendErrorMessage(message, 0, 'You cannot add/remove a role from someone with higher role');
 
-    const embed = new MessageEmbed()
-        .setTitle('Role')
-        .setDescription(`Changed roles for ${member}.`)
-        .addField('Moderator', message.member, true)
-        .addField('Member', member, true)
-        .addField('Roles', changes.join('\n'), true)
-        .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
-        .setTimestamp()
-        .setColor(message.guild.me.displayHexColor);
-    return message.channel.send(embed);
-  }
-
-  async handleRoleAssignment(args, message, member) {
     if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide a valid role to assign');
     // Seperate roles by comma
     args = args.join(' ')
@@ -71,7 +54,17 @@ module.exports = class RoleCommand extends Command {
         else changes.push(await this.addRole(member, role, message));
       }
     }
-    return changes;
+
+    const embed = new MessageEmbed()
+        .setTitle('Role')
+        .setDescription(`Changed roles for ${member}.`)
+        .addField('Moderator', message.member, true)
+        .addField('Member', member, true)
+        .addField('Roles', changes.join('\n'), true)
+        .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+        .setTimestamp()
+        .setColor(message.guild.me.displayHexColor);
+    return message.channel.send(embed);
   }
 
   async RemoveRole(member, role, message) {
@@ -85,6 +78,7 @@ module.exports = class RoleCommand extends Command {
     }
     catch (err) {
       message.client.logger.error(err.stack);
+      return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
     }
   }
 
@@ -99,6 +93,7 @@ module.exports = class RoleCommand extends Command {
     }
     catch (err) {
       message.client.logger.error(err.stack);
+      return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);
     }
   }
 };
