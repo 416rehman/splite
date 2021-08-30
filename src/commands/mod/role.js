@@ -18,16 +18,16 @@ module.exports = class RoleCommand extends Command {
     if (!args[0]) return this.sendHelpMessage(message);
     const memberArg = args.shift()
 
-    let embed, failed = 0;
+    let embed, failed = 0, target;
     if (memberArg == 'humans') {
-      const members = message.guild.members.cache.filter(m=>{
+      const target = message.guild.members.cache.filter(m=>{
         if (!m.user.bot) return m;
       })
-      await message.reply(`This command will take approximately ${(members.size)} seconds`)
-      members.forEach(m=>{
+      await message.reply(`This command will take approximately ${(target.size)} seconds`)
+      target.forEach(m=>{
         setTimeout(()=>{
           try {
-            this.handleRoleAssignment(args, message, b);
+            this.handleRoleAssignment(args, message, m);
           } catch (e) {
             failed++;
           }
@@ -38,18 +38,18 @@ module.exports = class RoleCommand extends Command {
           .setTitle('Role')
           .setDescription(`Changed roles for all humans.`)
           .addField('Moderator', message.member, true)
-          .addField('Users Modified', `${members.size - failed}/${members.size}`, true)
-          .addField(`Errors`, `${failed ? 'Please check the role hierarchy': 'None'}`)
+          .addField('Users Modified', `${target.size - failed}/${target.size}`, true)
           .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
+      if (failed) embed.addField(`Errors`, `Please check the role hierarchy`)
     }
     else if (memberArg == 'bots') {
-      const bots = message.guild.members.cache.filter(b=>{
+      const target = message.guild.members.cache.filter(b=>{
         if (b.user.bot) return b;
       })
-      await message.reply(`This command will take approximately ${(bots.size)} seconds`)
-      bots.forEach(b=>{
+      await message.reply(`This command will take approximately ${(target.size)} seconds`)
+      target.forEach(b=>{
         setTimeout(()=>{
           try {
             this.handleRoleAssignment(args, message, b);
@@ -62,11 +62,11 @@ module.exports = class RoleCommand extends Command {
           .setTitle('Role')
           .setDescription(`Changed roles for all bots.`)
           .addField('Moderator', message.member, true)
-          .addField('Users Modified', `${bots.size - failed}/${bots.size}`, true)
-          .addField(`Errors`, `${failed ? 'Please check the role hierarchy': 'None'}`)
+          .addField('Users Modified', `${target.size - failed}/${target.size}`, true)
           .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
+      if (failed) embed.addField(`Errors`, `Please check the role hierarchy`)
     }
     else {
       const member = await this.getMemberFromMention(message, memberArg) || await message.guild.members.cache.get(memberArg) || await this.getMemberFromText(message, memberArg);
@@ -88,7 +88,11 @@ module.exports = class RoleCommand extends Command {
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
     }
-    return message.channel.send(embed);
+    if ((memberArg == 'bots' || memberArg == 'humans') && target.size) {
+      setTimeout(function () {
+        return message.channel.send(embed);
+      }, target.size*1.5*1000)
+    } else return message.channel.send(embed);
   }
 
   async handleRoleAssignment(args, message, member) {
