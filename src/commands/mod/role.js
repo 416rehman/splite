@@ -23,7 +23,7 @@ module.exports = class RoleCommand extends Command {
       const members = message.guild.members.cache.filter(m=>{
         if (!m.user.bot) return m;
       })
-      await message.reply(`This command will take approximately ${(members.length)} seconds`)
+      await message.reply(`This command will take approximately ${(members.size)} seconds`)
       members.forEach(m=>{
         setTimeout(()=>{
           try {
@@ -38,7 +38,7 @@ module.exports = class RoleCommand extends Command {
           .setTitle('Role')
           .setDescription(`Changed roles for all humans.`)
           .addField('Moderator', message.member, true)
-          .addField('Users Modified', `${members.length - failed}/${members.length}`, true)
+          .addField('Users Modified', `${members.size - failed}/${members.size}`, true)
           .addField(`Errors`, `${failed ? 'Please check the role hierarchy': 'None'}`)
           .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
           .setTimestamp()
@@ -48,7 +48,7 @@ module.exports = class RoleCommand extends Command {
       const bots = message.guild.members.cache.filter(b=>{
         if (b.user.bot) return b;
       })
-      await message.reply(`This command will take approximately ${(bots.length)} seconds`)
+      await message.reply(`This command will take approximately ${(bots.size)} seconds`)
       bots.forEach(b=>{
         setTimeout(()=>{
           try {
@@ -62,7 +62,7 @@ module.exports = class RoleCommand extends Command {
           .setTitle('Role')
           .setDescription(`Changed roles for all bots.`)
           .addField('Moderator', message.member, true)
-          .addField('Users Modified', `${bots.length - failed}/${bots.length}`, true)
+          .addField('Users Modified', `${bots.size - failed}/${bots.size}`, true)
           .addField(`Errors`, `${failed ? 'Please check the role hierarchy': 'None'}`)
           .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
           .setTimestamp()
