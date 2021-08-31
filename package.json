@@ -9,7 +9,7 @@
     "better-sqlite3": "^7.4.3",
     "common-tags": "^1.8.0",
     "discord-banner": "^1.6.7",
-    "discord-buttons": "github:watchdogsrox/discord-buttons-1",
+    "discord-buttons": "github:certifiedrehman/discord-buttons-1",
     "discord-slash-commands-client": "^1.1.1",
     "discord.js": "^12.5.3",
     "djs-reaction-collector": "^2.9.3",
@@ -41,12 +41,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/watchdogsrox/spliteBot.git"
+    "url": "git+https://github.com/certifiedrehman/spliteBot.git"
   },
   "author": "Sebastian Battle",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/watchdogsrox/spliteBot"
+    "url": "https://github.com/certifiedrehman/spliteBot"
   },
   "forkedFrom": "https://github.com/sabattle/CalypsoBot"
 }
