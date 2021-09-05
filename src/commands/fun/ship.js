@@ -58,7 +58,7 @@ module.exports = class shipCommand extends Command {
   }
 
   addToCollection(message, owner, child, shipScore) {
-    if (message.guild.ships.has(owner.id) == false || (new Date() - (message.guild.ships.get(owner.id)).time) > 300000)  message.guild.ships.set(owner.id, [{userId: child.id, shipScore, time: Date.now()}])
+    if (message.guild.ships.has(owner.id) == false || (Date.now() - (message.guild.ships.get(owner.id)).time) > 300000)  message.guild.ships.set(owner.id, [{userId: child.id, shipScore, time: Date.now()}])
     else {
       let matchedBefore
       let ships = message.guild.ships.get(owner.id)
