@@ -65,7 +65,7 @@ module.exports = class shipCommand extends Command {
       if (ships) {
         matchedBefore = ships.find(u => u.userId === child.id)
         if (matchedBefore) shipScore = matchedBefore.shipScore;
-        else ships.push({userId: child.id, shipScore})
+        else ships.push({userId: child.id, shipScore, time: Date.now()})
       }
     }
     return shipScore;
