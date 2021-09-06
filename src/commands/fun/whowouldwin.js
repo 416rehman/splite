@@ -6,7 +6,7 @@ module.exports = class whowouldwinCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'whowouldwin',
-
+      aliases: ['www', 'vs'],
       usage: 'whowouldwin <user mention/id>',
       description: 'Generates a whowouldwin image',
       type: client.types.FUN,
@@ -17,7 +17,7 @@ module.exports = class whowouldwinCommand extends Command {
     if (message.guild.funInProgress.has(message.author.id)) return message.channel.send(new MessageEmbed().setDescription(`${fail} Please wait, you already have a request pending.`))
     message.guild.funInProgress.set(message.author.id, 'fun');
     const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.author;
-    const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.author;
+    const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) ||  message.guild.members.cache.random() ||message.author;
 
     message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
       try {
