@@ -48,11 +48,11 @@ module.exports = class SetVerificationMessageCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
 
     if (!args[0]) {
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
           .addField('Status', `\`${oldStatus}\``, true)
           .addField('Current Message ID', `\`${verificationMessageId}\``)
           .addField('Current Message', `\`${oldVerificationMessage}\``).setDescription(this.description)
-      );
+      ]});
     }
 
     embed.setDescription(`The \`verification message\` was successfully updated. ${success}\nUse \`clearverificationmessage\` to clear the verification message.`)
@@ -64,10 +64,10 @@ module.exports = class SetVerificationMessageCommand extends Command {
     const status =  message.client.utils.getStatus(verificationRole && verificationChannel && verificationMessage);
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .addField('Status', statusUpdate, true)
       .addField('Message', verificationMessage)
-    );
+    ]});
 
     // Update verification
     if (status === 'enabled') {
@@ -77,10 +77,10 @@ module.exports = class SetVerificationMessageCommand extends Command {
         } catch (err) { // Message was deleted
           message.client.logger.error(err);
         }
-        const msg = await verificationChannel.send(new MessageEmbed()
+        const msg = await verificationChannel.send({embeds: [new MessageEmbed()
           .setDescription(verificationMessage)
           .setColor(message.guild.me.displayHexColor)
-        );
+        ]});
         await msg.react(verify.split(':')[2].slice(0, -1));
         message.client.db.settings.updateVerificationMessageId.run(msg.id, message.guild.id);
       } else {

@@ -30,8 +30,8 @@ module.exports = class KickCommand extends Command {
     if (!reason) reason = '`None`';
     if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
-    message.channel.send(new MessageEmbed().setTitle('Kick Member')
-        .setDescription(`Do you want to kick ${member}?`)).then(async msg=> {
+    message.channel.send({embeds: [new MessageEmbed().setTitle('Kick Member')
+        .setDescription(`Do you want to kick ${member}?`)]}).then(async msg=> {
       const reactions = await confirm(msg, message.author, ["✅", "❌"], 10000);
 
       if (reactions === '✅') {
@@ -46,7 +46,7 @@ module.exports = class KickCommand extends Command {
             .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        msg.edit(embed);
+        msg.edit({embeds: [embed]});
         message.client.logger.info(`${message.guild.name}: ${message.author.tag} kicked ${member.user.tag}`);
 
         // Update mod log

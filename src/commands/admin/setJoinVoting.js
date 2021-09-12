@@ -39,12 +39,12 @@ module.exports = class setJoinVoting extends Command {
           .setColor(message.guild.me.displayHexColor);
 
       const emoji = await message.guild.emojis.cache.find(e => e.id === joinvotingEmoji) || joinvotingEmoji
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .addField('Status', oldStatus, true)
         .addField('Current MessageID', `\`${joinvotingMessageId || 'None'}\``)
         .addField('Current Emoji', `${emoji || '`None`'}`)
         .addField('Current ChannelID', `${'<#'+ votingChannelID +'>' || '`None`'}`)
-      );
+      ]});
     }
     else if (args.length > 2)
     {
@@ -115,7 +115,7 @@ module.exports = class setJoinVoting extends Command {
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
 
-      await message.channel.send(embed);
+      await message.channel.send({embeds: [embed]});
     }
   }
 };

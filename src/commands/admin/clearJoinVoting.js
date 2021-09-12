@@ -44,9 +44,9 @@ module.exports = class clearJoinVoting extends Command {
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
 
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .addField('Status', statusUpdate, true)
-        .addField('Message', '`None`')
+        .addField('Message', '`None`')]}
       );
   }
 };

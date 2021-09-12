@@ -39,7 +39,7 @@ module.exports = class ClearWarnsCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
     message.client.logger.info(oneLine`
       ${message.guild.name}: ${message.author.tag} cleared ${member.user.tag}'s warns
     `);

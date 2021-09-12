@@ -6,50 +6,16 @@ const { fail } = require('./utils/emojis.json');
 const amethyste = require('amethyste-api')
 const { NekoBot } = require("nekobot-api");
 
-/**
- * Splite's custom client
- * @extends Discord.Client
- */
 class Client extends Discord.Client {
+  constructor(config, options) {
+    super(options);
 
-  /**
-   * Create a new client with partials
-   * @param {Object} config 
-   * @param {ClientOptions} options 
-   */
-  constructor(config, options, partials = {}) {
-    
-    super({options, partials: ['MESSAGE', 'CHANNEL', 'REACTION']});
-    /**
-     * Bot name
-     */
     this.name = config.botName;
-
     this.config = config;
-    /**
-     * Invite Link for this bot
-     */
     this.link = config.inviteLink;
-
-    /**
-     * Discord tag of the owner. i.e Split#0420
-     */
     this.ownerTag = config.ownerDiscordTag;
-
-    /**
-     * Create logger
-     */
     this.logger = require('./utils/logger.js');
-
-    /**
-     * Create database
-     */
     this.db = require('./utils/db.js');
-
-    /**
-     * All possible command types
-     * @type {Object}
-     */
     this.types = {
       INFO: 'info',
       FUN: 'fun',
@@ -61,85 +27,22 @@ class Client extends Discord.Client {
       ADMIN: 'admin',
       OWNER: 'owner',
     };
-
-    /** 
-     * Collection of bot commands
-     * @type {Collection<string, Command>}
-     */
     this.commands = new Discord.Collection();
-
-    /** 
-     * Collection of command aliases
-     * @type {Collection<string, Command>}
-     */
     this.aliases = new Discord.Collection();
-
-    /** 
-     * Array of geoGuessr topics
-     * @type {Array<string>}
-     */
     this.topics = [];
-
-    /** 
-     * Login token
-     * @type {string}
-     */
     this.token = config.token;
-
-    /** 
-     * API keys
-     * @type {Object}
-     */
     this.apiKeys = config.apiKeys;
-
-    /**
-     * Amethyst API
-     * @type {Object}
-     */
     this.ameApi = new amethyste(config.apiKeys.amethyste)
-
-    /**
-     * Neko API
-     * @type {Object}
-     */
     this.nekoApi = new NekoBot()
-
-    /** 
-     * Splite's owner ID
-     * @type {string}
-     */
     this.ownerId = config.ownerId;
-
-    /** 
-     * Splite's bug report channel ID
-     * @type {string}
-     */
     this.bugReportChannelId = config.bugReportChannelId;
-
-    /** 
-     * Splite's feedback channel ID
-     * @type {string}
-     */
     this.feedbackChannelId = config.feedbackChannelId;
-
-    /** 
-     * Splite's server log channel ID
-     * @type {string}
-     */
     this.serverLogId = config.serverLogId;
     this.confessionReportsID = config.confessionReportsID
-    /** 
-     * Utility functions
-     * @type {Object}
-     */
     this.utils = require('./utils/utils.js');
-
     this.logger.info('Initializing...');
-
     this.odds = new Map()
-
     this.votes = new Map()
-
   }
 
   /**
@@ -250,7 +153,7 @@ class Client extends Discord.Client {
       .setDescription(`\`\`\`diff\n- System Failure\n+ ${errorMessage}\`\`\``)
       .setTimestamp()
       .setColor("RANDOM");
-    systemChannel.send(embed);
+    systemChannel.send({embeds: [embed]});
   }
 }
 

@@ -19,7 +19,7 @@ module.exports = (client, messages) => {
       .setDescription(`**${messages.size} messages** in ${message.channel} were deleted.`)
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    messageDeleteLog.send(embed);
+    messageDeleteLog.send({embeds: [embed]});
   }
 
 };

@@ -36,10 +36,10 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
 
     // Clear role
     if (args.length === 0) {
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .spliceFields(0, 0, { name: 'Current View-Confessions Role', value: `${oldViewConfessionsRole}`, inline: true })
         .spliceFields(2, 0, { name: 'Status', value: `\`${oldStatus}\``, inline: true }).setDescription(this.description)
-      );
+      ]});
     }
 
     // Update role
@@ -52,9 +52,9 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
     const status =  message.client.utils.getStatus(confessionsRole);
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .spliceFields(0, 0, { name: 'Role', value: `${oldViewConfessionsRole} ➔ ${confessionsRole}`, inline: true })
       .spliceFields(2, 0, { name: 'Status', value: statusUpdate, inline: true })
-    );
+    ]});
   }
 };

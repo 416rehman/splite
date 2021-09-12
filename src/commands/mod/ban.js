@@ -30,8 +30,8 @@ module.exports = class BanCommand extends Command {
     if (!reason) reason = '`None`';
     if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
-    message.channel.send(new MessageEmbed().setTitle('Ban Member')
-        .setDescription(`Do you want to ban ${member}?`)).then(async msg=> {
+    message.channel.send({embeds: [new MessageEmbed().setTitle('Ban Member')
+        .setDescription(`Do you want to ban ${member}?`)]}).then(async msg=> {
       const reactions = await confirm(msg, message.author, ["✅", "❌"], 10000);
 
       if (reactions === '✅') {
@@ -46,7 +46,7 @@ module.exports = class BanCommand extends Command {
             .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        msg.edit(embed);
+        msg.edit({embeds: [embed]});
         message.client.logger.info(`${message.guild.name}: ${message.author.tag} banned ${member.user.tag}`);
 
         // Update mod log

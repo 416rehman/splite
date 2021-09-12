@@ -54,8 +54,8 @@ module.exports = class clearVerificationRoleCommand extends Command {
     const status = 'disabled';
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
         .addField('Verification Role', `${oldVerificationRole} ➔ \`None\``)
-        .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``))
+        .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``)]})
   }
 };

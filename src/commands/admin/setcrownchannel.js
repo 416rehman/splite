@@ -48,11 +48,11 @@ module.exports = class SetCrownChannelCommand extends Command {
 
     // Clear channel
     if (args.length === 0) {
-      return message.channel.send(embed.spliceFields(1, 0, { 
+      return message.channel.send({embeds: [embed.spliceFields(1, 0, {
         name: 'Current Crown Channel',
         value: `\`${oldCrownChannel}\``,
         inline: true
-      }).spliceFields(3, 0, { name: 'Status', value: `\`${oldStatus}\`` }).setDescription(this.description));
+      }).spliceFields(3, 0, { name: 'Status', value: `\`${oldStatus}\`` }).setDescription(this.description)]});
     }
     embed.setDescription(`The \`crown channel\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`)
     const crownChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
@@ -62,10 +62,10 @@ module.exports = class SetCrownChannelCommand extends Command {
       `);
 
     message.client.db.settings.updateCrownChannelId.run(crownChannel.id, message.guild.id);
-    message.channel.send(embed.spliceFields(1, 0, { 
+    message.channel.send({embeds: [embed.spliceFields(1, 0, {
       name: 'Channel', 
       value: `${oldCrownChannel} ➔ ${crownChannel}`, 
       inline: true 
-    }));
+    })]});
   }
 };

@@ -17,7 +17,7 @@ module.exports = {
                 **Should they stay?**\n`)
                     .setFooter(`Voting will end in ${duration} seconds...`);
                 const channel = client.channels.cache.find(channel => channel.id === votingChannelID)
-                channel.send(embed).then(msg => {
+                channel.send({embeds: [embed]}).then(msg => {
                     msg.react('👍').then(() => msg.react('👎'));
 
                     embed
@@ -29,7 +29,7 @@ module.exports = {
                         .setFooter(`Voting will end in ${duration = duration - timer} seconds...`);
 
                     let myinterval = setInterval(() => {
-                        msg.edit(embed).then(() =>
+                        msg.edit({embeds: [embed]}).then(() =>
                             embed
                                 .setThumbnail(`${user.displayAvatarURL({ dynamic: true })}`)
                                 .setColor(0xf25852)
@@ -61,7 +61,7 @@ module.exports = {
                                         .setImage("https://media4.giphy.com/media/ljtfkyTD3PIUZaKWRi/giphy.gif")
                                         .setDescription(`**Maybe they have higher perms than me?**\nThey received ${yesVotes} 👍 and ${noVotes} 👎`)
                                         .setFooter('');
-                                    msg.edit(embed)
+                                    msg.edit({embeds: [embed]})
                                 }
 
                                 embed
@@ -70,7 +70,7 @@ module.exports = {
                                     .setImage("https://media.tenor.com/images/da66a96ca7f65f949a07db8ab9926297/tenor.gif")
                                     .setDescription(`They received ${yesVotes} 👍 and ${noVotes} 👎`)
                                     .setFooter('');
-                                msg.edit(embed)
+                                msg.edit({embeds: [embed]})
 
                             } else {
                                 await user.send('Welcome, enjoy your stay!.').catch(() => console.log("Can't send DM to your user!"));
@@ -80,7 +80,7 @@ module.exports = {
                                     .setTitle(`${user.username}#${user.discriminator} has been welcomed to the server!`)
                                     .setDescription(`They received ${yesVotes} 👍 and ${noVotes} 👎`)
                                     .setFooter(' ')
-                                msg.edit(embed)
+                                msg.edit({embeds: [embed]})
                             }
                         });
                 })

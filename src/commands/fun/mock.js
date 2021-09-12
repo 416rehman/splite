@@ -10,15 +10,11 @@ module.exports = class MockCommand extends Command {
       usage: 'mock <text>',
       description: 'Generates a "mocking-spongebob" image with provided text',
       type: client.types.FUN,
-      examples: [`mock ${client.name} is the best bot!`]
+      examples: [`mock ${client.name} is the best bot!`],
     });
   }
   async run(message, args) {
-    if (message.guild.funInProgress.has(message.author.id)) return message.channel.send(new MessageEmbed().setDescription(`${fail} Please wait, you already have a request pending.`))
-    if (!args[0] && !message.reference) return this.sendErrorMessage(message, 0, 'Please provide some text');
-    message.guild.funInProgress.set(message.author.id, 'fun');
-
-    message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
+    message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg=>{
       try {
         const text = await this.getTexts(message, args);
         const buffer = await msg.client.utils.generateImgFlipImage(102918669, `${text.text1}`, `${text.text2}`)
@@ -27,22 +23,22 @@ module.exports = class MockCommand extends Command {
         {
           const attachment = new MessageAttachment(buffer, "mocking.png");
 
-          await message.channel.send(text.text1 + text.text2, attachment)
+          await message.channel.send({content: text.text1 + text.text2, files: [attachment]})
           await msg.delete()
         }
       }
       catch (e) {
-        await msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
+        await msg.edit({embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)]})
       }
     })
-    message.guild.funInProgress.delete(message.author.id)
   }
 
   async getTexts(message, args) {
     return new Promise((async (resolve, reject) => {
       //If reply
       if (message.reference) {
-        await message.channel.messages.fetch(message.reference.messageID).then(async ref => {
+        await message.channel.messages.fetch(message.reference.messageId).then(async ref => {
+
           const text1 = ref.member.displayName + ': '
           let text2 = await message.client.utils.replaceMentionsWithNames(ref.content, ref.guild)
 

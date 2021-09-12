@@ -51,11 +51,11 @@ module.exports = class WarnsCommand extends Command {
         .setDescription(`Showing \`${amount}\` of ${member}'s \`${count}\` total warns.`);
     };
 
-    if (count == 0) message.channel.send(embed
+    if (count == 0) message.channel.send({embeds: [embed
       .setTitle('Warn List [0]')
       .setDescription(`${member} currently has no warns.`)
-    );
-    else if (count < 5) message.channel.send(buildEmbed(0, embed));
+    ]});
+    else if (count < 5) message.channel.send({embeds: [buildEmbed(0, embed)]});
     else {
 
       let n = 0;

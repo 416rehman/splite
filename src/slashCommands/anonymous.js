@@ -40,7 +40,7 @@ module.exports = {
                     .setDescription(`"${anonMsg}"`)
                     .setFooter("To send an anonymous message, type /anonymous")
                     .setColor("RANDOM");
-                channel.send(embed).then(()=>{
+                channel.send({embeds: [embed]}).then(()=>{
                     client.db.users.setPoints.run(points - cost, interaction.member.user.id, interaction.guild_id)
                     reply(interaction, `Your anonymous message has been posted! Remaining points: **\`${points - cost}\`**.`, client)
                 })

@@ -24,11 +24,11 @@ module.exports = class PointsCommand extends Command {
         .setTitle(`${member.displayName}'s ${emojis.point}`)
         .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
         .setDescription(`${voted ? `${emojis.Voted}**+10%** Gambling Odds` : ''}`)
-        .addField('Member', member, true)
+        .addField('Member', member.toString(), true)
         .addField(`Points ${emojis.point}`, `\`${points}\``, true)
         .setFooter(`Boost your odds: ${prefix}vote`, message.author.displayAvatarURL({dynamic: true}))
         .setTimestamp()
         .setColor(member.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

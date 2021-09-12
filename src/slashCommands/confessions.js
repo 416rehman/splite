@@ -44,7 +44,7 @@ module.exports = {
                 .setFooter(`${ftr} ${viewConfessionRole > 0 ? "| Viewable by staff" : ""}`)
                 .setTimestamp()
                 .setColor("RANDOM");
-            confessionsChannel.send(embed).then(msg => {
+            confessionsChannel.send({embeds: [embed]}).then(msg => {
                 client.db.confessions.insertRow.run(
                     n,
                     confession,

@@ -16,7 +16,7 @@ module.exports = class SnipeCommand extends Command {
     const embed = new MessageEmbed()
       .setDescription('`Sniping...`')
       .setColor("RANDOM");
-    const msg = await message.channel.send(embed);
+    const msg = await message.channel.send({embeds: [embed]});
 
 
    const snipedMSg = message.guild.snipes.get(message.channel.id)
@@ -28,7 +28,7 @@ module.exports = class SnipeCommand extends Command {
             .setImage(`${snipedMSg.attachments.size > 0 ? snipedMSg.attachments.first().url : ''}`)
             .setTimestamp()
             .setAuthor(`${snipedMSg.author.username}#${snipedMSg.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.author.id}/${snipedMSg.author.avatar}.png`)
-        msg.edit(embed);
+        msg.edit({embeds: [embed]});
     }
     else
     {
@@ -36,7 +36,9 @@ module.exports = class SnipeCommand extends Command {
           .setDescription(`${fail} There is nothing to snipe!`)
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp();
-      msg.edit(embed).then(m => {m.delete({timeout: 5000})});
+      msg.edit({embeds: [embed]}).then(m => {
+          setTimeout(() => m.delete(), 5000);
+      });
     }
   }
 };

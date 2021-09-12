@@ -32,15 +32,15 @@ module.exports = class WarnCommand extends Command {
           .replace(/`?\?username`?/g, message.member.user.username) // Username substitution
           .replace(/`?\?tag`?/g, message.member.user.tag) // Tag substitution
           .replace(/`?\?size`?/g, message.guild.members.cache.size); // Guild size substitution
-      farewellChannel.send(new MessageEmbed().setDescription(farewellMessage).setColor("RANDOM"));
+      farewellChannel.send({embeds: [new MessageEmbed().setDescription(farewellMessage).setColor("RANDOM")]});
     }
     else {
-      message.channel.send(new MessageEmbed()
+      message.channel.send({embeds: [new MessageEmbed()
           .setDescription(`${emojis.fail} **There is no farewell message set for this server.**\n\n\`setfarewellmessage\` Sets a farewell message\n\`setfarewellchannel\` Sets the channel to post the farewell message to. `)
           .setColor("RED")
           .setFooter(message.author.tag, message.author.displayAvatarURL())
           .setTimestamp()
-      )
+      ]})
     }
   }
 };

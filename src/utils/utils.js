@@ -1,11 +1,10 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Collection } = require('discord.js');
 const schedule = require('node-schedule');
 const { stripIndent } = require('common-tags');
 const confessions = require("../slashCommands/confessions")
 const report = require("../slashCommands/report")
 const anonymous = require("../slashCommands/anonymous")
 const view = require("../slashCommands/view")
-const Collection = require("@discordjs/collection");
 const emojis = require("./emojis.json")
 const request = require('request')
 const config = require('../../config.json')
@@ -243,7 +242,7 @@ async function transferCrown(client, guild, crownRoleId) {
       .replace(/`?\?tag`?/g, winner.user.tag) // Tag substitution
       .replace(/`?\?role`?/g, crownRole) // Role substitution
       .replace(/`?\?points`?/g, points); // Points substitution
-    crownChannel.send(new MessageEmbed().setDescription(crownMessage).setColor(guild.me.displayHexColor));
+    crownChannel.send({embeds: [new MessageEmbed().setDescription(crownMessage).setColor(guild.me.displayHexColor)]});
   }
 
   client.logger.info(`${guild.name}: Assigned crown role to ${winner.user.tag} and reset server points`);
@@ -269,13 +268,12 @@ function scheduleCrown(client, guild) {
 
 function createCollections(client, guild) {
 
-  guild.snipes = new Collection()
+    guild.snipes = new Collection()
     guild.betsInProgress = new Collection();
     guild.gamblesInProgress = new Collection();
     guild.SmashOrPassInProgress = new Collection();
     guild.JoinVotingInProgress = new Collection();
     guild.roleRetrieval = new Collection();
-    guild.funInProgress = new Collection();
     guild.ships = new Collection();
 }
 

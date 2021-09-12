@@ -30,7 +30,7 @@ module.exports = class clearStarboardChannelCommand extends Command {
 
     // Clear if no args provided
       message.client.db.settings.updateStarboardChannelId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Starboard Channel', `${oldStarboardChannel} ➔ \`None\``));
+      return message.channel.send({embeds: [embed.addField('Starboard Channel', `${oldStarboardChannel} ➔ \`None\``)]});
 
   }
 };

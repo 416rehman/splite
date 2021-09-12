@@ -51,7 +51,7 @@ module.exports = class clearVerificationChannelCommand extends Command {
     const status = 'disabled';
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-    message.channel.send(embed.addField('Verification Channel', `${oldVerificationChannel}  ➔ \`None\``)
-          .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``))
+    message.channel.send({embeds: [embed.addField('Verification Channel', `${oldVerificationChannel}  ➔ \`None\``)
+          .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``)]})
   }
 };

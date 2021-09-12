@@ -32,7 +32,7 @@ module.exports = class rolesCommand extends Command {
             .setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${emojis.load} Please wait.... This may take a while`)
             .setFooter(`Total Roles: ${roleCount}`)
 
-        message.channel.send(embed).then(
+        message.channel.send({embeds: [embed]}).then(
             async msg => {
                 const roles = [];
                 try
@@ -44,15 +44,15 @@ module.exports = class rolesCommand extends Command {
                     sorted.forEach(r=>{roles.push(`<@&${r.id}> - \`${r.memberCount} Members\``)})
 
                     if (roles.length <= max) {
-                        msg.edit(embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`))
+                        msg.edit({embeds: [embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`)]})
                     } else {
-                        msg.edit(embed.setFooter(
+                        msg.edit({embeds: [embed.setFooter(
                             `Expires after two minutes.`,
-                            message.author.displayAvatarURL({dynamic: true})))
+                            message.author.displayAvatarURL({dynamic: true}))]})
                         msg.delete()
                         new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
                     }
-                    msg.edit(embed)
+                    msg.edit({embeds: [embed]})
                 } catch (e) { console.log(e) }
 
                 message.guild.roleRetrieval.delete(message.guild.id);

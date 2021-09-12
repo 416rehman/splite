@@ -24,7 +24,7 @@ module.exports = (client, member) => {
       .setDescription(`${member} (**${member.user.tag}**)`)
       .setTimestamp()
       .setColor(member.guild.me.displayHexColor);
-    memberLog.send(embed);
+    memberLog.send({embeds: [embed]});
   }
 
   /** ------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ module.exports = (client, member) => {
       .replace(/`?\?username`?/g, member.user.username) // Username substitution
       .replace(/`?\?tag`?/g, member.user.tag) // Tag substitution
       .replace(/`?\?size`?/g, member.guild.members.cache.size); // Guild size substitution
-    farewellChannel.send(new MessageEmbed().setDescription(farewellMessage).setColor(member.guild.me.displayHexColor));
+    farewellChannel.send({embeds: [new MessageEmbed().setDescription(farewellMessage).setColor(member.guild.me.displayHexColor)]});
   }
   
   /** ------------------------------------------------------------------------------------------------

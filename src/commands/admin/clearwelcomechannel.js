@@ -45,10 +45,10 @@ module.exports = class clearWelcomeChannelCommand extends Command {
       const status = 'disabled';
       const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
       
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .spliceFields(0, 0, { name: 'Channel', value: `${oldWelcomeChannel} ➔ \`None\``, inline: true })
         .spliceFields(1, 0, { name: 'Status', value: statusUpdate, inline: true })
-      );
+      ]});
 
   }
 };

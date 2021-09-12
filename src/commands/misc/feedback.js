@@ -30,7 +30,7 @@ module.exports = class FeedbackCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    feedbackChannel.send(feedbackEmbed);
+    feedbackChannel.send({embeds: [feedbackEmbed]});
 
     // Send response
     if (feedback.length > 1024) feedback = feedback.slice(0, 1021) + '...';
@@ -46,6 +46,6 @@ module.exports = class FeedbackCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

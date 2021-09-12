@@ -81,6 +81,6 @@ module.exports = class ExplainPointsCommand extends Command {
     if (checkingPoints) embed.addField(`Checking Points ${emojis.point}`, checkingPoints);
     if (leaderboard) embed.addField('The Leaderboard', leaderboard);
     embed.addField(`The Crown ${emojis.crown}`, crown);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

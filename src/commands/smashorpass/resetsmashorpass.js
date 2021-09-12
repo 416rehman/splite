@@ -23,7 +23,7 @@ module.exports = class resetSmashOrPassCommand extends Command {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
-      return (await message.reply(`${emojis.nep} **You need ${cost - points} more points ${emojis.point} in this server to reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history.**\n\nTo check your points ${emojis.point}, type \`${prefix}points\``)).delete({timeout: 5000})
+      return (await message.reply(`${emojis.nep} **You need ${cost - points} more points ${emojis.point} in this server to reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history.**\n\nTo check your points ${emojis.point}, type \`${prefix}points\``))
     }
     message.reply(`Your ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} matches, likes, and passes will be reset and ${cost} points ${emojis.point} will be deducted from you.\nDo you want to continue?`)
         .then(async msg=>{

@@ -6,5 +6,3 @@ function arrayProto (constructor) {
 module.exports = {
     arrayProto
 }
-
-//Call with require('./src/utils/prototypes').arrayProto(Array) in entry (app.js)

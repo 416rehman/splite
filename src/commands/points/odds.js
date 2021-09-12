@@ -28,6 +28,6 @@ module.exports = class WipePointsCommand extends Command {
         .setFooter(modifier ? `+10% odds voting perk active.`:`Boost your gambling odds: ${prefix}vote`, message.author.displayAvatarURL({dynamic: true}))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

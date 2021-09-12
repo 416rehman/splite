@@ -21,7 +21,7 @@ module.exports = class AddRoleCommand extends Command {
       if(args.join(' ').length > 30) return this.sendErrorMessage(message, 1, 'Your role name must not be longer than 30 characters', "");
       try {
         // Add role
-        await message.guild.roles.create({data:{name: `${args.join(' ')}`}, reason: `Created By ${message.author.username}#${message.author.discriminator}(${message.author.id})`})
+        await message.guild.roles.create({name: `${args.join(' ')}`, reason: `Created By ${message.author.username}#${message.author.discriminator}(${message.author.id})`})
             .then(role => {
               const embed = new MessageEmbed()
                   .setTitle('Add Role')
@@ -31,7 +31,7 @@ module.exports = class AddRoleCommand extends Command {
                   .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
                   .setTimestamp()
                   .setColor(message.guild.me.displayHexColor);
-              message.channel.send(embed);
+              message.channel.send({embeds: [embed]});
 
               // Update mod log
               this.sendModLogMessage(message, `Created By ${message.author.username}#${message.author.discriminator}(${message.author.id})`, { Member: message.author, Role: role });

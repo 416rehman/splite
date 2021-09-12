@@ -2,12 +2,12 @@ const { MessageEmbed } = require('discord.js');
 
 module.exports = (client, oldMessage, newMessage) => {
 
-  if (newMessage.webhookID) return; // Check for webhook
+  if (newMessage.webhookId) return; // Check for webhook
 
   // Detect edited commands
   if (
     newMessage.member && 
-    newMessage.id === newMessage.member.lastMessageID &&
+    newMessage.id === newMessage.member.lastMessageId &&
     !oldMessage.command
   ) {
     client.emit('message', newMessage);
@@ -55,7 +55,7 @@ module.exports = (client, oldMessage, newMessage) => {
           .setDescription(`${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})`)
           .addField('Before', oldMessage ? oldMessage.content : "**")
           .addField('After', newMessage.content);
-      messageEditLog.send(embed);
+      messageEditLog.send({embeds: [embed]});
     }
   }
 
@@ -75,7 +75,7 @@ module.exports = (client, oldMessage, newMessage) => {
         embed.setDescription(`${newMessage.member}'s **message embeds** in ${newMessage.channel} were deleted.`);
       else
         embed.setDescription(`${newMessage.member}'s **message embed** in ${newMessage.channel} was deleted.`);
-      messageDeleteLog.send(embed);
+      messageDeleteLog.send({embeds: [embed]});
     }
   }
 };

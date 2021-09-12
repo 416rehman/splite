@@ -18,9 +18,9 @@ module.exports = class AdminsCommand extends Command {
     const adminRoleId = message.client.db.settings.selectAdminRoleId.pluck().get(message.guild.id);
     const adminRole = message.guild.roles.cache.get(adminRoleId) || '`None`';
 
-    const admins = message.guild.members.cache.filter(m => {
+    const admins = [...message.guild.members.cache.filter(m => {
       if (m.roles.cache.find(r => r === adminRole)) return true;
-    }).sort((a, b) => (a.joinedAt > b.joinedAt) ? 1 : -1).array();
+    }).sort((a, b) => (a.joinedAt > b.joinedAt) ? 1 : -1).values()];
 
     const embed = new MessageEmbed()
       .setTitle(`Admin List [${admins.length}]`)
@@ -32,13 +32,13 @@ module.exports = class AdminsCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
 
     const interval = 25;
-    if (admins.length === 0) message.channel.send(embed.setDescription('No admins found.'));
+    if (admins.length === 0) message.channel.send({embeds: [embed.setDescription('No admins found.')]});
     else if (admins.length <= interval) {
       const range = (admins.length == 1) ? '[1]' : `[1 - ${admins.length}]`;
-      message.channel.send(embed
+      message.channel.send({embeds: [embed
         .setTitle(`Admin List ${range}`)
         .setDescription(admins.join('\n'))
-      );
+      ]});
 
     // Reaction Menu
     } else {

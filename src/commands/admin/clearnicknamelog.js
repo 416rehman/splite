@@ -30,7 +30,7 @@ module.exports = class clearNicknameLogCommand extends Command {
 
     // Clear if no args provided
       message.client.db.settings.updateNicknameLogId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Nickname Log', `${oldNicknameLog} ➔ \`None\``));
+      return message.channel.send({embeds: [embed.addField('Nickname Log', `${oldNicknameLog} ➔ \`None\``)]});
 
   }
 };

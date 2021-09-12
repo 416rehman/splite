@@ -19,7 +19,7 @@ module.exports = class activityCommand extends Command {
     const embed = new MessageEmbed()
         .setDescription(`${emojis.load} Fetching Message Count...`)
         .setColor("RANDOM")
-    message.channel.send(embed).then(async msg=>
+    message.channel.send({embeds: [embed]}).then(async msg=>
         {
           if (!args[0]) this.sendUserMessageCount(message, message.author, embed, msg);
           else if (args[0])
@@ -78,10 +78,10 @@ module.exports = class activityCommand extends Command {
 
     if (descriptions.length <= max) {
       const range = (descriptions.length == 1) ? '[1]' : `[1 - ${descriptions.length}]`;
-      await msg.edit(embed
+      await msg.edit({embeds: [embed
           .setTitle(`${title} ${range}`)
           .setDescription(descriptions.join('\n'))
-      );
+      ]});
     } else {
       const position = lb.findIndex(p => p.user.id === message.author.id)
       embed
@@ -98,6 +98,6 @@ module.exports = class activityCommand extends Command {
   sendUserMessageCount(message, target, embed, msg) {
     const messages = message.client.db.users.selectMessageCount.pluck().get(target.id, message.guild.id);
     embed.setDescription(`${target} has sent **${messages} messages** so far!`)
-    msg.edit(embed)
+    msg.edit({embeds: [embed]})
   }
 };

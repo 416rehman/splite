@@ -6,7 +6,7 @@ try
   if (message.guild.snipes.has(message.channel.id) && (!message.author.bot)) message.guild.snipes.delete(message.channel.id)
   message.guild.snipes.set(message.channel.id, message)
   // Check for webhook and that message is not empty
-  if (message.webhookID || (!message.content && message.embeds.length === 0)) return;
+  if (message.webhookId || (!message.content && message.embeds.length === 0)) return;
 } catch (e){}
 
 
@@ -44,7 +44,7 @@ try{
             .setDescription(`${message.member}'s **message** in ${message.channel} was deleted.`)
             .addField('Message', message.content);
 
-        messageDeleteLog.send(embed);
+        messageDeleteLog.send({embeds: [embed]});
       }
     }
     catch (e) {
@@ -67,7 +67,7 @@ try{
       embed
         .setTitle('Message Update: `Delete`')
         .setDescription(`${message.member}'s **message embed** in ${message.channel} was deleted.`);
-      messageDeleteLog.send(embed);
+      messageDeleteLog.send({embeds: [embed]});
     }
   }
   

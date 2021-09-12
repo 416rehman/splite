@@ -45,7 +45,7 @@ module.exports = class UnmuteCommand extends Command {
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
-      message.channel.send(embed);
+      message.channel.send({embeds: [embed]});
     } catch (err) {
       message.client.logger.error(err.stack);
       return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);

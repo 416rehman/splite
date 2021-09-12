@@ -27,6 +27,6 @@ module.exports = class ClearAdminRoleCommand extends Command {
         .setColor(message.guild.me.displayHexColor);
 
     message.client.db.settings.updateAdminRoleId.run(null, message.guild.id);
-    return message.channel.send(embed.addField('Admin Role', `${oldAdminRole} ➔ \`None\``));
+    return message.channel.send({embeds: [embed.addField('Admin Role', `${oldAdminRole} ➔ \`None\``)]});
   }
 };

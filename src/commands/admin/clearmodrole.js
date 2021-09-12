@@ -28,6 +28,6 @@ module.exports = class clearModRoleCommand extends Command {
 
     // Clear if no args provided
       message.client.db.settings.updateModRoleId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Mod Role', `${oldModRole} ➔ \`None\``));
+      return message.channel.send({embeds: [embed.addField('Mod Role', `${oldModRole} ➔ \`None\``)]});
   }
 };

@@ -40,14 +40,14 @@ module.exports = class SetModChannelsCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Mod Channels', `${oldModChannels}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Mod Channels', `${oldModChannels}`).setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`mod channels\` were successfully updated. ${success}\nUse \`clearmodchannels\` to clear the current \`mod channels\`.`)
     let channels = [];
     for (const arg of args) {
       const channel = this.getChannelFromMention(message, arg) || message.guild.channels.cache.get(arg);
-      if (channel && channel.type === 'text' && channel.viewable) channels.push(channel);
+      if (channel && channel.type === 'GUILD_TEXT' && channel.viewable) channels.push(channel);
       else return this.sendErrorMessage(message, 0, stripIndent`
         Please mention only accessible text channels or provide only valid text channel IDs
       `);
@@ -55,6 +55,6 @@ module.exports = class SetModChannelsCommand extends Command {
     channels = [...new Set(channels)];
     const channelIds = channels.map(c => c.id).join(' '); // Only keep unique IDs
     message.client.db.settings.updateModChannelIds.run(channelIds, message.guild.id);
-    message.channel.send(embed.addField('Mod Channels', `${oldModChannels} ➔ ${trimArray(channels).join(' ')}`));
+    message.channel.send({embeds: [embed.addField('Mod Channels', `${oldModChannels} ➔ ${trimArray(channels).join(' ')}`)]});
   }
 };

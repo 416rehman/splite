@@ -20,7 +20,7 @@ module.exports = class urbanCommand extends Command {
         .setDescription(`${emoji.load} Fetching Definition`)
         .setTitle(`Urban Dictionary`)
         .setTimestamp()
-    message.channel.send(embed).then(msg=> {
+    message.channel.send({embeds: [embed]}).then(msg=> {
       if (!args[0])
       {
         ud.random((error,result)=> {
@@ -30,7 +30,7 @@ module.exports = class urbanCommand extends Command {
             embed.setDescription(`**${result[0].word}** \`\`\`${error ? error : result[0].definition}\`\`\``)
             embed.setFooter(message.member.displayName, message.author.displayAvatarURL())
           }
-          msg.edit(embed)
+          msg.edit({embeds: [embed]})
         })
       }
       else
@@ -39,7 +39,7 @@ module.exports = class urbanCommand extends Command {
           if (error)
           {
             embed.setDescription(`${emoji.fail} ${error.message}`)
-            msg.edit(embed)
+            msg.edit({embeds: [embed]})
           }
           else
           {

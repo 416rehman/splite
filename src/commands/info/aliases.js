@@ -53,7 +53,7 @@ module.exports = class AliasesCommand extends Command {
 
       embed
         .setTitle(`Alias Type: \`${capitalize(type)}\``)
-        .setThumbnail('https://i.imgur.com/B0XSinY.png')
+        .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
         .addField(
           `**${emojiMap[type]} [${aliases[type].reduce((a, b) => a + b.split(' ').slice(1).length, 0)}]**`, 
           aliases[type].join('\n')
@@ -102,6 +102,6 @@ module.exports = class AliasesCommand extends Command {
       );
     }
 
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

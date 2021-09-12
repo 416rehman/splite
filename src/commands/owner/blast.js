@@ -31,7 +31,7 @@ module.exports = class BlastCommand extends Command {
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor)
           .setFooter(`Don't want this message here? Use the "setsystemchannel" command to change it`);
-        systemChannel.send(embed);
+        systemChannel.send({embeds: [embed]});
       } else guilds.push(guild.name);
     });
   
@@ -45,7 +45,7 @@ module.exports = class BlastCommand extends Command {
         .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
-      message.channel.send(embed);
+      message.channel.send({embeds: [embed]});
     }
   } 
 };

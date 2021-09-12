@@ -44,8 +44,8 @@ module.exports = class MuteCommand extends Command {
     if (member.roles.cache.has(muteRoleId))
       return this.sendErrorMessage(message, 0, 'Provided member is already muted');
 
-    message.channel.send(new MessageEmbed().setTitle('Mute Member')
-        .setDescription(`Do you want to mute ${member} for **${ms(time, {long: true})}**?`)).then(async msg=>
+    message.channel.send({embeds: [new MessageEmbed().setTitle('Mute Member')
+        .setDescription(`Do you want to mute ${member} for **${ms(time, {long: true})}**?`)]}).then(async msg=>
     {
       const reactions = await confirm(msg, message.author, ["✅", "❌"], 10000);
 
@@ -67,7 +67,7 @@ module.exports = class MuteCommand extends Command {
             .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        message.channel.send(muteEmbed);
+        message.channel.send({embeds: [muteEmbed]});
 
         // Unmute member
         member.timeout = message.client.setTimeout(async () => {
@@ -78,7 +78,7 @@ module.exports = class MuteCommand extends Command {
                 .setDescription(`${member} has been unmuted.`)
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            message.channel.send(unmuteEmbed);
+            message.channel.send({embeds: [unmuteEmbed]});
           } catch (err) {
             message.client.logger.error(err.stack);
             return this.sendErrorMessage(message, 1, 'Please check the role hierarchy', err.message);

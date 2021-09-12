@@ -31,7 +31,7 @@ module.exports = class SetRoleLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Role Log', `\`${oldRoleLog}\``).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Role Log', `\`${oldRoleLog}\``).setDescription(this.description)]});
     }
     embed.setDescription(`The \`role log\` was successfully updated. ${success}\nUse \`clearrolelog\` to clear the current \`role log\`.`)
     const roleLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
@@ -40,6 +40,6 @@ module.exports = class SetRoleLogCommand extends Command {
         Please mention an accessible text channel or provide a valid text channel ID
       `);
     message.client.db.settings.updateRoleLogId.run(roleLog.id, message.guild.id);
-    message.channel.send(embed.addField('Role Log', `${oldRoleLog} ➔ ${roleLog}`));
+    message.channel.send({embeds: [embed.addField('Role Log', `${oldRoleLog} ➔ ${roleLog}`)]});
   }
 };

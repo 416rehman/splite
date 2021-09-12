@@ -5,7 +5,7 @@ module.exports = class enlargeCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'enlarge',
-      aliases: ['en', 'el', 'big', 'maximize', 'bigemoji', 'enemoji'],
+      aliases: ['en', 'el', 'big', 'maximize', 'bigemoji', 'enemoji', 'expand', 'enhance'],
       usage: 'en <emoji>',
       description: 'Enlarges a custom emoji',
       type: client.types.FUN,
@@ -21,7 +21,7 @@ module.exports = class enlargeCommand extends Command {
       const Link = `https://cdn.discordapp.com/emojis/${customemoji.id}.${
           customemoji.animated ? "gif" : "png"
       }`
-      return message.channel.send(new Discord.MessageAttachment(Link));
+      return message.channel.send({files: [new Discord.MessageAttachment(Link)]});
     }
     else {
       this.sendErrorMessage(message, 0, 'Please mention a valid custom emoji.');

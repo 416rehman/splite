@@ -10,15 +10,14 @@ module.exports = class HateCommand extends Command {
       usage: 'hate <text>',
       description: 'Generates an "all my homies hate" image with provided text',
       type: client.types.FUN,
-      examples: [`hate ${client.name} is the best bot!`]
+      examples: [`hate ${client.name} is the best bot!`],
+      cooldown: 5
     });
   }
   async run(message, args) {
-    if (message.guild.funInProgress.has(message.author.id)) return message.channel.send(new MessageEmbed().setDescription(`${fail} Please wait, you already have a request pending.`))
-    if (!args[0]) return this.sendErrorMessage(message, 0, 'Please provide some text');
-    message.guild.funInProgress.set(message.author.id, 'fun');
+    
 
-    message.channel.send(new MessageEmbed().setDescription(`${load} Loading...`)).then(async msg=>{
+    message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg=>{
       try {
         const text = await message.client.utils.replaceMentionsWithNames(args.join(' '), message.guild)
         const buffer = await msg.client.utils.generateImgFlipImage(242461078, `${text}`, `${text}`, '#EBDBD1', '#2E251E')
@@ -27,14 +26,13 @@ module.exports = class HateCommand extends Command {
         {
           const attachment = new MessageAttachment(buffer, "allmyhomieshate.png");
 
-          await message.channel.send(attachment)
+          await message.channel.send({files: [attachment]})
           await msg.delete()
         }
       }
       catch (e) {
-        await msg.edit(new MessageEmbed().setDescription(`${fail} ${e}`))
+        await msg.edit({embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)]})
       }
     })
-    message.guild.funInProgress.delete(message.author.id)
   }
 };

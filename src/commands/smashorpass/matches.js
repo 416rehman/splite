@@ -27,7 +27,10 @@ module.exports = class MatchesCommand extends Command {
     let matches, name
     if (args.length > 0) {
       const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
-      if (member == undefined) return message.reply(`${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>m.delete({timeout:5000}))
+      if (member == undefined)
+        return message.reply(`${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`).then(m=>{
+          setTimeout(() => m.delete(), 5000);
+        })
       matches = message.client.db.SmashOrPass.getMatches.all(member.user.id, member.user.id);
       name = member.user.username;
     }
@@ -58,10 +61,10 @@ module.exports = class MatchesCommand extends Command {
 
     if (members.length <= max) {
       const range = (members.length == 1) ? '[1]' : `[1 - ${members.length}]`;
-      message.channel.send(embed
+      message.channel.send({embeds: [embed
         .setTitle(`${name}'s ${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass} Matches ${emojis.matches} ${range}`)
         .setDescription(members.join('\n'))
-      );
+      ]});
 
     // Reaction Menu
     } else {

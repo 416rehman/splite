@@ -11,7 +11,7 @@ module.exports = class AddEmojiCommand extends Command {
       usage: 'addemoji <emoji> <name>',
       description: 'Add emoji from a server, or an image link.\nMultiple emojis can be added by typing all of them at once seperated by spaces.',
       type: client.types.MOD,
-      clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_EMOJIS'],
+      clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_EMOJIS_AND_STICKERS'],
       userPermissions: ['MANAGE_ROLES'],
       examples: ['addemoji 🙄 feelsbad', 'em https://i.imgur.com/iYU1mgQ.png coolEmoji', 'em 😂 😙 😎']
     });
@@ -55,7 +55,7 @@ async function addEmoji(emoji, message, command, emojiName)
         `${Link}`,
         `${name}`
     );
-    return message.channel.send(new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} added with name "${name}"`));
+    return message.channel.send({embeds: [new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} added with name "${name}"`)]});
   }
   else if (urlRegex.test(emoji)) { //check for image urls
     name = emojiName || Math.random().toString(36).slice(2) //make the name compatible or just choose a random string

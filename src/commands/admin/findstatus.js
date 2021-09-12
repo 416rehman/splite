@@ -34,11 +34,12 @@ module.exports = class findStatusCommand extends Command {
 
     const embed = new MessageEmbed()
         .setDescription(`${emojis.load} **Searching for users with status **\n\`\`\`${query}\`\`\``)
-    message.channel.send(embed).then(async msg=>{
+    message.channel.send({embeds: [embed]}).then(async msg=>{
       const max = 5
 
       let results = []
       role.forEach(m => {
+        console.log(m)
         for (const activity of m.presence.activities.values()) {
           if(activity.type === 'CUSTOM_STATUS' && activity.state && activity.state.toLowerCase().includes(query))
           {
@@ -52,15 +53,15 @@ module.exports = class findStatusCommand extends Command {
       })
       if (results.length <= 0) {
         embed.setDescription(`${emojis.fail} None of the online members have matching status!`);
-        return msg.edit(embed)
+        return msg.edit({embeds: [embed]})
       }
       if (results.length <= max) {
         const range = (results.length === 1) ? '[1]' : `[1 - ${results.length}]`;
-        await msg.edit(embed
+        await msg.edit({embeds: [embed
             .setTitle(`Status Search Results ${range}`)
             .setDescription(results.join('\n'))
             .setFooter(`Only displays online users`)
-        );
+        ]});
       } else {
         embed
             .setTitle(`Status Search Results`)

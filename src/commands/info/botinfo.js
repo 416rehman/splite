@@ -19,8 +19,8 @@ module.exports = class BotInfoCommand extends Command {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const tech = stripIndent`
       Version     :: ${pkg.version}
-      Library     :: Discord.js v12.3.1
-      Environment :: Node.js v12.16.3
+      Library     :: Discord.js v13.1.0
+      Environment :: Node.js v16.8.0
       Database    :: SQLite
     `;
     const embed = new MessageEmbed()
@@ -30,7 +30,7 @@ module.exports = class BotInfoCommand extends Command {
       `)
       .addField('Prefix', `\`${prefix}\``, true)
       .addField('Client ID', `\`${message.client.user.id}\``, true)
-      .addField(`Developer ${owner}`, botOwner, true)
+      .addField(`Developer ${owner}`, botOwner.toString(), true)
       .addField('Tech', `\`\`\`asciidoc\n${tech}\`\`\``)
       .addField(
         'Links', 
@@ -41,6 +41,6 @@ module.exports = class BotInfoCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

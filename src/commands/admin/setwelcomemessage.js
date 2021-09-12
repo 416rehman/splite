@@ -41,10 +41,10 @@ module.exports = class SetWelcomeMessageCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
 
     if (!args[0]) {
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .addField('Status', oldStatus, true)
         .addField('Current Welcome Message', `${oldWelcomeMessage}`).setDescription(this.description)
-      );
+      ]});
     }
 
     embed.setDescription(`The \`welcome message\` was successfully updated. ${success}\nUse \`clearwelcomemessage\` to clear the current \`welcome message\`.`)
@@ -56,9 +56,9 @@ module.exports = class SetWelcomeMessageCommand extends Command {
     const status =  message.client.utils.getStatus(welcomeChannel, welcomeMessage);
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .addField('Status', statusUpdate, true)
       .addField('Message', message.client.utils.replaceKeywords(welcomeMessage))
-    );
+    ]});
   }
 };

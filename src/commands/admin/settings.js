@@ -102,7 +102,7 @@ module.exports = class SettingsCommand extends Command {
       case 's':
       case 'sys':
       case 'system':
-        return message.channel.send(embed
+        return message.channel.send({embeds: [embed
           .setTitle('Settings: `System`')
           .addField('Prefix', prefix, true)
           .addField('System Channel', systemChannel, true)
@@ -117,12 +117,12 @@ module.exports = class SettingsCommand extends Command {
             .addField('Confessions Channel', confessionChannel, true)
           .addField('Mod Channels', modChannels)
           .addField('Disabled Commands', disabledCommands)
-        );
+        ]});
       case 'l':
       case 'log':
       case 'logs':
       case 'logging':
-        return message.channel.send(embed
+        return message.channel.send({embeds: [embed
           .setTitle('Settings: `Logging`')
           .addField('Mod Log', modLog, true)
           .addField('Member Log', memberLog, true)
@@ -130,7 +130,7 @@ module.exports = class SettingsCommand extends Command {
           .addField('Role Log', roleLog, true)
           .addField('Message Edit Log', messageEditLog, true)
           .addField('Message Delete Log', messageDeleteLog, true)
-        );
+        ]});
       case 'v':
       case 'ver':
       case 'verif':
@@ -141,7 +141,7 @@ module.exports = class SettingsCommand extends Command {
           .addField('Channel', verificationChannel, true)
           .addField('Status', verificationStatus, true)
           .addField('Message', verificationMessage);
-        return message.channel.send(embed);
+        return message.channel.send({embeds: [embed]});
       case 'w':
       case 'welcome':
       case 'welcomes':
@@ -150,7 +150,7 @@ module.exports = class SettingsCommand extends Command {
           .addField('Channel', welcomeChannel, true)
           .addField('Status', welcomeStatus, true)
           .addField('Message', welcomeMessage);
-        return message.channel.send(embed);
+        return message.channel.send({embeds: [embed]});
       case 'f':
       case 'farewell':
       case 'farewells':
@@ -159,17 +159,17 @@ module.exports = class SettingsCommand extends Command {
           .addField('Channel', farewellChannel, true)
           .addField('Status', farewellStatus, true)
           .addField('Message', farewellMessage);
-        return message.channel.send(embed);
+        return message.channel.send({embeds: [embed]});
       case 'p':
       case 'point':
       case 'points':
-        return message.channel.send(embed
+        return message.channel.send({embeds: [embed
           .setTitle('Settings: `Points`')
           .addField('Message Points', messagePoints, true)
           .addField('Command Points', commandPoints, true)
           .addField('Voice Points', voicePoints, true)
           .addField('Status', pointsStatus)
-        );
+        ]});
       case 'c':
       case 'crown':
         embed
@@ -179,18 +179,18 @@ module.exports = class SettingsCommand extends Command {
           .addField('Schedule', crownSchedule, true)
           .addField('Status', crownStatus)
           .addField('Message', crownMessage);
-        return message.channel.send(embed);
+        return message.channel.send({embeds: [embed]});
       case 'j':
       case 'join':
       case 'joinvote':
       case 'joinvoting':
-        return message.channel.send(embed
+        return message.channel.send({embeds: [embed
             .setTitle('Settings: `Join Voting`')
             .addField('Status', joinVotingStatus)
             .addField('Reaction', joinVotingEmoji, true)
             .addField('MessageID', joinVotingMessage, true)
             .addField('Vote Broadcast Channel', joinVotingChannel, true)
-            );
+            ]});
     }
     if (setting)
       return this.sendErrorMessage(message, 0, stripIndent`
@@ -213,6 +213,6 @@ module.exports = class SettingsCommand extends Command {
       .addField('Crown', '`4` settings', true)
       .addField('JoinVoting', '`5` settings', true)
       .addField('Invite Me', `[Click Here](${message.client.link})`, true);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

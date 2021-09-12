@@ -47,10 +47,10 @@ module.exports = class clearCrownChannelCommand extends Command {
 
       // Clear channel
       message.client.db.settings.updateCrownChannelId.run(null, message.guild.id);
-      return message.channel.send(embed.spliceFields(1, 0, { 
+      return message.channel.send({embeds: [embed.spliceFields(1, 0, {
         name: 'Channel', 
         value: `${oldCrownChannel} ➔ \`None\``, 
         inline: true
-      }));
+      })]});
   }
 };

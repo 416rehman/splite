@@ -30,7 +30,7 @@ module.exports = class PurgeBotCommand extends Command {
     } else channel = message.channel;
 
     // Check type and viewable
-    if (channel.type != 'text' || !channel.viewable) return this.sendErrorMessage(message, 0, stripIndent`
+    if (channel.type != 'GUILD_TEXT' || !channel.viewable) return this.sendErrorMessage(message, 0, stripIndent`
       Please mention an accessible text channel or provide a valid text channel ID
     `);
 
@@ -59,8 +59,7 @@ module.exports = class PurgeBotCommand extends Command {
 
     if (messages.size === 0) { // No messages found
 
-      message.channel.send(
-        new MessageEmbed()
+      message.channel.send({embeds: [new MessageEmbed()
           .setTitle('Purgebot')
           .setDescription(`
             Unable to find any bot messages or commands. 
@@ -71,7 +70,9 @@ module.exports = class PurgeBotCommand extends Command {
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor)
-      ).then(msg => msg.delete({ timeout: 10000 })).catch(err => message.client.logger.error(err.stack));
+      ]}).then(msg => {
+        setTimeout(() => msg.delete(), 10000);
+      }).catch(err => message.client.logger.error(err.stack));
 
     } else { // Purge messages
       
@@ -89,8 +90,9 @@ module.exports = class PurgeBotCommand extends Command {
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
 
-        message.channel.send(embed).then(msg => msg.delete({ timeout: 10000 }))
-          .catch(err => message.client.logger.error(err.stack));
+        message.channel.send({embeds: [embed]}).then(msg => {
+          setTimeout(() => msg.delete(), 10000);
+        }).catch(err => message.client.logger.error(err.stack));
       });
     }
     

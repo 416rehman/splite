@@ -31,7 +31,7 @@ module.exports = class SetAutoRoleCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Auto Role', `${oldAutoRole}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Auto Role', `${oldAutoRole}`).setDescription(this.description)]});
     }
 
     // Update role
@@ -39,6 +39,6 @@ module.exports = class SetAutoRoleCommand extends Command {
     const autoRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!autoRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateAutoRoleId.run(autoRole.id, message.guild.id);
-    message.channel.send(embed.addField('Auto Role', `${oldAutoRole} ➔ ${autoRole}`));
+    message.channel.send({embeds: [embed.addField('Auto Role', `${oldAutoRole} ➔ ${autoRole}`)]});
   }
 };

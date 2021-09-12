@@ -19,7 +19,7 @@ module.exports = class MembersCommand extends Command {
   async run(message, args) {
     if (!args.length > 0)
     {
-      const members = message.guild.members.cache.array();
+      const members = [...message.guild.members.cache.values()];
       const online = members.filter((m) => m.presence.status === 'online').length;
       const offline =  members.filter((m) => m.presence.status === 'offline').length;
       const dnd =  members.filter((m) => m.presence.status === 'dnd').length;
@@ -36,7 +36,7 @@ module.exports = class MembersCommand extends Command {
           .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
-      return message.channel.send(embed);
+      return message.channel.send({embeds: [embed]});
     }
 
     let role;
@@ -61,7 +61,7 @@ module.exports = class MembersCommand extends Command {
         .setTitle(`Members of ${role.name}`)
         .setDescription(description)
         .setFooter(`${role.members.size} Members in ${role.name} | Showing ${i}`)
-    message.channel.send(embed).catch(err => {
+    message.channel.send({embeds: [embed]}).catch(err => {
       return this.sendErrorMessage(message, 0, `Too many members to display. Please try another role with fewer members`);
     })
   }

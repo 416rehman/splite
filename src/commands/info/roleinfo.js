@@ -34,7 +34,7 @@ module.exports = class RoleInfoCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('Role Information')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      .addField('Role', role, true)
+      .addField('Role', role.toString(), true)
       .addField('Role ID', `\`${role.id}\``, true)
       .addField('Position', position, true)
       .addField('Mentionable', `\`${role.mentionable}\``, true)
@@ -47,6 +47,6 @@ module.exports = class RoleInfoCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(role.hexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

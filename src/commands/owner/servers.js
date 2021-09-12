@@ -15,7 +15,7 @@ module.exports = class ServersCommand extends Command {
   }
   run(message, args) {
 
-    const servers = message.client.guilds.cache.array().map(guild => {
+    const servers = [...message.client.guilds.cache.values()].map(guild => {
       return `\`${guild.id}\` - **${guild.name}** - \`${guild.members.cache.size}\` members`;
     });
 
@@ -27,7 +27,7 @@ module.exports = class ServersCommand extends Command {
 
     if (servers.length <= 10) {
       const range = (servers.length == 1) ? '[1]' : `[1 - ${servers.length}]`;
-      message.channel.send(embed.setTitle(`Server List ${range}`).setDescription(servers.join('\n')));
+      message.channel.send({embeds: [embed.setTitle(`Server List ${range}`).setDescription(servers.join('\n'))]});
     } else {
       new ReactionMenu(message.client, message.channel, message.member, embed, servers);
     }

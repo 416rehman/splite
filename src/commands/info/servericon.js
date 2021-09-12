@@ -5,7 +5,7 @@ module.exports = class ServerIconCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'servericon',
-      aliases: ['icon', 'i', 'serveravatar'],
+      aliases: ['icon', 'i', 'serveravatar', 'serverav'],
       usage: 'servericon',
       description: 'Displays the server\'s icon.',
       type: client.types.INFO
@@ -18,6 +18,6 @@ module.exports = class ServerIconCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

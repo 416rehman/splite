@@ -24,14 +24,14 @@ module.exports = class EmojisCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
 
     const interval = 25;
-    if (emojis.length === 0) message.channel.send(embed.setDescription('No emojis found. 😢'));
+    if (emojis.length === 0) message.channel.send({embeds: [embed.setDescription('No emojis found. 😢')]});
     else if (emojis.length <= interval) {
       const range = (emojis.length == 1) ? '[1]' : `[1 - ${emojis.length}]`;
-      message.channel.send(embed
+      message.channel.send({embeds: [embed
         .setTitle(`Emoji List ${range}`)
         .setDescription(emojis.join('\n'))
         .setThumbnail(message.guild.iconURL({ dynamic: true }))
-      );
+      ]});
     
     // Reaction Menu
     } else {

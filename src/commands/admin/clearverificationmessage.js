@@ -50,9 +50,9 @@ module.exports = class clearVerificationMessageCommand extends Command {
     const status = 'disabled';
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
         .addField('Verification Message ID', `${verificationMessageId} ➔ \`None\``)
         .addField('Verification Message', `${oldVerificationMessage} ➔ \`None\``)
-        .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``))
+        .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``)]})
   }
 };

@@ -19,7 +19,7 @@ module.exports = class UnbanCommand extends Command {
     if (!args[0]) return this.sendHelpMessage(message);
     const id = args[0];
     if (!rgx.test(id)) return this.sendErrorMessage(message, 0, 'Please provide a valid user ID');
-    const bannedUsers = await message.guild.fetchBans();
+    const bannedUsers = await message.guild.bans.fetch();
     const user = bannedUsers.get(id).user;
     if (!user) return this.sendErrorMessage(message, 0, 'Unable to find user, please check the provided ID');
 
@@ -38,7 +38,7 @@ module.exports = class UnbanCommand extends Command {
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
 
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
     message.client.logger.info(`${message.guild.name}: ${message.author.tag} unbanned ${user.tag}`);
     
     // Update mod log

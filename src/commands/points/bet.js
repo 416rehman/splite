@@ -18,16 +18,24 @@ module.exports = class betCommand extends Command {
   }
 
   run(message, args) {
-    if (message.guild.betsInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already betting against someone! Please try again later.`).then(m=>m.delete({timeout: 5000}))
+    if (message.guild.betsInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already betting against someone! Please try again later.`).then(m=>{
+      setTimeout(() => m.delete(), 5000);
+    })
 
     const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
     if (!member) return this.sendErrorMessage(message, 0, `Please mention a user or provide a valid user ID`);
     if (member.id === message.client.user.id)
-      return message.channel.send(`${emojis.fail} Sorry I am not allowed to play with you 😟`).then(m=>m.delete({timeout: 5000}));
+      return message.channel.send(`${emojis.fail} Sorry I am not allowed to play with you 😟`).then(m=>{
+        setTimeout(() => m.delete(), 5000);
+      });
     if (member.user.id == message.author.id)
-      return message.reply(`${emojis.fail} No stupid, you NEVER bet against yourself!!`).then(m=>m.delete({timeout: 5000}))
+      return message.reply(`${emojis.fail} No stupid, you NEVER bet against yourself!!`).then(m=>{
+        setTimeout(() => m.delete(), 5000);
+      })
 
-    if (message.guild.betsInProgress.has(member.user.id)) return message.reply(`${emojis.fail} ${member.user.username} is already betting against someone! Please try again later.`).then(m=>m.delete({timeout: 5000}))
+    if (message.guild.betsInProgress.has(member.user.id)) return message.reply(`${emojis.fail} ${member.user.username} is already betting against someone! Please try again later.`).then(m=>{
+      setTimeout(() => m.delete(), 5000);
+    })
 
     let amount = parseInt(args[1]);
     if (isNaN(amount) === true || !amount)
@@ -38,7 +46,9 @@ module.exports = class betCommand extends Command {
 
     if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`).then(m=>m.delete(5000));
     if (amount > limit) amount = limit;
-    if (amount < 0 || amount > otherPoints) return message.reply(`${emojis.nep} ${member.user.username} only has ${otherPoints} points ${emojis.point}! Please change your betting amount!`).then(m=>m.delete({timeout: 5000}));
+    if (amount < 0 || amount > otherPoints) return message.reply(`${emojis.nep} ${member.user.username} only has ${otherPoints} points ${emojis.point}! Please change your betting amount!`).then(m=>{
+      setTimeout(() => m.delete(), 5000);
+    });
 
     message.guild.betsInProgress.set(message.author.id, new Date().getTime().toString());
     message.guild.betsInProgress.set(member.user.id, new Date().getTime().toString());
@@ -51,7 +61,7 @@ module.exports = class betCommand extends Command {
               .setTitle(`${message.author.username} VS ${member.user.username}`)
               .setDescription(`${emojis.point} **Rolling for ${amount} points** ${emojis.point}\n${emojis.dices}${emojis.dices}${emojis.dices}`)
               .setFooter(`${message.author.username} points: ${points} | ${member.user.username} points: ${otherPoints}`)
-          message.channel.send(embed).then(msg2 => {
+          message.channel.send({embeds: [embed]}).then(msg2 => {
             msg.delete()
             setTimeout(() => {
                       const d = message.client.utils.weightedRandom({0: 50, 1: 50})
@@ -71,13 +81,15 @@ module.exports = class betCommand extends Command {
                           .setTitle(`${message.author.username} VS ${member.user.username}`)
                           .setDescription(`🎉 ${winner} has won ${amount} points ${emojis.point} from ${loser}!`)
                           .setFooter(`🏆 ${winner.username}'s points: ${winnerPoints + amount} | ${loser.username}'s points: ${loserPoints - amount}`)
-                      msg2.edit(embed)
+                      msg2.edit({embeds: [embed]})
             }, 3000)
           }).catch(e => {
             console.log(e)
           })
         } else {
-          msg.edit(`${emojis.fail} ${message.author}, ${member.user.username} has rejected your bet!`).then(msg=>{msg.delete({timeout: 5000})})
+          msg.edit(`${emojis.fail} ${message.author}, ${member.user.username} has rejected your bet!`).then(msg=>{
+            setTimeout(() => m.delete(), 5000);
+          })
         }
       })
     } catch (e) {

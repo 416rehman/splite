@@ -41,9 +41,9 @@ module.exports = class clearWelcomeMessageCommand extends Command {
       const status = 'disabled';
       const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``; 
 
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .addField('Status', statusUpdate, true)
         .addField('Message', '`None`')
-      );
+      ]});
   }
 };

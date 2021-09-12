@@ -33,7 +33,7 @@ module.exports = class ReportBugCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    reportChannel.send(reportEmbed);
+    reportChannel.send({embeds: [reportEmbed]});
 
     // Send response
     if (report.length > 1024) report = report.slice(0, 1021) + '...';
@@ -49,6 +49,6 @@ module.exports = class ReportBugCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

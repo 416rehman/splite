@@ -6,7 +6,7 @@ module.exports = (client, guild) => {
   client.logger.info(`${client.name} has left ${guild.name}`);
   const serverLog = client.channels.cache.get(client.serverLogId);
   if (serverLog)
-    serverLog.send(new MessageEmbed().setDescription(`${client.user} has left **${guild.name}** ${fail}`));
+    serverLog.send({embeds: [new MessageEmbed().setDescription(`${client.user} has left **${guild.name}** ${fail}`)]});
 
   client.db.settings.deleteGuild.run(guild.id);
   client.db.users.deleteGuild.run(guild.id);

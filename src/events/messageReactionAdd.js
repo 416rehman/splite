@@ -72,7 +72,7 @@ module.exports = async (client, messageReaction, user) => {
 
       // Check for attachment image
       let image = '';
-      const attachment = message.attachments.array()[0];
+      const attachment = [...message.attachments.values()][0];
       if (attachment && attachment.url) {
         const extension = attachment.url.split('.').pop();
         if (/(jpg|jpeg|png|gif)/gi.test(extension)) image = attachment.url;
@@ -94,7 +94,7 @@ module.exports = async (client, messageReaction, user) => {
         .setTimestamp()
         .setFooter(message.id)
         .setColor('#ffac33');
-      await starboardChannel.send(`⭐ **1  |**  ${message.channel}`, embed);
+      await starboardChannel.send({content: `⭐ **1  |**  ${message.channel}`, embeds: [embed]});
     }
   }
 

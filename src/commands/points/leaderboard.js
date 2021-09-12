@@ -48,14 +48,13 @@ module.exports = class LeaderboardCommand extends Command {
 
     if (members.length <= max) {
       const range = (members.length == 1) ? '[1]' : `[1 - ${members.length}]`;
-      message.channel.send(embed
+      message.channel.send({embeds: [embed
         .setTitle(`Points Leaderboard ${range}`)
         .setDescription(members.join('\n'))
-      );
+      ]});
 
     // Reaction Menu
     } else {
-
       embed
         .setTitle('Points Leaderboard')
         .setThumbnail(message.guild.iconURL({ dynamic: true }))

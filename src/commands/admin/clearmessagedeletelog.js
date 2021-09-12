@@ -30,7 +30,7 @@ module.exports = class clearMessageDeleteLogCommand extends Command {
 
     // Clear if no args provided
       message.client.db.settings.updateMessageDeleteLogId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Message Delete Log', `${oldMessageDeleteLog} ➔ \`None\``));
+      return message.channel.send({embeds: [embed.addField('Message Delete Log', `${oldMessageDeleteLog} ➔ \`None\``)]});
 
   }
 };

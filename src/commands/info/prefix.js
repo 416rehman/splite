@@ -15,12 +15,12 @@ module.exports = class PrefixCommand extends Command {
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id); // Get prefix
     const embed = new MessageEmbed()
       .setTitle(`${message.client.name}\'s Prefix`)
-      .setThumbnail('https://i.imgur.com/B0XSinY.png')
+      .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
       .addField('Prefix', `\`${prefix}\``, true)
       .addField('Example', `\`${prefix}ping\``, true)
       .setFooter(`To change the prefix, type ${prefix}setprefix`)
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

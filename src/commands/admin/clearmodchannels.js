@@ -38,6 +38,6 @@ module.exports = class clearModChannelsCommand extends Command {
 
     // Clear if no args provided
     message.client.db.settings.updateModChannelIds.run(null, message.guild.id);
-    return message.channel.send(embed.addField('Mod Channels', `${oldModChannels} ➔ \`None\``));
+    return message.channel.send({embeds: [embed.addField('Mod Channels', `${oldModChannels} ➔ \`None\``)]});
   }
 };

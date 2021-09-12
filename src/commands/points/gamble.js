@@ -37,7 +37,7 @@ module.exports = class gambleCommand extends Command {
           .setDescription(`${emojis.point} **Rolling** ${emojis.point}\n${emojis.dices}${emojis.dices}${emojis.dices}`)
           .setFooter(`Your points: ${points}.`, message.author.displayAvatarURL({dynamic: true}))
 
-      message.channel.send(embed).then(msg => {
+      message.channel.send({embeds: [embed]}).then(msg => {
           setTimeout(async () => {
               let odds = message.client.odds.get(message.author.id) || {lose: 45, win: 55}
               odds.win += (await message.client.utils.checkTopGGVote(message.client, message.author.id) ? 10 : 0)
@@ -51,7 +51,7 @@ module.exports = class gambleCommand extends Command {
                       .setDescription(`${emojis.fail} You lost! **You now have ${points - amount}** ${emojis.point}\n\n${modifier ? '' : emojis.Voted + `Get a +10% boost to your odds: \`${prefix}vote\``}`)
                       .setFooter(`Your points: ${points - amount}.`, message.author.displayAvatarURL({dynamic: true}))
                   message.client.db.users.updatePoints.run({points: -amount}, message.author.id, message.guild.id);
-                  msg.edit(embed)
+                  msg.edit({embeds: [embed]})
               }
               //Win
               else {
@@ -60,7 +60,7 @@ module.exports = class gambleCommand extends Command {
                       .setDescription(`🎉 You Won! **You now have ${points + amount}** ${emojis.point}`)
                       .setFooter(`Your points: ${points + amount}.`, message.author.displayAvatarURL({dynamic: true}))
                   message.client.db.users.updatePoints.run({points: amount}, message.author.id, message.guild.id);
-                  msg.edit(embed)
+                  msg.edit({embeds: [embed]})
               }
               message.guild.gamblesInProgress.delete(message.author.id)
           }, 3000)

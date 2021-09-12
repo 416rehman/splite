@@ -34,10 +34,10 @@ module.exports = class SetAutoKickCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0 || amount == 0) {
-      return message.channel.send(embed.addField('Current Auto Kick', `\`${autoKick}\``).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Auto Kick', `\`${autoKick}\``).setDescription(this.description)]});
     }
     embed.setDescription(`\`Auto kick\` was successfully updated. ${success}\nUse \`clearautokick\` to disable \`auto kick\``)
     message.client.db.settings.updateAutoKick.run(amount, message.guild.id);
-    message.channel.send(embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`${amount}\``));
+    message.channel.send({embeds: [embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`${amount}\``)]});
   }
 };

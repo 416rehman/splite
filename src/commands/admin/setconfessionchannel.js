@@ -30,7 +30,7 @@ module.exports = class setconfessionchannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Confessions Channel', `${oldConfessionsChannel}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Confessions Channel', `${oldConfessionsChannel}`).setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`confessions channel\` was successfully updated. ${success}\nUse \`clearconfessionschannel\` to clear the current \`confessions channel\`.`)
@@ -40,6 +40,6 @@ module.exports = class setconfessionchannelCommand extends Command {
         Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID
       `);
     message.client.db.settings.updateConfessionsChannelId.run(confessionsChannel.id, message.guild.id);
-    message.channel.send(embed.addField('Confessions Channel', `${oldConfessionsChannel} ➔ ${confessionsChannel}`));
+    message.channel.send({embeds: [embed.addField('Confessions Channel', `${oldConfessionsChannel} ➔ ${confessionsChannel}`)]});
   }
 };

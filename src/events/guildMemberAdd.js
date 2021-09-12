@@ -25,7 +25,7 @@ module.exports = async (client, member) => {
       .addField('Account created on', moment(member.user.createdAt).format('dddd, MMMM Do YYYY'))
       .setTimestamp()
       .setColor(member.guild.me.displayHexColor);
-    memberLog.send(embed);
+    memberLog.send({embeds: [embed]});
   }
 
   /** ------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ module.exports = async (client, member) => {
       .replace(/`?\?username`?/g, member.user.username) // Username substitution
       .replace(/`?\?tag`?/g, member.user.tag) // Tag substitution
       .replace(/`?\?size`?/g, member.guild.members.cache.size); // Guild size substitution
-    welcomeChannel.send(new MessageEmbed().setDescription(welcomeMessage).setColor(member.guild.me.displayHexColor));
+    welcomeChannel.send({embeds: [new MessageEmbed().setDescription(welcomeMessage).setColor(member.guild.me.displayHexColor)]});
   }
   
   /** ------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ module.exports = async (client, member) => {
   // Assign random color
   const randomColor = client.db.settings.selectRandomColor.pluck().get(member.guild.id);
   if (randomColor) {
-    const colors = member.guild.roles.cache.filter(c => c.name.startsWith('#')).array();
+    const colors = [...member.guild.roles.cache.filter(c => c.name.startsWith('#')).values()];
 
     // Check length
     if (colors.length > 0) {

@@ -31,7 +31,7 @@ module.exports = class SetStarboardChannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Starboard Channel', `${oldStarboardChannel}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Starboard Channel', `${oldStarboardChannel}`).setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`starboard channel\` was successfully updated. ${success}\nUse \`clearstarboardchannel\` to clear the current \`starboard channel\``)
@@ -46,6 +46,6 @@ module.exports = class SetStarboardChannelCommand extends Command {
       `);
     }
     message.client.db.settings.updateStarboardChannelId.run(starboardChannel.id, message.guild.id);
-    message.channel.send(embed.addField('Starboard Channel', `${oldStarboardChannel} ➔ ${starboardChannel}`));
+    message.channel.send({embeds: [embed.addField('Starboard Channel', `${oldStarboardChannel} ➔ ${starboardChannel}`)]});
   }
 };

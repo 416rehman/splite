@@ -41,10 +41,10 @@ module.exports = class SetWelcomeChannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .spliceFields(0, 0, { name: 'Current Welcome Channel', value: `${oldWelcomeChannel}`, inline: true })
         .spliceFields(1, 0, { name: 'Status', value: `\`${oldStatus}\``, inline: true }).setDescription(this.description)
-      );
+      ]});
     }
 
     embed.setDescription(`The \`welcome channel\` was successfully updated. ${success}\nUse \`clearwelcomechannel\` to clear the current \`welcome channel\`.`)
@@ -59,9 +59,9 @@ module.exports = class SetWelcomeChannelCommand extends Command {
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
     message.client.db.settings.updateWelcomeChannelId.run(welcomeChannel.id, message.guild.id);
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .spliceFields(0, 0, { name: 'Channel', value: `${oldWelcomeChannel} ➔ ${welcomeChannel}`, inline: true})
       .spliceFields(1, 0, { name: 'Status', value: statusUpdate, inline: true})
-    );
+    ]});
   }
 };

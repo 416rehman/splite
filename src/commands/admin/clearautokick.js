@@ -29,6 +29,6 @@ module.exports = class clearautokickCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
 
       message.client.db.settings.updateAutoKick.run(null, message.guild.id);
-      message.channel.send(embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`disabled\``));
+      message.channel.send({embeds: [embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`disabled\``)]});
   }
 };

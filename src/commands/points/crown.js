@@ -16,9 +16,9 @@ module.exports = class CrownCommand extends Command {
     const { crown_role_id: crownRoleId, crown_schedule: crownSchedule } = 
       message.client.db.settings.selectCrown.get(message.guild.id);
     const crownRole = message.guild.roles.cache.get(crownRoleId) || '`None`';
-    const crowned = message.guild.members.cache.filter(m => {
+    const crowned = [...message.guild.members.cache.filter(m => {
       if (m.roles.cache.find(r => r === crownRole)) return true;
-    }).array();
+    }).values()];
 
     let description = `${emojis.crown} ${message.client.utils.trimStringFromArray(crowned)} ${emojis.crown}`
     if (crowned.length === 0) description = `No one has the crown ${emojis.crown}`;
@@ -26,10 +26,10 @@ module.exports = class CrownCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle(`Crowned Members`)
       .setDescription(description)
-      .addField('Crown Role', crownRole)
+      .addField('Crown Role', crownRole.toString())
       .setFooter(`Crown transfer will occur at 20:00 EST`)
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

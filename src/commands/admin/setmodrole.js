@@ -28,7 +28,7 @@ module.exports = class SetModRoleCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Mod Role', `${oldModRole}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Mod Role', `${oldModRole}`).setDescription(this.description)]});
     }
 
     // Update role
@@ -36,6 +36,6 @@ module.exports = class SetModRoleCommand extends Command {
     const modRole = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]);
     if (!modRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
     message.client.db.settings.updateModRoleId.run(modRole.id, message.guild.id);
-    message.channel.send(embed.addField('Mod Role', `${oldModRole} ➔ ${modRole}`));
+    message.channel.send({embeds: [embed.addField('Mod Role', `${oldModRole} ➔ ${modRole}`)]});
   }
 };

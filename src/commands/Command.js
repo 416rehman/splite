@@ -1,5 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const permissions = require('../utils/permissions.json');
+const {Collection} = require("discord.js");
 const { fail, nsfw } = require('../utils/emojis.json');
 
 /**
@@ -95,6 +96,19 @@ class Command {
      */
     this.errorTypes = ['Invalid Argument', 'Command Failure'];
 
+    /**
+     * Cooldown in seconds
+     * @type {number}
+     */
+    this.cooldown = options.cooldown * 1000;
+
+    if (options.cooldown) this.cooldowns = new Collection();
+
+    /**
+     * If true, only one instance of the command will run per user until the done() method is called. Good for heavy commands.
+     */
+    this.exclusive = options.exclusive;
+    if (options.exclusive) this.instances = new Collection();
   }
 
   /**
@@ -105,6 +119,57 @@ class Command {
   // eslint-disable-next-line no-unused-vars
   run(message, args) {
     throw new Error(`The ${this.name} command has no run() method`);
+  }
+
+  /**
+   * If this.exclusive is true, a user can call this command once
+   * until this method is called to remove the user from this.currentUsers
+   *
+   * @param userId
+   */
+  done(userId) {
+    if (!this.exclusive) return;
+    this.instances.delete(userId)
+  }
+
+  /**
+   * Sets the user as a current user so they cannot call this command again until done() method is called.
+   * @param userId
+   */
+  setInstance(userId) {
+    if (!this.exclusive) return;
+    this.instances.set(userId, true)
+  }
+
+  /**
+   * If this.exclusive, check if the user has already called this command
+   * @param userId
+   * @returns {any}
+   */
+  isInstanceRunning(userId){
+    if (!this.exclusive || !this.instances) return;
+    return this.instances.get(userId);
+  }
+
+  /**
+   * Sets cooldown for the user
+   * @param userId
+   */
+  setCooldown(userId) {
+    if (!this.cooldown) return;
+    this.cooldowns.set(userId, Date.now() + this.cooldown)
+  }
+
+  /**
+   * Check if user is on cooldown
+   * @param userId
+   * @returns {Promise<number> || null}
+   */
+  async isOnCooldown(userId) {
+    if (!this.cooldown) return;
+    const uCooldown = await this.cooldowns.get(userId);
+    if (uCooldown > Date.now()) return (uCooldown - Date.now()) / 1000
+    else this.cooldowns.delete(userId);
   }
 
   /**
@@ -136,7 +201,7 @@ class Command {
    * @param {boolean} hard
    */
   getAvatarURL(user, hard = true) {
-    const link = user.user ? user.user.displayAvatarURL({ size: 512, format: "png", dynamic: true })  : user.displayAvatarURL({ size: 1024, format: "png", dynamic: true })
+    const link = user.user ? user.user.displayAvatarURL({ size: 1024, format: "png", dynamic: true })  : user.displayAvatarURL({ size: 1024, format: "png", dynamic: true })
     return hard ? link.split('?')[0] : link;
   }
 
@@ -211,7 +276,7 @@ class Command {
           .setDescription(`${nsfw} NSFW Commands can only be run in NSFW channels.`)
           .setTimestamp()
           .setColor("RED");
-      message.channel.send(embed);
+      message.channel.send({embeds: [embed]});
       return false;
     }
   }
@@ -229,7 +294,7 @@ class Command {
       return false;
     }
     
-    if (message.member.hasPermission('ADMINISTRATOR')) return true;
+    if (message.member.permissions.has('ADMINISTRATOR')) return true;
     if (this.userPermissions) {
       const missingPermissions =
         message.channel.permissionsFor(message.author).missing(this.userPermissions).map(p => permissions[p]);
@@ -240,7 +305,7 @@ class Command {
           .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
           .setTimestamp()
           .setColor(message.guild.me.displayHexColor);
-        message.channel.send(embed);
+        message.channel.send({embeds: [embed]});
         return false;
       }
     }
@@ -262,7 +327,7 @@ class Command {
         .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
-      message.channel.send(embed);
+      message.channel.send({embeds: [embed]});
       return false;
 
     } else return true;
@@ -287,7 +352,7 @@ class Command {
       .setColor(message.guild.me.displayHexColor);
     if (this.examples) embed.addField('Examples', this.examples.map(e => `\`${prefix}${e}\``).join('\n'));
     if (errorMessage) embed.addField('Error Message', `\`\`\`${errorMessage}\`\`\``);
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 
   /**
@@ -303,7 +368,7 @@ class Command {
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
     if (this.examples) embed.addField('Examples', this.examples.map(e => `\`${prefix}${e}\``).join('\n'));
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 
   /**
@@ -331,7 +396,7 @@ class Command {
         embed.addField(field, fields[field], true);
       }
       embed.addField('Reason', reason);
-      modLog.send(embed).catch(err => message.client.logger.error(err.stack));
+      modLog.send({embeds: [embed]}).catch(err => message.client.logger.error(err.stack));
     }
   }
 
@@ -406,6 +471,15 @@ class Command {
     // Disabled
     if (options.disabled && typeof options.disabled !== 'boolean') 
       throw new TypeError('Command disabled is not a boolean');
+
+    // Cooldown
+    if (options.cooldown && typeof options.cooldown !== 'number')
+      throw new TypeError('Command cooldown is not a number');
+
+    // Exclusive
+    if (options.exclusive && typeof options.exclusive !== 'boolean')
+      throw new TypeError('Command exclusive is not a boolean');
+
   }
 }
 

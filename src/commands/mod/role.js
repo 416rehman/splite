@@ -64,7 +64,7 @@ module.exports = class RoleCommand extends Command {
         .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
-    return message.channel.send(embed);
+    return message.channel.send({embeds: [embed]});
   }
 
   async RemoveRole(member, role, message) {

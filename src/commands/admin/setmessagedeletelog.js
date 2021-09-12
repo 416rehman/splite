@@ -30,7 +30,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Message Delete Log', `${oldMessageDeleteLog}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Message Delete Log', `${oldMessageDeleteLog}`).setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`message delete log\` was successfully updated. ${success}\nUse \`clearmessagedeletelog\` to clear the current \`message delete log\`.`)
@@ -40,6 +40,6 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
         Please mention an accessible text channel or provide a valid text channel ID
       `);
     message.client.db.settings.updateMessageDeleteLogId.run(messageDeleteLog.id, message.guild.id);
-    message.channel.send(embed.addField('Message Delete Log', `${oldMessageDeleteLog} ➔ ${messageDeleteLog}`));
+    message.channel.send({embeds: [embed.addField('Message Delete Log', `${oldMessageDeleteLog} ➔ ${messageDeleteLog}`)]});
   }
 };

@@ -41,10 +41,10 @@ module.exports = class SetFarewellChannelCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .spliceFields(0, 0, { name: 'Current Farewell Channel', value: `${oldFarewellChannel} ➔ \`None\``, inline: true })
         .spliceFields(1, 0, { name: 'Status', value: `\`${oldStatus}\``, inline: true }).setDescription(this.description)
-      );
+      ]});
     }
     embed.setDescription(`The \`farewell channel\` was successfully updated. ${success}\nUse \`clearfarewellchannel\` to clear the current \`farewell channel\`.`)
     const farewellChannel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
@@ -58,9 +58,9 @@ module.exports = class SetFarewellChannelCommand extends Command {
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
     message.client.db.settings.updateFarewellChannelId.run(farewellChannel.id, message.guild.id);
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .spliceFields(0, 0, { name: 'Channel', value: `${oldFarewellChannel} ➔ ${farewellChannel}`, inline: true})
       .spliceFields(1, 0, { name: 'Status', value: statusUpdate, inline: true})
-    );
+    ]});
   }
 };

@@ -23,7 +23,7 @@ module.exports = (client, oldMember, newMember) => {
         .setTitle('Member Update: `Nickname`')
         .setDescription(`${newMember}'s **nickname** was changed.`)
         .addField('Nickname', `${oldNickname} ➔ ${newNickname}`);
-      nicknameLog.send(embed);
+      nicknameLog.send({embeds: [embed]});
     }
   }
 
@@ -41,7 +41,7 @@ module.exports = (client, oldMember, newMember) => {
       embed
         .setTitle('Member Update: `Role Add`')
         .setDescription(`${newMember} was **given** the ${role} role.`);
-      roleLog.send(embed);
+      roleLog.send({embeds: [embed]});
     }
   }
 
@@ -59,7 +59,7 @@ module.exports = (client, oldMember, newMember) => {
       embed
         .setTitle('Member Update: `Role Remove`')
         .setDescription(`${newMember} was **removed** from ${role} role.`);
-      roleLog.send(embed);
+      roleLog.send({embeds: [embed]});
     }
   }
 };

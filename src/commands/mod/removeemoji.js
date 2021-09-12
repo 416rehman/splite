@@ -10,7 +10,7 @@ module.exports = class RemoveEmojiCommand extends Command {
       usage: 'removeemoji <emoji>',
       description: "Delete emojis from the server.",
       type: client.types.MOD,
-      clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_EMOJIS'],
+      clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_EMOJIS_AND_STICKERS'],
       userPermissions: ['MANAGE_ROLES'],
       examples: ['removeemoji 🙄', 'rem 😂 😙 😎']
     });
@@ -37,7 +37,7 @@ async function removeemoji(emoji, message, command)
 
   if (customemoji.id) {
       customemoji.delete().then(()=>{
-        message.channel.send(new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} Removed!`));
+        message.channel.send({embeds: [new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} Removed!`)]});
       })
 
       await command.sendModLogMessage(message, '', {Member: message.member, 'Removed Emoji': `\`${emoji}\``});

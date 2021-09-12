@@ -27,10 +27,10 @@ module.exports = class InviteMeCommand extends Command {
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
             if (!voted) {
-                message.channel.send(embed);
+                message.channel.send({embeds: [embed]});
             }
             else {
-                message.channel.send(embed.setTitle(`${emojis.Voted} You have already voted`));
+                message.channel.send({embeds: [embed.setTitle(`${emojis.Voted} You have already voted`)]});
             }
         }).catch(e=>{
             console.log(e)

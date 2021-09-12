@@ -30,7 +30,7 @@ module.exports = class clearRoleLogCommand extends Command {
 
     // Clear if no args provided
       message.client.db.settings.updateRoleLogId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Role Log', `${oldRoleLog} ➔ \`None\``));
+      return message.channel.send({embeds: [embed.addField('Role Log', `${oldRoleLog} ➔ \`None\``)]});
 
   }
 };

@@ -30,7 +30,7 @@ module.exports = class SetNicknameLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Nickname Log', `${oldNicknameLog}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Nickname Log', `${oldNicknameLog}`).setDescription(this.description)]});
     }
     embed.setDescription(`The \`nickname log\` was successfully updated. ${success}\nUse \`clearnicknamelog\` to clear the current \`nickname log\`.`)
     const nicknameLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
@@ -39,6 +39,6 @@ module.exports = class SetNicknameLogCommand extends Command {
         Please mention an accessible text channel or provide a valid text channel ID
       `);
     message.client.db.settings.updateNicknameLogId.run(nicknameLog.id, message.guild.id);
-    message.channel.send(embed.addField('Nickname Log', `${oldNicknameLog} ➔ ${nicknameLog}`));
+    message.channel.send({embeds: [embed.addField('Nickname Log', `${oldNicknameLog} ➔ ${nicknameLog}`)]});
   }
 };

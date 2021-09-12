@@ -22,7 +22,7 @@ module.exports = class SayCommand extends Command {
     } else channel = message.channel;
 
     // Check type and viewable
-    if (channel.type != 'text' || !channel.viewable) return this.sendErrorMessage(message, 0, stripIndent`
+    if (channel.type != 'GUILD_TEXT' || !channel.viewable) return this.sendErrorMessage(message, 0, stripIndent`
       Please mention an accessible text channel or provide a valid text channel ID
     `);
 
@@ -43,6 +43,6 @@ module.exports = class SayCommand extends Command {
       return this.sendErrorMessage(message, 0, 'You do not have permission to send messages in the provided channel');
 
     const msg = message.content.slice(message.content.indexOf(args[0]), message.content.length);
-    channel.send(msg, { disableMentions: 'everyone' });
+    channel.send(msg);
   } 
 };

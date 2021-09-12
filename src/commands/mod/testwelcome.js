@@ -33,15 +33,15 @@ module.exports = class testWelcomeCommand extends Command {
           .replace(/`?\?username`?/g, message.member.user.username) // Username substitution
           .replace(/`?\?tag`?/g, message.member.user.tag) // Tag substitution
           .replace(/`?\?size`?/g, message.guild.members.cache.size); // Guild size substitution
-      welcomeChannel.send(new MessageEmbed().setDescription(welcomeMessage).setColor("RANDOM"));
+      welcomeChannel.send({embeds: [new MessageEmbed().setDescription(welcomeMessage).setColor("RANDOM")]});
     }
     else {
-      message.channel.send(new MessageEmbed()
+      message.channel.send({embeds: [new MessageEmbed()
           .setDescription(`${emojis.fail} There is no welcome message set for this server.\n\n\`setwelcomemessage\` Sets a welcome message\n\`setwelcomechannel\` Sets the channel to post the welcome message to. `)
           .setColor("RED")
           .setFooter(message.author.tag, message.author.displayAvatarURL())
           .setTimestamp()
-      )
+      ]})
     }
   }
 };

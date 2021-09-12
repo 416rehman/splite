@@ -15,7 +15,7 @@ module.exports = class InviteMeCommand extends Command {
   run(message, args) {
     const embed = new MessageEmbed()
       .setTitle('Invite Me')
-      .setThumbnail('https://i.imgur.com/B0XSinY.png')
+      .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
       .setDescription(oneLine`
         Click [here](${message.client.link})
         to invite me to your server!
@@ -26,6 +26,7 @@ module.exports = class InviteMeCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send(embed);
+    if (message.client.config.botLogoURL)
+    message.channel.send({embeds: [embed]});
   }
 };

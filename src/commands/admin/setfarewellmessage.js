@@ -42,9 +42,9 @@ module.exports = class SetFarewellMessageCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
 
     if (!args[0]) {
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .addField('Current Farewell Message', `${oldFarewellMessage}`).addField('Status', oldStatus, true).setDescription(this.description)
-      );
+      ]});
     }
     
     let farewellMessage = message.content.slice(message.content.indexOf(args[0]), message.content.length);
@@ -56,9 +56,9 @@ module.exports = class SetFarewellMessageCommand extends Command {
     const status =  message.client.utils.getStatus(farewellChannel, farewellMessage);
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
     
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .addField('Status', statusUpdate, true)
       .addField('Message', message.client.utils.replaceKeywords(farewellMessage))
-    );
+    ]});
   }
 };

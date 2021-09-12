@@ -44,7 +44,7 @@ module.exports = class geoGuessrCommand extends Command {
       .setColor(message.guild.me.displayHexColor);
     const url = question.match(/\bhttps?:\/\/\S+/gi);
     if (url) questionEmbed.setImage(url[0]);
-    message.channel.send(questionEmbed);
+    message.channel.send({embeds: [questionEmbed]});
     let winner;
     const collector = new MessageCollector(message.channel, msg => {
       if (!msg.author.bot) return true;
@@ -64,13 +64,13 @@ module.exports = class geoGuessrCommand extends Command {
       if (winner)
       {
         message.client.db.users.updatePoints.run({ points: reward }, winner.id, message.guild.id);
-        message.channel.send(answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! +${reward} Points!`));
+        message.channel.send({embeds: [answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! +${reward} Points!`)]});
       }
 
-      else message.channel.send(answerEmbed
+      else message.channel.send({embeds: [answerEmbed
         .setDescription('Sorry, time\'s up! Better luck next time.')
         .addField('Correct Answers', origAnswers.join('\n'))
-      );
+      ]});
     });
   }
 };

@@ -39,7 +39,7 @@ module.exports = class textHelpCommand extends Command {
       
       embed // Build specific command help embed
         .setTitle(`Command: \`${command.name}\``)
-        .setThumbnail('https://i.imgur.com/B0XSinY.png')
+        .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
         .setDescription(command.description)
         .addField('Usage', `\`${prefix}${command.usage}\``, true)
         .addField('Type', `\`${capitalize(command.type)}\``, true)
@@ -74,7 +74,7 @@ module.exports = class textHelpCommand extends Command {
 
       message.client.commands.forEach(command => {
         if (!disabledCommands.includes(command.name) && !command.name.startsWith('clear') && !command.name.startsWith('texthelp')) {
-          if (command.userPermissions && command.userPermissions.every(p => message.member.hasPermission(p)) && !all)
+          if (command.userPermissions && command.userPermissions.every(p => message.member.permissions.has(p)) && !all)
             commands[command.type].push(`\`${command.name}\``);
           else if (!command.userPermissions || all) {
               commands[command.type].push(`\`${command.name}\``);
@@ -92,7 +92,7 @@ module.exports = class textHelpCommand extends Command {
       }
 
       let viewHelp = ''
-      if (message.member.hasPermission('MANAGE_GUILD')) viewHelp = `\`/view\` View details of a confession.`
+      if (message.member.permissions.has('MANAGE_GUILD')) viewHelp = `\`/view\` View details of a confession.`
       embed.addField(`${emojis.verified_developer} **/Slash Commands**`, `\`/anonymous\` Post anonymous message. **Cost: 50 points**\
       \n\`/confess\` Post a confession in confessions channel.\
       \n\`/report\` Report a confession.\
@@ -103,6 +103,6 @@ module.exports = class textHelpCommand extends Command {
           `**[Invite Me](${message.client.link}) | ` +
           `Developed By ${message.client.ownerTag}**`)
     }
-    message.channel.send(embed);
+    message.channel.send({embeds: [embed]});
   }
 };

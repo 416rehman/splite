@@ -31,7 +31,7 @@ module.exports = class SetMemberLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send(embed.addField('Current Member Log', `${oldMemberLog}`).setDescription(this.description));
+      return message.channel.send({embeds: [embed.addField('Current Member Log', `${oldMemberLog}`).setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`member log\` was successfully updated. ${success}\nUse \`clearmemberlog\` to clear the current \`member log\`.`)
@@ -41,6 +41,6 @@ module.exports = class SetMemberLogCommand extends Command {
         Please mention an accessible text channel or provide a valid text channel ID
       `);
     message.client.db.settings.updateMemberLogId.run(memberLog.id, message.guild.id);
-    message.channel.send(embed.addField('Member Log', `${oldMemberLog} ➔ ${memberLog}`));
+    message.channel.send({embeds: [embed.addField('Member Log', `${oldMemberLog} ➔ ${memberLog}`)]});
   }
 };

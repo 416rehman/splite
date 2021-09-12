@@ -28,7 +28,7 @@ module.exports = class SlowmodeCommand extends Command {
     }
 
     // Check type and viewable
-    if (channel.type != 'text' || !channel.viewable) return this.sendErrorMessage(message, 0, stripIndent`
+    if (channel.type != 'GUILD_TEXT' || !channel.viewable) return this.sendErrorMessage(message, 0, stripIndent`
       Please mention an accessible text channel or provide a valid text channel ID
     `);
       
@@ -55,23 +55,23 @@ module.exports = class SlowmodeCommand extends Command {
 
     // Slowmode disabled
     if (rate === '0') {
-      message.channel.send(embed
+      message.channel.send({embeds: [embed
         .setDescription(`\`${status}\` ➔ \`disabled\``)
         .addField('Moderator', message.member, true)
         .addField('Channel', channel, true)
         .addField('Reason', reason)
-      );
+      ]});
     
       // Slowmode enabled
     } else {
 
-      message.channel.send(embed
+      message.channel.send({embeds: [embed
         .setDescription(`\`${status}\` ➔ \`enabled\``)
         .addField('Moderator', message.member, true)
         .addField('Channel', channel, true)
         .addField('Rate', `\`${rate}\``, true)
         .addField('Reason', reason)
-      );
+      ]});
     }
 
     // Update mod log

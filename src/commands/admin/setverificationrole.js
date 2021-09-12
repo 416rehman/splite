@@ -52,10 +52,10 @@ module.exports = class SetVerificationRoleCommand extends Command {
 
     // Clear role
     if (args.length === 0) {
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .spliceFields(0, 0, { name: 'Current Verification Role', value: `${oldVerificationRole}`, inline: true })
         .spliceFields(2, 0, { name: 'Status', value: `\`${oldStatus}\``, inline: true }).setDescription(this.description)
-      );
+      ]});
     }
 
     // Update role
@@ -68,10 +68,10 @@ module.exports = class SetVerificationRoleCommand extends Command {
     const status =  message.client.utils.getStatus(verificationRole && verificationChannel && verificationMessage);
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .spliceFields(0, 0, { name: 'Role', value: `${oldVerificationRole} ➔ ${verificationRole}`, inline: true })
       .spliceFields(2, 0, { name: 'Status', value: statusUpdate, inline: true })
-    );
+    ]});
 
     // Update verification
     if (status === 'enabled') {
@@ -81,10 +81,10 @@ module.exports = class SetVerificationRoleCommand extends Command {
         } catch (err) { // Message was deleted
           message.client.logger.error(err);
         }
-        const msg = await verificationChannel.send(new MessageEmbed()
+        const msg = await verificationChannel.send({embeds: [new MessageEmbed()
           .setDescription(verificationMessage.slice(3, -3))
           .setColor(message.guild.me.displayHexColor)
-        );
+        ]});
         await msg.react(verify.split(':')[2].slice(0, -1));
         message.client.db.settings.updateVerificationMessageId.run(msg.id, message.guild.id);
       } else {

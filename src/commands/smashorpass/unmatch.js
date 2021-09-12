@@ -46,17 +46,16 @@ module.exports = class unmatchCommand extends Command {
                 .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
                 .setDescription(`You will be unmatched ${emojis.unmatch} with ${member.user.username}\nDo you want to continue?`)
                 .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
-            message.channel.send(embed)
+            message.channel.send({embeds: [embed]})
                 .then(async msg=>{
                     const reactions = await confirm(msg, message.author, ["✅", "❎"], 30000);
 
                     if(reactions === '✅')
                     {
                         message.client.db.SmashOrPass.unmatchUser.run({userId: message.author.id, unmatchUser: member.user.id})
-                        await msg.edit(new MessageEmbed()
+                        await msg.edit({embeds: [new MessageEmbed()
                             .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
-                            .setDescription(`You have unmatched ${emojis.unmatch} with ${member.user.username}!`))
-                        await msg.delete({timeout: 5000})
+                            .setDescription(`You have unmatched ${emojis.unmatch} with ${member.user.username}!`)]})
                     }
                     else return msg.delete();
                 })
@@ -66,11 +65,14 @@ module.exports = class unmatchCommand extends Command {
                 .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
                 .setDescription(`You can't unmatch ${emojis.unmatch} someone you aren't matched with.`)
 
-           return message.channel.send(embed).then(m=>m.delete({timeout:5000}))
+           return message.channel.send({embeds: [embed]}).then(m=>{
+               setTimeout(() => m.delete(), 5000);
+           })
         }
 
     }
-    else message.reply(`Please mention a user, or provide a valid ID`).then(m=> m.delete({timeout:5000}))
-
+    else message.reply(`Please mention a user, or provide a valid ID`).then(m=> {
+        setTimeout(() => m.delete(), 5000);
+    })
   }
 };

@@ -28,7 +28,7 @@ module.exports = class BioCommand extends Command {
             .setTitle(`No Bio ${fail}`)
             .setDescription(`You don't have a bio set up.`)
             .setFooter(`Set your bio like "${prefix}bio split is cool"`);
-        return message.channel.send(embed)
+        return message.channel.send({embeds: [embed]})
       }
       else
       {
@@ -36,7 +36,7 @@ module.exports = class BioCommand extends Command {
             .setTitle(`${message.author.username}'s Bio`)
             .setDescription(`${Bio}`)
             .setFooter(`For help, type "${prefix}help bio"`);
-        return message.channel.send(embed)
+        return message.channel.send({embeds: [embed]})
       }
     }
     else
@@ -50,7 +50,7 @@ module.exports = class BioCommand extends Command {
               .setTitle(`Bio Cleared ${success}`)
               .setDescription(`Your bio has been cleared.\nTo set your bio again, type \`@${message.client.name} bio <your bio here>\`.`)
               .setFooter(`Clear your bio by typing, ${prefix}bio clear`);
-          return message.channel.send(embed)
+          return message.channel.send({embeds: [embed]})
         } catch (e) {
           console.log(e)
         }
@@ -68,8 +68,8 @@ module.exports = class BioCommand extends Command {
           const embed = new MessageEmbed()
               .setTitle(`No Bio ${fail}`)
               .setDescription(`This user does not have a bio.`)
-              .setFooter(`${prefix}help bio"`);
-          return message.channel.send(embed)
+              .setFooter(`For help, type "${prefix}help bio"`);
+          return message.channel.send({embeds: [embed]})
         }
         else
         {
@@ -77,7 +77,7 @@ module.exports = class BioCommand extends Command {
               .setTitle(`${message.mentions.users.first().username}'s Bio`)
               .setDescription(`${Bio}`)
               .setFooter(`To clear your bio, type "${prefix}bio clear"`);
-          return message.channel.send(embed)
+          return message.channel.send({embeds: [embed]})
         }
       }
       else
@@ -90,7 +90,7 @@ module.exports = class BioCommand extends Command {
             .setTitle(`Bio Updated ${success}`)
             .setDescription(`Your bio has been updated. Check it out by typing \`${prefix}bio\`.`)
             .setFooter(`Clear your bio by typing, ${prefix}bio clear`);
-        return message.channel.send(embed)
+        return message.channel.send({embeds: [embed]})
       }
     }
   }

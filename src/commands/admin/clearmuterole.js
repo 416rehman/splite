@@ -28,7 +28,7 @@ module.exports = class clearMuteRoleCommand extends Command {
 
     // Clear if no args provided
       message.client.db.settings.updateMuteRoleId.run(null, message.guild.id);
-      return message.channel.send(embed.addField('Mute Role', `${oldMuteRole} ➔ \`None\``));
+      return message.channel.send({embeds: [embed.addField('Mute Role', `${oldMuteRole} ➔ \`None\``)]});
 
   }
 };

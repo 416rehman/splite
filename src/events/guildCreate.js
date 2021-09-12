@@ -6,7 +6,7 @@ module.exports = async (client, guild) => {
   client.logger.info(`${client.name} has joined ${guild.name}`);
   const serverLog = client.channels.cache.get(client.serverLogId);
   if (serverLog)
-    serverLog.send(new MessageEmbed().setDescription(`${client.user} has joined **${guild.name}** ${success}`));
+    serverLog.send({embeds: [new MessageEmbed().setDescription(`${client.user} has joined **${guild.name}** ${success}`)]});
 
   /** ------------------------------------------------------------------------------------------------
    * CREATE/FIND SETTINGS
@@ -25,10 +25,8 @@ module.exports = async (client, guild) => {
   if (!muteRole) {
     try {
       muteRole = await guild.roles.create({
-        data: {
           name: 'Muted',
           permissions: []
-        }
       });
     } catch (err) {
       client.logger.error(err.message);
@@ -36,12 +34,12 @@ module.exports = async (client, guild) => {
     for (const channel of guild.channels.cache.values()) {
       try {
         if (channel.viewable && channel.permissionsFor(guild.me).has('MANAGE_ROLES')) {
-          if (channel.type === 'text') // Deny permissions in text channels
+          if (channel.type === 'GUILD_TEXT') // Deny permissions in text channels
             await channel.updateOverwrite(muteRole, {
               'SEND_MESSAGES': false,
               'ADD_REACTIONS': false
             });
-          else if (channel.type === 'voice' && channel.editable) // Deny permissions in voice channels
+          else if (channel.type === 'GUILD_VOICE' && channel.editable) // Deny permissions in voice channels
             await channel.updateOverwrite(muteRole, {
               'SPEAK': false,
               'STREAM': false
@@ -58,11 +56,9 @@ module.exports = async (client, guild) => {
   if (!crownRole) {
     try {
       crownRole = await guild.roles.create({
-        data: {
           name: 'The Crown',
           permissions: [],
           hoist: true
-        }
       });
     } catch (err) {
       client.logger.error(err.message);

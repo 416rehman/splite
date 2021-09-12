@@ -23,15 +23,15 @@ module.exports = class toggleSmashOrPassCommand extends Command {
       const embed = new MessageEmbed()
           .setTitle(`Opt out of 🔥 Smash or Pass 👎`)
           .setDescription(`You are currently opted in 🔥 Smash or Pass 👎\nIf you opt out, you will not be shown in the game.\n**Do you wish to opt out?**`)
-      message.channel.send(embed).then(async msg => {
+      message.channel.send({embeds: [embed]}).then(async msg => {
         const reactions = await confirm(msg, message.author, ["✅", "❎"], 10000);
 
         if (reactions === '✅')
         {
           await msg.client.db.users.updateOptOutSmashOrPass.run(1, message.author.id)
-          msg.edit(new MessageEmbed()
+          msg.edit({embeds: [new MessageEmbed()
               .setTitle(`Opt out of 🔥 Smash or Pass 👎`)
-              .setDescription(`**You have opted out of 🔥 Smash or Pass 👎**\nYou will not be shown in the game.`))
+              .setDescription(`**You have opted out of 🔥 Smash or Pass 👎**\nYou will not be shown in the game.`)]})
         }
         else
         {
@@ -44,15 +44,15 @@ module.exports = class toggleSmashOrPassCommand extends Command {
       const embed = new MessageEmbed()
           .setTitle(`Opt in to 🔥 Smash or Pass 👎`)
           .setDescription(`You are currently opted out of 🔥 Smash or Pass 👎\nIf you opt in, you will be shown in the game.\n**Do you wish to opt in?**`)
-      message.channel.send(embed).then(async msg => {
+      message.channel.send({embeds: [embed]}).then(async msg => {
         const reactions = await confirm(msg, message.author, ["✅", "❎"], 10000);
 
         if (reactions === '✅')
         {
           await msg.client.db.users.updateOptOutSmashOrPass.run(0, message.author.id)
-          msg.edit(new MessageEmbed()
+          msg.edit({embeds: [new MessageEmbed()
               .setTitle(`Opt In to 🔥 Smash or Pass 👎`)
-              .setDescription(`**You have opted in to 🔥 Smash or Pass 👎**\nYou will now be shown in the game.`))
+              .setDescription(`**You have opted in to 🔥 Smash or Pass 👎**\nYou will now be shown in the game.`)]})
         }
         else
         {

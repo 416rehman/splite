@@ -55,10 +55,10 @@ module.exports = class SetVerificationChannelCommand extends Command {
     // Clear if no args provided
     if (args.length === 0) {
       // Update status
-      return message.channel.send(embed
+      return message.channel.send({embeds: [embed
         .spliceFields(1, 0, { name: 'Current Verification Channel', value: `${oldVerificationChannel}`, inline: true })
         .spliceFields(2, 0, { name: 'Status', value: `\`${oldStatus}\``, inline: true }).setDescription(this.description)
-      );
+      ]});
     }
     embed.setDescription(`The \`verification channel\` was successfully updated. ${success}\nUse \`clearverificationchannel\` to clear current \`verification channel\`.`)
     const verificationChannel = 
@@ -73,14 +73,14 @@ module.exports = class SetVerificationChannelCommand extends Command {
     const statusUpdate = (oldStatus != status) ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
     message.client.db.settings.updateVerificationChannelId.run(verificationChannel.id, message.guild.id);
-    message.channel.send(embed
+    message.channel.send({embeds: [embed
       .spliceFields(1, 0, { 
         name: 'Channel', 
         value: `${oldVerificationChannel} ➔ ${verificationChannel}`, 
         inline: true
       })
       .spliceFields(2, 0, { name: 'Status', value: statusUpdate, inline: true})
-    );
+    ]});
 
     // Update verification
     if (status === 'enabled') {
@@ -90,10 +90,10 @@ module.exports = class SetVerificationChannelCommand extends Command {
         } catch (err) { // Message was deleted
           message.client.logger.error(err);
         }
-        const msg = await verificationChannel.send(new MessageEmbed()
+        const msg = await verificationChannel.send({embeds: [new MessageEmbed()
           .setDescription(verificationMessage.slice(3, -3))
           .setColor(message.guild.me.displayHexColor)
-        );
+        ]});
         await msg.react(verify.split(':')[2].slice(0, -1));
         message.client.db.settings.updateVerificationMessageId.run(msg.id, message.guild.id);
       } else {

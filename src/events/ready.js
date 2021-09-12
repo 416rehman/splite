@@ -6,7 +6,7 @@ module.exports = async (client) => {
   ];
 
   // Update presence
-  client.user.setPresence({ status: 'online', activity: activities[0] });
+  client.user.setPresence({ status: 'online', activities: [activities[0]] });
 
   let activity = 1;
 
@@ -126,7 +126,7 @@ module.exports = async (client) => {
 
   // Remove left guilds
   const dbGuilds = client.db.settings.selectGuilds.all();
-  const guilds = client.guilds.cache.array();
+  const guilds = client.guilds.cache;
   const leftGuilds = dbGuilds.filter(g1 => !guilds.some(g2 => g1.guild_id === g2.id));
   for (const guild of leftGuilds) {
     client.db.settings.deleteGuild.run(guild.guild_id);

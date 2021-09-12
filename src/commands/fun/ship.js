@@ -15,12 +15,10 @@ module.exports = class shipCommand extends Command {
     });
   }
   async run(message, args) {
-    if (message.guild.funInProgress.has(message.author.id)) return message.channel.send(new MessageEmbed().setDescription(`${emojis.fail} Please wait, you already have a request pending.`))
-    message.guild.funInProgress.set(message.author.id, 'fun');
     const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.guild.members.cache.random();
     const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.author;
 
-    message.channel.send(new MessageEmbed().setDescription(`${emojis.load} Shipping...`)).then(async msg=>{
+    message.channel.send({embeds: [new MessageEmbed().setDescription(`${emojis.load} Shipping...`)]}).then(async msg=>{
       let shipScore = message.client.utils.getRandomInt(0, 100);
       if (shipScore < 5) shipScore = 0;
       try {
@@ -43,18 +41,20 @@ module.exports = class shipCommand extends Command {
         bg.getBase64(jimp.AUTO, async function (e, img64) {
           const buff = new Buffer.from(img64.split(",")[1], "base64")
           await msg.delete()
-          await msg.channel.send(new MessageEmbed()
+          await msg.channel.send({embeds: [new MessageEmbed()
               .setDescription(`\`${member2.user ? member2.user.username  : member2.username}\` ${shipScore > 50 ? emojis.match : emojis.unmatch} \`${member.user ? member.user.username  : member.username}\`\n\n **${shipScore}%** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
-              .attachFiles(new MessageAttachment(buff, 'ship.png'))
-              .setImage('attachment://ship.png'))
+              // .attachFiles(new MessageAttachment(buff, 'ship.png'))
+              .setImage('attachment://ship.png')],
+            files: [new MessageAttachment(buff, 'ship.png')]
+          })
         })
       }
       catch(e) {
         console.log(e)
-        msg.edit(new MessageEmbed().setDescription(`${emojis.fail} ${e}`))
+        msg.edit({embeds: [new MessageEmbed().setDescription(`${emojis.fail} ${e}`)]})
       }
     })
-    message.guild.funInProgress.delete(message.author.id)
+    
   }
 
   addToCollection(message, owner, child, shipScore) {
