@@ -24,11 +24,11 @@ module.exports = class smashOrPassCommand extends Command {
       `,
       type: client.types.SMASHORPASS,
       examples: ['smashorpass', 'sop', 'smash'],
-      clientPermissions: ['MANAGE_MESSAGES','SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS']
+      clientPermissions: ['MANAGE_MESSAGES','SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+      exclusive: true
     });
   }
   async run(message, args) {
-    if (message.guild.SmashOrPassInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already playing. Please try again later`)
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const optOutSmashOrPass = message.client.db.users.selectOptOutSmashOrPass.pluck().get(message.author.id)
     if (optOutSmashOrPass === 1) {
@@ -38,22 +38,26 @@ module.exports = class smashOrPassCommand extends Command {
       return message.channel.send({embeds: [embed]})
     }
 
-    message.guild.SmashOrPassInProgress.set(message.author.id, new Date().getTime().toString())
-
     let points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
     if (points < cost) {
-      message.guild.SmashOrPassInProgress.delete(message.author.id)
+      this.done(message.author.id)
       return await message.reply(`${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``)
     }
+
+    const stopPlaying = (msg, id, error = `${emojis.fail} Stopped Playing!`) => {
+      this.done(message.author.id)
+      msg.edit({embeds: [new MessageEmbed().setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`).setDescription(error)]})
+    }
+    
     // MENTIONED A USER
     if (args.length) {
       const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0] || await message.guild.members.cache.find(m=>m.displayName.toLowerCase().startsWith(args[0].toLowerCase())));
       if (member == undefined) {
-        message.guild.SmashOrPassInProgress.delete(message.author.id)
+        this.done(message.author.id)
         return message.reply(`${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`)
       }
       if (member.user.id == message.author.id) {
-        message.guild.SmashOrPassInProgress.delete(message.author.id)
+        this.done(message.author.id)
         return message.reply(`${emojis.fail} No stupid, how are you gonna 🔥Smash yourself?? :neutral_face:`)
       }
 
@@ -62,14 +66,14 @@ module.exports = class smashOrPassCommand extends Command {
         const matched = message.client.db.SmashOrPass.getMatch.get({userId: member.user.id, userId2: message.author.id})
         if (seenBefore.liked == 'yes') {
           if (matched) {
-            message.guild.SmashOrPassInProgress.delete(message.author.id)
+            this.done(message.author.id)
             return await message.reply(`${emojis.smashorpass} You two have matched already ${emojis.smashorpass}. To unmatch ${emojis.unmatch}, type \`${prefix}unmatch <user mention/id>\``)
           }
-          message.guild.SmashOrPassInProgress.delete(message.author.id)
+          this.done(message.author.id)
           return message.reply(`You already voted 🔥 Smash on ${member.user.username}. To reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history, type \`${prefix}resetSmashOrPass\``)
         }
         else {
-          message.guild.SmashOrPassInProgress.delete(message.author.id)
+          this.done(message.author.id)
           return message.reply(`You already voted 👎 Pass on ${member.user.username}. To reset your ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass} history, type \`${prefix}resetSmashOrPass\``)
         }
       }
@@ -89,7 +93,7 @@ module.exports = class smashOrPassCommand extends Command {
             .setDescription(result.decision)
             .setFooter(`Expires in 10 seconds | Points: ${points}`)]})
         await msg.reactions.removeAll();
-        msg.guild.SmashOrPassInProgress.delete(message.author.id)
+        this.done(message.author.id)
       })
     }
     else {
@@ -128,7 +132,7 @@ module.exports = class smashOrPassCommand extends Command {
         })
       }
       else {
-        message.guild.SmashOrPassInProgress.delete(message.author.id)
+        this.done(message.author.id)
         await message.reply(`You have viewed everyone. Consider resetting using the command **\`${prefix}resetsmashorpass\`**`)
       }
     }
@@ -160,12 +164,6 @@ async function nextUser(message, usersQueue, points, prefix) {
     }
     resolve(currentUser);
   })
-}
-
-function stopPlaying(msg, id, error = `${emojis.fail} Stopped Playing!`){
-  console.log(`stopPlaying`)
-  msg.guild.SmashOrPassInProgress.delete(id)
-  msg.edit({embeds: [new MessageEmbed().setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`).setDescription(error)]})
 }
 
 async function handleSmashOrPass(msg, author, points, currentUser){
@@ -218,7 +216,7 @@ async function handleSmashOrPass(msg, author, points, currentUser){
           decision = `👎 Passed ${currentUser.user.username}`
           msg.client.db.SmashOrPass.insertRow.run(author.id, currentUser.user.id, 'no', date.toISOString())
         } catch (e) {
-          await stopPlaying(msg, author.id)
+          await stopPlaying(msg, author.id, `${emojis.fail} Stoped Playing`)
           resolve({decision, points})
         }
       }

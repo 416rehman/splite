@@ -68,6 +68,10 @@ module.exports = async (client, message) => {
           setTimeout(()=>msg.delete(), 3000)
         });
 
+      const instanceExists = command.isInstanceRunning(message.author.id)
+      if (instanceExists)
+        return message.reply({embeds: [new MessageEmbed().setDescription(`You have already used this command, wait for it.`)]});
+
       // Check if mod channel
       if (modChannelIds.includes(message.channel.id)) {
         if (
@@ -90,6 +94,7 @@ module.exports = async (client, message) => {
           client.db.users.updatePoints.run({points: commandPoints}, message.author.id, message.guild.id);
         message.command = true; // Add flag for messageUpdate event
         message.channel.sendTyping();
+        command.setInstance(message.author.id);
         command.setCooldown(message.author.id);
         return command.run(message, args); // Run command
       }

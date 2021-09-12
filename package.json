@@ -1,5 +1,5 @@
 {
-  "name": "splite",
+  "name": "Ace",
   "version": "1.7.0",
   "description": "A fully customizable bot built with discord.js",
   "main": "app.js",
@@ -8,10 +8,7 @@
     "ascii-table": "0.0.9",
     "better-sqlite3": "^7.4.3",
     "common-tags": "^1.8.0",
-    "discord-banner": "^1.6.7",
-    "discord-buttons": "github:certifiedrehman/discord-buttons-1",
-    "discord-slash-commands-client": "^1.1.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.1.0",
     "djs-reaction-collector": "^2.9.3",
     "fast-sort": "^3.0.2",
     "he": "^1.2.0",
@@ -27,7 +24,7 @@
     "node-schedule": "^1.3.2",
     "request": "^2.88.2",
     "twemoji-parser": "^13.0.0",
-    "urban-dictionary": "^3.0.0",
+    "urban-dictionary": "^3.0.2",
     "winston": "^3.2.1",
     "yaml": "^1.8.3",
     "youtube-search": "^1.1.4"
@@ -43,10 +40,10 @@
     "type": "git",
     "url": "git+https://github.com/certifiedrehman/spliteBot.git"
   },
-  "author": "Sebastian Battle",
+  "author": "Rehman Ahmadzai",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/certifiedrehman/spliteBot"
   },
-  "forkedFrom": "https://github.com/sabattle/CalypsoBot"
+  "basedOn": "https://github.com/sabattle/CalypsoBot"
 }

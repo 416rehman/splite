@@ -15,16 +15,13 @@ module.exports = class rolesCommand extends Command {
             type: client.types.MOD,
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
             userPermissions: ['MANAGE_ROLES'],
-            examples: ['roles']
+            examples: ['roles'],
+            exclusive: true
         });
     }
 
     async run(message, args) {
-
-        if (message.guild.roleRetrieval.has(message.guild.id)) return message.reply(`Role count is already in progress. Please try later!`)
-        message.guild.roleRetrieval.set(message.guild.id, true);
-
-        const max = 25;
+        const maxRolesPerPage = 25;
 
         const roleCount = message.guild.roles.cache.size
         const embed = new MessageEmbed()
@@ -43,19 +40,19 @@ module.exports = class rolesCommand extends Command {
                     inPlaceSort(sorted).desc(u=>u.memberCount)
                     sorted.forEach(r=>{roles.push(`<@&${r.id}> - \`${r.memberCount} Members\``)})
 
-                    if (roles.length <= max) {
+                    if (roles.length <= maxRolesPerPage) {
                         msg.edit({embeds: [embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`)]})
                     } else {
                         msg.edit({embeds: [embed.setFooter(
                             `Expires after two minutes.`,
                             message.author.displayAvatarURL({dynamic: true}))]})
                         msg.delete()
-                        new ReactionMenu(message.client, message.channel, message.member, embed, roles, max);
+                        new ReactionMenu(message.client, message.channel, message.member, embed, roles, maxRolesPerPage);
                     }
                     msg.edit({embeds: [embed]})
                 } catch (e) { console.log(e) }
 
-                message.guild.roleRetrieval.delete(message.guild.id);
+                this.done(message.author.id)
             }
         )
     }

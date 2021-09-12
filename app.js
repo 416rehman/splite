@@ -1,22 +1,20 @@
 //entry point
-const config = require('./config.json');
 const Client = require('./src/Client.js');
-const { Intents } = require('discord.js');
 require('./src/utils/prototypes').arrayProto(Array)
 
 global.__basedir = __dirname;
 
 // Client setup
-const intents = new Intents();
-intents.add(
-  'GUILD_PRESENCES',
-  'GUILD_MEMBERS',
-  'GUILDS',
-  'GUILD_VOICE_STATES',
-  'GUILD_MESSAGES',
-  'GUILD_MESSAGE_REACTIONS'
-);
-const client = new Client(config, { ws: { intents: intents } });
+const intents = [
+  "GUILDS",
+  "GUILD_BANS",
+  "GUILD_VOICE_STATES",
+  "GUILD_MESSAGES",
+  "GUILD_MESSAGE_REACTIONS",
+  "GUILD_MEMBERS",
+  "GUILD_PRESENCES"
+]
+const client = new Client(require('./config.json'), {intents, partials: ['MESSAGE', 'CHANNEL', 'REACTION'], allowedMentions: { parse: ['users', 'roles'], repliedUser: true }});
 
 // Initialize client
 function init() {

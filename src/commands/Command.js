@@ -97,18 +97,18 @@ class Command {
     this.errorTypes = ['Invalid Argument', 'Command Failure'];
 
     /**
-     * Cooldown in seconds
+     * Cooldown in seconds (default = 2)
      * @type {number}
      */
-    this.cooldown = options.cooldown * 1000;
+    this.cooldown = (options.cooldown || 2) * 1000;
 
-    if (options.cooldown) this.cooldowns = new Collection();
+    if (this.cooldown) this.cooldowns = new Collection();
 
     /**
      * If true, only one instance of the command will run per user until the done() method is called. Good for heavy commands.
      */
     this.exclusive = options.exclusive;
-    if (options.exclusive) this.instances = new Collection();
+    if (this.exclusive) this.instances = new Collection();
   }
 
   /**
@@ -133,7 +133,7 @@ class Command {
   }
 
   /**
-   * Sets the user as a current user so they cannot call this command again until done() method is called.
+   * Sets an instance for the user so they cannot call this command again until done() method is called.
    * @param userId
    */
   setInstance(userId) {
