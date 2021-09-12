@@ -70,7 +70,9 @@ module.exports = async (client, message) => {
 
       const instanceExists = command.isInstanceRunning(message.author.id)
       if (instanceExists)
-        return message.reply({embeds: [new MessageEmbed().setDescription(`You have already used this command, wait for it.`)]});
+        return message.reply({embeds: [new MessageEmbed().setDescription(`Command already in progress, please wait for it.`)]}).then(msg=>{
+          setTimeout(()=>msg.delete(), 3000)
+        });
 
       // Check if mod channel
       if (modChannelIds.includes(message.channel.id)) {

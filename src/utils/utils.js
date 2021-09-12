@@ -267,13 +267,8 @@ function scheduleCrown(client, guild) {
 }
 
 function createCollections(client, guild) {
-
     guild.snipes = new Collection()
-    guild.betsInProgress = new Collection();
-    guild.gamblesInProgress = new Collection();
-    guild.SmashOrPassInProgress = new Collection();
     guild.JoinVotingInProgress = new Collection();
-    guild.roleRetrieval = new Collection();
     guild.ships = new Collection();
 }
 

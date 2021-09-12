@@ -13,45 +13,61 @@ module.exports = class betCommand extends Command {
       usage: 'bet <user mention/id/name> <point count>',
       description: 'Bet against someone. Winner receives double the bet amount',
       type: client.types.POINTS,
-      examples: ['bet @split 1000']
+      examples: ['bet @split 1000'],
+      exclusive: true
     });
   }
 
   run(message, args) {
-    if (message.guild.betsInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already betting against someone! Please try again later.`).then(m=>{
-      setTimeout(() => m.delete(), 5000);
-    })
-
     const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
-    if (!member) return this.sendErrorMessage(message, 0, `Please mention a user or provide a valid user ID`);
-    if (member.id === message.client.user.id)
+    if (!member) {
+      this.done(message.author.id)
+      return this.sendErrorMessage(message, 0, `Please mention a user or provide a valid user ID`);
+    }
+    if (member.id === message.client.user.id) {
+      this.done(message.author.id)
       return message.channel.send(`${emojis.fail} Sorry I am not allowed to play with you 😟`).then(m=>{
         setTimeout(() => m.delete(), 5000);
       });
-    if (member.user.id == message.author.id)
+    }
+
+    if (member.user.id == message.author.id){
+      this.done(message.author.id)
       return message.reply(`${emojis.fail} No stupid, you NEVER bet against yourself!!`).then(m=>{
         setTimeout(() => m.delete(), 5000);
       })
+    }
 
-    if (message.guild.betsInProgress.has(member.user.id)) return message.reply(`${emojis.fail} ${member.user.username} is already betting against someone! Please try again later.`).then(m=>{
-      setTimeout(() => m.delete(), 5000);
-    })
+
+    if (this.instances.has(member.user.id)) {
+      this.done(message.author.id)
+      return message.reply(`${emojis.fail} ${member.user.username} is already betting against someone! Please try again later.`).then(m=>{
+        setTimeout(() => m.delete(), 5000);
+      })
+    }
 
     let amount = parseInt(args[1]);
-    if (isNaN(amount) === true || !amount)
+    if (isNaN(amount) === true || !amount){
+      this.done(message.author.id)
       return this.sendErrorMessage(message, 0, `Please provide a valid point count`);
+    }
 
     const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
     const otherPoints = message.client.db.users.selectPoints.pluck().get(member.user.id, message.guild.id);
 
-    if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`).then(m=>m.delete(5000));
+    if (amount < 0 || amount > points) {
+      this.done(message.author.id)
+      return message.reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`).then(m=>m.delete(5000));
+    }
     if (amount > limit) amount = limit;
-    if (amount < 0 || amount > otherPoints) return message.reply(`${emojis.nep} ${member.user.username} only has ${otherPoints} points ${emojis.point}! Please change your betting amount!`).then(m=>{
-      setTimeout(() => m.delete(), 5000);
-    });
+    if (amount < 0 || amount > otherPoints) {
+      this.done(message.author.id)
+      return message.reply(`${emojis.nep} ${member.user.username} only has ${otherPoints} points ${emojis.point}! Please change your betting amount!`).then(m=>{
+        setTimeout(() => m.delete(), 5000);
+      });
+    }
 
-    message.guild.betsInProgress.set(message.author.id, new Date().getTime().toString());
-    message.guild.betsInProgress.set(member.user.id, new Date().getTime().toString());
+    this.setInstance(member.user.id);
 
     try {
       message.channel.send(`${member}, ${message.author.username} has sent you a bet of ${amount} points ${emojis.point}. Do you accept?`).then(async msg => {
@@ -95,7 +111,7 @@ module.exports = class betCommand extends Command {
     } catch (e) {
       console.log(e)
     }
-    message.guild.betsInProgress.delete(message.author.id)
-    message.guild.betsInProgress.delete(member.user.id)
+    this.done(message.author.id)
+    this.done(member.user.id)
   };
 }

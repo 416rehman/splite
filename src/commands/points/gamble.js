@@ -13,24 +13,32 @@ module.exports = class gambleCommand extends Command {
       usage: 'gamble <point count>',
       description: 'Gamble your points. Limit: 1000',
       type: client.types.POINTS,
-      examples: ['gamble 1000']
+      examples: ['gamble 1000'],
+      exclusive: true
     });
   }
   async run(message, args) {
       const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id)
-      if (message.guild.gamblesInProgress.has(message.author.id)) return message.reply(`${emojis.fail} You are already gambling. Please try again later`)
 
       let amount = parseInt(args[0]);
       const points = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id);
       if (isNaN(amount) === true || !amount) {
           if (args[0] === 'all') amount = points
-          else return this.sendErrorMessage(message, 0, `Please provide a valid point count`);
+          else {
+              this.done(message.author.id)
+              return this.sendErrorMessage(message, 0, `Please provide a valid point count`);
+          }
       }
 
-      if (amount < 0 || amount > points) return message.reply(`${emojis.nep} Please provide an amount you currently have! You have **${points} points** ${emojis.point}`);
-      if (amount > limit) return message.reply(`${emojis.fail} You can't bet more than ${limit} points ${emojis.point} at a time. Please try again!`);
+      if (amount < 0 || amount > points) {
+          this.done(message.author.id)
+          return message.reply(`${emojis.nep} Please provide an amount you currently have! You have **${points} points** ${emojis.point}`);
+      }
+      if (amount > limit) {
+          this.done(message.author.id)
+          return message.reply(`${emojis.fail} You can't bet more than ${limit} points ${emojis.point} at a time. Please try again!`);
+      }
 
-      message.guild.gamblesInProgress.set(message.author.id, new Date().getTime().toString())
       const modifier = (await message.client.utils.checkTopGGVote(message.client, message.author.id) ? 10 : 0);
       const embed = new MessageEmbed()
           .setTitle(`${modifier ? emojis.Voted: ''}${message.author.username} gambling ${amount} points ${emojis.point}`)
@@ -62,11 +70,11 @@ module.exports = class gambleCommand extends Command {
                   message.client.db.users.updatePoints.run({points: amount}, message.author.id, message.guild.id);
                   msg.edit({embeds: [embed]})
               }
-              message.guild.gamblesInProgress.delete(message.author.id)
+              this.done(message.author.id)
           }, 3000)
       }).catch(e => {
           console.log(e)
-          message.guild.gamblesInProgress.delete(message.author.id)
+          this.done(message.author.id)
       })
   }
 };

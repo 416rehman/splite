@@ -35,6 +35,7 @@ module.exports = class smashOrPassCommand extends Command {
       const embed = new MessageEmbed()
           .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
           .setDescription(`To use this command, you must be opted-in to ${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}.\nPlease opt back in, by typing **\`${prefix}toggleSmashOrPass\`**`)
+      this.done(message.author.id)
       return message.channel.send({embeds: [embed]})
     }
 
