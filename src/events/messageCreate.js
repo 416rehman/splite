@@ -84,7 +84,7 @@ module.exports = async (client, message) => {
       // Check permissions
       const permissionErrors = command.checkPermissionErrors(message.author, message.channel, message.guild);
       if (permissionErrors) return message.reply({embeds: [permissionErrors]})
-      if (!command.checkNSFW(message))
+      if (!command.checkNSFW(message.channel))
         return message.reply({
           embeds: [new MessageEmbed()
               .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL())
