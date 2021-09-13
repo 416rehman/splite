@@ -15,6 +15,142 @@
 
 </div>
 
+Splite runs on DiscordJS V13, NodeJS 16+, and SQLite.
+
+# Setup
+
+1. Clone the repo
+2. Add the emojis from emojis.zip to your server
+3. Update src/utils/emoji.json to use emojis from your server
+4. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
+5. Run `npm i` in the repo directory to install dependencies
+6. Run `node app.js` command to run the bot
+
+*If you wish to run the bot over pm2, use the command `pm2 ecosystem.config.js`*
+
+
+## Modifying Functionality
+
+### Command Handler
+Commands are stored `/src/commands/commands/{category}/` directory<br>
+Slash Commands are stored `/src/commands/slashCommands/{category}/` directory<br><br>
+Splite has a powerful command handler that extends the calypso handler, allowing you to serve both classic commands and slash commands from the same command class.<br>
+Features include
+1. Cooldowns
+2. Exclusive / Instanced Commands (Only one instance of the command will be run per user, until the done() method is called)
+3. Aliases
+4. Categories/Types
+
+
+### Creating Classic vs Slash Commands - Code Sample
+#### Classic Command - Shows the prefix of the bot
+```javascript
+module.exports = class prefixCommand extends Command {
+    constructor(client) {
+        super(client, {
+            name: 'prefix',
+            description: 'Shows the prefix of the bot',
+            type: client.types.INFO,
+            examples: ['prefix'],
+            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            cooldown: 5
+        });
+    }
+
+    async run(message, args) {
+        console.log(`The first argument is ${args[0]}`)
+        const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
+        message.channel.send({
+                embeds: [new MessageEmbed().setTitle(`${message.client.config.name}'s Prefix`)
+                    .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
+                    .addField(`Current Prefix`, `**\`${prefix}\`**`)
+                    .setThumbnail(message.client.user.displayAvatarURL())
+                    .setFooter(message.author.tag, message.author.displayAvatarURL())
+                    .setTimestamp()]
+            })
+    }
+} 
+```
+
+#### Slash Command - Shows the prefix of the bot
+```javascript
+module.exports = class prefixCommand extends Command {
+    constructor(client) {
+        super(client, {
+            name: 'prefix',
+            description: 'Shows the prefix of the bot',
+            type: client.types.INFO,
+            examples: ['prefix'],
+            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            cooldown: 5,
+            slashCommand: new SlashCommandBuilder()
+                .addStringOption(options => options
+                    .setName('argument name')
+                    .setDescription(`argument description`))
+        });
+    }
+
+    async run(interaction, args) {
+        console.log(`The first argument is ${args[0]}`)
+        const prefix = interaction.client.db.settings.selectPrefix.pluck().get(interaction.guild_id);
+        interaction.reply({
+            embeds: [new MessageEmbed().setTitle(`${interaction.client.config.name}'s Prefix`)
+                .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
+                .addField(`Current Prefix`, `**\`${prefix}\`**`)
+                .setThumbnail(interaction.client.user.displayAvatarURL())
+                .setFooter(interaction.author.tag, interaction.author.displayAvatarURL())
+                .setTimestamp()],
+            ephemeral: true
+        })
+    }
+}
+```
+
+
+### Cooldowns
+Cooldowns are handled by the commands own instance. Each command has a cooldowns collection and a default cooldown of 2 seconds. A cooldown can be specified by adding the `cooldown`option in the constructor of the command.
+
+### Exclusive
+If the `exclusive` option is set to true in the constructor for the command, the calling user will not be able to call that function again until the done() method is called.
+This is useful for commands whose functionality might not be instant. For example, the **`kick`** command is not instant, when it is called, a prompt is displayed to the calling user, and it awaits the user response. While the command is awaiting the user response, the user can call the kick command again, and now theres more than one instances of the command waiting for the user's response. <br>We can avoid this by setting the `exclusive` option to true, and when the command finishes listening for the user's response, we can call the `done()` method. Now the user will only be able to call this method again only after that `done()` method is called., 
+
+In the below example, once the user calls the `prefix` command, they won't be able to call it again, until 30 seconds after that command has been run.
+```javascript
+module.exports = class prefixCommand extends Command {
+    constructor(client) {
+        super(client, {
+            name: 'prefix',
+            description: 'Shows the prefix of the bot',
+            type: client.types.INFO,
+            examples: ['prefix'],
+            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            cooldown: 10,
+            exclusive: true
+        });
+    }
+    async run(interaction, args) {
+        const prefix = interaction.client.db.settings.selectPrefix.pluck().get(interaction.guild_id);
+        message.reply({
+            embeds: [new MessageEmbed().setTitle(`${interaction.client.config.name}'s Prefix`)
+                .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
+                .addField(`Current Prefix`, `**\`${prefix}\`**`)
+                .setThumbnail(interaction.client.user.displayAvatarURL())
+                .setFooter(interaction.author.tag, interaction.author.displayAvatarURL())
+                .setTimestamp()]
+        })
+        
+        setTimeout(()=>{
+          this.done(message.author.id)
+          console.log(`The user can call the command now`);
+        }, 30000)            
+    }
+}
+```
+
+You should make sure your exclusive commands always call the done method.<br>
+***If you forget to call the done() method, the bot will automatically call the done method 5 minutes after the command was run to prevent unwanted lockouts from running the command***
+
+
 # Commands
 **![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [23]**
 
@@ -56,33 +192,3 @@
 `/confess` Post a confession in confessions channel.  
 `/report` Report a confession.  
 `/view` View details of a confession.
-# Setup
-
-1. Clone the repo
-2. Add the emojis from emojis.zip to your server
-3. Update src/utils/emoji.json to use emojis from your server
-4. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
-5. Run `npm i` in the repo directory to install dependencies
-6. Run `node app.js` command to run the bot
-
-*If you wish to run the bot over pm2, use the command `pm2 ecosystem.config.js`*
-
-
-## Modifying Functionality
-
-### Commands
-**Commands are stored /src/commands/{category}/ directory**
-
-To add a new command, go into one of the category folders in the command folder, add a new .js file with your command name and implement your functionality in it.
-Look at the existing command files to see how to create your own commands.
-
-### Slash Commands
-**Slash commands are stored in /src/slashCommands directory**
-
-1. Create a slash command logic in a .js file inside /src/slashCommands directory. i.e `report.js` *(Take a look at an existing slashCommand file to see how they are made)*
-2. Import the command file in /src/utils/utils.js. i.e. `const report = require("../slashCommands/report")`
-3. Register the command in registerSlashCommand function inside utils.js.
-4. Add the registered command to the callSlashCommand function in utils.js to run the logic when the slash command is executed by a user. i.e `if (command === 'report') report.report(interaction, client);`
-
-# spliteBot
-Database: SQLite
