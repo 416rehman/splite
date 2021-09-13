@@ -19,7 +19,8 @@ const client = new Client(require('./config.json'), {intents, partials: ['MESSAG
 // Initialize client
 function init() {
   client.loadEvents('./src/events');
-  client.loadCommands('./src/commands');
+  client.loadCommands('./src/commands/commands');
+  client.loadSlashCommands('./src/commands/slashCommands');
   client.loadTopics('./data/geoguessr');
   client.login(client.token);
 }

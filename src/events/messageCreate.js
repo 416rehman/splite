@@ -2,9 +2,9 @@ const { MessageEmbed } = require('discord.js');
 const { online, dnd } = require('../utils/emojis.json')
 const moment = require('moment')
 const { oneLine } = require('common-tags');
+const {nsfw} = require('../utils/emojis.json')
 
 module.exports = async (client, message) => {
-  console.log(message.content)
   if (message.channel.type === 'DM' || !message.channel.viewable || message.author.bot) return;
 
   //Update MessageCount
@@ -18,9 +18,7 @@ module.exports = async (client, message) => {
   if (currentStatus != null) {
     const d = new Date(afkTime)
     message.client.db.users.updateAfk.run(null, message.author.id, message.guild.id)
-    if (message.member.nickname) message.member.setNickname(`${message.member.nickname.replace('[AFK]', '')}`).catch(err => {
-      console.log()
-    })
+    if (message.member.nickname) message.member.setNickname(`${message.member.nickname.replace('[AFK]', '')}`).catch(err => {})
     message.channel.send(`${online} Welcome back ${message.author}, you went afk **${moment(d).fromNow()}**!`).then(msg => {
       setTimeout(() => msg.delete(), 5000);
     })
@@ -76,21 +74,26 @@ module.exports = async (client, message) => {
 
       // Check if mod channel
       if (modChannelIds.includes(message.channel.id)) {
-        if (
-            command.type != client.types.MOD || (command.type == client.types.MOD &&
-            message.channel.permissionsFor(message.author).missing(command.userPermissions) != 0)
-        ) {
+        if (command.type != client.types.MOD || (command.type == client.types.MOD && message.channel.permissionsFor(message.author).missing(command.userPermissions) != 0)) {
           // Update points with messagePoints value
-          if (pointTracking)
-            client.db.users.updatePoints.run({points: messagePoints}, message.author.id, message.guild.id);
-          return; // Return early so bot doesn't respond
+          if (pointTracking) client.db.users.updatePoints.run({points: messagePoints}, message.author.id, message.guild.id);
+          return message.channel.send(`This is a mod-only channel. Only Mod commands may be used in this channel.\nTo reset this, an admin has to use \`${prefix}clearcommandchanels\` in another channel`).then(m=>setTimeout(()=>m.delete(), 15000)); // Return early so bot doesn't respond
         }
       }
 
       // Check permissions
-      const permission = command.checkPermissions(message);
-      const nsfw = command.checkNSFW(message)
-      if (permission && nsfw) {
+      const permissionErrors = command.checkPermissionErrors(message.author, message.channel, message.guild);
+      if (permissionErrors) return message.reply({embeds: [permissionErrors]})
+      if (!command.checkNSFW(message))
+        return message.reply({
+          embeds: [new MessageEmbed()
+              .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL())
+              .setDescription(`${nsfw} NSFW Commands can only be run in NSFW channels.`)
+              .setTimestamp()
+              .setColor("RED")]
+        })
+
+      if (!permissionErrors) {
         // Update points with commandPoints value
         if (pointTracking)
           client.db.users.updatePoints.run({points: commandPoints}, message.author.id, message.guild.id);

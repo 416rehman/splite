@@ -1,9 +1,12 @@
 const Discord = require('discord.js');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 const { readdir, readdirSync } = require('fs');
 const { join, resolve } = require('path');
 const AsciiTable = require('ascii-table');
 const { fail } = require('./utils/emojis.json');
 const amethyste = require('amethyste-api')
+const {Collection} = require("discord.js");
 const { NekoBot } = require("nekobot-api");
 
 class Client extends Discord.Client {
@@ -43,6 +46,7 @@ class Client extends Discord.Client {
     this.logger.info('Initializing...');
     this.odds = new Map()
     this.votes = new Map()
+    this.slashCommands = new Collection();
   }
 
   /**
@@ -154,6 +158,77 @@ class Client extends Discord.Client {
       .setTimestamp()
       .setColor("RANDOM");
     systemChannel.send({embeds: [embed]});
+  }
+
+  /**
+   * Loads all available slash commands
+   * @param path
+   */
+  loadSlashCommands(path){
+    this.logger.info(`Loading Slash Commands`)
+    const table = new AsciiTable('Slash Commands').setHeading('Name', 'Type', 'Status');
+    const folders = readdirSync(path).filter(file => !file.endsWith('.js'))
+    folders.forEach(folder => {
+      this.logger.info(`Folder: ${folder}`)
+      const commands = readdirSync(resolve(__basedir, join(path, folder))).filter(f=>f.endsWith('.js'))
+      commands.forEach(f=>{
+        const Command = require(resolve(__basedir, join(path, folder, f)));
+        const slashCommand = new Command(this);
+
+        if (slashCommand.name && !slashCommand.disabled && slashCommand) {
+          this.slashCommands.set(slashCommand.name, slashCommand);
+          table.addRow(f, slashCommand.type, 'Pass');
+          this.logger.info(`Loaded Slash Command: ${f} | ${slashCommand.description} | Type: ${slashCommand.type}`)
+        }
+        else {
+          table.addRow(f, '', 'Fail');
+          this.logger.error(`Failed Loading Command: ${f}`)
+        }
+      })
+    })
+    this.logger.info(table.toString())
+  }
+
+  /**
+   * Registers all slash commands across all the guilds
+   * @param id
+   * @returns {Promise<void>}
+   */
+  async registerAllSlashCommands(id) {
+    this.logger.info('Started refreshing application (/) commands.');
+    const data = this.slashCommands.map((v,k)=>v.slashCommand.toJSON())
+    const promises = [];
+    this.guilds.cache.forEach(g=>{
+      promises.push(this.registerSlashCommands(g, data, id))
+    })
+    Promise.all(promises).then(()=>{
+      this.logger.info('Finished refreshing application (/) commands.');
+    }).catch((error)=>{
+      const guild = error.url.toString().match(/(guilds\/)(\S*)(\/commands)/)[2]
+      if (error.code === 50001) return this.logger.error(`Failed to setup slash commands for guild: ${guild}. Missing perms.`)
+    })
+  }
+
+  /**
+   * Registes all slash commands in the provided guild
+   * @param guild
+   * @param commands
+   * @param id
+   * @returns {Promise<unknown>}
+   */
+  registerSlashCommands(guild, commands, id) {
+    return new Promise((async (resolve, reject) => {
+      const rest = new REST({version: '9'}).setToken(this.token);
+      try {
+        await rest.put(
+            Routes.applicationGuildCommands(id, guild.id),
+            {body: commands},
+        );
+        resolve('Registered slash commands for ' + guild.name);
+      } catch (error) {
+        reject(error);
+      }
+    }))
   }
 }
 

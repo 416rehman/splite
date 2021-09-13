@@ -1,10 +1,10 @@
 const { MessageEmbed } = require('discord.js');
 const permissions = require('../utils/permissions.json');
 const {Collection} = require("discord.js");
-const { fail, nsfw } = require('../utils/emojis.json');
+const { fail } = require('../utils/emojis.json');
 
 /**
- * Splite's custom Command class
+ * Command class
  */
 class Command {
 
@@ -109,6 +109,15 @@ class Command {
      */
     this.exclusive = options.exclusive;
     if (this.exclusive) this.instances = new Collection();
+
+    /**
+     * Slash command options
+     */
+    if (options.slashCommand) {
+      this.slashCommand = options.slashCommand
+      this.slashCommand.setName(this.name)
+      this.slashCommand.setDescription(this.description)
+    }
   }
 
   /**
@@ -138,7 +147,7 @@ class Command {
    */
   setInstance(userId) {
     if (!this.exclusive) return;
-    this.instances.set(userId, true)
+    this.instances.set(userId, Date.now())
   }
 
   /**
@@ -148,7 +157,14 @@ class Command {
    */
   isInstanceRunning(userId){
     if (!this.exclusive || !this.instances) return;
-    return this.instances.get(userId);
+    const instance = this.instances.get(userId)
+
+    //if instance was started more than 5 minutes ago, force-reset it.
+    if (instance && (Date.now() - instance > 1000 * 60 * 5)) {
+      this.done(userId);
+      return false;
+    }
+    return instance;
   }
 
   /**
@@ -248,89 +264,72 @@ class Command {
   }
 
   /**
-   * Helper method to check permissions
-   * @param {Message} message 
-   * @param {boolean} ownerOverride 
+   * Returns an embed of errors
+   * @param member
+   * @param channel
+   * @param guild
+   * @param ownerOverride
+   * @returns {*|boolean|MessageEmbed}
    */
-  checkPermissions(message, ownerOverride = true) {
-    if (!message.channel.permissionsFor(message.guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return false;
-    const clientPermission = this.checkClientPermissions(message);
-    const userPermission = this.checkUserPermissions(message, ownerOverride);
-    if (clientPermission && userPermission) return true;
-    else return false;
+  checkPermissionErrors(member, channel, guild, ownerOverride = true) {
+    if (!channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return new MessageEmbed()
+        .setAuthor(`${member.tag}`, member.displayAvatarURL({ dynamic: true }))
+        .setTitle(`Missing Client Permissions: \`${this.name}\``)
+        .setDescription(`\`\`\`SEND_MESSAGES\`\`\`\n\`\`\`EMBED_LINKS\`\`\``)
+        .setTimestamp()
+        .setColor("RANDOM");
+    const clientPermission = this.checkClientPermissions(channel, guild);
+    const userPermission = this.checkUserPermissions(member, channel, ownerOverride);
+    if (clientPermission instanceof MessageEmbed || userPermission instanceof MessageEmbed) {
+      return clientPermission || userPermission;
+    }
+    return false;
   }
 
   /**
-   * Helper method to check channel NSFW status
-   * @param {Message} message
-   * @param {boolean} ownerOverride
+   * Checks if nsfw perms are good
+   * @param channel
+   * @returns {boolean}
    */
-  checkNSFW(message) {
+  checkNSFW(channel) {
     if (!this.nsfwOnly) return true
-    const channelIsNSFW = message.channel.nsfw
-    if (channelIsNSFW) return true
-    else
-    {
-      const embed = new MessageEmbed()
-          .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
-          .setDescription(`${nsfw} NSFW Commands can only be run in NSFW channels.`)
-          .setTimestamp()
-          .setColor("RED");
-      message.channel.send({embeds: [embed]});
-      return false;
-    }
+    return channel.nsfw
   }
 
-  /**
-   * Checks the user permissions
-   * Code modified from: https://github.com/discordjs/Commando/blob/master/src/commands/base.js
-   * @param {Message} message 
-   * @param {boolean} ownerOverride 
-   */
-  checkUserPermissions(message, ownerOverride = true) {
-    if (!this.ownerOnly && !this.userPermissions) return true;
-    if (ownerOverride && this.client.isOwner(message.author)) return true;
-    if (this.ownerOnly && !this.client.isOwner(message.author)) {
+  checkUserPermissions(member, channel, ownerOverride = true, perms = this.userPermissions) {
+    if (!this.ownerOnly && !perms) return true;
+    if (ownerOverride && this.client.isOwner(member)) return true;
+    if (this.ownerOnly && !this.client.isOwner(member)) {
       return false;
     }
-    
-    if (message.member.permissions.has('ADMINISTRATOR')) return true;
-    if (this.userPermissions) {
+
+    if (member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) return true;
+    if (perms) {
       const missingPermissions =
-        message.channel.permissionsFor(message.author).missing(this.userPermissions).map(p => permissions[p]);
+          channel.permissionsFor(member).missing(perms).map(p => permissions[p]);
       if (missingPermissions.length !== 0) {
-        const embed = new MessageEmbed()
-          .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
-          .setTitle(`${fail} Missing User Permissions: \`${this.name}\``)
-          .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
-          .setTimestamp()
-          .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
-        return false;
+        return new MessageEmbed()
+            .setAuthor(`${member.tag}`, member.displayAvatarURL({ dynamic: true }))
+            .setTitle(`Missing User Permissions: \`${this.name}\``)
+            .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
+            .setTimestamp()
+            .setColor("RANDOM");
       }
     }
     return true;
   }
 
-  /**
-   * Checks the client permissions
-   * @param {Message} message 
-   * @param {boolean} ownerOverride 
-   */
-  checkClientPermissions(message) {
+  checkClientPermissions(channel, guild, perms = this.clientPermissions) {
     const missingPermissions =
-      message.channel.permissionsFor(message.guild.me).missing(this.clientPermissions).map(p => permissions[p]);
+        channel.permissionsFor(guild.me).missing(perms).map(p => permissions[p]);
     if (missingPermissions.length !== 0) {
-      const embed = new MessageEmbed()
-        .setAuthor(`${this.client.user.tag}`, message.client.user.displayAvatarURL({ dynamic: true }))
-        .setTitle(`${fail} Missing Bot Permissions: \`${this.name}\``)
-        .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
-        .setTimestamp()
-        .setColor(message.guild.me.displayHexColor);
-      message.channel.send({embeds: [embed]});
-      return false;
-
-    } else return true;
+      return new MessageEmbed()
+          .setAuthor(`${this.client.user.tag}`, this.client.user.displayAvatarURL({ dynamic: true }))
+          .setTitle(`Missing Bot Permissions: \`${this.name}\``)
+          .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
+          .setTimestamp()
+          .setColor("RANDOM");
+    }
   }
   
   /**
@@ -388,7 +387,7 @@ class Command {
       const caseNumber = await message.client.utils.getCaseNumber(message.client, message.guild, modLog);
       const embed = new MessageEmbed()
         .setTitle(`Action: \`${message.client.utils.capitalize(this.name)}\``)
-        .addField('Moderator', message.member, true)
+        .addField('Moderator', message.member.toString(), true)
         .setFooter(`Case #${caseNumber}`)
         .setTimestamp()
         .setColor(message.guild.me.displayHexColor);

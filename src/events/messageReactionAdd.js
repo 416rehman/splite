@@ -31,6 +31,7 @@ module.exports = async (client, messageReaction, user) => {
 
   // Starboard
   if (emoji.name === '⭐' && message.author != user) {
+
     const starboardChannelId = client.db.settings.selectStarboardChannelId.pluck().get(message.guild.id);
     const starboardChannel = message.guild.channels.cache.get(starboardChannelId);
     if (
