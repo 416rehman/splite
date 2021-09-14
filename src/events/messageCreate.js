@@ -83,7 +83,7 @@ module.exports = async (client, message) => {
 
       // Check permissions
       const permissionErrors = command.checkPermissionErrors(message.member, message.channel, message.guild);
-      console.log({permissionErrors})
+      if (!permissionErrors) return;
       if (permissionErrors instanceof MessageEmbed) return message.reply({embeds: [permissionErrors]})
       if (!command.checkNSFW(message.channel))
         return message.reply({
@@ -94,16 +94,15 @@ module.exports = async (client, message) => {
               .setColor("RED")]
         })
 
-      if (!permissionErrors) {
-        // Update points with commandPoints value
-        if (pointTracking)
-          client.db.users.updatePoints.run({points: commandPoints}, message.author.id, message.guild.id);
-        message.command = true; // Add flag for messageUpdate event
-        message.channel.sendTyping();
-        command.setInstance(message.author.id);
-        command.setCooldown(message.author.id);
-        return command.run(message, args); // Run command
-      }
+      // Update points with commandPoints value
+      if (pointTracking)
+        client.db.users.updatePoints.run({points: commandPoints}, message.author.id, message.guild.id);
+      message.command = true; // Add flag for messageUpdate event
+      message.channel.sendTyping();
+      command.setInstance(message.author.id);
+      command.setCooldown(message.author.id);
+      return command.run(message, args); // Run command
+
     } else if (
         (message.content === `<@${client.user.id}>` || message.content === `<@!${client.user.id}>`) &&
         message.channel.permissionsFor(message.guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS']) &&

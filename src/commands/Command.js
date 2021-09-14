@@ -279,11 +279,12 @@ class Command {
         .setTimestamp()
         .setColor("RANDOM");
     const clientPermission = this.checkClientPermissions(channel, guild);
-    const userPermission = this.checkUserPermissions(member, channel, ownerOverride)
-    if (clientPermission instanceof MessageEmbed || userPermission instanceof MessageEmbed) {
-      return clientPermission || userPermission;
+    if (clientPermission instanceof MessageEmbed) return clientPermission;
+    const userPermission = this.checkUserPermissions(member, channel, ownerOverride);
+    if (userPermission instanceof MessageEmbed || !userPermission) {
+      return userPermission;
     }
-    return !clientPermission || !userPermission;
+    return true;
   }
 
   /**
@@ -300,8 +301,8 @@ class Command {
     if (!this.ownerOnly && !perms) return true;
     if (ownerOverride && this.client.isOwner(member)) return true;
     if (this.ownerOnly && !this.client.isOwner(member)) return false;
-
-    if (member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) return true;
+    console.log(member.permissions.has(`ADMINISTRATOR`))
+    if (member.permissions.has(`ADMINISTRATOR`)) return true;
     if (perms) {
       const missingPermissions =
           channel.permissionsFor(member).missing(perms).map(p => permissions[p]);
@@ -326,10 +327,11 @@ class Command {
           .setTitle(`Missing Bot Permissions: \`${this.name}\``)
           .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
           .setTimestamp()
-          .setColor("RANDOM");
+          .setColor("RANDOM")
     }
+    return true;
   }
-  
+
   /**
    * Creates and sends command failure embed
    * @param {Message} message
