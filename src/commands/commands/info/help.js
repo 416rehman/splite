@@ -31,11 +31,7 @@ module.exports = class HelpCommand extends Command {
         const { capitalize } = message.client.utils;
 
         const command = message.client.commands.get(args[0]) || message.client.aliases.get(args[0]);
-        if (
-            command &&
-            (command.type != OWNER || message.client.isOwner(message.member)) &&
-            !disabledCommands.includes(command.name)
-        ) {
+        if ( command && (command.type != OWNER || message.client.isOwner(message.member)) && !disabledCommands.includes(command.name) ) {
             embed // Build specific command help embed
                 .setTitle(`Command: \`${command.name}\``)
                 .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
@@ -74,6 +70,8 @@ module.exports = class HelpCommand extends Command {
 
             message.client.commands.forEach(command => {
                 if (!disabledCommands.includes(command.name) && !command.name.startsWith('clear') && !command.name.startsWith('texthelp')) {
+                    if (command.ownerOnly && !message.client.isOwner(message.member)) return
+
                     if (command.userPermissions && command.userPermissions.every(p => message.member.permissions.has(p)) && !all)
                         commands[command.type].push(`\`${command.name}\``);
                     else if (!command.userPermissions || all)
