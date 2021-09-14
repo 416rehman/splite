@@ -18,7 +18,6 @@ module.exports = class ServersCommand extends Command {
     const servers = [...message.client.guilds.cache.values()].sort((a, b) => a.joinedTimestamp - b.joinedTimestamp).map(guild => {
       return `\`${guild.id}\` - \`${guild.members.cache.size}\` - **${guild.name}** - ${moment(guild.me.joinedAt).fromNow()}`;
     });
-    servers.sort()
 
     const embed = new MessageEmbed()
       .setTitle('Server List')
