@@ -279,11 +279,11 @@ class Command {
         .setTimestamp()
         .setColor("RANDOM");
     const clientPermission = this.checkClientPermissions(channel, guild);
-    const userPermission = this.checkUserPermissions(member, channel, ownerOverride);
+    const userPermission = this.checkUserPermissions(member, channel, ownerOverride)
     if (clientPermission instanceof MessageEmbed || userPermission instanceof MessageEmbed) {
       return clientPermission || userPermission;
     }
-    return false;
+    return !clientPermission || !userPermission;
   }
 
   /**
@@ -299,9 +299,7 @@ class Command {
   checkUserPermissions(member, channel, ownerOverride = true, perms = this.userPermissions) {
     if (!this.ownerOnly && !perms) return true;
     if (ownerOverride && this.client.isOwner(member)) return true;
-    if (this.ownerOnly && !this.client.isOwner(member)) {
-      return false;
-    }
+    if (this.ownerOnly && !this.client.isOwner(member)) return false;
 
     if (member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) return true;
     if (perms) {

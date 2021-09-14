@@ -82,8 +82,9 @@ module.exports = async (client, message) => {
       }
 
       // Check permissions
-      const permissionErrors = command.checkPermissionErrors(message.author, message.channel, message.guild);
-      if (permissionErrors) return message.reply({embeds: [permissionErrors]})
+      const permissionErrors = command.checkPermissionErrors(message.member, message.channel, message.guild);
+      console.log({permissionErrors})
+      if (permissionErrors instanceof MessageEmbed) return message.reply({embeds: [permissionErrors]})
       if (!command.checkNSFW(message.channel))
         return message.reply({
           embeds: [new MessageEmbed()
