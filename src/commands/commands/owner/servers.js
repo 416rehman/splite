@@ -1,6 +1,7 @@
 const Command = require('../../Command.js');
 const { ReactionMenu } = require('../../ReactionMenu.js');
 const { MessageEmbed } = require('discord.js');
+const moment = require('moment')
 
 module.exports = class ServersCommand extends Command {
   constructor(client) {
@@ -14,10 +15,10 @@ module.exports = class ServersCommand extends Command {
     });
   }
   run(message, args) {
-
-    const servers = [...message.client.guilds.cache.values()].map(guild => {
-      return `\`${guild.id}\` - **${guild.name}** - \`${guild.members.cache.size}\` members`;
+    const servers = [...message.client.guilds.cache.values()].sort((a, b) => { a.joinedTimestamp > b.joinedTimestamp }).map(guild => {
+      return `\`${guild.id}\` - \`${guild.members.cache.size}\` - **${guild.name}** - ${moment(guild.me.joinedAt).fromNow()}`;
     });
+    servers.sort()
 
     const embed = new MessageEmbed()
       .setTitle('Server List')
