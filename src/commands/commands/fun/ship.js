@@ -41,7 +41,7 @@ module.exports = class shipCommand extends Command {
         bg.getBase64(jimp.AUTO, async function (e, img64) {
           const buff = new Buffer.from(img64.split(",")[1], "base64")
           await msg.delete()
-          await msg.channel.send({embeds: [new MessageEmbed()
+          await msg.edit({embeds: [new MessageEmbed()
               .setDescription(`\`${member2.user ? member2.user.username  : member2.username}\` ${shipScore > 50 ? emojis.match : emojis.unmatch} \`${member.user ? member.user.username  : member.username}\`\n\n **${shipScore}%** ${progress} ${shipScore < 10 ? 'Yiiikes!' : shipScore < 20 ? 'Terrible 💩' : shipScore < 30 ? 'Very Bad 😭' : shipScore < 40 ? 'Bad 😓' : shipScore < 50 ? 'Worse Than Average 🤐' : shipScore < 60 ? 'Average 😔' : shipScore < 70 ? shipScore === 69 ? 'NICE 🙈' : 'Above Average ☺' : shipScore < 80 ? 'Pretty Good 😳' : shipScore < 90 ? 'Amazing 🤩' : shipScore < 100 ? 'Extraordinary 😍' : 'Perfect 🤩😍🥰'}`)
               // .attachFiles(new MessageAttachment(buff, 'ship.png'))
               .setImage('attachment://ship.png')],
