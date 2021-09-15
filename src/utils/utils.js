@@ -263,7 +263,8 @@ function scheduleCrown(client, guild) {
 }
 
 function createCollections(client, guild) {
-    guild.snipes = new Collection()
+    guild.snipes = new Collection();
+    guild.editSnipes = new Collection();
     guild.JoinVotingInProgress = new Collection();
     guild.ships = new Collection();
 }
