@@ -15,7 +15,7 @@ module.exports = class shipCommand extends Command {
     });
   }
   async run(message, args) {
-    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.guild.members.cache.random();
+    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.guild.members.cache.filter(m => !m.user.bot).random();
     const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.author;
 
     message.channel.send({embeds: [new MessageEmbed().setDescription(`${emojis.load} Shipping...`)]}).then(async msg=>{
