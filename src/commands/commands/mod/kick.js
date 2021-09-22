@@ -16,13 +16,13 @@ module.exports = class KickCommand extends Command {
       exclusive: true
     });
   }
-  run(message, args) {
+  async run(message, args) {
     if (!args[0]) {
       this.done(message.author.id)
       return this.sendHelpMessage(message);
     }
-    const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
-    if (!member){
+    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0])
+    if (!member) {
       this.done(message.author.id)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
     }
@@ -42,10 +42,18 @@ module.exports = class KickCommand extends Command {
     const row = new MessageActionRow()
     row.addComponents(new MessageButton().setCustomId(`proceed`).setLabel(`✅ Proceed`).setStyle('SUCCESS'))
     row.addComponents(new MessageButton().setCustomId(`cancel`).setLabel(`❌ Cancel`).setStyle('DANGER'))
-    message.channel.send({embeds: [new MessageEmbed().setTitle('Kick Member')
-        .setDescription(`Do you want to kick ${member}?`).setFooter(`Expires in 15s`, message.author.displayAvatarURL({dynamic: true}))], components: [row]}).then(async msg=> {
+    message.channel.send({
+      embeds: [new MessageEmbed().setTitle('Kick Member')
+          .setDescription(`Do you want to kick ${member}?`).setFooter(`Expires in 15s`, message.author.displayAvatarURL({dynamic: true}))],
+      components: [row]
+    }).then(async msg => {
       const filter = (button) => button.user.id === message.author.id;
-      const collector = msg.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 15000, dispose: true });
+      const collector = msg.createMessageComponentCollector({
+        filter,
+        componentType: 'BUTTON',
+        time: 15000,
+        dispose: true
+      });
 
       let updated = false;
       collector.on('collect', async b => {
@@ -69,15 +77,19 @@ module.exports = class KickCommand extends Command {
           this.sendModLogMessage(message, reason, {Member: member});
         } else {
           updated = true;
-          msg.edit({ components: [], embeds: [new MessageEmbed().setTitle('Kick Member')
-                .setDescription(`${member} Not Kicked - Cancelled`)] });
+          msg.edit({
+            components: [], embeds: [new MessageEmbed().setTitle('Kick Member')
+                .setDescription(`${member} Not Kicked - Cancelled`)]
+          });
         }
       })
       collector.on('end', () => {
         this.done(message.author.id)
         if (updated) return;
-        msg.edit({ components: [], embeds: [new MessageEmbed().setTitle('Kick Member')
-              .setDescription(`${member} Not Kicked - Expired`)] });
+        msg.edit({
+          components: [], embeds: [new MessageEmbed().setTitle('Kick Member')
+              .setDescription(`${member} Not Kicked - Expired`)]
+        });
       });
     })
   }

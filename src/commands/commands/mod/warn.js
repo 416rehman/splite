@@ -16,7 +16,7 @@ module.exports = class WarnCommand extends Command {
   }
   async run(message, args) {
     if (!args[0]) return this.sendHelpMessage(message);
-    const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+    const member =  await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0])
     if (!member)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
     if (member === message.member)

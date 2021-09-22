@@ -31,7 +31,7 @@ module.exports = class MuteCommand extends Command {
       return this.sendErrorMessage(message, 1, 'There is currently no mute role set on this server\nCheck out the "setMuteRole" command');
     }
 
-    const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0])
     if (!member) {
       this.done(message.author.id)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');

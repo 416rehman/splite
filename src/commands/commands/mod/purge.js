@@ -33,7 +33,7 @@ module.exports = class PurgeCommand extends Command {
       Please mention an accessible text channel or provide a valid text channel ID
     `);
 
-    let member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+    let member =  await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0])
     if (member) {
       args.shift();
     }

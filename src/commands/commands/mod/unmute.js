@@ -21,7 +21,7 @@ module.exports = class UnmuteCommand extends Command {
     if (muteRoleId) muteRole = message.guild.roles.cache.get(muteRoleId);
     else return this.sendErrorMessage(message, 1, 'There is currently no mute role set on this server');
 
-    const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+    const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0])
     if (!member)
       return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
 
