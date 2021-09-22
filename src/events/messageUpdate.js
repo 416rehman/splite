@@ -5,10 +5,10 @@ module.exports = (client, oldMessage, newMessage) => {
   if (newMessage.webhookId) return; // Check for webhook
 
   //Add to editsnipe history
-  if (oldMessage?.author && oldMessage.guild.editSnipes.has(oldMessage.channel.id) && (!oldMessage.author.bot))
-    oldMessage.guild.editSnipes.delete(oldMessage.channel.id)
+  if (oldMessage?.author && oldMessage.guild?.editSnipes.has(oldMessage.channel.id) && (!oldMessage.author.bot))
+    oldMessage.guild?.editSnipes.delete(oldMessage.channel.id)
 
-  oldMessage.guild.editSnipes.set(oldMessage.channel.id, {oldMessage, newMessage})
+  oldMessage.guild?.editSnipes.set(oldMessage.channel.id, {oldMessage, newMessage})
 
   // Detect edited commands
   if (
