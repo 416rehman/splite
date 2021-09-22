@@ -55,13 +55,16 @@ module.exports = (client, oldMessage, newMessage) => {
         console.log(e)
       }
 
-
-      const embed = new MessageEmbed()
-          .setTitle('Message Update: `Edit`')
-          .setDescription(`${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})`)
-          .addField('Before', oldMessage ? oldMessage.content : "**")
-          .addField('After', newMessage.content);
-      messageEditLog.send({embeds: [embed]});
+      try {
+        const embed = new MessageEmbed()
+            .setTitle('Message Update: `Edit`')
+            .setDescription(`${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})`)
+            .addField('Before', oldMessage ? oldMessage?.content : "**")
+            .addField('After', newMessage?.content || 'None');
+        messageEditLog.send({embeds: [embed]});
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 
