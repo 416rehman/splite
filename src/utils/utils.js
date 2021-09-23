@@ -132,13 +132,6 @@ function replaceKeywords(message) {
     .replace(/\?size/g, '`?size`');
 }
 
-function callSlashCommand(command, client, interaction){
-  if (command === 'confess') confessions.confess(interaction, client);
-  if (command === 'report') report.report(interaction, client);
-  if (command === 'anonymous') anonymous.anonymous(interaction, client);
-  if (command === 'view') view.view(interaction, client);
-}
-
 function getEmojiForJoinVoting(guild, client) {
   const {joinvoting_emoji: joinVotingEmoji } = client.db.settings.selectJoinVotingMessage.get(guild.id)
   let emoji = joinVotingEmoji || '`None`';
@@ -450,8 +443,6 @@ module.exports = {
   replaceCrownKeywords,
   transferCrown,
   scheduleCrown,
-  registerSlashCommands,
-  callSlashCommand,
   getEmojiForJoinVoting,
   createCollections,
   createProgressBar,
