@@ -192,13 +192,18 @@ async function transferCrown(client, guild, crownRoleId) {
       } catch (err) {
 
         quit = true;
-        
+        // Clear points
+        client.db.users.wipeAllPoints.run(guild.id);
+
         return client.sendSystemErrorMessage(guild, 'crown update', stripIndent`
           Unable to transfer crown role, please check the role hierarchy and ensure I have the Manage Roles permission
         `, err.message);
       } 
     }
   }));
+
+  // Clear points
+  client.db.users.wipeAllPoints.run(guild.id);
 
   if (quit) return;
 
@@ -210,9 +215,6 @@ async function transferCrown(client, guild, crownRoleId) {
       Unable to transfer crown role, please check the role hierarchy and ensure I have the Manage Roles permission
     `, err.message);
   }
-
-  // Clear points
-  client.db.users.wipeAllPoints.run(guild.id);
   
   // Get crown channel and crown channel
   let { crown_channel_id: crownChannelId, crown_message: crownMessage } = 
