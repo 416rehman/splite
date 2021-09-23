@@ -135,19 +135,6 @@ module.exports = async (client) => {
     client.logger.info(`${client.name} has left ${guild.guild_name}`);
   }
 
-  // //Slash Commands
-  // console.log("Setting up slash commands")
-  // client.guilds.cache.forEach(server => {
-  //   //client.api.applications(client.user.id).guilds(server.id).commands.forEach(cmd => console.log(`Deleted ${cmd}`, cmd.delete))
-  //   client.utils.registerSlashCommands(client, server);
-  //   });
-  //
-  // client.ws.on('INTERACTION_CREATE', async interaction => {
-  //   if (interaction.type !== 2) return  //Slash Commands Only
-  //       const command = interaction.data.name.toLowerCase();
-  //       client.utils.callSlashCommand(command, client, interaction)
-  // })
-
   await client.registerAllSlashCommands(client.application.id);
 
   client.logger.info(`${client.name} is now online`);

@@ -212,13 +212,14 @@ async function transferCrown(client, guild, crownRoleId) {
   // Give role to winner
   try {
     await winner.roles.add(crownRole);
-    // Clear points
-    client.db.users.wipeAllPoints.run(guild.id);
   } catch (err) {
     return client.sendSystemErrorMessage(guild, 'crown update', stripIndent`
       Unable to transfer crown role, please check the role hierarchy and ensure I have the Manage Roles permission
     `, err.message);
   }
+
+  // Clear points
+  client.db.users.wipeAllPoints.run(guild.id);
   
   // Get crown channel and crown channel
   let { crown_channel_id: crownChannelId, crown_message: crownMessage } = 
@@ -254,8 +255,8 @@ function scheduleCrown(client, guild) {
   const { crown_role_id: crownRoleId, crown_schedule: cron } = client.db.settings.selectCrown.get(guild.id);
 
   if (crownRoleId && cron) {
-    guild.job = schedule.scheduleJob(cron, () => {
-      client.utils.transferCrown(client, guild, crownRoleId);
+    guild.job = schedule.scheduleJob(cron, async () => {
+      await client.utils.transferCrown(client, guild, crownRoleId);
     });
     console.log(`${guild.name}: Successfully scheduled job`)
     client.logger.info(`${guild.name}: Successfully scheduled job`);
