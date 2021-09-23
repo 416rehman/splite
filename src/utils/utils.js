@@ -132,13 +132,6 @@ function replaceKeywords(message) {
     .replace(/\?size/g, '`?size`');
 }
 
-function registerSlashCommands(client, server){
-  confessions.createSlashConfess(client, server);
-  report.createSlashReport(client, server);
-  anonymous.createSlashAnonymous(client, server);
-  view.createSlashView(client, server);
-}
-
 function callSlashCommand(command, client, interaction){
   if (command === 'confess') confessions.confess(interaction, client);
   if (command === 'report') report.report(interaction, client);
