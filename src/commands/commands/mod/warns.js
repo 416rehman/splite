@@ -95,24 +95,24 @@ module.exports = class WarnsCommand extends Command {
 
       const reactions = {
         '⏪': first,
-        '◀️': previous,
-        '▶️': next,
+        '◀': previous,
+        '▶': next,
         '⏩': last,
-        '⏹️': null,
+        '⏹': null,
       };
 
       const menu = new ReactionMenu(
         message.client,
         message.channel, 
-        message.member.toString(), 
+        message.member,
         buildEmbed(n, new MessageEmbed(json)), 
         null,
         null,
-        reactions, 
-        180000
+        null,
+        reactions
       );
 
-      menu.reactions['⏹️'] = menu.stop.bind(menu);
+      menu.reactions['⏹'] = menu.stop.bind(menu);
 
     }
   }
