@@ -45,7 +45,7 @@ module.exports = class SetVerificationChannelCommand extends Command {
     
     const embed = new MessageEmbed()
       .setTitle('Settings: `Verification`')
-      .addField('Role', verificationRole || '`None`', true)
+      .addField('Role', verificationRole.toString() || '`None`', true)
       .addField('Message', verificationMessage || '`None`')
       .setThumbnail(message.guild.iconURL({ dynamic: true }))
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
