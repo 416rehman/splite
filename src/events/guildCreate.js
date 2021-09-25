@@ -35,12 +35,12 @@ module.exports = async (client, guild) => {
       try {
         if (channel.viewable && channel.permissionsFor(guild.me).has('MANAGE_ROLES')) {
           if (channel.type === 'GUILD_TEXT') // Deny permissions in text channels
-            await channel.updateOverwrite(muteRole, {
+            await channel.permissionOverwrites.edit(muteRole, {
               'SEND_MESSAGES': false,
               'ADD_REACTIONS': false
             });
           else if (channel.type === 'GUILD_VOICE' && channel.editable) // Deny permissions in voice channels
-            await channel.updateOverwrite(muteRole, {
+            await channel.permissionOverwrites.edit(muteRole, {
               'SPEAK': false,
               'STREAM': false
             });
