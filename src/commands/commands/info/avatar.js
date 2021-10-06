@@ -13,15 +13,21 @@ module.exports = class AvatarCommand extends Command {
     });
   }
   run(message, args) {
-    const member =  this.getMemberFromMention(message, args[0]) || 
-      message.guild.members.cache.get(args[0]) || 
+    const member =  this.getMemberFromMention(message, args[0]) ||
+      message.guild.members.cache.get(args[0]) ||
       message.member;
+    const serverAvatar = member.avatar && `https://cdn.discordapp.com/guilds/${message.guild.id}/users/${member.id}/avatars/${member.avatar}.png?size=512`
+
     const embed = new MessageEmbed()
       .setTitle(`${member.displayName}'s Avatar`)
-      .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+      .setImage(serverAvatar || member.user.displayAvatarURL({ dynamic: true, size: 512 }))
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(member.displayHexColor);
+    if (serverAvatar) {
+      embed.setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+      embed.addField(`Default Avatar 👉`,`Server-Only Avatar 👇`)
+    }
     message.channel.send({embeds: [embed]});
   }
 };

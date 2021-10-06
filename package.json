@@ -10,7 +10,7 @@
     "ascii-table": "0.0.9",
     "better-sqlite3": "^7.4.3",
     "common-tags": "^1.8.0",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.2.0",
     "fast-sort": "^3.0.2",
     "he": "^1.2.0",
     "jimp": "^0.16.1",
