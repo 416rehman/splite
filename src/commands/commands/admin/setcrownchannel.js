@@ -50,7 +50,7 @@ module.exports = class SetCrownChannelCommand extends Command {
     if (args.length === 0) {
       return message.channel.send({embeds: [embed.spliceFields(1, 0, {
         name: 'Current Crown Channel',
-        value: `\`${oldCrownChannel}\``,
+        value: `${oldCrownChannel}` || '`None`',
         inline: true
       }).spliceFields(3, 0, { name: 'Status', value: `\`${oldStatus}\`` }).setDescription(this.description)]});
     }

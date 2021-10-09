@@ -12,7 +12,7 @@ module.exports = class modActivityCommand extends Command {
       name: 'modactivity',
       aliases: ['moderations'],
       usage: 'modactivity <user>/<role> <days>',
-      description: 'Counts the number of moderation actions performed by a specified user or role and with an optional day filter. For example, `modactivity @split 7` will display the mod activity of the user named split over the last 7 days.',
+      description: 'Counts the number of moderation actions performed by a specified user and with an optional day filter. For example, `modactivity @split 7` will display the mod activity of the user named split over the last 7 days.',
       type: client.types.INFO,
       examples: ['modactivity 1', 'modactivity @CoolRole', 'modactivity @split 7'],
       userPermissions: ['VIEW_AUDIT_LOG']

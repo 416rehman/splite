@@ -31,7 +31,7 @@ module.exports = class SetMemberLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send({embeds: [embed.addField('Current Member Log', `${oldMemberLog}`).setDescription(this.description)]});
+      return message.channel.send({embeds: [embed.addField('Current Member Log', `${oldMemberLog}` || '`None`').setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`member log\` was successfully updated. ${success}\nUse \`clearmemberlog\` to clear the current \`member log\`.`)

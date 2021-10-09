@@ -31,7 +31,7 @@ module.exports = class SetModLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send({embeds: [embed.addField('Current Mod Log', `${oldModLog}`).setDescription(this.description)]});
+      return message.channel.send({embeds: [embed.addField('Current Mod Log', `${oldModLog}` || '`None`').setDescription(this.description)]});
     }
     embed.setDescription(`The \`mod log\` was successfully updated. ${success}\nUse \`clearmodlog\` to clear the current \`mod log\`.`)
     const modLog = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);

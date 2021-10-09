@@ -31,7 +31,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send({embeds: [embed.addField('Current Message Edit Log', `${oldMessageEditLog}`).setDescription(this.description)]});
+      return message.channel.send({embeds: [embed.addField('Current Message Edit Log', `${oldMessageEditLog}` || '`None`').setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`message edit log\` was successfully updated. ${success}\nUse \`clearmessageeditlog\` to clear the current \`message edit log\`.`)

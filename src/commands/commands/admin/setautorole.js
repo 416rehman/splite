@@ -31,7 +31,7 @@ module.exports = class SetAutoRoleCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send({embeds: [embed.addField('Current Auto Role', `${oldAutoRole}`).setDescription(this.description)]});
+      return message.channel.send({embeds: [embed.addField('Current Auto Role', `${oldAutoRole}` || '`None`').setDescription(this.description)]});
     }
 
     // Update role

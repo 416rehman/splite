@@ -28,7 +28,7 @@ module.exports = class SetMuteRoleCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send({embeds: [embed.addField('Current Mute Role', `${oldMuteRole}`).setDescription(this.description)]});
+      return message.channel.send({embeds: [embed.addField('Current Mute Role', `${oldMuteRole}` || '`None`').setDescription(this.description)]});
     }
 
     // Update role

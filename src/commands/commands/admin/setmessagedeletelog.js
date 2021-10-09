@@ -30,7 +30,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send({embeds: [embed.addField('Current Message Delete Log', `${oldMessageDeleteLog}`).setDescription(this.description)]});
+      return message.channel.send({embeds: [embed.addField('Current Message Delete Log', `${oldMessageDeleteLog}` || '`None`').setDescription(this.description)]});
     }
 
     embed.setDescription(`The \`message delete log\` was successfully updated. ${success}\nUse \`clearmessagedeletelog\` to clear the current \`message delete log\`.`)

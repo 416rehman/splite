@@ -28,7 +28,7 @@ module.exports = class SetAdminRoleCommand extends Command {
 
     // Clear if no args provided
     if (args.length === 0) {
-      return message.channel.send({embeds: [embed.addField('Current Admin Role', `\`${oldAdminRole}\``).setDescription(this.description)]});
+      return message.channel.send({embeds: [embed.addField('Current Admin Role', `${oldAdminRole}` || '`None`').setDescription(this.description)]});
     }
 
     // Update role
