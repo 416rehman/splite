@@ -33,5 +33,6 @@ module.exports = class clearafkCommand extends Command {
             .setColor(message.guild.me.displayHexColor);
 
         message.channel.send({embeds: [embed]})
+        this.sendModLogMessage(message, null, { Member: member.toString()});
     }
 };

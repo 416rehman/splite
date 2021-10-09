@@ -48,6 +48,6 @@ module.exports = class StatsCommand extends Command {
       .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(message.guild.me.displayHexColor);
-    message.channel.send({embeds: [embed]});
+    message.channel.send({embeds: [embed]})
   }
 };

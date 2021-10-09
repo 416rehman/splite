@@ -8,7 +8,7 @@ module.exports = async (client, message) => {
   if (message.channel.type === 'DM' || !message.channel.viewable || message.author.bot) return;
 
   //Update MessageCount
-  client.db.users.updateMessageCount.run({messageCount: 1}, message.author.id, message.guild.id);
+  client.db.activities.updateMessages.run({userId: message.author.id, guildId: message.guild.id});
 
   const {
     afk: currentStatus,

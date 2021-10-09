@@ -31,14 +31,13 @@ module.exports = class rolesCommand extends Command {
 
         message.channel.send({embeds: [embed]}).then(
             async msg => {
-                const roles = [];
                 try
                 {
-                    const sorted = message.guild.roles.cache.map(r=> {
+                    let sorted = message.guild.roles.cache.map(r=> {
                         return { id: r.id, memberCount: r.members.size }
                     })
                     inPlaceSort(sorted).desc(u=>u.memberCount)
-                    sorted.forEach(r=>{roles.push(`<@&${r.id}> - \`${r.memberCount} Members\``)})
+                    const roles = sorted.map(r=>{return (`<@&${r.id}> - \`${r.memberCount} Members\``)})
 
                     if (roles.length <= maxRolesPerPage) {
                         msg.edit({embeds: [embed.setDescription(`Total Roles: \`${roleCount}\`\nRemaining Space: \`${250 - roleCount}\`\n\n${roles.join('\n')}`)]})

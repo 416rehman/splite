@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const { stripIndent } = require('common-tags');
 const emojis = require('../../../utils/emojis.json')
 
-const limit = 1000;
+const limit = Number.MAX_SAFE_INTEGER;
 
 module.exports = class gambleCommand extends Command {
   constructor(client) {
@@ -11,7 +11,7 @@ module.exports = class gambleCommand extends Command {
       name: 'gamble',
       aliases: ['spin', 'coinflip', 'heads', 'tails', 'roll'],
       usage: 'gamble <point count>',
-      description: 'Gamble your points. Limit: 1000',
+      description: 'Gamble your points.',
       type: client.types.POINTS,
       examples: ['gamble 1000'],
       exclusive: true

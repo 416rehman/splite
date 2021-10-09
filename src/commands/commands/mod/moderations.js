@@ -6,36 +6,35 @@ const {MessageActionRow} = require("discord.js");
 const {MessageButton} = require("discord.js");
 const {inPlaceSort} = require("fast-sort");
 
-module.exports = class activityCommand extends Command {
+module.exports = class modActivityCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'activity',
-      aliases: ['count', 'messages', 'messagecount'],
-      usage: 'activity <user>/<role> <days>',
-      description: 'Fetches number of messages sent by users, or by role and with an optional day filter. For example, `activity @split 7` will display the activity of the user named split over the last 7 days.',
+      name: 'modactivity',
+      aliases: ['moderations'],
+      usage: 'modactivity <user>/<role> <days>',
+      description: 'Counts the number of moderation actions performed by a specified user or role and with an optional day filter. For example, `modactivity @split 7` will display the mod activity of the user named split over the last 7 days.',
       type: client.types.INFO,
-      examples: ['activity 1', 'activity @CoolRole', 'activity @split 7']
+      examples: ['modactivity 1', 'modactivity @CoolRole', 'modactivity @split 7'],
+      userPermissions: ['VIEW_AUDIT_LOG']
     });
   }
   async run(message, args) {
     const embed = new MessageEmbed()
-        .setDescription(`${emojis.load} Fetching Message Count...`)
+        .setDescription(`${emojis.load} Fetching Mod Activity...`)
         .setColor("RANDOM")
+
     message.channel.send({embeds: [embed]}).then(async msg=>
         {
-          const moderationButton = message.member.permissions.has('VIEW_AUDIT_LOG') && new MessageButton().setCustomId('moderations').setLabel(`Moderation Leaderboard`).setStyle('SECONDARY')
+          const activityButton = new MessageButton().setCustomId(`activity`).setLabel(`Activity Leaderboard`).setStyle('SECONDARY')
+          activityButton.setEmoji(emojis.info.match(/(?<=\:)(.*?)(?=\>)/)[1].split(':')[1])
           const pointsButton = new MessageButton().setCustomId('points').setLabel(`Points Leaderboard`).setStyle('SECONDARY')
           pointsButton.setEmoji(emojis.point.match(/(?<=\:)(.*?)(?=\>)/)[1].split(':')[1])
 
           const row = new MessageActionRow();
+          row.addComponents(activityButton)
           row.addComponents(pointsButton)
-          if (moderationButton) {
-            moderationButton.setEmoji(emojis.mod.match(/(?<=\:)(.*?)(?=\>)/)[1].split(':')[1])
-            row.addComponents(moderationButton)
-          }
 
-
-          if (!args[0]) await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server Activity`, 1000, row);
+          if (!args[0]) await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server Mod Activity`, 1000, row);
           else if (args[0])
           {
               const target = this.getRoleFromMention(message, args[0]) ||
@@ -46,15 +45,15 @@ module.exports = class activityCommand extends Command {
               switch (target?.constructor.name) {
                 case 'GuildMember':
                 case 'User':
-                  this.sendUserMessageCount(message, target, embed, msg, days);
+                  this.sendUserMessageCount(message, target, embed, msg, days, row);
                   break
                 case 'Role':
-                  await this.sendMultipleMessageCount(args, target.members, message, msg, embed, `${target.name}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row);
+                  await this.sendMultipleMessageCount(args, target.members, message, msg, embed, `${target.name}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Mod Activity`, days, row);
                   break
                 default:
                   if (!args[1]) {
                     days = parseInt(args[0]) || 1000
-                    await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row);
+                    await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server ${days < 1000 && days > 0 ? days + ' Day ' : ''}Mod Activity`, days, row);
                   } else {
                     msg.edit(`${emojis.fail} Failed! Please try again later.`)
                   }
@@ -72,7 +71,8 @@ module.exports = class activityCommand extends Command {
     if (days > 1000 || days < 0) days = 1000
     const lb = [];
     await collection.forEach(m => {
-      const count = message.client.db.activities.getMessages.pluck().get(m.id, message.guild.id, days);
+      console.log(m.id, message.guild.id, days)
+      const count = message.client.db.activities.getModerations.pluck().get(m.id, message.guild.id, days);
       lb.push({user: m, count})
     });
 
@@ -104,9 +104,8 @@ module.exports = class activityCommand extends Command {
         const filter = (button) => button.user.id === message.author.id;
         const collector = m.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 120000, dispose: true });
         collector.on('collect', b => {
-          console.log(b.customId)
-          if (b.customId === 'moderations') {
-            message.client.commands.get('modactivity').run(message, [])
+          if (b.customId === 'activity') {
+            message.client.commands.get('activity').run(message, [])
             m.delete()
           } else if (b.customId === 'points') {
             message.client.commands.get('leaderboard').run(message, [])
@@ -119,9 +118,24 @@ module.exports = class activityCommand extends Command {
 
   sendUserMessageCount(message, target, embed, msg, days, row) {
     if (days > 1000 || days < 0) days = 1000
-    const messages =  message.client.db.activities.getMessages.pluck().get(target.id, message.guild.id, days);
+    const messages =  message.client.db.activities.getModerations.pluck().get(target.id, message.guild.id, days);
+
     embed.setTitle(`${target.displayName}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`)
-    embed.setDescription(`${target} has sent **${messages || 0} messages** ${days === 1000 ? 'so far!' : 'in the last ' + days + ' days!'}`)
-    msg.edit({embeds: [embed]})
+    embed.setDescription(`${target} has performed **${messages || 0} moderations** ${days === 1000 ? 'so far!' : 'in the last ' + days + ' days!'}`)
+
+    msg.edit({embeds: [embed], components: [row]}).then(msg=>{
+      const filter = (button) => button.user.id === message.author.id;
+      const collector = msg.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 120000, dispose: true });
+
+      collector.on('collect', b => {
+        if (b.customId === 'activity') {
+          message.client.commands.get('activity').run(message, ['all'])
+          msg.delete()
+        } else if (b.customId === 'points') {
+          message.client.commands.get('leaderboard').run(message, [])
+          msg.delete()
+        }
+      })
+    })
   }
 };

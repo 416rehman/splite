@@ -7,7 +7,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'setfarewellmessage',
-      aliases: ['setfarewellmsg', 'setfm', 'sfm'],
+      aliases: ['setfarewellmsg', 'setfm', 'sfm', 'setleavemessage', 'setleavemsg'],
       usage: 'setfarewellmessage <message>',
       description: oneLine`
         Sets the message ${client.name} will say when someone leaves your server.

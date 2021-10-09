@@ -7,7 +7,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'setwelcomemessage',
-      aliases: ['setwelcomemsg', 'setwm', 'swm'],
+      aliases: ['setwelcomemsg', 'setwm', 'swm', 'setgreetmessage', 'setgreetmsg'],
       usage: 'setwelcomemessage <message>',
       description: oneLine`
         Sets the message ${client.name} will say when someone joins your server.

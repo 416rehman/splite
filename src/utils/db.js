@@ -80,7 +80,6 @@ db.prepare(`
     voteRunning INTEGER,
     SmashRunning INTEGER,
     optOutSmashOrPass INTEGER,
-    messageCount INTEGER,
     PRIMARY KEY (user_id, guild_id)
   );
 `).run();
@@ -115,6 +114,18 @@ db.prepare(`
     user_id TEXT,
     bio TEXT,
     PRIMARY KEY (user_id)
+  );
+`).run();
+
+// ACTIVITY TABLE
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS activities (
+    activity_date DATE,
+    user_id TEXT,
+    guild_id TEXT,
+    messages INTEGER DEFAULT 0,
+    moderations INTEGER DEFAULT 0,
+    PRIMARY KEY (activity_date, user_id, guild_id)
   );
 `).run();
 /** ------------------------------------------------------------------------------------------------
@@ -249,9 +260,8 @@ const users = {
       current_member,
       afk,
       afk_time,
-      optOutSmashOrPass,
-      messageCount
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?, ?);
+      optOutSmashOrPass
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?);
   `),
 
   // Selects
@@ -265,7 +275,6 @@ const users = {
   selectMissingMembers: db.prepare('SELECT * FROM users WHERE guild_id = ? AND current_member = 0;'),
   selectAfk: db.prepare('SELECT afk, afk_time FROM users WHERE guild_id = ? AND user_id = ?;'),
   selectOptOutSmashOrPass: db.prepare('SELECT optOutSmashOrPass FROM users WHERE user_id = ? limit 1;'),
-  selectMessageCount: db.prepare('SELECT messageCount FROM users WHERE user_id = ? AND guild_id = ?;'),
 
   // Updates
   updateGuildName: db.prepare('UPDATE users SET guild_name = ? WHERE guild_id = ?;'),
@@ -286,10 +295,6 @@ const users = {
   updateAfk: db.prepare('UPDATE users SET afk = ? WHERE user_id = ? AND guild_id = ?;'),
   updateAfkTime: db.prepare('UPDATE users SET afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
   updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;'),
-  updateMessageCount: db.prepare(`
-    UPDATE users 
-    SET messageCount = messageCount + @messageCount WHERE user_id = ? AND guild_id = ?;
-  `),
 };
 
 // BOT CONFESSIONS TABLE
@@ -406,10 +411,31 @@ const bios = {
   updateBio: db.prepare('UPDATE bios SET bio = ? WHERE user_id = ?;'),
 };
 
+// ACTIVITIES TABLE
+const activities = {
+  insertRow: db.prepare(`
+    INSERT OR IGNORE INTO activities (
+      activity_date,
+      user_id,
+      guild_id,
+      messages,
+      moderations
+    ) VALUES (?, ?, ?, ?, ?);
+  `),
+  //UPDATES
+  updateMessages: db.prepare(`INSERT INTO activities (activity_date, user_id, guild_id, messages) VALUES((select date()), $userId, $guildId, 1) ON CONFLICT(activity_date, user_id, guild_id) DO UPDATE SET messages = messages + 1 WHERE activity_date = (SELECT DATE()) AND user_id = $userId AND guild_id = $guildId;`),
+  updateModerations: db.prepare(`INSERT INTO activities (activity_date, user_id, guild_id, moderations) VALUES((select date()), $userId, $guildId, 1) ON CONFLICT(activity_date, user_id, guild_id) DO UPDATE SET moderations = moderations + 1 WHERE activity_date = (SELECT DATE()) AND user_id = $userId AND guild_id = $guildId;`),
+  //SELECTS
+  getMessages: db.prepare(`SELECT SUM(messages) FROM activities WHERE user_id = ? AND guild_id = ? AND activity_date > date('now', '-' || ? || ' day' )`),
+  getModerations: db.prepare(`
+    SELECT SUM(moderations) FROM activities WHERE user_id = ? AND guild_id = ? AND activity_date > date('now', '-' || ? || ' day' )`)
+};
+
 module.exports = {
   settings,
   users,
   confessions,
   SmashOrPass,
-  bios
+  bios,
+  activities
 };

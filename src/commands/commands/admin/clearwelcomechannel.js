@@ -7,7 +7,7 @@ module.exports = class clearWelcomeChannelCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'clearwelcomechannel',
-      aliases: ['clearwc', 'cwc'],
+      aliases: ['clearwc', 'cwc', 'cleargreetchannel'],
       usage: 'clearwelcomechannel',
       description: oneLine`
         Clears the welcome message text channel for your server. 

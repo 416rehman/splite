@@ -7,7 +7,7 @@ module.exports = class clearWelcomeMessageCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'clearwelcomemessage',
-      aliases: ['clearwelcomemsg', 'clearwm', 'cwm'],
+      aliases: ['clearwelcomemsg', 'clearwm', 'cwm', 'cleargreetmessage', 'cleargreetmsg'],
       usage: 'clearwelcomemessage <message>',
       description: oneLine`
         Clears the message ${client.name} will say when someone joins your server.

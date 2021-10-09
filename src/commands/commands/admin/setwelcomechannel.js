@@ -7,7 +7,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'setwelcomechannel',
-      aliases: ['setwc', 'swc'],
+      aliases: ['setwc', 'swc', 'setgreetchannel'],
       usage: 'setwelcomechannel <channel mention/ID>',
       description: oneLine`
         Sets the welcome message text channel for your server.      

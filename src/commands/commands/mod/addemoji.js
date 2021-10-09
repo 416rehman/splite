@@ -17,6 +17,7 @@ module.exports = class AddEmojiCommand extends Command {
     });
   }
   async run(message, args){
+    let emoji;
     if (!args[0]) return this.sendHelpMessage(message, `Add Emoji`);
     try {
       if (args.length > 1) {
@@ -25,11 +26,12 @@ module.exports = class AddEmojiCommand extends Command {
           args.forEach(emoji => {
             addEmoji(emoji, message, this)
           })
+          return this.sendModLogMessage(message, null, { Emoji: 'Multiple Emojis'});
         }
-        else addEmoji(args[0], message, this, args.slice(1).join("_"))
+        else emoji = addEmoji(args[0], message, this, args.slice(1).join("_"))
       }
-      else addEmoji(args[0], message, this, args.slice(1).join("_"))
-
+      else emoji = addEmoji(args[0], message, this, args.slice(1).join("_"))
+      this.sendModLogMessage(message, null, { Emoji: emoji});
     } catch (err) {
       this.client.logger.error(err)
       this.sendErrorMessage(message, 1, 'A error occured while adding the emoji. Common reasons are:- unallowed characters in emoji name, 50 emoji limit.', err)
@@ -53,7 +55,8 @@ async function addEmoji(emoji, message, command, emojiName)
         `${Link}`,
         `${name}`
     );
-    return message.channel.send({embeds: [new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} added with name "${name}"`)]});
+    message.channel.send({embeds: [new Discord.MessageEmbed().setDescription(`${_emojis.success} ${emoji} added with name "${name}"`)]});
+    return emoji
   }
   else if (urlRegex.test(emoji)) { //check for image urls
     name = emojiName || Math.random().toString(36).slice(2) //make the name compatible or just choose a random string

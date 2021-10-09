@@ -372,11 +372,12 @@ class Command {
 
   /**
    * Creates and sends mod log embed
-   * @param {Message} message
+   * @param {Object} message
    * @param {string} reason 
    * @param {Object} fields
    */
   async sendModLogMessage(message, reason, fields = {}) {
+    message.client.db.activities.updateModerations.run({userId: message.author.id, guildId: message.guild.id});
     const modLogId = message.client.db.settings.selectModLogId.pluck().get(message.guild.id);
     const modLog = message.guild.channels.cache.get(modLogId);
     if (

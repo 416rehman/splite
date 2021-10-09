@@ -103,7 +103,6 @@ module.exports = async (client, member) => {
       null, //AFK
       0,  //Afk_time
       0,    //OptOutSmashOrPass
-      0     //messageCount
   );
 
   client.db.bios.insertRow.run(member.id, null)

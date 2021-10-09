@@ -16,14 +16,9 @@ class ReactionMenu {
    * @param {Message} overwrite
    * @param {Object} reactions
    * @param {int} timeout
+   * @param {function} callback
    */
-  constructor(client, channel, member, embed, arr = null, interval = 10, overwrite = null, reactions = {
-    '⏪': this.first.bind(this),
-    '◀️': this.previous.bind(this),
-    '▶️': this.next.bind(this),
-    '⏩': this.last.bind(this),
-    '⏹️': this.stop.bind(this)
-  }, timeout = 120000) {
+  constructor(client, channel, member, embed, arr = null, interval = 10, overwrite = null, reactions, timeout = 120000, components, callback = null) {
 
     /**
      * The Client
@@ -36,7 +31,7 @@ class ReactionMenu {
      * @type {TextChannel}
      */
     this.channel = channel;
-
+    this.callback = callback;
     /**
      * The member ID snowflake
      * @type {string}
@@ -83,7 +78,13 @@ class ReactionMenu {
      * The reactions for menu
      * @type {Object}
      */
-    this.reactions = reactions;
+    this.reactions = reactions || {
+      '⏪': this.first.bind(this),
+      '◀️': this.previous.bind(this),
+      '▶️': this.next.bind(this),
+      '⏩': this.last.bind(this),
+      '⏹️': this.stop.bind(this)
+    };
 
     /**
      * The emojis used as keys
@@ -105,7 +106,7 @@ class ReactionMenu {
         .setDescription(description.join('\n'));
 
 
-    this.channel.send({embeds: [first]}).then(message => {
+    this.channel.send({embeds: [first], components: components || []}).then(message => {
 
       /**
        * The menu message
@@ -116,7 +117,7 @@ class ReactionMenu {
       this.addReactions().then(r =>
           this.createCollector()
       );
-
+      if (this.callback) this.callback(message)
     });
   }
 

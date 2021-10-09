@@ -7,7 +7,7 @@ module.exports = class clearFarewellChannelCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'clearfarewellchannel',
-      aliases: ['clearfc', 'cfc'],
+      aliases: ['clearfc', 'cfc', 'clearleavechannel'],
       usage: 'clearfarewellchannel',
       description: oneLine`
         Clears the farewell message text channel for your server. 

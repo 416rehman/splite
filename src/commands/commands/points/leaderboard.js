@@ -3,6 +3,8 @@ const { ReactionMenu } = require('../../ReactionMenu.js');
 const { MessageEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const emojis = require('../../../utils/emojis.json')
+const {MessageActionRow} = require("discord.js");
+const {MessageButton} = require("discord.js");
 
 module.exports = class LeaderboardCommand extends Command {
   constructor(client) {
@@ -62,8 +64,31 @@ module.exports = class LeaderboardCommand extends Command {
           'Expires after two minutes.\n' + `${message.member.displayName}'s position: ${position + 1}`,  
           message.author.displayAvatarURL({ dynamic: true })
         );
-      
-      new ReactionMenu(message.client, message.channel, message.member, embed, members, max);
+
+      const activityButton = new MessageButton().setCustomId(`activity`).setLabel(`Activity Leaderboard`).setStyle('SECONDARY')
+      activityButton.setEmoji(emojis.info.match(/(?<=\:)(.*?)(?=\>)/)[1].split(':')[1])
+      const moderationButton = message.member.permissions.has('VIEW_AUDIT_LOG') && new MessageButton().setCustomId('moderations').setLabel(`Moderation Leaderboard`).setStyle('SECONDARY')
+
+      const row = new MessageActionRow();
+      row.addComponents(activityButton)
+      if (moderationButton) {
+        moderationButton.setEmoji(emojis.mod.match(/(?<=\:)(.*?)(?=\>)/)[1].split(':')[1])
+        row.addComponents(moderationButton)
+      }
+
+      new ReactionMenu(message.client, message.channel, message.member, embed, members, max, null, null, 120000, [row], msg=>{
+        const filter = (button) => button.user.id === message.author.id;
+        const collector = msg.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 120000, dispose: true });
+        collector.on('collect', b => {
+          if (b.customId === 'activity') {
+            message.client.commands.get('activity').run(message, ['all'])
+            msg.delete()
+          } else if (b.customId === 'moderations') {
+            message.client.commands.get('modactivity').run(message, [])
+            msg.delete()
+          }
+        })
+      });
     } 
   }
 };
