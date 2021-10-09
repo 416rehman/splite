@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const { stripIndent } = require('common-tags');
 const emojis = require('../../../utils/emojis.json')
 
-const limit = Number.MAX_SAFE_INTEGER;
+const limit = 99999999;
 
 module.exports = class gambleCommand extends Command {
   constructor(client) {
@@ -48,8 +48,8 @@ module.exports = class gambleCommand extends Command {
       message.channel.send({embeds: [embed]}).then(msg => {
           setTimeout(async () => {
               let odds = message.client.odds.get(message.author.id) || {lose: 45, win: 55}
-              odds.win += (await message.client.utils.checkTopGGVote(message.client, message.author.id) ? 10 : 0)
-              odds.lose -= (await message.client.utils.checkTopGGVote(message.client, message.author.id) ? 10 : 0)
+              odds.win += modifier
+              odds.lose -= modifier
 
               const outcome = message.client.utils.weightedRandom(odds)
               //Loss

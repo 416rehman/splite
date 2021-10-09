@@ -12,7 +12,7 @@ module.exports = class modActivityCommand extends Command {
       name: 'modactivity',
       aliases: ['moderations'],
       usage: 'modactivity <user>/<role> <days>',
-      description: 'Counts the number of moderation actions performed by a specified user and with an optional day filter. For example, `modactivity @split 7` will display the mod activity of the user named split over the last 7 days.',
+      description: 'Counts the number of moderation actions performed by a specified user or a role, and with an optional day filter. For example, `modactivity @split 7` will display the mod activity of the user named split over the last 7 days.',
       type: client.types.INFO,
       examples: ['modactivity 1', 'modactivity @CoolRole', 'modactivity @split 7'],
       userPermissions: ['VIEW_AUDIT_LOG']
@@ -37,11 +37,14 @@ module.exports = class modActivityCommand extends Command {
           if (!args[0]) await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server Mod Activity`, 1000, row);
           else if (args[0])
           {
-            const target = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]);
+            const target = await this.getRoleFromMention(message, args[0]) || await this.getMemberFromMention(message, args[0]) ||
+                await message.guild.roles.cache.get(args[0]) || await message.guild.members.cache.get(args[0]);
+
             let days = parseInt(args[1]) || 1000
 
             if (target) {
-              this.sendUserMessageCount(message, target, embed, msg, days);
+              if (target.constructor.name === 'GuildMember' || target.constructor.name === 'User') return this.sendUserMessageCount(message, target, embed, msg, days);
+              else if (target.constructor.name === 'Role') return this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `${target.name}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Mod Activity`, days, row, target);
             }
             else if (!args[1]) {
               days = parseInt(args[0]) || 1000
@@ -52,10 +55,20 @@ module.exports = class modActivityCommand extends Command {
     )
   }
 
-  async sendMultipleMessageCount(args, collection, message, msg, embed, title, days = 1000, row) {
+  async sendMultipleMessageCount(args, collection, message, msg, embed, title, days = 1000, row, role) {
     if (days > 1000 || days < 0) days = 1000
-    let data = message.client.db.activities.getGuildModerations.all(message.guild.id, days)
 
+    let data;
+    if (role) {
+      if (role.members.size > 1000) return msg.edit(`${emojis.fail} This role has too many members, please try again with a role that has less than 1000 members.`);
+      function selectByIds(ids) {
+        const params = '?,'.repeat(ids.length).slice(0, -1);
+        const stmt = message.client.db.db.prepare(`SELECT SUM(moderations) as moderations, user_id FROM activities WHERE guild_id = ${message.guild.id} AND activity_date > date('now', '-${days} day' ) AND user_id IN (${params}) GROUP BY user_id ORDER BY 1 DESC;`);
+        return stmt.all(ids);
+      }
+      data = selectByIds(role.members.map(m=>{return m.id}));
+    }
+    else data = message.client.db.activities.getGuildModerations.all(message.guild.id, days)
     let max;
     if (!max || max < 0) max = 10;
     else if (max > 25) max = 25;

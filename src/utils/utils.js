@@ -387,13 +387,22 @@ async function getTopGGVote(client, userId){
       }
     };
     request(options, function (error, response) {
-      const res = JSON.parse(response.body)
-      if (res) {
-
-        client.votes.set(userId, {time:new Date(), voted: res.voted})
-        resolve(res.voted);
+      try {
+        const res = JSON.parse(response.body)
+        if (res) {
+          client.votes.set(userId, {time:new Date(), voted: res.voted})
+          resolve(res.voted);
+        }
+        else {
+          client.votes.set(userId, {time:new Date(), voted: 0})
+          resolve(0);
+        }
       }
-      else reject(`${error}`)
+      catch (e) {
+        console.log(e)
+        client.votes.set(userId, {time:new Date(), voted: 0})
+        resolve(0);
+      }
     })
   }))
 }

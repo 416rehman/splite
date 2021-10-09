@@ -439,5 +439,6 @@ module.exports = {
   confessions,
   SmashOrPass,
   bios,
-  activities
+  activities,
+  db
 };
