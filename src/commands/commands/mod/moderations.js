@@ -117,26 +117,13 @@ module.exports = class modActivityCommand extends Command {
     }
   }
 
-  sendUserMessageCount(message, target, embed, msg, days, row) {
+  sendUserMessageCount(message, target, embed, msg, days = 1000, row) {
     if (days > 1000 || days < 0) days = 1000
-    const messages =  message.client.db.activities.getModerations.pluck().get(target.id, message.guild.id, days);
+    const messages =  message.client.db.activities.getModerations.pluck().get(target.id, message.guild.id, days || 1000);
 
     embed.setTitle(`${target.displayName}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`)
     embed.setDescription(`${target} has performed **${messages || 0} moderations** ${days === 1000 ? 'so far!' : 'in the last ' + days + ' days!'}`)
 
-    msg.edit({embeds: [embed], components: [row]}).then(msg=>{
-      const filter = (button) => button.user.id === message.author.id;
-      const collector = msg.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 120000, dispose: true });
-
-      collector.on('collect', b => {
-        if (b.customId === 'activity') {
-          message.client.commands.get('activity').run(message, ['all'])
-          msg.delete()
-        } else if (b.customId === 'points') {
-          message.client.commands.get('leaderboard').run(message, [])
-          msg.delete()
-        }
-      })
-    })
+    msg.edit({embeds: [embed]})
   }
 };
