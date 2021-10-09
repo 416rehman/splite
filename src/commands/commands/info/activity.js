@@ -104,7 +104,7 @@ module.exports = class activityCommand extends Command {
         const filter = (button) => button.user.id === message.author.id;
         const collector = m.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 120000, dispose: true });
         collector.on('collect', b => {
-          console.log(b.customId)
+
           if (b.customId === 'moderations') {
             message.client.commands.get('modactivity').run(message, [])
             m.delete()

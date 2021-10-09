@@ -71,7 +71,6 @@ module.exports = class modActivityCommand extends Command {
     if (days > 1000 || days < 0) days = 1000
     const lb = [];
     await collection.forEach(m => {
-      console.log(m.id, message.guild.id, days)
       const count = message.client.db.activities.getModerations.pluck().get(m.id, message.guild.id, days);
       lb.push({user: m, count})
     });
