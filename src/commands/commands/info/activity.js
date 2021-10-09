@@ -11,8 +11,8 @@ module.exports = class activityCommand extends Command {
     super(client, {
       name: 'activity',
       aliases: ['count', 'messages', 'messagecount'],
-      usage: 'activity <user>/<role> <days>',
-      description: 'Fetches number of messages sent by users, or by role and with an optional day filter. For example, `activity @split 7` will display the activity of the user named split over the last 7 days.',
+      usage: 'activity <user> <days>',
+      description: 'Fetches number of messages sent by users with an optional day filter. For example, `activity @split 7` will display the activity of the user named split over the last 7 days.',
       type: client.types.INFO,
       examples: ['activity 1', 'activity @CoolRole', 'activity @split 7']
     });
@@ -38,45 +38,34 @@ module.exports = class activityCommand extends Command {
           if (!args[0]) await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server Activity`, 1000, row);
           else if (args[0])
           {
-              const target = this.getRoleFromMention(message, args[0]) ||
-                  await message.guild.roles.cache.get(args[0]) ||
-                  await this.getMemberFromMention(message, args[0]) ||
-                  await message.guild.members.cache.get(args[0]);
-              let days = parseInt(args[1]) || 1000
-              switch (target?.constructor.name) {
-                case 'GuildMember':
-                case 'User':
-                  this.sendUserMessageCount(message, target, embed, msg, days);
-                  break
-                case 'Role':
-                  await this.sendMultipleMessageCount(args, target.members, message, msg, embed, `${target.name}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row);
-                  break
-                default:
-                  if (!args[1]) {
-                    days = parseInt(args[0]) || 1000
-                    await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row);
-                  } else {
-                    msg.edit(`${emojis.fail} Failed! Please try again later.`)
-                  }
-                  break
-              }
+            const target = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]);
+            let days = parseInt(args[1]) || 1000
+
+            if (target) {
+              this.sendUserMessageCount(message, target, embed, msg, days);
+            }
+            else if (!args[1]) {
+              days = parseInt(args[0]) || 1000
+              await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row);
+            }
           }
         }
     )
   }
 
   async sendMultipleMessageCount(args, collection, message, msg, embed, title, days = 1000, row) {
+    if (days > 1000 || days < 0) days = 1000
+    let data = message.client.db.activities.getGuildMessages.all(message.guild.id, days)
+
     let max;
     if (!max || max < 0) max = 10;
     else if (max > 25) max = 25;
-    if (days > 1000 || days < 0) days = 1000
-    const lb = [];
-    await collection.forEach(m => {
-      const count = message.client.db.activities.getMessages.pluck().get(m.id, message.guild.id, days);
-      lb.push({user: m, count})
-    });
 
-    await inPlaceSort(lb).desc(u => u.count)
+    const lb = data.flatMap(d => {
+      const member = message.guild.members.cache.get(d.user_id)
+      if (!member) return []
+      return {user: member, count: d.messages || 0}
+    });
 
     let i = 1
     const descriptions = lb.map(e => {

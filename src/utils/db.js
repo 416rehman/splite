@@ -428,7 +428,9 @@ const activities = {
   //SELECTS
   getMessages: db.prepare(`SELECT SUM(messages) FROM activities WHERE user_id = ? AND guild_id = ? AND activity_date > date('now', '-' || ? || ' day' )`),
   getModerations: db.prepare(`
-    SELECT SUM(moderations) FROM activities WHERE user_id = ? AND guild_id = ? AND activity_date > date('now', '-' || ? || ' day' )`)
+    SELECT SUM(moderations) FROM activities WHERE user_id = ? AND guild_id = ? AND activity_date > date('now', '-' || ? || ' day' )`),
+  getGuildMessages: db.prepare(`SELECT SUM(messages) as messages, user_id FROM activities WHERE guild_id = ? AND activity_date > date('now', '-' || ? || ' day' ) GROUP BY user_id ORDER BY 1 DESC;`),
+  getGuildModerations: db.prepare(`SELECT SUM(moderations) as moderations, user_id FROM activities WHERE guild_id = ? AND activity_date > date('now', '-' || ? || ' day' ) GROUP BY user_id ORDER BY 1 DESC;`)
 };
 
 module.exports = {
