@@ -38,6 +38,7 @@ class Client extends Discord.Client {
     this.ameApi = new amethyste(config.apiKeys.amethyste)
     this.nekoApi = new NekoBot()
     this.ownerId = config.ownerId;
+    this.extraOwnerIds = config.extraOwnerIds
     this.bugReportChannelId = config.bugReportChannelId;
     this.feedbackChannelId = config.feedbackChannelId;
     this.serverLogId = config.serverLogId;
@@ -130,7 +131,7 @@ class Client extends Discord.Client {
    * @param {User} user 
    */
   isOwner(user) {
-    return user.id === this.ownerId;
+    return user.id === this.ownerId || this.extraOwnerIds.includes(user.id);
   }
 
   /**

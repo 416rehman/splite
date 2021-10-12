@@ -15,7 +15,7 @@ module.exports = class BotInfoCommand extends Command {
     });
   }
   run(message, args) {
-    const botOwner = message.client.users.cache.get(message.client.ownerId) || message.client.ownerTag;
+    const botOwner = message.client.ownerTag;
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
     const tech = stripIndent`
       Version     :: ${pkg.version}
