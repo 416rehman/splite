@@ -19,7 +19,13 @@ module.exports = class shipCommand extends Command {
     const member2 = await this.getMemberFromMention(message, args[1]) || await message.guild.members.cache.get(args[1]) || message.author;
 
     message.channel.send({embeds: [new MessageEmbed().setDescription(`${emojis.load} Shipping...`)]}).then(async msg=>{
-      let shipScore = message.client.utils.getRandomInt(0, 100);
+      let shipOddsTime;
+      if (member2.id === message.author.id || member.id === message.author.id) shipOddsTime = message.guild.shippingOdds.get(message.author.id);
+      let shipScore;
+      if (shipOddsTime && new Date().getTime() - shipOddsTime < 1800000) {
+        shipScore = message.client.utils.getRandomInt(85, 100)
+      } else shipScore = message.client.utils.getRandomInt(0, 100);
+
       if (shipScore < 5) shipScore = 0;
       try {
         shipScore = this.addToCollection(message, member2, member, shipScore);

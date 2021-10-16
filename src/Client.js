@@ -45,8 +45,8 @@ class Client extends Discord.Client {
     this.confessionReportsID = config.confessionReportsID
     this.utils = require('./utils/utils.js');
     this.logger.info('Initializing...');
-    this.odds = new Map()
-    this.votes = new Map()
+    this.odds = new Map();
+    this.votes = new Map();
     this.slashCommands = new Collection();
   }
 

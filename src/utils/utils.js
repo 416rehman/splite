@@ -246,8 +246,10 @@ function scheduleCrown(client, guild) {
     guild.job = schedule.scheduleJob(cron, async () => {
       await client.utils.transferCrown(client, guild, crownRoleId);
     });
-    console.log(`${guild.name}: Successfully scheduled job`)
+
     client.logger.info(`${guild.name}: Successfully scheduled job`);
+  } else {
+    console.error(`${guild.name}: Failed to schedule job`)
   }
 }
 
@@ -256,6 +258,7 @@ function createCollections(client, guild) {
     guild.editSnipes = new Collection();
     guild.JoinVotingInProgress = new Collection();
     guild.ships = new Collection();
+    guild.shippingOdds = new Collection();
 }
 
 function createProgressBar(percentage)
