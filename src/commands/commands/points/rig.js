@@ -9,8 +9,7 @@ module.exports = class WipePointsCommand extends Command {
             aliases: ['setshipodds', 'rig'],
             usage: 'rig <user mention/ID>',
             description: `Rig the 'ship' command in your favor for 30 mins. Cost: ${cost} `,
-            type: client.types.OWNER,
-            ownerOnly: true,
+            type: client.types.POINTS,
             examples: ['rig']
         });
     }
