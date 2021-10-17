@@ -131,7 +131,7 @@ class Client extends Discord.Client {
    * @param {User} user 
    */
   isOwner(user) {
-    return user.id === this.ownerId || this.extraOwnerIds.includes(user.id);
+    return user.id === this.ownerId || this.extraOwnerIds?.includes(user.id)
   }
 
   /**
