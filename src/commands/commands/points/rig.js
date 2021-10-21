@@ -18,6 +18,7 @@ module.exports = class WipePointsCommand extends Command {
         if (bal >= cost) {
             message.client.db.users.updatePoints.run({points: -cost}, message.author.id, message.guild.id)
             message.guild.shippingOdds.set(message.author.id, new Date().getTime())
+            message.guild.ships.delete(message.author.id)
             const embed = new MessageEmbed()
                 .setTitle('Rig Ship')
                 .setDescription(`Successfully rigged ${message.author}'s shipping odds for 30 mins.`)
