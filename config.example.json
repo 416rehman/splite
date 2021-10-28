@@ -6,7 +6,7 @@
   "botLogoURL": "https://i.imgur.com/B0XSinY.png",
   "ownerDiscordTag": "",
   "ownerId": "",
-  "extraOwnerIds": ["", ""],
+  "extraOwnerIds": ["12345", "123456"],
   "bugReportChannelId": "",
   "feedbackChannelId": "",
   "serverLogId": "",
