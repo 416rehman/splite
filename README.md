@@ -1,16 +1,18 @@
 # SPLITE - Discord Multi-Purpose Bot
 <div align=center>
-  
+
   <a href="https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands">
-    <img src="https://i.imgur.com/Onde220.png" alt="shield.png">
+    <img src="https://i.imgur.com/Onde220.png" alt="Add Splite to your server">
   </a>
 
   <a href="https://discord.gg/pxnu3eF6DG">
-    <img src="https://discordapp.com/api/guilds/668625434157776896/widget.png?style=shield" alt="shield.png">
+    <img src="https://discordapp.com/api/guilds/668625434157776896/widget.png?style=shield" alt="Join Splite's Support Server">
   </a>
-
+  <a href="https://github.com/discordjs">
+    <img src="https://img.shields.io/badge/discord.js-v13.2.0-gold.svg?logo=npm" alt="DiscordJS Version">
+  </a>
   <a href="https://github.com/sabattle/CalypsoBot">
-    <img src="https://img.shields.io/badge/Based%20on-Calypso-green.svg" alt="shield.png">
+    <img src="https://img.shields.io/badge/Based%20on-Calypso-green.svg" alt="Based on Calypso Bot">
   </a>
 
 </div>
@@ -61,13 +63,13 @@ module.exports = class prefixCommand extends Command {
         console.log(`The first argument is ${args[0]}`)
         const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
         message.channel.send({
-                embeds: [new MessageEmbed().setTitle(`${message.client.config.name}'s Prefix`)
-                    .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
-                    .addField(`Current Prefix`, `**\`${prefix}\`**`)
-                    .setThumbnail(message.client.user.displayAvatarURL())
-                    .setFooter(message.author.tag, message.author.displayAvatarURL())
-                    .setTimestamp()]
-            })
+            embeds: [new MessageEmbed().setTitle(`${message.client.config.name}'s Prefix`)
+                .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
+                .addField(`Current Prefix`, `**\`${prefix}\`**`)
+                .setThumbnail(message.client.user.displayAvatarURL())
+                .setFooter(message.author.tag, message.author.displayAvatarURL())
+                .setTimestamp()]
+        })
     }
 } 
 ```
@@ -112,7 +114,7 @@ Cooldowns are handled by the commands own instance. Each command has a cooldowns
 
 ### Exclusive
 If the `exclusive` option is set to true in the constructor for the command, the calling user will not be able to call that function again until the done() method is called.
-This is useful for commands whose functionality might not be instant. For example, the **`kick`** command is not instant, when it is called, a prompt is displayed to the calling user, and it awaits the user response. While the command is awaiting the user response, the user can call the kick command again, and now theres more than one instances of the command waiting for the user's response. <br>We can avoid this by setting the `exclusive` option to true, and when the command finishes listening for the user's response, we can call the `done()` method. Now the user will only be able to call this method again only after that `done()` method is called., 
+This is useful for commands whose functionality might not be instant. For example, the **`kick`** command is not instant, when it is called, a prompt is displayed to the calling user, and it awaits the user response. While the command is awaiting the user response, the user can call the kick command again, and now theres more than one instances of the command waiting for the user's response. <br>We can avoid this by setting the `exclusive` option to true, and when the command finishes listening for the user's response, we can call the `done()` method. Now the user will only be able to call this method again only after that `done()` method is called.,
 
 In the below example, once the user calls the `prefix` command, they won't be able to call it again, until 30 seconds after that command has been run.
 ```javascript
@@ -138,11 +140,11 @@ module.exports = class prefixCommand extends Command {
                 .setFooter(interaction.author.tag, interaction.author.displayAvatarURL())
                 .setTimestamp()]
         })
-        
+
         setTimeout(()=>{
-          this.done(message.author.id)
-          console.log(`The user can call the command now`);
-        }, 30000)            
+            this.done(message.author.id)
+            console.log(`The user can call the command now`);
+        }, 30000)
     }
 }
 ```
