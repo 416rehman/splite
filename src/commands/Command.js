@@ -116,7 +116,7 @@ class Command {
     if (options.slashCommand) {
       this.slashCommand = options.slashCommand
       this.slashCommand.setName(this.name)
-      this.slashCommand.setDescription(this.description)
+      this.slashCommand.setDescription((this.ownerOnly ? 'RESTRICTED COMMAND: ' : '') + this.description)
     }
   }
 

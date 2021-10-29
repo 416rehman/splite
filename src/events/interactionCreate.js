@@ -15,7 +15,7 @@ module.exports = async (client, interaction ) => {
             const channel = await interaction.guild.channels.cache.get(interaction.channelId);
 
             const permissionErrors = command.checkPermissionErrors(author, channel, interaction.guild);
-            if (!permissionErrors) return;
+            if (!permissionErrors) return interaction.reply({content: `**This command can only be used by the bot creator.**`, ephemeral: true});
             if (permissionErrors instanceof MessageEmbed) return interaction.reply({embeds: [permissionErrors], ephemeral: true})
 
             let disabledCommands = client.db.settings.selectDisabledCommands.pluck().get(interaction.guild.id) || [];
