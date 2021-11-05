@@ -85,14 +85,14 @@ module.exports = class smashOrPassCommand extends Command {
               .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
               .setDescription(`${member.displayName} \n${bio}`)
               .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
-              .setFooter(`Expires in 10 seconds ${points ? `| Points: ${points}` : ''}`)
+              .setFooter(`Expires in 30 seconds ${points ? `| Points: ${points}` : ''}`)
 
       message.channel.send({embeds: [embed]}).then(async msg => {
         const result = await handleSmashOrPass(msg, message.author, points, member)
         await msg.edit({embeds: [new MessageEmbed()
             .setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`)
             .setDescription(result.decision)
-            .setFooter(`Expires in 10 seconds | Points: ${points}`)]})
+            .setFooter(`Expires in 30 seconds | Points: ${points}`)]})
         await msg.reactions.removeAll();
         this.done(message.author.id)
       })
@@ -107,7 +107,7 @@ module.exports = class smashOrPassCommand extends Command {
         let embed = new MessageEmbed()
             .setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`)
             .setDescription(`${emojis.load} Loading...`)
-            .setFooter(`Expires in 10 seconds | Points: ${points}`)
+            .setFooter(`Expires in 30 seconds | Points: ${points}`)
 
         message.channel.send({embeds: [embed]}).then(async msg => {
           console.log(`started`)
@@ -125,7 +125,7 @@ module.exports = class smashOrPassCommand extends Command {
               await msg.edit({embeds: [new MessageEmbed()
                   .setTitle(result.decision)
                   .setDescription(`${emojis.load} Loading...`)
-                  .setFooter(`Expires in 10 seconds | Points: ${points}`)]})
+                  .setFooter(`Expires in 30 seconds | Points: ${points}`)]})
             }
           }
           if (points < cost) await stopPlaying(msg, message.author.id, `${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``);
@@ -157,7 +157,7 @@ async function nextUser(message, usersQueue, points, prefix) {
                   .setTitle(`${emojis.smashorpass} Smash or Pass ${emojis.smashorpass}`)
                   .setDescription(`${currentUser.displayName} \n${bio}`)
                   .setImage(currentUser.user.displayAvatarURL({dynamic: true, size: 512}))
-                  .setFooter(`Expires in 10 seconds ${points ? `| Points: ${points}` : ''} | To Opt-Out: ${prefix}optout`)
+                  .setFooter(`Expires in 30 seconds ${points ? `| Points: ${points}` : ''} | To Opt-Out: ${prefix}optout`)
             ]
           })
         }
@@ -175,7 +175,7 @@ async function handleSmashOrPass(msg, author, points, currentUser){
       return (reaction.emoji.name === '🔥' || reaction.emoji.name === '👎') && user.id == author.id;
     };
 
-    const collector = msg.createReactionCollector({filter, time: 10000});
+    const collector = msg.createReactionCollector({filter, time: 30000});
 
     let decision = 'Undecided';
     collector.on('collect', async (reaction, user) => {
@@ -228,6 +228,7 @@ async function handleSmashOrPass(msg, author, points, currentUser){
 
     collector.on('end', async () => {
       await msg.reactions.removeAll();
+      this.done(message.author.id)
       reject(`Timed out.`)
     });
   }))
