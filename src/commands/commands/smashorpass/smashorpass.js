@@ -228,7 +228,7 @@ async function handleSmashOrPass(msg, author, points, currentUser){
 
     collector.on('end', async () => {
       await msg.reactions.removeAll();
-      this.done(message.author.id)
+      this.done(msg.author.id)
       reject(`Timed out.`)
     });
   }))
