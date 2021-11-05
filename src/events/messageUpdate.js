@@ -23,7 +23,7 @@ module.exports = (client, oldMessage, newMessage) => {
     const embed = new MessageEmbed()
         .setAuthor(`${newMessage.author.username}#${newMessage.author.discriminator}`, newMessage.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
-        .setColor(newMessage.guild.me.displayHexColor);
+        .setColor("YELLOW");
   } catch (e) {
     console.log(e)
   }

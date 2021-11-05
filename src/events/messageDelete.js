@@ -15,7 +15,7 @@ try{
   embed.setTitle('Message Update: `Delete`')
       .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
-      .setColor("RANDOM");
+      .setColor("RED");
 }catch (e) {
   return;
 }

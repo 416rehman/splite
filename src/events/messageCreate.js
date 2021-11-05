@@ -2,7 +2,7 @@ const { MessageEmbed } = require('discord.js');
 const { online, dnd } = require('../utils/emojis.json')
 const moment = require('moment')
 const { oneLine } = require('common-tags');
-const {nsfw} = require('../utils/emojis.json')
+const {nsfw, fail} = require('../utils/emojis.json')
 
 module.exports = async (client, message) => {
   if (message.channel.type === 'DM' || !message.channel.viewable || message.author.bot) return;
@@ -59,16 +59,21 @@ module.exports = async (client, message) => {
     const args = message.content.slice(match.length).trim().split(/ +/g);
     const cmd = args.shift().toLowerCase();
     let command = client.commands.get(cmd) || client.aliases.get(cmd); // If command not found, check aliases
+
     if (command && !disabledCommands.includes(command.name)) {
+      //Blacklisted user
+      if (command.checkBlacklist(message)) return message.reply({embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${message.client.ownerTag}\`** for appeals.`)]}).then(msg=>{
+        setTimeout(()=>msg.delete(), 15000)
+      });
       const cooldown = await command.isOnCooldown(message.author.id)
       if (cooldown)
-        return message.reply({embeds: [new MessageEmbed().setDescription(`You are on a cooldown. Try again in **${cooldown}** seconds.`)]}).then(msg=>{
+        return message.reply({embeds: [new MessageEmbed().setDescription(`${fail} You are on a cooldown. Try again in **${cooldown}** seconds.`)]}).then(msg=>{
           setTimeout(()=>msg.delete(), 3000)
         });
 
       const instanceExists = command.isInstanceRunning(message.author.id)
       if (instanceExists)
-        return message.reply({embeds: [new MessageEmbed().setDescription(`Command already in progress, please wait for it.`)]}).then(msg=>{
+        return message.reply({embeds: [new MessageEmbed().setDescription(`${fail} Command already in progress, please wait for it.`)]}).then(msg=>{
           setTimeout(()=>msg.delete(), 3000)
         });
 
@@ -77,10 +82,9 @@ module.exports = async (client, message) => {
         if (command.type != client.types.MOD || (command.type == client.types.MOD && message.channel.permissionsFor(message.author).missing(command.userPermissions) != 0)) {
           // Update points with messagePoints value
           if (pointTracking) client.db.users.updatePoints.run({points: messagePoints}, message.author.id, message.guild.id);
-          return message.channel.send(`This is a mod-only channel. Only Mod commands may be used in this channel.\nTo reset this, an admin has to use \`${prefix}clearcommandchanels\` in another channel`).then(m=>setTimeout(()=>m.delete(), 15000)); // Return early so bot doesn't respond
+          return message.channel.send(`${fail} This is a mod-only channel. Only Mod commands may be used in this channel.\nTo reset this, an admin has to use \`${prefix}clearcommandchanels\` in another channel`).then(m=>setTimeout(()=>m.delete(), 15000)); // Return early so bot doesn't respond
         }
       }
-
       // Check permissions
       const permissionErrors = command.checkPermissionErrors(message.member, message.channel, message.guild);
       if (!permissionErrors) return;

@@ -128,6 +128,15 @@ db.prepare(`
     PRIMARY KEY (activity_date, user_id, guild_id)
   );
 `).run();
+
+// BLACKLIST TABLE
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS blacklist (
+    user_id TEXT,
+    PRIMARY KEY (user_id)
+  );
+`).run();
+
 /** ------------------------------------------------------------------------------------------------
  * PREPARED STATEMENTS
  * ------------------------------------------------------------------------------------------------ */
@@ -433,6 +442,14 @@ const activities = {
   getGuildModerations: db.prepare(`SELECT SUM(moderations) as moderations, user_id FROM activities WHERE guild_id = ? AND activity_date > date('now', '-' || ? || ' day' ) GROUP BY user_id ORDER BY 1 DESC;`)
 };
 
+// BLACKLIST TABLE
+const blacklist = {
+  insertRow: db.prepare(`INSERT OR IGNORE INTO blacklist (user_id) VALUES (?);`),
+  add: db.prepare('INSERT OR REPLACE INTO blacklist(user_id) VALUES(?);'),
+  remove: db.prepare('DELETE from blacklist WHERE user_id = ?;'),
+  selectRow: db.prepare('SELECT * FROM blacklist WHERE user_id = ?;'),
+};
+
 module.exports = {
   settings,
   users,
@@ -440,5 +457,6 @@ module.exports = {
   SmashOrPass,
   bios,
   activities,
+  blacklist,
   db
 };

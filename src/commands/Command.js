@@ -332,6 +332,12 @@ class Command {
     return true;
   }
 
+  checkBlacklist(message) {
+    //Don't blacklist bot owners
+    if (message.client.isOwner(message.author)) return false;
+    return message.client.db.blacklist.selectRow.pluck().get(message.author.id)
+  }
+
   /**
    * Creates and sends command failure embed
    * @param {Message} message

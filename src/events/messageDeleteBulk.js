@@ -18,7 +18,7 @@ module.exports = (client, messages) => {
       .setAuthor(`${message.guild.name}`, message.guild.iconURL({ dynamic: true }))
       .setDescription(`**${messages.size} messages** in ${message.channel} were deleted.`)
       .setTimestamp()
-      .setColor(message.guild.me.displayHexColor);
+      .setColor("RED");
     messageDeleteLog.send({embeds: [embed]});
   }
 
