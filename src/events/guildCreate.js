@@ -28,9 +28,8 @@ module.exports = async (client, guild) => {
           name: 'Muted',
           permissions: []
       });
-    } catch (err) {
-      client.logger.error(err.message);
-    }
+    } catch (err) { client.logger.error(err.message); }
+
     for (const channel of guild.channels.cache.values()) {
       try {
         if (channel.viewable && channel.permissionsFor(guild.me).has('MANAGE_ROLES')) {
@@ -45,9 +44,7 @@ module.exports = async (client, guild) => {
               'STREAM': false
             });
         } 
-      } catch (err) {
-        client.logger.error(err.stack);
-      }
+      } catch (err) { client.logger.error(err.stack) }
     }
   }
   
@@ -109,7 +106,12 @@ module.exports = async (client, guild) => {
     )
   });
 
-  await guild.me.setNickname(`${client.config.defaultPrefix} ${client.name}`)
+  await guild.me.setNickname(`[${client.config.defaultPrefix}] ${client.name}`)
 
   client.utils.createCollections(client, guild)
+
+  client.logger.info('Started registering application (/) commands for ' + guild.name);
+  const data = await client.slashCommands.map((v,k)=>v.slashCommand.toJSON())
+  await client.registerSlashCommands(guild, data, client.application.id)
+  client.logger.info('Finished registering application (/) commands for ' + guild.name);
 };
