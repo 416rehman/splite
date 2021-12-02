@@ -26,6 +26,7 @@
     "request": "^2.88.2",
     "twemoji-parser": "^13.0.0",
     "urban-dictionary": "^3.0.2",
+    "weky": "^3.1.8",
     "winston": "^3.2.1",
     "yaml": "^1.8.3",
     "youtube-search": "^1.1.4"
