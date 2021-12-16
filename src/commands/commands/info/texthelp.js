@@ -27,7 +27,7 @@ module.exports = class textHelpCommand extends Command {
     const all = (args[0] === 'all') ? args[0] : '';
     const embed = new MessageEmbed();
     const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id); // Get prefix
-    const { INFO, FUN, SMASHORPASS, NSFW, POINTS, MISC, MOD, ADMIN, OWNER } = message.client.types;
+    const { INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER } = message.client.types;
     const { capitalize } = message.client.utils;
     
     const command = message.client.commands.get(args[0]) || message.client.aliases.get(args[0]);
@@ -68,6 +68,7 @@ module.exports = class textHelpCommand extends Command {
         [POINTS]: `${emojis.points} ${capitalize(POINTS)}`,
         [MISC]: `${emojis.misc} ${capitalize(MISC)}`,
         [MOD]: `${emojis.mod} ${capitalize(MOD)}`,
+[MUSIC]: `${emojis.music} ${capitalize(MUSIC)}`,
         [ADMIN]: `${emojis.admin} ${capitalize(ADMIN)}`,
         [OWNER]: `${emojis.owner} ${capitalize(OWNER)}`
       };

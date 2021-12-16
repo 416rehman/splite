@@ -98,9 +98,13 @@ module.exports = async (client, message) => {
               .setColor("RED")]
         })
 
+      // Check if command is voice channel only
+      if (!command.checkVoiceChannel(message)) return;
+
       // Update points with commandPoints value
       if (pointTracking)
         client.db.users.updatePoints.run({points: commandPoints}, message.author.id, message.guild.id);
+
       message.command = true; // Add flag for messageUpdate event
       message.channel.sendTyping();
       command.setInstance(message.author.id);

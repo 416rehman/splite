@@ -31,7 +31,7 @@ module.exports = class AliasesCommand extends Command {
 
     const type = (args[0]) ? args[0].toLowerCase() : '';
     const types = Object.values(message.client.types);
-    const { INFO, FUN, POINTS, MISC, MOD, ADMIN, OWNER } = message.client.types;
+    const { INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER } = message.client.types;
     const { capitalize } = message.client.utils;
 
     const emojiMap = {
@@ -40,6 +40,7 @@ module.exports = class AliasesCommand extends Command {
       [POINTS]: `${emojis.points} ${capitalize(POINTS)}`,
       [MISC]: `${emojis.misc} ${capitalize(MISC)}`,
       [MOD]: `${emojis.mod} ${capitalize(MOD)}`,
+[MUSIC]: `${emojis.music} ${capitalize(MUSIC)}`,
       [ADMIN]: `${emojis.admin} ${capitalize(ADMIN)}`,
       [OWNER]: `${emojis.owner} ${capitalize(OWNER)}`
     };

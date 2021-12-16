@@ -118,6 +118,11 @@ class Command {
       this.slashCommand.setName(this.name)
       this.slashCommand.setDescription((this.ownerOnly ? 'RESTRICTED COMMAND: ' : '') + this.description)
     }
+
+    /**
+     * If true, the command will only be run if the author is in a voice channel
+     */
+    this.voiceChannelOnly = options.voiceChannelOnly;
   }
 
   /**
@@ -332,6 +337,33 @@ class Command {
     return true;
   }
 
+  //check if the message author is in a voice channel
+  checkVoiceChannel(message) {
+    if (this.voiceChannelOnly) {
+      if (!message.member.voice.channel){
+        message.channel.send(`You're not in a voice channel ${message.author}... try again ? ❌`);
+        return false;
+      }
+
+      if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) {
+        message.channel.send(`You are not in the same voice channel ${message.author}... try again ? ❌`);
+        return false;
+      }
+
+      // if the dj role is set, check if the user has it
+      const DJ = this.client.config.music.DJ;
+      if (DJ.enabled && DJ.commands.includes(this.name)) {
+        const roleDJ = message.guild.roles.cache.find(x => x.name.toLowerCase() === DJ.roleName.toLowerCase());
+
+        if (!roleDJ || !message.member._roles.includes(roleDJ.id)) {
+          message.channel.send(`This command is reserved for members with the ${DJ.roleName} role on the server ${message.author}... try again ? ❌`);
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   checkBlacklist(message) {
     //Don't blacklist bot owners
     if (message.client.isOwner(message.author)) return false;
@@ -430,7 +462,7 @@ class Command {
         throw new RangeError('Command aliases are not lowercase');
 
       for (const alias of options.aliases) {
-        if (client.aliases.get(alias)) throw new Error('Command alias already exists');
+        if (client.aliases.get(alias)) throw new Error(alias + ' Command alias already exists');
       }
     }
 
@@ -485,6 +517,10 @@ class Command {
     // Exclusive
     if (options.exclusive && typeof options.exclusive !== 'boolean')
       throw new TypeError('Command exclusive is not a boolean');
+
+    // VoceChannelOnly
+    if (options.voiceChannelOnly && typeof options.voiceChannelOnly !== 'boolean')
+      throw new TypeError('Command voiceChannelOnly is not a boolean');
 
   }
 }

@@ -8,6 +8,7 @@ const { fail } = require('./utils/emojis.json');
 const amethyste = require('amethyste-api')
 const {Collection} = require("discord.js");
 const { NekoBot } = require("nekobot-api");
+const { Player } = require('discord-player');
 
 class Client extends Discord.Client {
   constructor(config, options) {
@@ -27,6 +28,7 @@ class Client extends Discord.Client {
       NSFW: 'NSFW 18+',
       MISC: 'misc',
       MOD: 'mod',
+      MUSIC: 'music',
       ADMIN: 'admin',
       OWNER: 'owner',
     };
@@ -48,6 +50,14 @@ class Client extends Discord.Client {
     this.odds = new Map();
     this.votes = new Map();
     this.slashCommands = new Collection();
+
+    //Create a new music player instance
+    this.player = new Player(this, {
+      ytdlOptions: {
+        quality: 'highestaudio',
+        highWaterMark: 1 << 25
+      }
+    })
   }
 
   /**
@@ -230,6 +240,36 @@ class Client extends Discord.Client {
         reject(error);
       }
     }))
+  }
+
+  /**
+   * Music Events Handler
+   */
+  handleMusicEvents() {
+    this.player.on('error', (queue, error) => {
+      console.log(`Error emitted from the queue ${error.message}`);
+    });
+
+    this.player.on('connectionError', (queue, error) => {
+      console.log(`Error emitted from the connection ${error.message}`);
+    });
+
+    this.player.on('trackStart', (queue, track) => {
+      if (!this.config.music.loopMessage && queue.repeatMode !== 0) return;
+      queue.metadata.send(`Started playing ${track.title} in **${queue.connection.channel.name}** 🎧`);
+    });
+
+    this.player.on('trackAdd', (queue, track) => {
+      queue.metadata.send(`Track ${track.title} added in the queue ✅`);
+    });
+
+    this.player.on('botDisconnect', (queue) => {
+      queue.metadata.send('I was manually disconnected from the voice channel, clearing queue... ❌');
+    });
+
+    this.player.on('channelEmpty', (queue) => {
+      queue.metadata.send('Nobody is in the voice channel, leaving the voice channel... ❌');
+    });
   }
 }
 
