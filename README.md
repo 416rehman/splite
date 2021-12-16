@@ -1,10 +1,8 @@
-# SPLITE - Discord Multi-Purpose Bot
 <div align=center>
 
-  <a href="https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=4294438903&scope=bot%20applications.commands">
-    <img src="https://i.imgur.com/Onde220.png" alt="Add Splite to your server">
+  <a href="https://github.com/ZerioDev/Music-bot">
+    <img src="https://img.shields.io/badge/Music%20By-ZerioDev-green.svg" alt="Music by ZerioDev">
   </a>
-
   <a href="https://discord.gg/pxnu3eF6DG">
     <img src="https://discordapp.com/api/guilds/668625434157776896/widget.png?style=shield" alt="Join Splite's Support Server">
   </a>
@@ -17,7 +15,14 @@
 
 </div>
 
-Splite runs on DiscordJS V13, NodeJS 16+, and SQLite.
+# SPLITE - Multi-Purpose Discord v13 Bot
+### Now supports Music, Moderation, and more!
+
+Splite is a free to use multi-purpose Discord bot. It is designed to be a flexible and easy to use.
+Show your support by [adding it to your server via TopGG](https://top.gg/bot/842244538248593439)
+
+⭐ Consider starring the repo on GitHub to help with development! ⭐
+
 
 # Setup
 
@@ -154,17 +159,17 @@ You should make sure your exclusive commands always call the done method.<br>
 
 
 # Commands
-**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [23]**
+**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [27]**
 
-`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`, `vote`
+`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `editsnipe`, `stats`, `uptime`, `whois`, `ratemyprofessor`, `vote`, `modactivity`
 
 **![:fun~1:](https://cdn.discordapp.com/emojis/838614336749568020.gif?v=1) Fun [84]**
 
 `8ball`, `afk`, `approved`, `awooify`, `baguette`, `beautiful`, `bio`, `bird`, `biryani`, `blur`, `blurple`, `brazzers`, `burn`, `cat`, `catfact`, `challenger`, `changemymind`, `circle`, `clyde`, `coinflip`, `contrast`, `crush`, `dadjoke`, `deepfry`, `dictator`, `distort`, `dither`, `dog`, `dogfact`, `duck`, `dungeon`, `emboss`, `emojify`, `enlarge`, `fire`, `fox`, `frame`, `gay`, `geoguessr`, `glitch`, `greyple`, `greyscale`, `hate`, `instagram`, `insult`, `invert`, `jail`, `magik`, `meme`, `missionpassed`, `mock`, `moustache`, `nsfw`, `pickup`, `pixelize`, `posterize`, `ps4`, `redple`, `rejected`, `rip`, `roll`, `rps`, `scary`, `sepia`, `sharpen`, `shibe`, `ship`, `sniper`, `thanos`, `thouart`, `threats`, `tobecontinued`, `trap`, `triggered`, `trumptweet`, `unsharpen`, `urban`, `tatoo`, `wanted`, `wasted`, `whowouldwin`, `yesno`, `yomomma`, `youtube`
 
-**![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [11]**
+**![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [12]**
 
-`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `totalpoints`, `odds`
+`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `rigship`, `totalpoints`, `odds`
 
 **![:smashorpass:](https://cdn.discordapp.com/emojis/838588533497266217.gif?v=1) Smash or Pass [4]**
 
@@ -174,9 +179,13 @@ You should make sure your exclusive commands always call the done method.<br>
 
 `feedback`, `reportbug`
 
-**![:mods:](https://cdn.discordapp.com/emojis/838614337904050237.gif?v=1) Mod [21]**
+**![:mods:](https://cdn.discordapp.com/emojis/838614337904050237.gif?v=1) Mod [20]**
 
-`addemoji`, `addrole`, `ban`, `kick`, `members`, `mute`, `purge`, `purgebot`, `removeemoji`, `role`, `roles`, `setnickname`, `slowmode`, `softban`, `testfarewell`, `testwelcome`, `unban`, `unmute`, `warn`, `warnpurge`, `warns`
+`addemoji`, `addrole`, `ban`, `kick`, `members`, `mute`, `purge`, `purgebot`, `removeemoji`, `role`, `setnickname`, `slowmode`, `softban`, `testfarewell`, `testwelcome`, `unban`, `unmute`, `warn`, `warnpurge`, `warns`
+
+**![:music:](https://cdn.discordapp.com/emojis/920916668484579328.gif?v=1) Music [16]**
+
+`back`, `filter`, `loop`, `nowplaying`, `pause`, `play`, `progress`, `queue`, `resume`, `save`, `search`, `seek`, `shuffle`, `skip`, `stop`, `volume`
 
 **![:admin~1:](https://cdn.discordapp.com/emojis/838614338515370064.gif?v=1) Admin [33]**
 
@@ -184,9 +193,9 @@ You should make sure your exclusive commands always call the done method.<br>
 
 `findstatus`, `say`, `setjoinvoting`, `setadminrole`, `setautokick`, `setautorole`, `setconfessionchannel`, `setcrownchannel`, `setcrownrole`, `setfarewellchannel`, `setfarewellmessage`, `setmemberlog`, `setmessagedeletelog`, `setmessageeditlog`, `setmodchannels`, `setmodlog`, `setmodrole`, `setmuterole`, `setnicknamelog`, `setprefix`, `setrolelog`, `setstarboardchannel`, `setsystemchannel`, `settings`, `setverificationchannel`, `setverificationmessage`, `setverificationrole`, `setviewconfessionsrole`, `setwelcomechannel`, `setwelcomemessage`, `toggleanonymous`, `togglecommand`, `toggletype`
 
-**![:owner~1:](https://cdn.discordapp.com/emojis/832778968243503144.png?v=1) Owner [11]**
+**![:owner~1:](https://cdn.discordapp.com/emojis/832778968243503144.png?v=1) Owner [12]**
 
-`blast`, `channels`, `eval`, `history`, `leaveguild`, `servers`, `setpoints`, `wipeallpoints`, `wipealltotalpoints`, `wipepoints`, `wipetotalpoints`
+`blacklist`, `blast`, `eval`, `leaveguild`, `servers`, `setodds`, `setpoints`, `whitelist`, `wipeallpoints`, `wipealltotalpoints`, `wipepoints`, `wipetotalpoints`
 
 ![:verified_developer:](https://cdn.discordapp.com/emojis/832779434641719306.png?v=1) **/Slash Commands**
 
