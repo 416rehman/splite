@@ -8,7 +8,7 @@ module.exports = class HelpCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'help',
-            aliases: ['commands', 'h'],
+            aliases: ['commands', 'h', 'support'],
             usage: 'help [command | all]',
             description: oneLine`
         Displays a list of all current commands, sorted by category. 
@@ -121,8 +121,8 @@ module.exports = class HelpCommand extends Command {
                 .setColor(message.guild.me.displayHexColor)
                 .addField(
                     '**Links**',
-                    `**[Invite Me](${message.client.link}) | ` +
-                    `Developed By ${message.client.ownerTag}**`)
+                    `[Invite Me](${message.client.link}) | [Support Server](${message.client.config.supportServer}) | ` +
+                    `Developed By ${message.client.ownerTag}`)
 
             const chunks = 4 //tweak this to add more items per line
             let rows = new Array(Math.ceil(allButtons.length / chunks)).fill().map(r=> {
