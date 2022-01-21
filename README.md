@@ -19,7 +19,6 @@
 ### Now supports Music, Moderation, and more!
 
 Splite is a free to use multi-purpose Discord bot. It is designed to be a flexible and easy to use.
-Show your support by [adding it to your server via TopGG](https://top.gg/bot/842244538248593439)
 
 ⭐ Consider starring the repo on GitHub to help with development! ⭐
 
