@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 const Command = require('../../Command.js');
 
 module.exports = class prefixCommand extends Command {
@@ -11,9 +11,9 @@ module.exports = class prefixCommand extends Command {
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
             ownerOnly: false,
             cooldown: 5,
-            slashCommand:  new SlashCommandBuilder()
-                .addIntegerOption(option =>option.setName('id').setDescription('ID of the confession').setRequired(true))
-                .addStringOption(option=>option.setName('reason').setDescription(`The reason for the report`))
+            slashCommand: new SlashCommandBuilder()
+                .addIntegerOption(option => option.setName('id').setDescription('ID of the confession').setRequired(true))
+                .addStringOption(option => option.setName('reason').setDescription(`The reason for the report`))
         });
     }
 

@@ -1,5 +1,5 @@
 const Command = require('../../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const emojis = require('../../../utils/emojis.json')
 const cost = 100;
 module.exports = class WipePointsCommand extends Command {
@@ -13,6 +13,7 @@ module.exports = class WipePointsCommand extends Command {
             examples: ['rig']
         });
     }
+
     run(message, args) {
         let bal = message.client.db.users.selectPoints.pluck().get(message.author.id, message.guild.id)
         if (bal >= cost) {
@@ -23,7 +24,10 @@ module.exports = class WipePointsCommand extends Command {
                 .setTitle('Rig Ship')
                 .setDescription(`Successfully rigged ${message.author}'s shipping odds for 30 mins.`)
                 .addField('Points Remaining', `${bal - cost} ${emojis.point}`)
-                .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+                .setFooter({
+                    text: message.member.displayName,
+                    iconURL: message.author.displayAvatarURL()
+                })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
             message.channel.send({embeds: [embed]});

@@ -2,15 +2,15 @@ const ms = require('ms');
 const Command = require("../../Command");
 
 module.exports = class MusicSeekCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'seek',
-        aliases: [],
-        usage: 'seek [time]',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'seek',
+            aliases: [],
+            usage: 'seek [time]',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
     async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);
@@ -23,6 +23,6 @@ module.exports = class MusicSeekCommand extends Command {
 
         await queue.seek(timeToMS);
 
-        message.channel.send(`Time set on the current song **${ms(timeToMS, { long: true })}** ✅`);
+        message.channel.send(`Time set on the current song **${ms(timeToMS, {long: true})}** ✅`);
     }
 };

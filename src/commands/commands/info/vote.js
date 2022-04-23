@@ -1,6 +1,6 @@
 const Command = require('../../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {oneLine} = require('common-tags');
 const emojis = require('../../../utils/emojis.json')
 
 module.exports = class InviteMeCommand extends Command {
@@ -13,9 +13,10 @@ module.exports = class InviteMeCommand extends Command {
             type: client.types.INFO
         });
     }
+
     async run(message, args) {
         const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id)
-        message.client.utils.checkTopGGVote(message.client, message.author.id).then(voted=>{
+        message.client.utils.checkTopGGVote(message.client, message.author.id).then(voted => {
             const embed = new MessageEmbed()
                 .setTitle('Vote On Top.gg')
                 .setThumbnail('https://top.gg/images/logoinverted.png')
@@ -23,16 +24,18 @@ module.exports = class InviteMeCommand extends Command {
                 **Voting Perks**\n${emojis.Voted}**+10%** Gambling Odds - Check your odds: \`${prefix}odds\` \
                 \n*Perks will be activated 5 mins after voting*
                 `)
-                .setFooter(message.member.displayName, message.author.displayAvatarURL({dynamic: true}))
+                .setFooter({
+                    text: message.member.displayName,
+                    iconURL: message.author.displayAvatarURL({dynamic: true})
+                })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
             if (!voted) {
                 message.channel.send({embeds: [embed]});
-            }
-            else {
+            } else {
                 message.channel.send({embeds: [embed.setTitle(`${emojis.Voted} You have already voted`)]});
             }
-        }).catch(e=>{
+        }).catch(e => {
             console.log(e)
         })
 

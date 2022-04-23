@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 const Command = require('../../Command.js');
 
 module.exports = class prefixCommand extends Command {
@@ -12,7 +12,7 @@ module.exports = class prefixCommand extends Command {
             userPermissions: [],
             ownerOnly: false,
             cooldown: 5,
-            slashCommand:  new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder()
                 .addIntegerOption(option =>
                     option.setName('id')
                         .setDescription('ID of the confession').setRequired(true))
@@ -25,7 +25,10 @@ module.exports = class prefixCommand extends Command {
         const viewConfessionsRole = client.db.settings.selectViewConfessionsRole.pluck().get(interaction.guild.id)
 
         if (!viewConfessionsRole)
-            return interaction.reply({content: `No role is set to run this command. To set a role to run this command type, \`${prefix}setviewconfessionsrole\``, ephemeral: true})
+            return interaction.reply({
+                content: `No role is set to run this command. To set a role to run this command type, \`${prefix}setviewconfessionsrole\``,
+                ephemeral: true
+            })
 
         const guild = client.guilds.cache.get(interaction.guild.id)
         const role = guild.roles.cache.find(r => r.id === viewConfessionsRole)
@@ -40,12 +43,16 @@ module.exports = class prefixCommand extends Command {
             const sender = guild.members.cache.get(row.author_id);
             const senderTxt = sender ? 'Tag: ' + sender.user.username + '#' + sender.user.discriminator : ''
 
-            return interaction.reply({content: `Confession ID: **\`${row.confession_id}\`** \
+            return interaction.reply({
+                content: `Confession ID: **\`${row.confession_id}\`** \
             \nContent: **\`${row.content}\`**\
             \nSent By: ${sender || "Someone not in the server"} \`${senderTxt} | ID: ${row.author_id}\`\
             \nDate/Time: **\`${row.timeanddate}\`**`,
-            ephemeral: true})
-        }
-        else return interaction.reply({content: `Error: Can't find that confession! Please check the confession ID`, ephemeral: true})
+                ephemeral: true
+            })
+        } else return interaction.reply({
+            content: `Error: Can't find that confession! Please check the confession ID`,
+            ephemeral: true
+        })
     }
 }

@@ -1,17 +1,18 @@
-const { QueueRepeatMode } = require('discord-player');
+const {QueueRepeatMode} = require('discord-player');
 const Command = require("../../Command");
 
 module.exports = class MusicLoopCommand extends Command {
-  constructor(client) {
-      super(client, {
-          name: 'loop',
-          aliases: ['lp', 'repeat'],
-          usage: 'loop <queue>',
-          examples: ['loop', 'loop queue'],
-          voiceChannelOnly: true,
-          type: client.types.MUSIC,
-      });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'loop',
+            aliases: ['lp', 'repeat'],
+            usage: 'loop <queue>',
+            examples: ['loop', 'loop queue'],
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
+
     async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);
         const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id)

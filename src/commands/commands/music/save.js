@@ -1,14 +1,14 @@
 const Command = require("../../Command");
 module.exports = class MusicSaveCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'save',
-        aliases: ['sv'],
-        usage: 'save',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'save',
+            aliases: ['sv'],
+            usage: 'save',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
     async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);

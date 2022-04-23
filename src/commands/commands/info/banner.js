@@ -1,6 +1,6 @@
 const Command = require('../../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { fail } = require('../../../utils/emojis.json')
+const {MessageEmbed} = require('discord.js');
+const {fail} = require('../../../utils/emojis.json')
 
 module.exports = class BannerCommand extends Command {
     constructor(client) {
@@ -13,13 +13,17 @@ module.exports = class BannerCommand extends Command {
             examples: ['banner @split']
         });
     }
+
     async run(message, args) {
         const member = await message.client.api.users((await this.getMemberFromMention(message, args[0]))?.id || (await message.guild.members.cache.get(args[0]))?.id || message.member.id).get();
         const banner = member.banner && `https://cdn.discordapp.com/banners/${member.id}/${member.banner}${member.banner.startsWith('a_') ? '.gif' : '.png'}?size=512`
 
         const embed = new MessageEmbed()
             .setTitle(`${member.username}'s Banner`)
-            .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+            .setFooter({
+                text: message.member.displayName,
+                iconURL: message.author.displayAvatarURL()
+            })
             .setTimestamp()
             .setColor(member.displayHexColor);
 

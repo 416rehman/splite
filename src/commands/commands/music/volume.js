@@ -1,15 +1,15 @@
 const Command = require("../../Command");
 
 module.exports = class MusicVolumeCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'volume',
-        aliases: ['vol'],
-        usage: `{prefix}volume [1-${client.config.music.maxVol}]`,
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'volume',
+            aliases: ['vol'],
+            usage: `{prefix}volume [1-${client.config.music.maxVol}]`,
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
     async run(message, args) {
         const maxVol = this.client.config.music.maxVol;

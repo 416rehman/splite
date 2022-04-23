@@ -1,16 +1,16 @@
-const { QueryType } = require('discord-player');
+const {QueryType} = require('discord-player');
 const Command = require("../../Command");
 
 module.exports = class MusicPlayCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'play',
-        aliases: ['p'],
-        usage: 'play [song name/URL]',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'play',
+            aliases: ['p'],
+            usage: 'play [song name/URL]',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
     async run(message, args) {
         if (!args[0]) return message.channel.send(`Please enter a valid search ${message.author}... try again ? ❌`);

@@ -7,7 +7,7 @@ module.exports = class MusicFilterCommand extends Command {
             voiceChannelOnly: true,
             type: client.types.MUSIC,
         });
-    }    
+    }
 
     async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);

@@ -1,16 +1,16 @@
-const { MessageEmbed } = require('discord.js');
-const { QueryType } = require('discord-player');
+const {MessageEmbed} = require('discord.js');
+const {QueryType} = require('discord-player');
 const Command = require("../../Command");
 
 module.exports = class MusicSearchCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'search',
-        usage: 'search [song name]',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'search',
+            usage: 'search [song name]',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
     async run(message, args) {
         if (!args[0]) return message.channel.send(`Please enter a valid search ${message.author}... try again ? ❌`);
@@ -29,16 +29,22 @@ module.exports = class MusicSearchCommand extends Command {
         const embed = new MessageEmbed();
 
         embed.setColor('RED');
-        embed.setAuthor(`Results for ${args.join(' ')}`, this.client.user.displayAvatarURL({ size: 1024, dynamic: true }));
+        embed.setAuthor(`Results for ${args.join(' ')}`, this.client.user.displayAvatarURL({
+            size: 1024,
+            dynamic: true
+        }));
 
         const maxTracks = res.tracks.slice(0, 10);
 
         embed.setDescription(`${maxTracks.map((track, i) => `**${i + 1}**. ${track.title} | ${track.author}`).join('\n')}\n\nSelect choice between **1** and **${maxTracks.length}** or **cancel** ⬇️`);
 
         embed.setTimestamp();
-        embed.setFooter('Music comes first - Made with heart by Zerio ❤️', message.author.avatarURL({ dynamic: true }));
+        embed.setFooter({
+            text: 'Music comes first - Made with heart by Zerio ❤️',
+            iconURL: message.author.avatarURL({dynamic: true})
+        });
 
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
 
         const collector = message.channel.createMessageCollector({
             time: 15000,

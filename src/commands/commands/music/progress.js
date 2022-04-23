@@ -1,14 +1,14 @@
 const Command = require("../../Command");
 module.exports = class MusicProgressCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'progress',
-        aliases: ['pbar'],
-        usage: 'progress',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'progress',
+            aliases: ['pbar'],
+            usage: 'progress',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
     async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);

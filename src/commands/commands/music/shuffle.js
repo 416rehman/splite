@@ -1,14 +1,14 @@
 const Command = require("../../Command");
 module.exports = class MusicShuffleCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'shuffle',
-        aliases: ['sh'],
-        usage: 'shuffle',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'shuffle',
+            aliases: ['sh'],
+            usage: 'shuffle',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
     async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);

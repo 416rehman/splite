@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 const Command = require('../../Command.js');
 const {MessageEmbed} = require('discord.js')
 
@@ -13,7 +13,7 @@ module.exports = class prefixCommand extends Command {
             userPermissions: [],
             ownerOnly: false,
             cooldown: 5,
-            slashCommand:  new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder()
                 .addStringOption(option =>
                     option.setName('message')
                         .setDescription('Type your message').setRequired(true))
@@ -27,7 +27,10 @@ module.exports = class prefixCommand extends Command {
         const anonymousAllowed = (client.db.settings.selectAnonymous.pluck().get(interaction.guild.id))
         const anonMsg = args[0].value;
 
-        if (!anonymousAllowed) return interaction.reply({content: `This server doesn't allow anonymous messages. An admin can change this by typing \`${prefix}toggleanonymous\``, ephemeral: true})
+        if (!anonymousAllowed) return interaction.reply({
+            content: `This server doesn't allow anonymous messages. An admin can change this by typing \`${prefix}toggleanonymous\``,
+            ephemeral: true
+        })
 
         const points = (client.db.users.selectPoints.pluck().get(interaction.member.user.id, interaction.guild.id))
         if (!points || points < cost) return interaction.reply({
@@ -39,11 +42,16 @@ module.exports = class prefixCommand extends Command {
         const embed = new MessageEmbed()
             .setTitle(`Anonymous Message`)
             .setDescription(`"${anonMsg}"`)
-            .setFooter("To send an anonymous message, type /anonymous")
+            .setFooter({
+                text: "To send an anonymous message, type /anonymous"
+            })
             .setColor("RANDOM");
-        channel.send({embeds: [embed]}).then(()=>{
+        channel.send({embeds: [embed]}).then(() => {
             client.db.users.setPoints.run(points - cost, interaction.member.user.id, interaction.guild.id)
-            interaction.reply({content: `Your anonymous message has been posted! Remaining points: **\`${points - cost}\`**.`, ephemeral: true})
+            interaction.reply({
+                content: `Your anonymous message has been posted! Remaining points: **\`${points - cost}\`**.`,
+                ephemeral: true
+            })
         })
     }
 }

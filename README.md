@@ -18,7 +18,7 @@
 # SPLITE - Multi-Purpose Discord v13 Bot
 ### Now supports Music, Moderation, and more!
 
-Splite is a free to use multi-purpose Discord bot. It is designed to be a flexible and easy to use.
+Splite is a free to use multipurpose Discord bot. It is designed to be a flexible and easy to use.
 
 ⭐ Consider starring the repo on GitHub to help with development! ⭐
 
@@ -71,7 +71,10 @@ module.exports = class prefixCommand extends Command {
                 .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
                 .addField(`Current Prefix`, `**\`${prefix}\`**`)
                 .setThumbnail(message.client.user.displayAvatarURL())
-                .setFooter(message.author.tag, message.author.displayAvatarURL())
+                .setFooter({
+          text: message.member.displayName,
+          iconURL: message.author.displayAvatarURL({dynamic: true})
+        })
                 .setTimestamp()]
         })
     }
@@ -104,7 +107,10 @@ module.exports = class prefixCommand extends Command {
                 .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
                 .addField(`Current Prefix`, `**\`${prefix}\`**`)
                 .setThumbnail(interaction.client.user.displayAvatarURL())
-                .setFooter(interaction.author.tag, interaction.author.displayAvatarURL())
+                .setFooter({
+                    text: interaction.author.tag,
+                    iconURL: interaction.author.displayAvatarURL({dynamic: true})
+                })
                 .setTimestamp()],
             ephemeral: true
         })
@@ -118,7 +124,7 @@ Cooldowns are handled by the commands own instance. Each command has a cooldowns
 
 ### Exclusive
 If the `exclusive` option is set to true in the constructor for the command, the calling user will not be able to call that function again until the done() method is called.
-This is useful for commands whose functionality might not be instant. For example, the **`kick`** command is not instant, when it is called, a prompt is displayed to the calling user, and it awaits the user response. While the command is awaiting the user response, the user can call the kick command again, and now theres more than one instances of the command waiting for the user's response. <br>We can avoid this by setting the `exclusive` option to true, and when the command finishes listening for the user's response, we can call the `done()` method. Now the user will only be able to call this method again only after that `done()` method is called.,
+This is useful for commands whose functionality might not be instant. For example, the **`kick`** command is not instant, when it is called, a prompt is displayed to the calling user, and it awaits the user response. While the command is awaiting the user response, the user can call the kick command again, and now there's more than one instances of the command waiting for the user's response. <br>We can avoid this by setting the `exclusive` option to true, and when the command finishes listening for the user's response, we can call the `done()` method. Now the user will only be able to call this method again only after that `done()` method is called.,
 
 In the below example, once the user calls the `prefix` command, they won't be able to call it again, until 30 seconds after that command has been run.
 ```javascript
@@ -141,7 +147,10 @@ module.exports = class prefixCommand extends Command {
                 .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
                 .addField(`Current Prefix`, `**\`${prefix}\`**`)
                 .setThumbnail(interaction.client.user.displayAvatarURL())
-                .setFooter(interaction.author.tag, interaction.author.displayAvatarURL())
+                .setFooter({
+                    text: interaction.author.tag,
+                    iconURL: interaction.author.displayAvatarURL({dynamic: true})
+                })
                 .setTimestamp()]
         })
 

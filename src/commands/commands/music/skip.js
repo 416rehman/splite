@@ -1,16 +1,16 @@
 const Command = require("../../Command");
 module.exports = class MusicSkipCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'skip',
-        aliases: ['sk'],
-        usage: 'skip',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'skip',
+            aliases: ['sk'],
+            usage: 'skip',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
-  async run(message, args) {
+    async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);
 
         if (!queue || !queue.playing) return message.channel.send(`No music currently playing ${message.author}... try again ? ❌`);

@@ -1,9 +1,9 @@
 const Command = require('../../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const emojis = require('../../../utils/emojis.json');
 const {MessageActionRow} = require("discord.js");
 const {MessageButton} = require("discord.js");
-const { oneLine, stripIndent } = require('common-tags');
+const {oneLine, stripIndent} = require('common-tags');
 module.exports = class HelpCommand extends Command {
     constructor(client) {
         super(client, {
@@ -19,36 +19,38 @@ module.exports = class HelpCommand extends Command {
             examples: ['help ping']
         })
     }
+
     async run(message, args) {
         // Get disabled commands
         let disabledCommands = message.client.db.settings.selectDisabledCommands.pluck().get(message.guild.id) || [];
-        if (typeof(disabledCommands) === 'string') disabledCommands = disabledCommands.split(' ');
+        if (typeof (disabledCommands) === 'string') disabledCommands = disabledCommands.split(' ');
 
         const all = (args[0] === 'all') ? args[0] : '';
         const embed = new MessageEmbed();
         const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id); // Get prefix
-        const { INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER } = message.client.types;
-        const { capitalize } = message.client.utils;
+        const {INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER} = message.client.types;
+        const {capitalize} = message.client.utils;
 
         const command = message.client.commands.get(args[0]) || message.client.aliases.get(args[0]);
-        if ( command && (command.type != OWNER || message.client.isOwner(message.member)) && !disabledCommands.includes(command.name) ) {
+        if (command && (command.type != OWNER || message.client.isOwner(message.member)) && !disabledCommands.includes(command.name)) {
             embed // Build specific command help embed
                 .setTitle(`Command: \`${command.name}\``)
                 .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
                 .setDescription(command.description)
                 .addField('Usage', `\`${prefix}${command.usage}\``, true)
                 .addField('Type', `\`${capitalize(command.type)}\``, true)
-                .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+                .setFooter({
+                    text: message.member.displayName,
+                    iconURL: message.author.displayAvatarURL()
+                })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
             if (command.aliases) embed.addField('Aliases', command.aliases.map(c => `\`${c}\``).join(' '));
             if (command.examples) embed.addField('Examples', command.examples.map(c => `\`${prefix}${c}\``).join('\n'));
             return message.channel.send({embeds: [embed]});
-        }
-        else if (args.length > 0 && !all) {
+        } else if (args.length > 0 && !all) {
             return this.sendErrorMessage(message, 0, 'Unable to find command, please check provided command');
-        }
-        else {
+        } else {
             // Get commands
             const commands = {};
             for (const type of Object.values(message.client.types)) {
@@ -80,18 +82,17 @@ module.exports = class HelpCommand extends Command {
                 }
             });
 
-            commands[`Slash Only Commands`] = message.client.slashCommands.map(s=>{
+            commands[`Slash Only Commands`] = message.client.slashCommands.map(s => {
                 if (s.name === 'view') {
                     if (message.member.permissions.has('MANAGE_GUILD'))
                         return `\`${s.name}\` ${s.description}`
-                }
-                else return `\`${s.name}\` ${s.description}`
+                } else return `\`${s.name}\` ${s.description}`
             })
             commands[`Slash Only Commands`] = commands[`Slash Only Commands`].join('\n')
 
             const allButtons = [];
             for (const property in commands) {
-                if (commands[property].length){
+                if (commands[property].length) {
 
                     const button = new MessageButton().setCustomId(`${property.replace(/ /g, '_')}`).setLabel(`${capitalize(property)}`).setStyle('PRIMARY')
                     if (emojiMap[property]) {
@@ -102,7 +103,8 @@ module.exports = class HelpCommand extends Command {
                     }
 
                     allButtons.push(button)
-                }}
+                }
+            }
             const total = Object.values(commands).reduce((a, b) => a + b.length, 0) - commands[OWNER].length;
             const size = message.client.commands.size - commands[OWNER].length;
 
@@ -113,8 +115,8 @@ module.exports = class HelpCommand extends Command {
           **Command Information:** \`${prefix}help [command]\`
           ${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n
         `)
-                .setFooter(`Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
-                    message.author.displayAvatarURL({ dynamic: true })
+                .setFooter(`Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName,
+                    message.author.displayAvatarURL({dynamic: true})
                 )
                 .setTimestamp()
                 .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
@@ -125,31 +127,36 @@ module.exports = class HelpCommand extends Command {
                     `Developed By ${message.client.ownerTag}`)
 
             const chunks = 4 //tweak this to add more items per line
-            let rows = new Array(Math.ceil(allButtons.length / chunks)).fill().map(r=> {
+            let rows = new Array(Math.ceil(allButtons.length / chunks)).fill().map(r => {
                 const row = new MessageActionRow();
                 const buttons = allButtons.splice(0, chunks);
-                buttons.forEach(b=>{
+                buttons.forEach(b => {
                     row.addComponents(b)
                 })
                 return row;
             });
 
 
-            let msg = await message.channel.send({ components: rows, embeds: [embed] });
+            let msg = await message.channel.send({components: rows, embeds: [embed]});
 
             const filter = (button) => button.user.id === message.author.id;
-            const collector = msg.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 60000, dispose: true });
+            const collector = msg.createMessageComponentCollector({
+                filter,
+                componentType: 'BUTTON',
+                time: 60000,
+                dispose: true
+            });
             let tempEmbed = new MessageEmbed().setTitle(`${message.client.name}\'s Commands`)
                 .setDescription(`**Prefix:** \`${prefix}\`\n**Command Information:** \`${prefix}help [command]\`\n${(!all && size != total) ? `**All Commands:** \`${prefix}help all\`` : ''}\n`)
                 .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
-            
+
             collector.on('collect', b => {
 
                 const type = `${b.customId}`.replace(/_/g, ' ')
                 tempEmbed.fields = []
-                tempEmbed = tempEmbed.setFooter(`Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName ,
-                        message.author.displayAvatarURL({ dynamic: true })
-                    )
+                tempEmbed = tempEmbed.setFooter(`Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName,
+                    message.author.displayAvatarURL({dynamic: true})
+                )
                     .setTimestamp()
                     .setColor("RANDOM")
 
@@ -158,14 +165,14 @@ module.exports = class HelpCommand extends Command {
                 else
                     tempEmbed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, `${emojiMap[type].includes('Admin') ? 'Commands can be cleared by replacing "set" with "clear".\ni.e `setmodlog` ➔ `clearmodlog`\n-----------------------------------------------------\n' : ''} ${commands[type].join(', ')}`);
 
-                msg.edit({ components: rows, embeds: [tempEmbed] });
+                msg.edit({components: rows, embeds: [tempEmbed]});
                 b.deferUpdate()
             });
             collector.on('end', () => {
-                tempEmbed.setFooter(`Expired! \nFor text-only help command, type ${prefix}texthelp \n` + message?.member?.displayName ,
-                    message.author.displayAvatarURL({ dynamic: true })
+                tempEmbed.setFooter(`Expired! \nFor text-only help command, type ${prefix}texthelp \n` + message?.member?.displayName,
+                    message.author.displayAvatarURL({dynamic: true})
                 )
-                msg.edit({ components: [], embeds: [tempEmbed] });
+                msg.edit({components: [], embeds: [tempEmbed]});
             });
         }
     }

@@ -1,18 +1,18 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 const Command = require("../../Command");
 
 module.exports = class MusicNowPlayingCommand extends Command {
-  constructor(client) {
-    super(client, {
-        name: 'nowplaying',
-        aliases: ['np'],
-        usage: 'nowplaying',
-        voiceChannelOnly: true,
-        type: client.types.MUSIC,
-    });
-  }
+    constructor(client) {
+        super(client, {
+            name: 'nowplaying',
+            aliases: ['np'],
+            usage: 'nowplaying',
+            voiceChannelOnly: true,
+            type: client.types.MUSIC,
+        });
+    }
 
-  async run(message, args) {
+    async run(message, args) {
         const queue = this.client.player.getQueue(message.guild.id);
 
         if (!queue || !queue.playing) return message.channel.send(`No music currently playing ${message.author}... try again ? ❌`);
@@ -23,7 +23,7 @@ module.exports = class MusicNowPlayingCommand extends Command {
 
         embed.setColor('RED');
         embed.setThumbnail(track.thumbnail);
-        embed.setAuthor(track.title, this.client.user.displayAvatarURL({ size: 1024, dynamic: true }));
+        embed.setAuthor(track.title, this.client.user.displayAvatarURL({size: 1024, dynamic: true}));
 
         const methods = ['disabled', 'track', 'queue'];
 
@@ -33,7 +33,10 @@ module.exports = class MusicNowPlayingCommand extends Command {
         embed.setDescription(`Volume **${queue.volume}**%\nDuration **${trackDuration}**\nLoop mode **${methods[queue.repeatMode]}**\nRequested by ${track.requestedBy}`);
 
         embed.setTimestamp();
-        embed.setFooter('Music comes first - Made with heart by Zerio ❤️', message.author.avatarURL({ dynamic: true }));
+        embed.setFooter({
+            text: 'Music comes first - Made with heart by Zerio ❤️',
+            iconURL: message.author.avatarURL({dynamic: true})
+        });
 
         const saveButton = new MessageButton();
 
@@ -43,6 +46,6 @@ module.exports = class MusicNowPlayingCommand extends Command {
 
         const row = new MessageActionRow().addComponents(saveButton);
 
-        message.channel.send({ embeds: [embed], components: [row] });
+        message.channel.send({embeds: [embed], components: [row]});
     }
 };
