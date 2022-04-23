@@ -61,7 +61,11 @@ module.exports = async (client) => {
             null      //view_confessions_role
         );
 
-        // Fetch here caches the members
+        guild.me.setNickname(`[${client.db.settings.selectPrefix.pluck().get(guild.id)}] ${client.name}`)
+
+        /** ------------------------------------------------------------------------------------------------
+         * Force Cache all members
+         * ------------------------------------------------------------------------------------------------ */
         console.log(`Caching members for ${guild.name}`);
         guild.members.fetch().then(members => {
             members.forEach(member => {
