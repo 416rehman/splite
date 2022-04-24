@@ -82,42 +82,6 @@ class Client extends Discord.Client {
     }
 
     /**
-     * Loads all available commands
-     * @param {string} path
-     */
-    loadCommands(path) {
-        this.logger.info('Loading commands...');
-        let table = new AsciiTable('Commands');
-        table.setHeading('File', 'Aliases', 'Type', 'Status');
-        readdirSync(path).filter(f => !f.endsWith('.js')).forEach(dir => {
-            const commands = readdirSync(resolve(__basedir, join(path, dir))).filter(f => f.endsWith('js'));
-            commands.forEach(f => {
-                const Command = require(resolve(__basedir, join(path, dir, f)));
-                const command = new Command(this); // Instantiate the specific command
-                if (command.name && !command.disabled) {
-                    // Map command
-                    this.commands.set(command.name, command);
-                    // Map command aliases
-                    let aliases = '';
-                    if (command.aliases) {
-                        command.aliases.forEach(alias => {
-                            this.aliases.set(alias, command);
-                        });
-                        aliases = command.aliases.join(', ');
-                    }
-                    table.addRow(f, aliases, command.type, 'pass');
-                } else {
-                    this.logger.warn(`${f} failed to load`);
-                    table.addRow(f, '', '', 'fail');
-
-                }
-            });
-        });
-        this.logger.info(`\n${table.toString()}`);
-        return this;
-    }
-
-    /**
      * Loads all available geoGuessr topics
      * @param {string} path
      */
@@ -171,42 +135,87 @@ class Client extends Discord.Client {
         systemChannel.send({embeds: [embed]});
     }
 
-    /**
-     * Loads all available slash commands
-     * @param path
-     */
-    loadSlashCommands(path) {
-        this.logger.info(`Loading Slash Commands`)
-        const table = new AsciiTable('Slash Commands').setHeading('Name', 'Type', 'Status');
-        const folders = readdirSync(path).filter(file => !file.endsWith('.js'))
-        folders.forEach(folder => {
-            this.logger.info(`Folder: ${folder}`)
-            const commands = readdirSync(resolve(__basedir, join(path, folder))).filter(f => f.endsWith('.js'))
-            commands.forEach(f => {
-                const Command = require(resolve(__basedir, join(path, folder, f)));
-                const slashCommand = new Command(this);
 
-                if (slashCommand.name && !slashCommand.disabled && slashCommand) {
-                    this.slashCommands.set(slashCommand.name, slashCommand);
-                    table.addRow(f, slashCommand.type, 'Pass');
-                    this.logger.info(`Loaded Slash Command: ${f} | ${slashCommand.description} | Type: ${slashCommand.type}`)
+    /**
+     * Loads all available commands
+     * @param {string} path
+     */
+    loadCommands(path) {
+        this.logger.info('Loading commands...');
+        let table = new AsciiTable('Commands');
+        table.setHeading('File', 'Aliases', 'Type', 'Status');
+
+        readdirSync(path).filter(f => !f.endsWith('.js')).forEach(dir => {
+            const commands = readdirSync(resolve(__basedir, join(path, dir))).filter(file => file.endsWith('js'));
+
+            commands.forEach(f => {
+                const Command = require(resolve(__basedir, join(path, dir, f)));
+                const command = new Command(this); // Instantiate the specific command
+                if (command.name && !command.disabled) {
+                    // Map command
+                    this.commands.set(command.name, command);
+
+                    // Map command aliases
+                    let aliases = '';
+                    if (command.aliases) {
+                        command.aliases.forEach(alias => {
+                            this.aliases.set(alias, command);
+                        });
+                        aliases = command.aliases.join(', ');
+                    }
+
+
+
+                    table.addRow(f, aliases, command.type, 'pass');
                 } else {
-                    table.addRow(f, '', 'Fail');
-                    this.logger.error(`Failed Loading Command: ${f}`)
+                    this.logger.warn(`${f} failed to load`);
+                    table.addRow(f, '', '', 'fail');
                 }
-            })
-        })
-        this.logger.info(table.toString())
+            });
+        });
+        this.logger.info(`\n${table.toString()}`);
+        return this;
     }
+
+    //
+    // /**
+    //  * Loads all available slash commands
+    //  * @param path
+    //  */
+    // loadSlashCommands(path) {
+    //     this.logger.info(`Loading Slash Commands`)
+    //     const table = new AsciiTable('Slash Commands').setHeading('Name', 'Type', 'Status');
+    //
+    //     const folders = readdirSync(path).filter(file => !file.endsWith('.js'))
+    //
+    //     folders.forEach(folder => {
+    //         this.logger.info(`Folder: ${folder}`)
+    //         const commands = readdirSync(resolve(__basedir, join(path, folder))).filter(f => f.endsWith('.js'))
+    //         commands.forEach(f => {
+    //             const Command = require(resolve(__basedir, join(path, folder, f)));
+    //             const slashCommand = new Command(this);
+    //
+    //             if (slashCommand.name && !slashCommand.disabled && slashCommand) {
+    //                 this.slashCommands.set(slashCommand.name, slashCommand);
+    //                 table.addRow(f, slashCommand.type, 'Pass');
+    //                 this.logger.info(`Loaded Slash Command: ${f} | ${slashCommand.description} | Type: ${slashCommand.type}`)
+    //             } else {
+    //                 table.addRow(f, '', 'Fail');
+    //                 this.logger.error(`Failed Loading Command: ${f}`)
+    //             }
+    //         })
+    //     })
+    //     this.logger.info(table.toString())
+    // }
 
     /**
      * Registers all slash commands across all the guilds
-     * @param id
+     * @param id client id
      * @returns {Promise<void>}
      */
     async registerAllSlashCommands(id) {
         this.logger.info('Started refreshing application (/) commands.');
-        const data = this.slashCommands.map((v, k) => v.slashCommand.toJSON())
+        const data = this.commands.filter(c => c.slashCommand && c.disabled !== true).map(c => c.slashCommand.toJSON())
         const promises = [];
         this.guilds.cache.forEach(g => {
             promises.push(this.registerSlashCommands(g, data, id))
@@ -221,9 +230,9 @@ class Client extends Discord.Client {
 
     /**
      * Registes all slash commands in the provided guild
-     * @param guild
-     * @param commands
-     * @param id
+     * @param guild guild to register commands in
+     * @param commands array of commands
+     * @param id client id
      * @returns {Promise<unknown>}
      */
     registerSlashCommands(guild, commands, id) {

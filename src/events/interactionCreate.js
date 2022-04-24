@@ -1,8 +1,8 @@
 const {MessageEmbed} = require('discord.js');
 module.exports = async (client, interaction) => {
     if (interaction.isCommand()) {
-        let command = client.slashCommands.get(interaction.commandName);
-        if (command) {
+        let command = client.commands.get(interaction.commandName);
+        if (command.slashCommand) {
             const cooldown = await command.isOnCooldown(interaction.user.id)
             if (cooldown)
                 return interaction.reply({
@@ -37,7 +37,10 @@ module.exports = async (client, interaction) => {
                 if (!command.checkNSFW(channel)) {
                     return interaction.reply({
                         embeds: [new MessageEmbed()
-                            .setAuthor(`${interaction.user.username}#${interaction.user.discriminator}`, command.getAvatarURL(interaction.user))
+                            .setAuthor({
+                                name: `${interaction.user.username}#${interaction.user.discriminator}`,
+                                iconURL: command.getAvatarURL(interaction.user)
+                            })
                             .setDescription(`NSFW Commands can only be run in NSFW channels.`)
                             .setTimestamp()
                             .setColor("RED")], ephemeral: true
@@ -47,7 +50,7 @@ module.exports = async (client, interaction) => {
                 command.setCooldown(interaction.user.id);
                 command.setInstance(interaction.user.id);
 
-                return command.run(interaction, interaction.options._hoistedOptions || null); // Run command
+                return command.interact(interaction, interaction.options._hoistedOptions || null); // Run command
             }
         }
     }

@@ -2,6 +2,7 @@ const {MessageEmbed} = require('discord.js');
 const permissions = require('../utils/permissions.json');
 const {Collection} = require("discord.js");
 const {fail} = require('../utils/emojis.json');
+const emojis = require("../utils/emojis.json");
 
 /**
  * Command class
@@ -222,6 +223,13 @@ class Command {
     }
 
     /**
+     * Interacts with the slash command
+     */
+    async interact(interaction, args) {
+        throw new Error(`The ${this.name} command has no interact() method`);
+    }
+
+    /**
      * If this.exclusive is true, a user can call this command once
      * until this method is called to remove the user from this.currentUsers
      *
@@ -307,13 +315,16 @@ class Command {
      * @param {object} user/author/member
      * @param {boolean} hard
      */
-    getAvatarURL(user, hard = true) {
-        const link = user.user ? user.user.displayAvatarURL({
-            size: 1024,
-            format: "png",
-            dynamic: true
-        }) : user.displayAvatarURL({size: 1024, format: "png", dynamic: true})
-        return hard ? link.split('?')[0] : link;
+    getAvatarURL(user, hard = false) {
+        const url = user.displayAvatarURL({ dynamic: true, size: 2048 }) || user.user.displayAvatarURL({ dynamic: true, size: 2048 });
+        // const link = user.user ? user.user.displayAvatarURL({
+        //     size: 4096,
+        //     dynamic: true,
+        // }) : user.displayAvatarURL({
+        //     size: 4096,
+        //     dynamic: true,
+        // });
+        return hard ? url.split('?')[0] : url;
     }
 
     /**
@@ -534,6 +545,18 @@ class Command {
             embed.addField('Reason', reason);
             modLog.send({embeds: [embed]}).catch(err => message.client.logger.error(err.stack));
         }
+    }
+
+    errorEmbed(error) {
+        return new MessageEmbed()
+            .setTitle(this.name.toUpperCase())
+            .setDescription(`${emojis.fail} ${error || 'An error has occurred'}
+                    
+                    **Usage**:
+                    \`\`\`${this.usage}\`\`\`
+                    **Example**:
+                    \`\`\`${this.examples.join('\n')}\`\`\``)
+            .setColor("RED");
     }
 }
 

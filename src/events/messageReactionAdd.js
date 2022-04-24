@@ -92,7 +92,9 @@ module.exports = async (client, messageReaction, user) => {
                 .addField('Original', `[Jump!](${message.url})`)
                 .setImage(image)
                 .setTimestamp()
-                .setFooter(message.id)
+                .setFooter({
+                    text: message.id
+                })
                 .setColor('#ffac33');
             await starboardChannel.send({content: `⭐ **1  |**  ${message.channel}`, embeds: [embed]});
         }
