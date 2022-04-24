@@ -62,7 +62,7 @@ module.exports = async (client) => {
             null      //view_confessions_role
         );
 
-        guild.me.setNickname(`[${client.db.settings.selectPrefix.pluck().get(guild.id)}] ${client.name}`)
+        guild.me.setNickname(`[${client.db.settings.selectPrefix.pluck().get(guild.id)}] ${client.name}`).catch(() => {});
 
         /** ------------------------------------------------------------------------------------------------
          * Force Cache all members
