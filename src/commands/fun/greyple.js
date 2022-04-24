@@ -19,7 +19,7 @@ module.exports = class greypleCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("greyple", {url: this.getAvatarURL(member)});
+                const buffer = await msg.client.ameApi.generate("greyple", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "greyple.png");
 
                 await message.channel.send({files: [attachment]})

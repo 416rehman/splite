@@ -225,7 +225,7 @@ class Command {
     /**
      * Interacts with the slash command
      */
-    async interact(interaction, args) {
+    async interact(interaction, args, author) {
         throw new Error(`The ${this.name} command has no interact() method`);
     }
 
@@ -315,16 +315,16 @@ class Command {
      * @param {object} user/author/member
      * @param {boolean} hard
      */
-    getAvatarURL(user, hard = false) {
-        const url = user.displayAvatarURL({ dynamic: true, size: 2048 }) || user.user.displayAvatarURL({ dynamic: true, size: 2048 });
-        // const link = user.user ? user.user.displayAvatarURL({
-        //     size: 4096,
-        //     dynamic: true,
-        // }) : user.displayAvatarURL({
-        //     size: 4096,
-        //     dynamic: true,
-        // });
+    getAvatarURL(user, type, hard = false) {
+        const options = { dynamic: true, size: 2048 };
+        if (type) options.format = type;
+
+        const url = user.displayAvatarURL(options) || user.user.displayAvatarURL(options);
         return hard ? url.split('?')[0] : url;
+    }
+
+    getUserIdentifier(user) {
+        return user.tag || user.displayName || (user.username + user.discriminator);
     }
 
     /**
@@ -472,10 +472,10 @@ class Command {
         return true;
     }
 
-    checkBlacklist(message) {
+    checkBlacklist(user) {
         //Don't blacklist bot owners
-        if (message.client.isOwner(message.author)) return false;
-        return message.client.db.blacklist.selectRow.pluck().get(message.author.id)
+        if (this.client.isOwner(user)) return false;
+        return this.client.db.blacklist.selectRow.pluck().get(user.id)
     }
 
     /**

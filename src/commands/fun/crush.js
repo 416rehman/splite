@@ -19,7 +19,8 @@ module.exports = class crushCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("crush", {url: this.getAvatarURL(member)});
+                console.log(this.getAvatarURL(member))
+                const buffer = await msg.client.ameApi.generate("crush", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "crush.png");
 
                 await message.channel.send({files: [attachment]})

@@ -19,7 +19,7 @@ module.exports = class posterizeCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("posterize", {url: this.getAvatarURL(member)});
+                const buffer = await msg.client.ameApi.generate("posterize", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "posterize.png");
 
                 await message.channel.send({files: [attachment]})

@@ -20,7 +20,7 @@ module.exports = class sharpenCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("sharpen", {url: this.getAvatarURL(member)});
+                const buffer = await msg.client.ameApi.generate("sharpen", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "sharpen.png");
 
                 await message.channel.send({files: [attachment]})

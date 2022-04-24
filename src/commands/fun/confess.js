@@ -1,8 +1,8 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const Command = require('../../commands/Command.js');
+const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js')
 
-module.exports = class prefixCommand extends Command {
+module.exports = class confessCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'confess',
@@ -20,12 +20,12 @@ module.exports = class prefixCommand extends Command {
         });
     }
 
-    async run(interaction, args) {
+    async interact(interaction, args) {
         const client = interaction.client;
         const prefix = (client.db.settings.selectPrefix.pluck().get(interaction.guild.id))
         const confessionsChannelID = (client.db.settings.selectConfessionsChannelId.pluck().get(interaction.guild.id))
         if (!confessionsChannelID) return interaction.reply({
-            content: `This server doesn't have a confessions channel. Create one by using \`${prefix}setconfessions #channel\``,
+            content: `This server doesn't have a confessions channel. An admin can create one using the \`${prefix}setconfessions #channel\` command.`,
             ephemeral: true
         })
 

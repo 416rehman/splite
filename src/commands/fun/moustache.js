@@ -20,7 +20,7 @@ module.exports = class moustacheCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("moustache", {url: this.getAvatarURL(member)});
+                const buffer = await msg.client.ameApi.generate("moustache", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "moustache.png");
 
                 await message.channel.send({files: [attachment]})

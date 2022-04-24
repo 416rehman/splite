@@ -19,7 +19,7 @@ module.exports = class deepfryCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("deepfry", {url: this.getAvatarURL(member)});
+                const buffer = await msg.client.ameApi.generate("deepfry", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "deepfry.png");
 
                 await message.channel.send({files: [attachment]})

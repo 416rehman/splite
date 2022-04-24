@@ -1,6 +1,24 @@
 const Command = require('../Command.js');
 const {MessageEmbed, MessageAttachment} = require('discord.js');
 const {fail, load} = require("../../utils/emojis.json")
+const {SlashCommandBuilder} = require("@discordjs/builders");
+
+async function createImagePayload(text1, text2, requestingUser) {
+    const buffer = await this.client.utils.generateImgFlipImage(102918669, `${text1}`, `${text2}`)
+
+    if (buffer) {
+        const attachment = new MessageAttachment(buffer, "mocking.png");
+        const embed = new MessageEmbed()
+            .setTitle(`${this.getUserIdentifier(requestingUser)} is mocking ${text1}`)
+            .setDescription(`${text2}`)
+            .setImage("attachment://mocking.png")
+            .setFooter({
+                text: this.getUserIdentifier(requestingUser),
+                iconURL: this.getAvatarURL(requestingUser)
+            })
+        return {embeds: [embed], files: [attachment]}
+    }
+}
 
 module.exports = class MockCommand extends Command {
     constructor(client) {
@@ -11,6 +29,25 @@ module.exports = class MockCommand extends Command {
             description: 'Generates a "mocking-spongebob" image with provided text',
             type: client.types.FUN,
             examples: [`mock ${client.name} is the best bot!`],
+            slashCommand: new SlashCommandBuilder()
+                .addSubcommand(sc=>
+                    sc.setName('text')
+                    .setDescription('Generates a "mocking-spongebob" image with provided text')
+                        .addStringOption(o=>
+                            o.setName('text')
+                            .setRequired(true)
+                            .setDescription('Text to be mocked')
+                        )
+                )
+                .addSubcommand(sc =>
+                    sc.setName('user')
+                    .setDescription('Generates a "mocking-spongebob" image with user\'s last message')
+                        .addUserOption(o=>
+                            o.setName('user')
+                            .setRequired(true)
+                            .setDescription('User to be mocked')
+                        )
+                )
         });
     }
 
@@ -18,20 +55,15 @@ module.exports = class MockCommand extends Command {
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
                 const text = await this.getTexts(message, args);
-                const buffer = await msg.client.utils.generateImgFlipImage(102918669, `${text.text1}`, `${text.text2}`)
-
-                if (buffer) {
-                    const attachment = new MessageAttachment(buffer, "mocking.png");
-
-                    await message.channel.send({content: text.text1 + text.text2, files: [attachment]})
-                    await msg.delete()
-                }
+                const payload = await createImagePayload.call(this, text.text1, text.text2, message.author);
+                await msg.edit(payload);
             } catch (e) {
                 await msg.edit({embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)]})
             }
         })
     }
 
+    // Get texts from quoting
     async getTexts(message, args) {
         return new Promise((async (resolve, reject) => {
             //If reply
@@ -55,5 +87,42 @@ module.exports = class MockCommand extends Command {
             }
             reject('Failed')
         }))
+    }
+
+    async interact(interaction, args) {
+        interaction.deferReply();
+        if (interaction.options.getSubcommand() == 'text' ) {
+            const text = interaction.options.getString('text');
+            const payload = await createImagePayload.call(this, '', this.client.utils.spongebobText(text), interaction.author);
+            interaction.reply(payload);
+        }
+        else if (interaction.options.getSubcommand() == 'user') {
+            const user = interaction.options.getUser('user');
+
+            interaction.channel.messages.fetch({limit: 100}).then(async messages => {
+                if (messages.size > 0) {
+                    const user_messages = await messages.filter(m => m.author.id === user.id);
+                    const lastMessage = await user_messages.first();
+
+                    if (!lastMessage.author) {
+                        return interaction.reply({
+                            content: `${fail} Failed to find last message from ${user.username}`,
+                            ephemeral: true
+                        });
+                    }
+
+                    this.client.utils.replaceMentionsWithNames(lastMessage.content, lastMessage.guild).then(async text => {
+                        const payload = await createImagePayload.call(this, this.getUserIdentifier(lastMessage.author), this.client.utils.spongebobText(text), interaction.author);
+                        lastMessage.reply(payload).then(()=>interaction.deleteReply())
+
+                    })
+                } else {
+                    return interaction.reply({
+                        content: `${fail} Failed to find last message from ${user.username}`,
+                        ephemeral: true
+                    });
+                }
+            });
+        }
     }
 };

@@ -62,15 +62,18 @@ module.exports = async (client, message) => {
 
         if (command && !disabledCommands.includes(command.name)) {
             //Blacklisted user
-            if (command.checkBlacklist(message)) return message.reply({embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${message.client.ownerTag}\`** for appeals.`)]}).then(msg => {
+            if (command.checkBlacklist(message.author)) return message.reply({embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${message.client.ownerTag}\`** for appeals.`)]}).then(msg => {
                 setTimeout(() => msg.delete(), 15000)
             });
+
+            // check cooldown
             const cooldown = await command.isOnCooldown(message.author.id)
             if (cooldown)
                 return message.reply({embeds: [new MessageEmbed().setDescription(`${fail} You are on a cooldown. Try again in **${cooldown}** seconds.`)]}).then(msg => {
                     setTimeout(() => msg.delete(), 3000)
                 });
 
+            // check if an instance of the command is already running
             const instanceExists = command.isInstanceRunning(message.author.id)
             if (instanceExists)
                 return message.reply({embeds: [new MessageEmbed().setDescription(`${fail} Command already in progress, please wait for it.`)]}).then(msg => {
@@ -85,10 +88,13 @@ module.exports = async (client, message) => {
                     return message.channel.send(`${fail} This is a mod-only channel. Only Mod commands may be used in this channel.\nTo reset this, an admin has to use \`${prefix}clearcommandchanels\` in another channel`).then(m => setTimeout(() => m.delete(), 15000)); // Return early so bot doesn't respond
                 }
             }
+
             // Check permissions
             const permissionErrors = command.checkPermissionErrors(message.member, message.channel, message.guild);
             if (!permissionErrors) return;
             if (permissionErrors instanceof MessageEmbed) return message.reply({embeds: [permissionErrors]})
+
+            // check nsfw channel
             if (!command.checkNSFW(message.channel))
                 return message.reply({
                     embeds: [new MessageEmbed()
@@ -102,7 +108,16 @@ module.exports = async (client, message) => {
                 })
 
             // Check if command is voice channel only
-            if (!command.checkVoiceChannel(message)) return;
+            if (!command.checkVoiceChannel(message)) return message.reply({
+                embeds: [new MessageEmbed()
+                    .setAuthor({
+                        name: `${message.author.username}#${message.author.discriminator}`,
+                        iconURL: message.author.displayAvatarURL()
+                    })
+                    .setDescription(`${fail} This command can only be run if you are in a voice channel.`)
+                    .setTimestamp()
+                    .setColor("RED")]
+            })
 
             // Update points with commandPoints value
             if (pointTracking)
@@ -110,8 +125,10 @@ module.exports = async (client, message) => {
 
             message.command = true; // Add flag for messageUpdate event
             message.channel.sendTyping();
-            command.setInstance(message.author.id);
+
+            if (command.exclusive) command.setInstance(message.author.id); // Track instance
             command.setCooldown(message.author.id);
+
             return command.run(message, args); // Run command
 
         } else if (

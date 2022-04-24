@@ -19,7 +19,7 @@ module.exports = class awooifyCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.nekoApi.generate("awooify", {url: this.getAvatarURL(member, false)})
+                const buffer = await msg.client.nekoApi.generate("awooify", {url: this.getAvatarURL(member, "png")})
                 const attachment = new MessageAttachment(buffer, "awooify.png");
 
                 await message.channel.send({files: [attachment]})

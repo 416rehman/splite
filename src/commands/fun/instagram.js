@@ -20,7 +20,7 @@ module.exports = class instagramCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("instagram", {url: this.getAvatarURL(member)});
+                const buffer = await msg.client.ameApi.generate("instagram", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "instagram.png");
 
                 await message.channel.send({files: [attachment]})

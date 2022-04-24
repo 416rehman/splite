@@ -20,7 +20,7 @@ module.exports = class distortCommand extends Command {
 
         message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
             try {
-                const buffer = await msg.client.ameApi.generate("distort", {url: this.getAvatarURL(member)});
+                const buffer = await msg.client.ameApi.generate("distort", {url: this.getAvatarURL(member, "png")});
                 const attachment = new MessageAttachment(buffer, "distort.png");
 
                 await message.channel.send({files: [attachment]})

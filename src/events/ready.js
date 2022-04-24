@@ -1,4 +1,5 @@
 module.exports = async (client) => {
+    // Set status
     const activities = [
         {name: `@${client.name} help`, type: 'LISTENING'},
         {name: `@${client.name}`, type: 'LISTENING'}

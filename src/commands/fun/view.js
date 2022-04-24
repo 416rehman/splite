@@ -1,7 +1,7 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const Command = require('../../commands/Command.js');
+const Command = require('../Command.js');
 
-module.exports = class prefixCommand extends Command {
+module.exports = class viewCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'view',
@@ -19,7 +19,7 @@ module.exports = class prefixCommand extends Command {
         });
     }
 
-    async run(interaction, args) {
+    async interact(interaction, args) {
         const client = interaction.client;
         const prefix = client.db.settings.selectPrefix.pluck().get(interaction.guild.id)
         const viewConfessionsRole = client.db.settings.selectViewConfessionsRole.pluck().get(interaction.guild.id)

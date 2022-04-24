@@ -1,8 +1,8 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const Command = require('../../commands/Command.js');
+const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js')
 
-module.exports = class prefixCommand extends Command {
+module.exports = class anonymous extends Command {
     constructor(client) {
         super(client, {
             name: 'anonymous',
@@ -20,7 +20,7 @@ module.exports = class prefixCommand extends Command {
         });
     }
 
-    async run(interaction, args) {
+    async interact(interaction, args) {
         const cost = 1;
         const client = interaction.client
         const prefix = (client.db.settings.selectPrefix.pluck().get(interaction.guild.id))
