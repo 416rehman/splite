@@ -278,7 +278,6 @@ class Client extends Discord.Client {
      * @return {{permissions: *, id}|null}
      */
     constructFullPermissions(allCommands, slashCommand, guild) {
-        if (slashCommand.name === 'avatar') process.exit()
         const perms_required = allCommands.find(command => command.name === slashCommand.name).userPermissions;
         if (!perms_required || perms_required.length === 0) return;
 
