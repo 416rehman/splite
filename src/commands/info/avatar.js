@@ -32,7 +32,7 @@ module.exports = class AvatarCommand extends Command {
 
 function displayAvatar(user, context, isInteraction = false) {
     const embed = new MessageEmbed()
-        .setTitle(`${user.tag || user.displayName || user.username + user.discriminator}'s Avatar`)
+        .setTitle(`${this.getUserIdentifier(user)}'s Avatar`)
         .setImage(this.getAvatarURL(user))
         .setFooter({
             text: context.member.displayName,
