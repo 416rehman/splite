@@ -165,7 +165,6 @@ class Client extends Discord.Client {
                     }
 
 
-
                     table.addRow(f, aliases, command.type, 'pass');
                 } else {
                     this.logger.warn(`${f} failed to load`);
@@ -215,7 +214,7 @@ class Client extends Discord.Client {
      */
     async registerAllSlashCommands(id) {
         this.logger.info('Started refreshing application (/) commands.');
-        const data = this.commands.filter(c => c.slashCommand && c.disabled !== true).map(c => c.slashCommand.toJSON())
+        const data = this.commands.filter(c => c.slashCommand && c.disabled !== true);
         const promises = [];
         this.guilds.cache.forEach(g => {
             promises.push(this.registerSlashCommands(g, data, id))
@@ -237,17 +236,65 @@ class Client extends Discord.Client {
      */
     registerSlashCommands(guild, commands, id) {
         return new Promise((async (resolve, reject) => {
+
             const rest = new REST({version: '9'}).setToken(this.token);
             try {
+                const slashCommands = commands.map(c => {
+                    if (c.userPermissions && c.userPermissions.length > 0)
+                        c.slashCommand.setDefaultPermission(false);
+
+                    return c.slashCommand.toJSON();
+                })
                 await rest.put(
                     Routes.applicationGuildCommands(id, guild.id),
-                    {body: commands},
+                    {body: slashCommands},
                 );
+
+                console.log(`Setting command permissions for ${guild.name}`)
+
+                guild.commands.fetch().then(async (registeredCommands) => {
+                    let fullPermissions = registeredCommands.map(async c => this.constructFullPermissions(commands, c, guild))
+
+                    Promise.all(fullPermissions).then(async (permissions) => {
+                        permissions = permissions.filter(p => p !== undefined && p !== null) // filter out undefined and null values
+                        guild.commands?.permissions.set({fullPermissions: permissions})
+                        console.log(`Updated command permissions for ${guild.name}`)
+                    })
+                })
+
                 resolve('Registered slash commands for ' + guild.name);
+
             } catch (error) {
                 reject(error);
             }
         }))
+    }
+
+    /**
+     * Constructs the full permissions object for a slash command
+     * @param allCommands
+     * @param slashCommand
+     * @param guild
+     * @return {{permissions: *, id}|null}
+     */
+    constructFullPermissions(allCommands, slashCommand, guild) {
+        if (slashCommand.name === 'avatar') process.exit()
+        const perms_required = allCommands.find(command => command.name === slashCommand.name).userPermissions;
+        if (!perms_required || perms_required.length === 0) return;
+
+        let matching_roles = guild.roles.cache.filter(r => r.permissions.has(perms_required))
+        if (!matching_roles || matching_roles.length === 0) return null;
+
+        return {
+            id: slashCommand.id,
+            permissions: matching_roles.last(10).map(r => {
+                return {
+                    id: r.id,
+                    type: 'ROLE',
+                    permission: true
+                }
+            })
+        }
     }
 
     /**
