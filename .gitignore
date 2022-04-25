@@ -1,5 +1,6 @@
 # ignore
 *.sqlite*
+.github
 node_modules
 logs/*
 data/emojis
