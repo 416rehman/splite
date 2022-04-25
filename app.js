@@ -4,6 +4,12 @@ require('./src/utils/prototypes').arrayProto(Array)
 
 global.__basedir = __dirname;
 
+// check node version
+if (process.version.slice(1).split('.')[0] < 16) {
+    console.error('Node.js 16.0.0 or higher is required. Update Node.js on your system.');
+    process.exit(1);
+}
+
 // Client setup
 const intents = [
   "GUILDS",
