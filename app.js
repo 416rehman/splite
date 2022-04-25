@@ -12,26 +12,30 @@ if (process.version.slice(1).split('.')[0] < 16) {
 
 // Client setup
 const intents = [
-  "GUILDS",
-  "GUILD_BANS",
-  "GUILD_VOICE_STATES",
-  "GUILD_MESSAGES",
-  "GUILD_MESSAGE_REACTIONS",
-  "GUILD_MEMBERS",
-  // "GUILD_PRESENCES"
-]
-const client = new Client(require('./config.json'), {intents, partials: ['MESSAGE', 'CHANNEL', 'REACTION'], allowedMentions: { parse: ['users', 'roles'], repliedUser: true }});
+    "GUILDS",
+    "GUILD_BANS",
+    "GUILD_VOICE_STATES",
+    "GUILD_MESSAGES",
+    "GUILD_MESSAGE_REACTIONS",
+    "GUILD_MEMBERS",
+    // "GUILD_PRESENCES"
+];
 
-// Initialize client
-function init() {
-  client.loadEvents('./src/events');
-  client.loadCommands('./src/commands');
-  client.loadTopics('./data/geoguessr');
-  client.handleMusicEvents();
-}
+const client = new Client(require('./config.json'), {
+    intents,
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+    allowedMentions: {parse: ['users', 'roles'], repliedUser: true}
+});
 
-client.login(client.token).then(()=>{
-  init();
+client.loadEvents('./src/events');
+
+client.login(client.token).then(() => {
+    client.loadCommands('./src/commands');
+    client.loadTopics('./data/geoguessr');
+    client.handleMusicEvents();
 })
 
-process.on('unhandledRejection', err => {client.logger.error(err); console.log(err);});
+process.on('unhandledRejection', err => {
+    client.logger.error(err);
+    console.log(err);
+});
