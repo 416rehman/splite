@@ -91,15 +91,18 @@ module.exports = class smashOrPassCommand extends Command {
                 .setFooter({text: `Expires in 30 seconds ${points ? `| Points: ${points}` : ''}`})
 
             message.channel.send({embeds: [embed]}).then(async msg => {
-                const result = await handleSmashOrPass(msg, message.author, points, member)
-                await msg.edit({
-                    embeds: [new MessageEmbed()
-                        .setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`)
-                        .setDescription(result.decision)
-                        .setFooter({text: `Expires in 30 seconds | Points: ${points}`})]
+                handleSmashOrPass.call(this, msg, message.author, points, member).then(async result => {
+                    await msg.edit({
+                        embeds: [new MessageEmbed()
+                            .setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`)
+                            .setDescription(result.decision)
+                            .setFooter({text: `Expires in 30 seconds | Points: ${points}`})]
+                    })
+                    await msg.reactions.removeAll();
+                    this.done(message.author.id)
+                }).finally(() => {
+                    this.done(message.author.id)
                 })
-                await msg.reactions.removeAll();
-                this.done(message.author.id)
             })
         } else {
             const likedByUsers = message.client.db.SmashOrPass.getLikedByUsers.all({userId: message.author.id}) || []
@@ -114,24 +117,26 @@ module.exports = class smashOrPassCommand extends Command {
                     .setFooter({text: `Expires in 30 seconds | Points: ${points}`})
 
                 message.channel.send({embeds: [embed]}).then(async msg => {
-                    console.log(`started`)
                     while (points >= cost && usersToBeShown.length) {
 
                         const currentUser = await nextUser(msg, usersToBeShown, points, prefix);
                         await msg.react(`🔥`);
                         await msg.react(`👎`);
+                        await msg.react(`🛑`);
                         if (currentUser) {
-                            let result = await handleSmashOrPass(msg, message.author, points, currentUser).catch(e => {
-                                return stopPlaying(msg, message.author.id, `${emojis.fail} ${e}`);
-                            })
-                            if (!result) return;
-                            points = result.points;
-                            await msg.edit({
-                                embeds: [new MessageEmbed()
-                                    .setTitle(result.decision)
-                                    .setDescription(`${emojis.load} Loading...`)
-                                    .setFooter({text: `Expires in 30 seconds | Points: ${points}`})]
-                            })
+                            try {
+                                let result = await handleSmashOrPass.call(this, msg, message.author, points, currentUser)
+                                if (!result) return;
+                                points = result.points;
+                                await msg.edit({
+                                    embeds: [new MessageEmbed()
+                                        .setTitle(result.decision)
+                                        .setDescription(`${emojis.load} Loading...`)
+                                        .setFooter({text: `Expires in 30 seconds | Points: ${points}`})]
+                                })
+                            } catch (e) {
+                                return stopPlaying(msg, message.author.id, `${e}`);
+                            }
                         }
                     }
                     if (points < cost) await stopPlaying(msg, message.author.id, `${emojis.nep} You need **${cost - points}** more points ${emojis.point} in this server to play ${emojis.smashorpass} **Smash or Pass** ${emojis.smashorpass} .\n\nTo check your points ${emojis.point}, type \`${prefix}points\``);
@@ -177,14 +182,14 @@ async function handleSmashOrPass(msg, author, points, currentUser) {
         console.log(`HANDLE SMASH`)
         const date = new Date();
         const filter = (reaction, user) => {
-            return (reaction.emoji.name === '🔥' || reaction.emoji.name === '👎') && user.id == author.id;
+            return (reaction.emoji.name === '🔥' || reaction.emoji.name === '👎' || reaction.emoji.name === '🛑') && user.id == author.id;
         };
 
         const collector = msg.createReactionCollector({filter, time: 30000});
 
         let decision = 'Undecided';
         collector.on('collect', async (reaction, user) => {
-            if (reaction.emoji.name === '🔥') {
+            if (reaction.emoji.name === '🔥' && user.id === author.id) {
                 try {
                     decision = `🔥 Smashed ${currentUser.user.username}`
                     msg.client.db.SmashOrPass.insertRow.run(author.id, currentUser.user.id, 'yes', date.toISOString())
@@ -192,8 +197,9 @@ async function handleSmashOrPass(msg, author, points, currentUser) {
                     points = points - cost;
                 } catch (e) {
                     msg.client.db.matches.unmatchUser.run(author.id, currentUser.user.id)
-                    stopPlaying(msg, author.id, `${emojis.match} **IT'S A MATCH** ${emojis.match}\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
-                    resolve({decision, points})
+                    await msg.reactions.removeAll();
+                    this.done(msg.author.id)
+                    reject( `${emojis.match} **IT'S A MATCH** ${emojis.match}\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
                 }
 
                 const matched = await msg.client.db.SmashOrPass.getMatch.get({
@@ -212,18 +218,26 @@ async function handleSmashOrPass(msg, author, points, currentUser) {
                         })
                     }
                 } catch (e) {
-                    await stopPlaying(msg, author.id, `${emojis.match} **IT'S A MATCH** ${emojis.match}\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
-                    resolve({decision, points})
+                    msg.client.db.matches.unmatchUser.run(author.id, currentUser.user.id)
+                    await msg.reactions.removeAll();
+                    this.done(msg.author.id)
+                    reject( `${emojis.match} **IT'S A MATCH** ${emojis.match}\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
                 }
-
-            } else if (reaction.emoji.name === '👎') {
+            }
+            else if (reaction.emoji.name === '👎' && user.id === author.id) {
                 try {
                     decision = `👎 Passed ${currentUser.user.username}`
                     msg.client.db.SmashOrPass.insertRow.run(author.id, currentUser.user.id, 'no', date.toISOString())
                 } catch (e) {
-                    await stopPlaying(msg, author.id, `${emojis.fail} Stoped Playing`)
-                    resolve({decision, points})
+                    await msg.reactions.removeAll();
+                    this.done(msg.author.id)
+                    reject( `${emojis.fail} Stopped Playing`)
                 }
+            }
+            else if (reaction.emoji.name === '🛑' && user.id === author.id) {
+                await msg.reactions.removeAll();
+                this.done(msg.author.id)
+                reject( '🛑 Stopped Playing')
             }
 
             await msg.reactions.removeAll();
