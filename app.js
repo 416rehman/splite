@@ -22,14 +22,12 @@ const intents = [
 ]
 const client = new Client(require('./config.json'), {intents, partials: ['MESSAGE', 'CHANNEL', 'REACTION'], allowedMentions: { parse: ['users', 'roles'], repliedUser: true }});
 
-// Handle music events
-client.handleMusicEvents();
-
 // Initialize client
 function init() {
   client.loadEvents('./src/events');
   client.loadCommands('./src/commands');
   client.loadTopics('./data/geoguessr');
+  client.handleMusicEvents();
 }
 
 client.login(client.token).then(()=>{
