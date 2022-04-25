@@ -32,7 +32,7 @@ Splite is a free to use multipurpose Discord bot. It is designed to be a flexibl
 5. Run `npm i` in the repo directory to install dependencies
 6. Run `node app.js` command to run the bot
 
-*If you wish to run the bot over pm2, use the command `pm2 ecosystem.config.js`*
+*If you wish to run the bot over pm2, use the command `pm2 start`*
 
 
 ## Modifying Functionality
