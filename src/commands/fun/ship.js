@@ -34,8 +34,8 @@ module.exports = class shipCommand extends Command {
 
                 const progress = message.client.utils.createProgressBar(shipScore)
                 const bg = await jimp.read('./data/ship/bgt.png')
-                const av1 = await jimp.read(this.getAvatarURL(member2))
-                const av2 = await jimp.read(this.getAvatarURL(member))
+                const av1 = await jimp.read(this.getAvatarURL(member2, "png", true))
+                const av2 = await jimp.read(this.getAvatarURL(member, "png", true))
                 const overlay = await jimp.read(shipScore > 50 ? './data/ship/overlay.png' : './data/ship/bOverlay.png')
 
                 av1.resize(512, 512);
