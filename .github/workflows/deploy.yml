@@ -29,4 +29,5 @@ jobs:
             cd /root/splite
             git pull -f
             echo "Applying Changes complete"
+            pm2 reload splite
             
