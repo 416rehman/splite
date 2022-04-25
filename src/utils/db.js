@@ -71,10 +71,10 @@ db.prepare(`
     guild_name TEXT,
     date_joined TEXT,
     bot INTEGER,
-    points INTEGER NOT NULL,
-    total_points INTEGER NOT NULL,
+    points INTEGER DEFAULT 0 NOT NULL,
+    total_points INTEGER DEFAULT 0 NOT NULL,
     warns TEXT,
-    current_member INTEGER NOT NULL,
+    current_member INTEGER DEFAULT 1 NOT NULL,
     afk TEXT,
     afk_time INTEGER,
     voteRunning INTEGER,
@@ -264,13 +264,10 @@ const users = {
       guild_name, 
       date_joined,
       bot,
-      points,
-      total_points,
-      current_member,
       afk,
       afk_time,
       optOutSmashOrPass
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?, ?, ?);
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `),
 
     // Selects
