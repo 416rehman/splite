@@ -19,16 +19,16 @@ module.exports = class PointsCommand extends Command {
         const member = this.getMemberFromMention(message, args[0]) ||
             message.guild.members.cache.get(args[0]) ||
             message.member;
-        const points = message.client.db.users.selectPoints.pluck().get(member.id, message.guild.id);
+        const points = message.client.db.users.selectPoints.pluck().get(member.id, message.guild.id) || 0;
         const voted = await message.client.utils.checkTopGGVote(message.client, member.id);
         const embed = new MessageEmbed()
-            .setTitle(`${member.displayName}'s ${emojis.point}`)
+            .setTitle(`${this.getUserIdentifier(member)}'s ${emojis.point}`)
             .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`${voted ? `${emojis.Voted}**+10%** Gambling Odds` : ''}`)
             .addField('Member', member.toString(), true)
             .addField(`Points ${emojis.point}`, `\`${points}\``, true)
             .setFooter({
-                text: `Boos your odds: ${prefix}vote`,
+                text: `Boost your odds: ${prefix}vote`,
                 iconURL: message.author.displayAvatarURL({dynamic: true})
             })
             .setTimestamp()
