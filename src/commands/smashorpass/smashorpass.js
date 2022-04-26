@@ -98,7 +98,10 @@ module.exports = class smashOrPassCommand extends Command {
 
             message.channel.send({embeds: [embed], components: [controls]}).then(async msg => {
 
-                const filter = (button) => button.user.id === message.author.id;
+                const filter = (button) => {
+                    button.deferUpdate();
+                    return button.user.id === message.author.id;
+                }
                 const collector = msg.createMessageComponentCollector({
                     filter,
                     componentType: 'BUTTON',
@@ -132,7 +135,10 @@ module.exports = class smashOrPassCommand extends Command {
 
                 message.channel.send({embeds: [embed], components: [controls]}).then(async msg => {
 
-                    const filter = (button) => button.user.id === message.author.id;
+                    const filter = (button) => {
+                        button.deferUpdate();
+                        return button.user.id === message.author.id;
+                    }
                     const collector = msg.createMessageComponentCollector({
                         filter,
                         componentType: 'BUTTON',
@@ -204,7 +210,6 @@ async function handleSmashOrPass(msg, author, points, currentUser, collector) {
 
         let decision = 'Undecided';
         collector.on('collect', async (btn) => {
-            btn.deferUpdate();
             if (btn.customId === 'smash' && btn.user.id === author.id) {
                 try {
                     decision = `🔥 Smashed ${currentUser.user.username}`
