@@ -120,8 +120,7 @@ class ReactionMenu {
 
         const row = new MessageActionRow()
         this.buttons.forEach(button => row.addComponents(button));
-
-        this.channel.send({embeds: [first], components: [...components, row] || []}).then(message => {
+        this.channel.send({embeds: [first], components: components ? [...components, row] : [row] || []}).then(message => {
 
             /**
              * The sent message
