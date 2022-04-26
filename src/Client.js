@@ -323,6 +323,154 @@ class Client extends Discord.Client {
             queue.metadata.send('Nobody is in the voice channel, leaving the voice channel... ❌');
         });
     }
+
+    /**
+     * Loads the Guild from the client to the database
+     * @param guild The guild to load
+     * @param prune if true, checks for members that are not in the guild and removes them, and checks for members that are not in the database and adds them
+     * @param createSettings if true, creates the settings for the guild, otherwise it will just load the settings
+     */
+    async loadGuild(guild, prune = true, createSettings = false) {
+        let {modLog, adminRole, modRole, muteRole, crownRole} = await this.extractSettings(guild, createSettings);
+
+        /** ------------------------------------------------------------------------------------------------
+         * UPDATE TABLES
+         * ------------------------------------------------------------------------------------------------ */
+        // Update settings table
+        this.db.settings.insertRow.run(
+            guild.id,
+            guild.name,
+            guild.systemChannelID, // Default channel
+            null, //confessions_channel_id
+            guild.systemChannelID, // Welcome channel
+            guild.systemChannelID, // Farewell channel
+            guild.systemChannelID,  // Crown Channel
+            modLog ? modLog.id : null,
+            adminRole ? adminRole.id : null,
+            modRole ? modRole.id : null,
+            muteRole ? muteRole.id : null,
+            crownRole ? crownRole.id : null,
+            null, //joinvoting_message_id
+            null,  //joinvoting_emoji
+            null,  //voting_channel_id
+            0,     //anonymous
+            null      //view_confessions_role
+        );
+
+        /** ------------------------------------------------------------------------------------------------
+         * Force Cache all members
+         * ------------------------------------------------------------------------------------------------ */
+        guild.members.fetch().then(members => {
+            const toBeInserted = members.map(member => {
+                // Update bios table
+                this.db.bios.insertRow.run(member.id, null)
+                return {
+                    user_id: member.id,
+                    user_name: member.user.username,
+                    user_discriminator: member.user.discriminator,
+                    guild_id: guild.id,
+                    guild_name: guild.name,
+                    date_joined: member.joinedAt.toString(),
+                    bot: member.user.bot ? 1 : 0,
+                    afk: null, //AFK
+                    afk_time: 0,
+                    optOutSmashOrPass: 0
+                }
+            })
+
+            // break up into chunks of 100 members using splice
+            const chunks = [];
+            while (toBeInserted.length > 0) {
+                chunks.push(toBeInserted.splice(0, 100));
+            }
+
+            chunks.forEach(chunk => {
+                this.db.users.insertBatch(chunk);
+            })
+
+            console.log(`Finished caching members for ${guild.name}`);
+
+            if (prune) {
+                /** ------------------------------------------------------------------------------------------------
+                 * CHECK DATABASE
+                 * ------------------------------------------------------------------------------------------------ */
+                    // If member left the guild, set their status to left
+                const currentMemberIds = this.db.users.selectCurrentMembers.all(guild.id).map(row => row.user_id);
+                for (const id of currentMemberIds) {
+                    if (!guild.members.cache.has(id)) {
+                        this.db.users.updateCurrentMember.run(0, id, guild.id);
+                        this.db.users.wipeTotalPoints.run(id, guild.id);
+                    }
+                }
+
+                // If member joined the guild, add to database
+                const missingMemberIds = this.db.users.selectMissingMembers.all(guild.id).map(row => row.user_id);
+                for (const id of missingMemberIds) {
+                    if (guild.members.cache.has(id)) this.db.users.updateCurrentMember.run(1, id, guild.id);
+                }
+            }
+        })
+
+        await guild.me.setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
+    }
+
+    async extractSettings(guild, createSettings) {
+        /** ------------------------------------------------------------------------------------------------
+         * FIND SETTINGS
+         * ------------------------------------------------------------------------------------------------ */
+            // Find mod log
+        const modLog = guild.channels.cache.find(c => c.name.replace('-', '').replace('s', '') === 'modlog' ||
+                c.name.replace('-', '').replace('s', '') === 'moderatorlog');
+
+        // Find admin and mod roles
+        const adminRole =
+            guild.roles.cache.find(r => r.name.toLowerCase() === 'admin' || r.name.toLowerCase() === 'administrator');
+        const modRole = guild.roles.cache.find(r => r.name.toLowerCase() === 'mod' || r.name.toLowerCase() === 'moderator');
+        let muteRole = guild.roles.cache.find(r => r.name.toLowerCase() === 'muted');
+        if (createSettings && !muteRole) {
+            try {
+                muteRole = await guild.roles.create({
+                    name: 'Muted',
+                    permissions: []
+                });
+            } catch (err) {
+                client.logger.error(err.message);
+            }
+
+            for (const channel of guild.channels.cache.values()) {
+                try {
+                    if (channel.viewable && channel.permissionsFor(guild.me).has('MANAGE_ROLES')) {
+                        if (channel.type === 'GUILD_TEXT') // Deny permissions in text channels
+                            await channel.permissionOverwrites.edit(muteRole, {
+                                'SEND_MESSAGES': false,
+                                'ADD_REACTIONS': false
+                            });
+                        else if (channel.type === 'GUILD_VOICE' && channel.editable) // Deny permissions in voice channels
+                            await channel.permissionOverwrites.edit(muteRole, {
+                                'SPEAK': false,
+                                'STREAM': false
+                            });
+                    }
+                } catch (err) {
+                    client.logger.error(err.stack)
+                }
+            }
+        }
+        // Create crown role
+        let crownRole = guild.roles.cache.find(r => r.name === 'The Crown');
+        if (createSettings && !crownRole) {
+            try {
+                crownRole = await guild.roles.create({
+                    name: 'The Crown',
+                    permissions: [],
+                    hoist: true
+                });
+            } catch (err) {
+                client.logger.error(err.message);
+            }
+        }
+        return {modLog, adminRole, modRole, muteRole, crownRole};
+    }
 }
 
 module.exports = Client;

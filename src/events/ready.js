@@ -24,125 +24,37 @@ module.exports = async (client) => {
     client.logger.info('Updating database and scheduling jobs...');
     //FOR EACH GUILD
     for (const guild of client.guilds.cache.values()) {
-        /** ------------------------------------------------------------------------------------------------
-         * FIND SETTINGS
-         * ------------------------------------------------------------------------------------------------ */
-            // Find mod log
-        const modLog = guild.channels.cache.find(c => c.name.replace('-', '').replace('s', '') === 'modlog' ||
-                c.name.replace('-', '').replace('s', '') === 'moderatorlog');
-
-        // Find admin and mod roles
-        const adminRole =
-            guild.roles.cache.find(r => r.name.toLowerCase() === 'admin' || r.name.toLowerCase() === 'administrator');
-        const modRole = guild.roles.cache.find(r => r.name.toLowerCase() === 'mod' || r.name.toLowerCase() === 'moderator');
-        const muteRole = guild.roles.cache.find(r => r.name.toLowerCase() === 'muted');
-        const crownRole = guild.roles.cache.find(r => r.name === 'The Crown');
-
-        /** ------------------------------------------------------------------------------------------------
-         * UPDATE TABLES
-         * ------------------------------------------------------------------------------------------------ */
-        // Update settings table
-        client.db.settings.insertRow.run(
-            guild.id,
-            guild.name,
-            guild.systemChannelID, // Default channel
-            null, //confessions_channel_id
-            guild.systemChannelID, // Welcome channel
-            guild.systemChannelID, // Farewell channel
-            guild.systemChannelID,  // Crown Channel
-            modLog ? modLog.id : null,
-            adminRole ? adminRole.id : null,
-            modRole ? modRole.id : null,
-            muteRole ? muteRole.id : null,
-            crownRole ? crownRole.id : null,
-            null, //joinvoting_message_id
-            null,  //joinvoting_emoji
-            null,  //voting_channel_id
-            0,     //anonymous
-            null      //view_confessions_role
-        );
-
-        /** ------------------------------------------------------------------------------------------------
-         * CROWN ROLE
-         * ------------------------------------------------------------------------------------------------ */
-        // Schedule crown role rotation
-        client.utils.scheduleCrown(client, guild);
-
-        /** ------------------------------------------------------------------------------------------------
-         * RUNNING COMMANDS
-         * ------------------------------------------------------------------------------------------------ */
-        client.utils.createCollections(client, guild)
-        try {
-            guild.me.setNickname(`[${client.db.settings.selectPrefix.pluck().get(guild.id)}] ${client.name}`);
-        } catch (e) {}
-
-        /** ------------------------------------------------------------------------------------------------
-         * Force Cache all members
-         * ------------------------------------------------------------------------------------------------ */
-        guild.members.fetch().then(members => {
-            const toBeInserted = members.map(member => {
-                // Update bios table
-                client.db.bios.insertRow.run(member.id, null)
-                return {
-                    user_id: member.id,
-                    user_name: member.user.username,
-                    user_discriminator:member.user.discriminator,
-                    guild_id:guild.id,
-                    guild_name:guild.name,
-                    date_joined:member.joinedAt.toString(),
-                    bot:member.user.bot ? 1 : 0,
-                    afk:null, //AFK
-                    afk_time:0,
-                    optOutSmashOrPass:0
-                }
-            })
-
-            // break up into chunks of 100 members using splice
-            const chunks = [];
-            while (toBeInserted.length > 0) {
-                chunks.push(toBeInserted.splice(0, 100));
-            }
-
-            chunks.forEach(chunk => {
-                client.db.users.insertBatch(chunk);
-            })
-
+        client.loadGuild(guild).then(async () => {
+            client.logger.info(`Loaded guild ${guild.name}`);
+            /** ------------------------------------------------------------------------------------------------
+             * CROWN ROLE
+             * ------------------------------------------------------------------------------------------------ */
+            // Schedule crown role rotation
+            client.utils.scheduleCrown(client, guild);
 
             /** ------------------------------------------------------------------------------------------------
-            * CHECK DATABASE
-            * ------------------------------------------------------------------------------------------------ */
-            // If member left the guild, remove from database
-            const currentMemberIds = client.db.users.selectCurrentMembers.all(guild.id).map(row => row.user_id);
-            for (const id of currentMemberIds) {
-                if (!guild.members.cache.has(id)) {
-                    client.db.users.updateCurrentMember.run(0, id, guild.id);
-                    client.db.users.wipeTotalPoints.run(id, guild.id);
+             * RUNNING COMMANDS
+             * ------------------------------------------------------------------------------------------------ */
+            client.utils.createCollections(client, guild)
+
+            /** ------------------------------------------------------------------------------------------------
+             * VERIFICATION
+             * ------------------------------------------------------------------------------------------------ */
+                // Fetch verification message
+            const {verification_channel_id: verificationChannelId, verification_message_id: verificationMessageId} =
+                    client.db.settings.selectVerification.get(guild.id);
+            const verificationChannel = guild.channels.cache.get(verificationChannelId);
+            if (verificationChannel && verificationChannel.viewable) {
+                try {
+                    await verificationChannel.messages.fetch(verificationMessageId);
+                } catch (err) { // Message was deleted
+                    client.logger.error(err);
                 }
             }
-
-            // If member joined the guild, add to database
-            const missingMemberIds = client.db.users.selectMissingMembers.all(guild.id).map(row => row.user_id);
-            for (const id of missingMemberIds) {
-                if (guild.members.cache.has(id)) client.db.users.updateCurrentMember.run(1, id, guild.id);
-            }
-
-            console.log(`Finished caching members for ${guild.name}`);
-        })
-
-        /** ------------------------------------------------------------------------------------------------
-         * VERIFICATION
-         * ------------------------------------------------------------------------------------------------ */
-            // Fetch verification message
-        const {verification_channel_id: verificationChannelId, verification_message_id: verificationMessageId} =
-                client.db.settings.selectVerification.get(guild.id);
-        const verificationChannel = guild.channels.cache.get(verificationChannelId);
-        if (verificationChannel && verificationChannel.viewable) {
-            try {
-                await verificationChannel.messages.fetch(verificationMessageId);
-            } catch (err) { // Message was deleted
-                client.logger.error(err);
-            }
-        }
+        }).catch(err => {
+            client.logger.error(`Failed to load guild ${guild.name}`);
+            client.logger.error(err);
+        });
     }
 
     // Remove left guilds
