@@ -14,8 +14,8 @@ module.exports = class CrownCommand extends Command {
     }
 
     run(message, args) {
-        const crown = message.client.db.settings.selectCrown.get(message.guild.id);
-        const crownRole = message.guild.roles.cache.get(crown.crownRoleId) || '`None`';
+        const {crown_role_id} = message.client.db.settings.selectCrown.get(message.guild.id);
+        const crownRole = message.guild.roles.cache.get(crown_role_id) || '`None`';
         const crowned = [...message.guild.members.cache.filter(m => {
             if (m.roles.cache.find(r => r === crownRole)) return true;
         }).values()];
