@@ -23,7 +23,10 @@ module.exports = class MusicNowPlayingCommand extends Command {
 
         embed.setColor('RED');
         embed.setThumbnail(track.thumbnail);
-        embed.setAuthor(track.title, this.client.user.displayAvatarURL({size: 1024, dynamic: true}));
+        embed.setAuthor({
+            name: track.title,
+            iconURL: this.client.user.displayAvatarURL({size: 1024, dynamic: true}),
+        });
 
         const methods = ['disabled', 'track', 'queue'];
 

@@ -87,7 +87,10 @@ module.exports = async (client, messageReaction, user) => {
             if (!message.content && !image) return;
 
             const embed = new MessageEmbed()
-                .setAuthor(message.author.tag, message.author.displayAvatarURL({dynamic: true}))
+                .setAuthor({
+                    name: message.author.tag,
+                    iconURL: message.author.displayAvatarURL({dynamic: true})
+                })
                 .setDescription(message.content)
                 .addField('Original', `[Jump!](${message.url})`)
                 .setImage(image)

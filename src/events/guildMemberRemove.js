@@ -19,7 +19,10 @@ module.exports = (client, member) => {
     ) {
         const embed = new MessageEmbed()
             .setTitle('Member Left')
-            .setAuthor(`${member.guild.name}`, member.guild.iconURL({dynamic: true}))
+            .setAuthor({
+                name: `${member.guild.name}`,
+                iconURL: member.guild.iconURL({dynamic: true})
+            })
             .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`${member} (**${member.user.tag}**)`)
             .setTimestamp()

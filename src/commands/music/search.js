@@ -29,10 +29,13 @@ module.exports = class MusicSearchCommand extends Command {
         const embed = new MessageEmbed();
 
         embed.setColor('RED');
-        embed.setAuthor(`Results for ${args.join(' ')}`, this.client.user.displayAvatarURL({
-            size: 1024,
-            dynamic: true
-        }));
+        embed.setAuthor({
+            name: `Results for ${args.join(' ')}`,
+            iconURL: this.client.user.displayAvatarURL({
+                size: 1024,
+                dynamic: true
+            })
+        });
 
         const maxTracks = res.tracks.slice(0, 10);
 

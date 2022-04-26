@@ -3,7 +3,10 @@ const {MessageEmbed} = require('discord.js');
 module.exports = (client, oldMember, newMember) => {
 
     const embed = new MessageEmbed()
-        .setAuthor(`${newMember.user.tag}`, newMember.user.displayAvatarURL({dynamic: true}))
+        .setAuthor({
+            name: `${newMember.user.tag}`,
+            iconURL: newMember.user.displayAvatarURL()
+        })
         .setTimestamp()
         .setColor(oldMember.guild.me.displayHexColor);
 

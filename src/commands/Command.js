@@ -386,7 +386,10 @@ class Command {
      */
     checkPermissionErrors(member, channel, guild, ownerOverride = true) {
         if (!channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return new MessageEmbed()
-            .setAuthor(`${member.tag}`, member.displayAvatarURL({dynamic: true}))
+            .setAuthor({
+                name: `${member.tag}`,
+                iconURL: member.displayAvatarURL({dynamic: true})
+            })
             .setTitle(`Missing Client Permissions: \`${this.name}\``)
             .setDescription(`\`\`\`SEND_MESSAGES\`\`\`\n\`\`\`EMBED_LINKS\`\`\``)
             .setTimestamp()
@@ -421,7 +424,10 @@ class Command {
                 channel.permissionsFor(member).missing(perms).map(p => permissions[p]);
             if (missingPermissions.length !== 0) {
                 return new MessageEmbed()
-                    .setAuthor(`${member.tag}`, member.displayAvatarURL({dynamic: true}))
+                    .setAuthor({
+                        name: `${member.tag}`,
+                        iconURL: member.displayAvatarURL({dynamic: true})
+                    })
                     .setTitle(`Missing User Permissions: \`${this.name}\``)
                     .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
                     .setTimestamp()
@@ -436,7 +442,10 @@ class Command {
             channel.permissionsFor(guild.me).missing(perms).map(p => permissions[p]);
         if (missingPermissions.length !== 0) {
             return new MessageEmbed()
-                .setAuthor(`${this.client.user.tag}`, this.client.user.displayAvatarURL({dynamic: true}))
+                .setAuthor({
+                    name: `${this.client.user.tag}`,
+                    iconURL: this.client.user.displayAvatarURL({dynamic: true})
+                })
                 .setTitle(`Missing Bot Permissions: \`${this.name}\``)
                 .setDescription(`\`\`\`diff\n${missingPermissions.map(p => `- ${p}`).join('\n')}\`\`\``)
                 .setTimestamp()
@@ -489,7 +498,10 @@ class Command {
         errorType = this.errorTypes[errorType];
         const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
         const embed = new MessageEmbed()
-            .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL({dynamic: true}))
+            .setAuthor({
+                name: `${message.author.tag}`,
+                iconURL: message.author.displayAvatarURL({dynamic: true})
+            })
             .setTitle(`${fail} Error: \`${this.name}\``)
             .setDescription(`\`\`\`diff\n- ${errorType}\n+ ${reason}\`\`\``)
             .addField('Usage', `\`${prefix}${this.usage}\``)

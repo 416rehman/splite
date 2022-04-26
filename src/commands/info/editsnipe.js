@@ -30,7 +30,10 @@ module.exports = class SnipeCommand extends Command {
                 })
                 .setImage(`${snipedMSg.newMessage.attachments.size > 0 ? snipedMSg.attachments.first().url : ''}`)
                 .setTimestamp()
-                .setAuthor(`${snipedMSg.newMessage.author.username}#${snipedMSg.newMessage.author.discriminator}`, `https://cdn.discordapp.com/avatars/${snipedMSg.newMessage.author.id}/${snipedMSg.newMessage.author.avatar}.png`)
+                .setAuthor({
+                    name: `${snipedMSg.newMessage.author.username}#${snipedMSg.newMessage.author.discriminator}`,
+                    iconURL: `https://cdn.discordapp.com/avatars/${snipedMSg.newMessage.author.id}/${snipedMSg.newMessage.author.avatar}.png`
+                })
             msg.edit({embeds: [embed]});
         } else {
             embed.setTitle(`${message.client.name} Sniper`)

@@ -26,7 +26,10 @@ module.exports = class WarnsCommand extends Command {
         const count = warns.warns.length;
 
         const embed = new MessageEmbed()
-            .setAuthor(member.user.tag, member.user.displayAvatarURL({dynamic: true}))
+            .setAuthor({
+                name: member.user.tag,
+                iconURL: member.user.displayAvatarURL({dynamic: true})
+            })
             .setFooter({
                 text: message.member.displayName,
                 iconURL: message.author.displayAvatarURL()
@@ -118,7 +121,7 @@ module.exports = class WarnsCommand extends Command {
                 reactions
             );
 
-            menu.reactions['⏹'] = menu.stop.bind(menu);
+            menu.functions['⏹'] = menu.stop.bind(menu);
 
         }
     }

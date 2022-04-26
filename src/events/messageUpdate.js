@@ -19,16 +19,6 @@ module.exports = (client, oldMessage, newMessage) => {
         client.emit('message', newMessage);
     }
 
-    try {
-        const embed = new MessageEmbed()
-            .setAuthor(`${newMessage.author.username}#${newMessage.author.discriminator}`, newMessage.author.displayAvatarURL({dynamic: true}))
-            .setTimestamp()
-            .setColor("YELLOW");
-    } catch (e) {
-        console.log(e)
-    }
-
-
     // Content change
     if (oldMessage.content != newMessage.content) {
 

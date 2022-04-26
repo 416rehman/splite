@@ -13,7 +13,10 @@ module.exports = (client, message) => {
     const embed = new MessageEmbed();
     try {
         embed.setTitle('Message Update: `Delete`')
-            .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL({dynamic: true}))
+            .setAuthor({
+                name: `${message.author.username}#${message.author.discriminator}`,
+                iconURL: message.author.displayAvatarURL({format: 'png', dynamic: true})
+            })
             .setTimestamp()
             .setColor("RED");
     } catch (e) {
