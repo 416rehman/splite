@@ -114,7 +114,7 @@ module.exports = class smashOrPassCommand extends Command {
                     })
                     this.done(message.author.id)
                 }).finally(() => {
-                    this.done(message.author.id)
+                    stopPlaying.call(this, message.author.id)
                 })
             })
         }
