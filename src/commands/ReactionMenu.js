@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 
 /**
  * Reaction Menu class
@@ -14,12 +14,12 @@ class ReactionMenu {
      * @param {Array} arr
      * @param {int} interval
      * @param {Message} overwrite
-     * @param {Object} reactions
+     * @param {Object} functions
      * @param {int} timeout
      * @param components
      * @param {function} callback
      */
-    constructor(client, channel, member, embed, arr = null, interval = 10, overwrite = null, reactions, timeout = 120000, components, callback = null) {
+    constructor(client, channel, member, embed, arr = null, interval = 10, overwrite = null, functions, timeout = 120000, components, callback = null) {
 
         /**
          * The Client
@@ -76,22 +76,34 @@ class ReactionMenu {
         this.max = (this.arr) ? arr.length : null;
 
         /**
-         * The reactions for menu
+         * The buttons to be displayed
+         * @type {MessageButton[]}
+         */
+        this.buttons = [
+            new MessageButton().setCustomId(`first`).setLabel(`⏮️`).setStyle('PRIMARY'),
+            new MessageButton().setCustomId(`previous`).setLabel(`◀️`).setStyle('PRIMARY'),
+            new MessageButton().setCustomId(`next`).setLabel(`▶️`).setStyle('PRIMARY'),
+            new MessageButton().setCustomId(`last`).setLabel(`⏭️`).setStyle('PRIMARY'),
+            new MessageButton().setCustomId(`stop`).setLabel(`⏹️`).setStyle('DANGER')
+        ];
+
+        /**
+         * The functions for the buttons
          * @type {Object}
          */
-        this.reactions = reactions || {
-            '⏪': this.first.bind(this),
-            '◀️': this.previous.bind(this),
-            '▶️': this.next.bind(this),
-            '⏩': this.last.bind(this),
-            '⏹️': this.stop.bind(this)
+        this.functions = functions || {
+            'first': this.first.bind(this),
+            'previous': this.previous.bind(this),
+            'next': this.next.bind(this),
+            'last': this.last.bind(this),
+            'stop': this.stop.bind(this)
         };
 
         /**
          * The emojis used as keys
          * @type {Array<string>}
          */
-        this.emojis = Object.keys(this.reactions);
+        this.emojis = Object.keys(this.functions);
 
         /**
          * The collector timeout
@@ -106,54 +118,47 @@ class ReactionMenu {
             .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
             .setDescription(description.join('\n'));
 
+        const row = new MessageActionRow()
+        this.buttons.forEach(button => row.addComponents(button));
 
-        this.channel.send({embeds: [first], components: components || []}).then(message => {
+        this.channel.send({embeds: [first], components: [...components, row] || []}).then(message => {
 
             /**
-             * The menu message
+             * The sent message
              * @type {Message}
              */
             this.message = message;
+            this.createCollector();
 
-            this.addReactions().then(r =>
-                this.createCollector()
-            );
             if (this.callback) this.callback(message)
         });
     }
 
-    /**
-     * Adds reactions to the message
-     */
-    async addReactions() {
-        for (const emoji of this.emojis) {
-            await this.message.react(emoji);
-        }
-    }
 
     /**
-     * Creates a reaction collector
+     * Creates a button collector
      */
     createCollector() {
-        const filter = (reaction, user) => {
-            return (this.emojis.includes(reaction.emoji.name) || this.emojis.includes(reaction.emoji.id)) &&
-                user.id == this.memberId
-        };
-
-        // Create collector
-        const collector = this.message.createReactionCollector({filter, time: this.timeout});
+        const filter = ((button) => {
+            button.deferUpdate();
+            return button.user.id === this.memberId;
+        });
+        const collector = this.message.createMessageComponentCollector({
+            filter,
+            componentType: 'BUTTON',
+            time: this.timeout
+        });
 
         // On collect
-        collector.on('collect', async reaction => {
-            let newPage = this.reactions[reaction.emoji.name] || this.reactions[reaction.emoji.id];
+        collector.on('collect', async btn => {
+            let newPage = this.functions[btn.customId];
             if (typeof newPage === 'function') newPage = newPage();
             if (newPage) await this.message.edit({embeds: [newPage]});
-            await reaction.users.remove(this.memberId);
         });
 
         // On end
         collector.on('end', () => {
-            this.message.reactions.removeAll();
+            this.message.edit({components: []});
         });
 
         this.collector = collector;
