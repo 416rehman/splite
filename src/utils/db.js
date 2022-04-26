@@ -270,6 +270,27 @@ const users = {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `),
 
+    insertBatch: (rows) => {
+        let query = `INSERT OR IGNORE INTO users (
+            user_id, 
+            user_name,
+            user_discriminator,
+            guild_id, 
+            guild_name, 
+            date_joined,
+            bot,
+            afk,
+            afk_time,
+            optOutSmashOrPass
+        ) VALUES ` + rows.map(row => "(?, ?, ?, ?,?, ?, ?, ?,?,?)").join(', ');
+
+        // console.log(query);
+        // process.exit()
+        const stmt = db.prepare(query);
+        const values = rows.flatMap(r => Object.values(r));
+        return stmt.run(...values);
+    },
+
     // Selects
     selectRow: db.prepare('SELECT * FROM users WHERE user_id = ? AND guild_id = ?;'),
     selectRowUserOnly: db.prepare('SELECT * FROM users WHERE user_id = ? limit 1;'),
@@ -345,8 +366,7 @@ const SmashOrPass = {
             and AlsoLikesMe.shownUserID = $userId
     where matches.userID = $userId and matches.liked = 'yes'
     group by AlsoLikesMe.userID
-    order by AlsoLikesMe.dateandtime desc;`),
-    /**
+    order by AlsoLikesMe.dateandtime desc;`), /**
      * Check if 2 users match
      * getMatch({userId: 123, userId2: 234})
      */
@@ -387,8 +407,7 @@ const SmashOrPass = {
         AND optoutsmashorpass != 1
     GROUP BY user_id
     ORDER BY random()
-    LIMIT 100;`),
-    /**
+    LIMIT 100;`), /**
      * unmatchUser({userId: 123, unmatchUser: 235})
      */
     unmatchUser: db.prepare(`delete from matches where userID = $userId and shownUserID = $unmatchUser;`),
@@ -426,11 +445,9 @@ const activities = {
       messages,
       moderations
     ) VALUES (?, ?, ?, ?, ?);
-  `),
-    //UPDATES
+  `), //UPDATES
     updateMessages: db.prepare(`INSERT INTO activities (activity_date, user_id, guild_id, messages) VALUES((select date()), $userId, $guildId, 1) ON CONFLICT(activity_date, user_id, guild_id) DO UPDATE SET messages = messages + 1 WHERE activity_date = (SELECT DATE()) AND user_id = $userId AND guild_id = $guildId;`),
-    updateModerations: db.prepare(`INSERT INTO activities (activity_date, user_id, guild_id, moderations) VALUES((select date()), $userId, $guildId, 1) ON CONFLICT(activity_date, user_id, guild_id) DO UPDATE SET moderations = moderations + 1 WHERE activity_date = (SELECT DATE()) AND user_id = $userId AND guild_id = $guildId;`),
-    //SELECTS
+    updateModerations: db.prepare(`INSERT INTO activities (activity_date, user_id, guild_id, moderations) VALUES((select date()), $userId, $guildId, 1) ON CONFLICT(activity_date, user_id, guild_id) DO UPDATE SET moderations = moderations + 1 WHERE activity_date = (SELECT DATE()) AND user_id = $userId AND guild_id = $guildId;`), //SELECTS
     getMessages: db.prepare(`SELECT SUM(messages) FROM activities WHERE user_id = ? AND guild_id = ? AND activity_date > date('now', '-' || ? || ' day' )`),
     getModerations: db.prepare(`
     SELECT SUM(moderations) FROM activities WHERE user_id = ? AND guild_id = ? AND activity_date > date('now', '-' || ? || ' day' )`),
@@ -447,12 +464,5 @@ const blacklist = {
 };
 
 module.exports = {
-    settings,
-    users,
-    confessions,
-    SmashOrPass,
-    bios,
-    activities,
-    blacklist,
-    db
+    settings, users, confessions, SmashOrPass, bios, activities, blacklist, db
 };

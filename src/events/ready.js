@@ -72,31 +72,41 @@ module.exports = async (client) => {
          * RUNNING COMMANDS
          * ------------------------------------------------------------------------------------------------ */
         client.utils.createCollections(client, guild)
-        guild.me.setNickname(`[${client.db.settings.selectPrefix.pluck().get(guild.id)}] ${client.name}`).catch(() => {});
+        try {
+            guild.me.setNickname(`[${client.db.settings.selectPrefix.pluck().get(guild.id)}] ${client.name}`);
+        } catch (e) {}
 
         /** ------------------------------------------------------------------------------------------------
          * Force Cache all members
          * ------------------------------------------------------------------------------------------------ */
-        console.log(`Caching members for ${guild.name}`);
         guild.members.fetch().then(members => {
-            members.forEach(member => {
-                // Update users table
-                client.db.users.insertRow.run(
-                    member.id,
-                    member.user.username,
-                    member.user.discriminator,
-                    guild.id,
-                    guild.name,
-                    member.joinedAt.toString(),
-                    member.user.bot ? 1 : 0,
-                    null, //AFK
-                    0,  //Afk_time
-                    0,    //OptOutSmashOrPass
-                );
-
+            const toBeInserted = members.map(member => {
                 // Update bios table
                 client.db.bios.insertRow.run(member.id, null)
+                return {
+                    user_id: member.id,
+                    user_name: member.user.username,
+                    user_discriminator:member.user.discriminator,
+                    guild_id:guild.id,
+                    guild_name:guild.name,
+                    date_joined:member.joinedAt.toString(),
+                    bot:member.user.bot ? 1 : 0,
+                    afk:null, //AFK
+                    afk_time:0,
+                    optOutSmashOrPass:0
+                }
             })
+
+            // break up into chunks of 100 members using splice
+            const chunks = [];
+            while (toBeInserted.length > 0) {
+                chunks.push(toBeInserted.splice(0, 100));
+            }
+
+            chunks.forEach(chunk => {
+                client.db.users.insertBatch(chunk);
+            })
+
 
             /** ------------------------------------------------------------------------------------------------
             * CHECK DATABASE
