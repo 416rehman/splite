@@ -250,8 +250,6 @@ class Client extends Discord.Client {
                     {body: slashCommands},
                 );
 
-                console.log(`Setting command permissions for ${guild.name}`)
-
                 guild.commands.fetch().then(async (registeredCommands) => {
                     let fullPermissions = registeredCommands.map(async c => this.constructFullPermissions(commands, c, guild))
 
