@@ -9,6 +9,7 @@ module.exports = class pickupCommand extends Command {
         super(client, {
             name: 'pickup',
             usage: 'pickup',
+            aliases: ['compliment'],
             description: 'Create a pickup line and send it to someone',
             type: client.types.FUN,
             examples: ['pickup @split']
@@ -25,7 +26,10 @@ module.exports = class pickupCommand extends Command {
             line = line.trim()
 
             const embed = new MessageEmbed()
-                .setAuthor(`Pickup lines used at your own risk`, this.getAvatarURL(member))
+                .setAuthor({
+                    name: `Pickup lines used at your own risk`,
+                    iconURL: this.getAvatarURL(member)
+                })
                 .setDescription(`<@${member.id}>,|| ${line} ||`)
                 .setFooter({
                     text: message.member.displayName,
