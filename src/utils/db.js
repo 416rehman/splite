@@ -321,6 +321,7 @@ const users = {
     deleteGuild: db.prepare('DELETE FROM users WHERE guild_id = ?;'),
     updateAfk: db.prepare('UPDATE users SET afk = ?, afk_time = ? WHERE user_id = ? AND guild_id = ?;'),
     updateOptOutSmashOrPass: db.prepare('UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;'),
+    deleteUser: db.prepare('DELETE FROM users WHERE user_id = ?;'),
 };
 
 // BOT CONFESSIONS TABLE
