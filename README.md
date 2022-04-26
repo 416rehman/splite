@@ -36,10 +36,11 @@ Splite is a free to use multipurpose Discord bot. It is designed to be a flexibl
 
 
 ## Modifying Functionality
-
+Commands are stored in `/src/commands/{category}/` directory<br>
+Events are stored in `/src/events/` directory<br>
 ### Command Handler
-Commands are stored `/src/commands/commands/{category}/` directory<br>
-Slash Commands are stored `/src/commands/slashCommands/{category}/` directory<br><br>
+
+
 Splite has a powerful command handler that extends the calypso handler, allowing you to serve both classic commands and slash commands from the same command class.<br>
 
 **Command Handler's Features:**
