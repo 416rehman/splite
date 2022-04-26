@@ -1,7 +1,7 @@
 //THIS IS SOOOO MESSY
 // but it works
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 
 const {oneLine} = require('common-tags');
 const emojis = require('../../utils/emojis.json')
@@ -24,7 +24,7 @@ module.exports = class smashOrPassCommand extends Command {
       `,
             type: client.types.SMASHORPASS,
             examples: ['smashorpass', 'sop', 'smash'],
-            clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES', 'EMBED_LINKS'],
             exclusive: true
         });
     }
@@ -47,9 +47,15 @@ module.exports = class smashOrPassCommand extends Command {
         }
 
         const stopPlaying = (msg, id, error = `${emojis.fail} Stopped Playing!`) => {
+            console.log('stopping smash or pass')
             this.done(message.author.id)
-            msg.edit({embeds: [new MessageEmbed().setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`).setDescription(error)]})
+            msg.edit({embeds: [new MessageEmbed().setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`).setDescription(error)], components: []})
         }
+
+        const controls = new MessageActionRow()
+        controls.addComponents(new MessageButton().setCustomId(`smash`).setLabel(`🔥 Smash`).setStyle('SUCCESS'))
+        controls.addComponents(new MessageButton().setCustomId(`pass`).setLabel(`👎 Pass`).setStyle('SECONDARY'))
+        controls.addComponents(new MessageButton().setCustomId(`stop`).setLabel(`🛑 STOP`).setStyle('DANGER'))
 
         // MENTIONED A USER
         if (args.length) {
@@ -90,21 +96,29 @@ module.exports = class smashOrPassCommand extends Command {
                 .setImage(member.user.displayAvatarURL({dynamic: true, size: 512}))
                 .setFooter({text: `Expires in 30 seconds ${points ? `| Points: ${points}` : ''}`})
 
-            message.channel.send({embeds: [embed]}).then(async msg => {
-                handleSmashOrPass.call(this, msg, message.author, points, member).then(async result => {
+            message.channel.send({embeds: [embed], components: [controls]}).then(async msg => {
+
+                const filter = (button) => button.user.id === message.author.id;
+                const collector = msg.createMessageComponentCollector({
+                    filter,
+                    componentType: 'BUTTON',
+                    time: 30000
+                });
+
+                handleSmashOrPass.call(this, msg, message.author, points, member, collector).then(async result => {
                     await msg.edit({
                         embeds: [new MessageEmbed()
                             .setTitle(`${emojis.smashorpass} Smash Or Pass ${emojis.smashorpass}`)
                             .setDescription(result.decision)
                             .setFooter({text: `Expires in 30 seconds | Points: ${points}`})]
                     })
-                    await msg.reactions.removeAll();
                     this.done(message.author.id)
                 }).finally(() => {
                     this.done(message.author.id)
                 })
             })
-        } else {
+        }
+        else {
             const likedByUsers = message.client.db.SmashOrPass.getLikedByUsers.all({userId: message.author.id}) || []
             const unseenUsers = message.client.db.SmashOrPass.getUnseenUsers.all({userId: message.author.id}) || []
             const usersToBeShown = [...likedByUsers, ...unseenUsers];
@@ -116,16 +130,21 @@ module.exports = class smashOrPassCommand extends Command {
                     .setDescription(`${emojis.load} Loading...`)
                     .setFooter({text: `Expires in 30 seconds | Points: ${points}`})
 
-                message.channel.send({embeds: [embed]}).then(async msg => {
-                    while (points >= cost && usersToBeShown.length) {
+                message.channel.send({embeds: [embed], components: [controls]}).then(async msg => {
 
+                    const filter = (button) => button.user.id === message.author.id;
+                    const collector = msg.createMessageComponentCollector({
+                        filter,
+                        componentType: 'BUTTON',
+                        time: 30000,
+                        dispose: true
+                    });
+
+                    while (points >= cost && usersToBeShown.length) {
                         const currentUser = await nextUser(msg, usersToBeShown, points, prefix);
-                        await msg.react(`🔥`);
-                        await msg.react(`👎`);
-                        await msg.react(`🛑`);
                         if (currentUser) {
                             try {
-                                let result = await handleSmashOrPass.call(this, msg, message.author, points, currentUser)
+                                let result = await handleSmashOrPass.call(this, msg, message.author, points, currentUser, collector)
                                 if (!result) return;
                                 points = result.points;
                                 await msg.edit({
@@ -177,19 +196,16 @@ async function nextUser(message, usersQueue, points, prefix) {
     })
 }
 
-async function handleSmashOrPass(msg, author, points, currentUser) {
+async function handleSmashOrPass(msg, author, points, currentUser, collector) {
     return new Promise((async (resolve, reject) => {
         console.log(`HANDLE SMASH`)
+        collector.resetTimer();
         const date = new Date();
-        const filter = (reaction, user) => {
-            return (reaction.emoji.name === '🔥' || reaction.emoji.name === '👎' || reaction.emoji.name === '🛑') && user.id == author.id;
-        };
-
-        const collector = msg.createReactionCollector({filter, time: 30000});
 
         let decision = 'Undecided';
-        collector.on('collect', async (reaction, user) => {
-            if (reaction.emoji.name === '🔥' && user.id === author.id) {
+        collector.on('collect', async (btn) => {
+            btn.deferUpdate();
+            if (btn.customId === 'smash' && btn.user.id === author.id) {
                 try {
                     decision = `🔥 Smashed ${currentUser.user.username}`
                     msg.client.db.SmashOrPass.insertRow.run(author.id, currentUser.user.id, 'yes', date.toISOString())
@@ -197,7 +213,6 @@ async function handleSmashOrPass(msg, author, points, currentUser) {
                     points = points - cost;
                 } catch (e) {
                     msg.client.db.matches.unmatchUser.run(author.id, currentUser.user.id)
-                    await msg.reactions.removeAll();
                     this.done(msg.author.id)
                     reject( `${emojis.match} **IT'S A MATCH** ${emojis.match}\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
                 }
@@ -219,35 +234,28 @@ async function handleSmashOrPass(msg, author, points, currentUser) {
                     }
                 } catch (e) {
                     msg.client.db.matches.unmatchUser.run(author.id, currentUser.user.id)
-                    await msg.reactions.removeAll();
                     this.done(msg.author.id)
                     reject( `${emojis.match} **IT'S A MATCH** ${emojis.match}\nHowever, we were unable to DM their discord tag to you. Please check your DMs settings.`)
                 }
             }
-            else if (reaction.emoji.name === '👎' && user.id === author.id) {
+            else if (btn.customId === 'pass' && btn.user.id === author.id) {
                 try {
                     decision = `👎 Passed ${currentUser.user.username}`
                     msg.client.db.SmashOrPass.insertRow.run(author.id, currentUser.user.id, 'no', date.toISOString())
                 } catch (e) {
-                    await msg.reactions.removeAll();
                     this.done(msg.author.id)
                     reject( `${emojis.fail} Stopped Playing`)
                 }
             }
-            else if (reaction.emoji.name === '🛑' && user.id === author.id) {
-                await msg.reactions.removeAll();
+            else if (btn.customId === 'stop' && btn.user.id === author.id) {
                 this.done(msg.author.id)
                 reject( '🛑 Stopped Playing')
             }
-
-            await msg.reactions.removeAll();
             resolve({decision, points})
         })
 
         collector.on('end', async () => {
-            await msg.reactions.removeAll();
-            this.done(msg.author.id)
-            reject(`Timed out.`)
+            reject(`${emojis.fail} Stopped Playing`)
         });
     }))
 }
