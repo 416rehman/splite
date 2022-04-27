@@ -376,10 +376,10 @@ async function getTopGGVote(client, userId) {
     return new Promise(((resolve, reject) => {
         let options = {
             'method': 'GET',
-            'url': `https://top.gg/api/bots/${config.apiKeys.TopGGID}/check?userId=${userId}`,
+            'url': `https://top.gg/api/bots/${config.apiKeys.topGG.manual.id}/check?userId=${userId}`,
             'headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
-                'Authorization': config.apiKeys.TopGGToken
+                'Authorization': config.apiKeys.topGG.manual.token
             }
         };
         request(options, function (error, response) {
