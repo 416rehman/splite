@@ -342,8 +342,9 @@ class Command {
 
     /**
      * Gets avatar from author/user/member
-     * @param {object} user/author/member
-     * @param {boolean} hard
+     * @param user the user to get avatar from
+     * @param type enforces avatar type (i.e 'png' or 'gif')
+     * @param hard enforces hard mode (i.e. no query params)
      */
     getAvatarURL(user, type, hard = false) {
         const options = {dynamic: true, size: 2048};

@@ -5,9 +5,9 @@ const {readdir, readdirSync} = require('fs');
 const {join, resolve} = require('path');
 const AsciiTable = require('ascii-table');
 const {fail} = require('./utils/emojis.json');
-const amethyste = require('amethyste-api')
-const {Collection} = require("discord.js");
-const {NekoBot} = require("nekobot-api");
+const amethyste = require('amethyste-api');
+const {Collection} = require('discord.js');
+const {NekoBot} = require('nekobot-api');
 const {Player} = require('discord-player');
 
 class Client extends Discord.Client {
@@ -38,14 +38,14 @@ class Client extends Discord.Client {
         this.topics = [];
         this.token = config.token;
         this.apiKeys = config.apiKeys;
-        this.ameApi = new amethyste(config.apiKeys.amethyste)
-        this.nekoApi = new NekoBot()
+        this.ameApi = new amethyste(config.apiKeys.amethyste);
+        this.nekoApi = new NekoBot();
         this.ownerId = config.ownerId;
-        this.extraOwnerIds = config.extraOwnerIds
+        this.extraOwnerIds = config.extraOwnerIds;
         this.bugReportChannelId = config.bugReportChannelId;
         this.feedbackChannelId = config.feedbackChannelId;
         this.serverLogId = config.serverLogId;
-        this.confessionReportsID = config.confessionReportsID
+        this.confessionReportsID = config.confessionReportsID;
         this.utils = require('./utils/utils.js');
         this.logger.info('Initializing...');
         this.odds = new Map();
@@ -58,7 +58,7 @@ class Client extends Discord.Client {
                 quality: 'highestaudio',
                 highWaterMark: 1 << 25
             }
-        })
+        });
     }
 
     /**
@@ -106,7 +106,7 @@ class Client extends Discord.Client {
      * @param {User} user
      */
     isOwner(user) {
-        return user.id === this.ownerId || this.extraOwnerIds?.includes(user.id)
+        return user.id === this.ownerId || this.extraOwnerIds?.includes(user.id);
     }
 
     /**
@@ -135,7 +135,7 @@ class Client extends Discord.Client {
             .setTitle(`${fail} System Error: \`${error}\``)
             .setDescription(`\`\`\`diff\n- System Failure\n+ ${errorMessage}\`\`\``)
             .setTimestamp()
-            .setColor("RANDOM");
+            .setColor('RANDOM');
         systemChannel.send({embeds: [embed]});
     }
 
@@ -170,7 +170,8 @@ class Client extends Discord.Client {
 
 
                     table.addRow(f, aliases, command.type, 'pass');
-                } else {
+                }
+                else {
                     this.logger.warn(`${f} failed to load`);
                     table.addRow(f, '', '', 'fail');
                 }
@@ -187,7 +188,7 @@ class Client extends Discord.Client {
 
 
         const webhooks = readdirSync(path).filter(file => file.endsWith('.webhook.js'));
-        console.log("WEBHOOKS: ", webhooks);
+        console.log('WEBHOOKS: ', webhooks);
         console.log({webhooks});
 
         webhooks.forEach(f => {
@@ -198,7 +199,8 @@ class Client extends Discord.Client {
                 this.webhooks.set(webhook.name, webhook);
 
                 table.addRow(`/${webhook.name}`, webhook.description || '', 'pass');
-            } else {
+            }
+            else {
                 this.logger.warn(`${f} failed to load`);
                 table.addRow(`/${webhook.name}`, webhook.description || '', 'fail');
             }
@@ -213,19 +215,19 @@ class Client extends Discord.Client {
      * @param id client id
      * @returns {Promise<void>}
      */
-    async registerAllSlashCommands(id) {
+    registerAllSlashCommands(id) {
         this.logger.info('Started refreshing application (/) commands.');
         const data = this.commands.filter(c => c.slashCommand && c.disabled !== true);
         const promises = [];
         this.guilds.cache.forEach(g => {
-            promises.push(this.registerSlashCommands(g, data, id))
-        })
+            promises.push(this.registerSlashCommands(g, data, id));
+        });
         Promise.all(promises).then(() => {
             this.logger.info('Finished refreshing application (/) commands.');
         }).catch((error) => {
-            const guild = error.url.toString().match(/(guilds\/)(\S*)(\/commands)/)[2]
-            if (error.code === 50001) return this.logger.error(`Failed to setup slash commands for guild: ${guild}. Missing perms.`)
-        })
+            const guild = error.url.toString().match(/(guilds\/)(\S*)(\/commands)/)[2];
+            if (error.code === 50001) return this.logger.error(`Failed to setup slash commands for guild: ${guild}. Missing perms.`);
+        });
     }
 
     /**
@@ -236,7 +238,7 @@ class Client extends Discord.Client {
      * @returns {Promise<unknown>}
      */
     registerSlashCommands(guild, commands, id) {
-        return new Promise((async (resolve, reject) => {
+        return new Promise(((resolve, reject) => {
 
             const rest = new REST({version: '9'}).setToken(this.token);
             try {
@@ -245,28 +247,30 @@ class Client extends Discord.Client {
                         c.slashCommand.setDefaultPermission(false);
 
                     return c.slashCommand.toJSON();
-                })
-                await rest.put(
+                });
+
+                rest.put(
                     Routes.applicationGuildCommands(id, guild.id),
                     {body: slashCommands},
                 );
 
-                guild.commands.fetch().then(async (registeredCommands) => {
-                    let fullPermissions = registeredCommands.map(async c => this.constructFullPermissions(commands, c, guild))
+                guild.commands.fetch().then((registeredCommands) => {
+                    let fullPermissions = registeredCommands.map(c => this.constructFullPermissions(commands, c, guild));
 
-                    Promise.all(fullPermissions).then(async (permissions) => {
-                        permissions = permissions.filter(p => p !== undefined && p !== null) // filter out undefined and null values
-                        guild.commands?.permissions.set({fullPermissions: permissions})
-                        console.log(`Updated command permissions for ${guild.name}`)
-                    })
-                })
+                    Promise.all(fullPermissions).then((permissions) => {
+                        permissions = permissions.filter(p => p !== undefined && p !== null); // filter out undefined and null values
+                        guild.commands?.permissions.set({fullPermissions: permissions});
+                        console.log(`Updated command permissions for ${guild.name}`);
+                    });
+                });
 
                 resolve('Registered slash commands for ' + guild.name);
 
-            } catch (error) {
+            }
+            catch (error) {
                 reject(error);
             }
-        }))
+        }));
     }
 
     /**
@@ -280,7 +284,7 @@ class Client extends Discord.Client {
         const perms_required = allCommands.find(command => command.name === slashCommand.name).userPermissions;
         if (!perms_required || perms_required.length === 0) return;
 
-        let matching_roles = guild.roles.cache.filter(r => r.permissions.has(perms_required))
+        let matching_roles = guild.roles.cache.filter(r => r.permissions.has(perms_required));
         if (!matching_roles || matching_roles.length === 0) return null;
 
         return {
@@ -290,9 +294,9 @@ class Client extends Discord.Client {
                     id: r.id,
                     type: 'ROLE',
                     permission: true
-                }
+                };
             })
-        }
+        };
     }
 
     /**
@@ -364,7 +368,7 @@ class Client extends Discord.Client {
         guild.members.fetch().then(members => {
             const toBeInserted = members.map(member => {
                 // Update bios table
-                this.db.bios.insertRow.run(member.id, null)
+                this.db.bios.insertRow.run(member.id, null);
                 return {
                     user_id: member.id,
                     user_name: member.user.username,
@@ -376,8 +380,8 @@ class Client extends Discord.Client {
                     afk: null, //AFK
                     afk_time: 0,
                     optOutSmashOrPass: 0
-                }
-            })
+                };
+            });
 
             // break up into chunks of 100 members using splice
             const chunks = [];
@@ -387,13 +391,13 @@ class Client extends Discord.Client {
 
             chunks.forEach(chunk => {
                 this.db.users.insertBatch(chunk);
-            })
+            });
 
             if (prune) {
                 /** ------------------------------------------------------------------------------------------------
                  * CHECK DATABASE
                  * ------------------------------------------------------------------------------------------------ */
-                    // If member left the guild, set their status to left
+                // If member left the guild, set their status to left
                 const currentMemberIds = this.db.users.selectCurrentMembers.all(guild.id).map(row => row.user_id);
                 for (const id of currentMemberIds) {
                     if (!guild.members.cache.has(id)) {
@@ -408,7 +412,7 @@ class Client extends Discord.Client {
                     if (guild.members.cache.has(id)) this.db.users.updateCurrentMember.run(1, id, guild.id);
                 }
             }
-        })
+        });
 
         await guild.members.cache.get(this.user.id).setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
     }
@@ -417,7 +421,7 @@ class Client extends Discord.Client {
         /** ------------------------------------------------------------------------------------------------
          * FIND SETTINGS
          * ------------------------------------------------------------------------------------------------ */
-            // Find mod log
+        // Find mod log
         const modLog = guild.channels.cache.find(c => c.name.replace('-', '').replace('s', '') === 'modlog' ||
                 c.name.replace('-', '').replace('s', '') === 'moderatorlog');
 
@@ -432,8 +436,9 @@ class Client extends Discord.Client {
                     name: 'Muted',
                     permissions: []
                 });
-            } catch (err) {
-                client.logger.error(err.message);
+            }
+            catch (err) {
+                this.logger.error(err.message);
             }
 
             for (const channel of guild.channels.cache.values()) {
@@ -450,8 +455,9 @@ class Client extends Discord.Client {
                                 'STREAM': false
                             });
                     }
-                } catch (err) {
-                    client.logger.error(err.stack)
+                }
+                catch (err) {
+                    this.logger.error(err.stack);
                 }
             }
         }
@@ -464,8 +470,9 @@ class Client extends Discord.Client {
                     permissions: [],
                     hoist: true
                 });
-            } catch (err) {
-                client.logger.error(err.message);
+            }
+            catch (err) {
+                this.logger.error(err.message);
             }
         }
         return {modLog, adminRole, modRole, muteRole, crownRole};

@@ -43,12 +43,7 @@ module.exports = class Webhook {
      */
     checkAuthorization(authorization) {
         if (this.authorization) {
-            if (this.authorization === authorization) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return this.authorization === authorization;
         }
         else {
             return true;
@@ -62,12 +57,7 @@ module.exports = class Webhook {
      */
     checkHost(host) {
         if (this.allowedHosts) {
-            if (this.allowedHosts.includes(host)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return !!this.allowedHosts.includes(host);
         }
         else {
             return true;
@@ -81,19 +71,14 @@ module.exports = class Webhook {
      */
     checkIP(ip) {
         if (this.allowedIPs) {
-            if (this.allowedIPs.includes(ip)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return !!this.allowedIPs.includes(ip);
         }
         else {
             return true;
         }
     }
 
-    async validate(request) {
+    validate(request) {
         if (this.checkCooldown()) {
             return {
                 status: 429, body: 'Too many requests',
@@ -124,9 +109,9 @@ module.exports = class Webhook {
      * @param body
      * @return {Promise<void>}
      */
-    async execute(body) {
+    execute(body) {
         return {
-            status: 200, body: 'NOT OVERRIDDEN',
+            status: 200, body: `NOT OVERRIDDEN. BODY: ${body}`,
         };
     }
 };
