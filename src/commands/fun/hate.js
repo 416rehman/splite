@@ -29,68 +29,45 @@ module.exports = class HateCommand extends Command {
    }
 
    async interact(interaction, args) {
-      try {
-         const text = await interaction.client.utils.replaceMentionsWithNames(
-            args.join(" "),
-            interaction.guild
-         );
-         const buffer = await interaction.client.utils.generateImgFlipImage(
-            242461078,
-            `${text}`,
-            `${text}`,
-            "#EBDBD1",
-            "#2E251E"
-         );
-
-         if (buffer) {
-            const attachment = new MessageAttachment(
-               buffer,
-               "allmyhomieshate.png"
-            );
-
-            await interaction.reply({ files: [attachment] });
-            // await msg.delete();
-         }
-      } catch (e) {
-         await interaction.reply({
-            embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-         });
-      }
+      runHate.call(this, interaction, args);
    }
 
    async run(message, args) {
-      message.channel
-         .send({
-            embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
-         })
-         .then(async (msg) => {
-            try {
-               const text = await message.client.utils.replaceMentionsWithNames(
-                  args.join(" "),
-                  message.guild
-               );
-               const buffer = await msg.client.utils.generateImgFlipImage(
-                  242461078,
-                  `${text}`,
-                  `${text}`,
-                  "#EBDBD1",
-                  "#2E251E"
-               );
-
-               if (buffer) {
-                  const attachment = new MessageAttachment(
-                     buffer,
-                     "allmyhomieshate.png"
-                  );
-
-                  await message.channel.send({ files: [attachment] });
-                  await msg.delete();
-               }
-            } catch (e) {
-               await msg.edit({
-                  embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-               });
-            }
-         });
+      runHate.call(this, message, args);
    }
 };
+
+/**
+ * Run the hate command by responding to the message with an image
+ * @param {any} interaction interaction object
+ * @param {any} args arguments
+ */
+async function runHate(interaction, args) {
+   try {
+      const text = await interaction.client.utils.replaceMentionsWithNames(
+         args.join(" "),
+         interaction.guild
+      );
+      const buffer = await interaction.client.utils.generateImgFlipImage(
+         242461078,
+         `${text}`,
+         `${text}`,
+         "#EBDBD1",
+         "#2E251E"
+      );
+
+      if (buffer) {
+         const attachment = new MessageAttachment(
+            buffer,
+            "allmyhomieshate.png"
+         );
+
+         await interaction.reply({ files: [attachment] });
+         // await msg.delete();
+      }
+   } catch (e) {
+      await interaction.reply({
+         embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
+      });
+   }
+}
