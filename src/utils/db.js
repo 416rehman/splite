@@ -551,12 +551,11 @@ const SmashOrPass = {
             and AlsoLikesMe.shownUserID = $userId
     where matches.userID = $userId and matches.liked = 'yes'
     group by AlsoLikesMe.userID
-    order by AlsoLikesMe.dateandtime desc;`)
+    order by AlsoLikesMe.dateandtime desc;`),
    /**
     * Check if 2 users match
     * getMatch({userId: 123, userId2: 234})
-    */,
-   getMatch: db.prepare(`    
+    */ getMatch: db.prepare(`    
     select distinct matches.userID, matches.dateandtime
     from matches
     inner join matches as AlsoLikesMe
@@ -593,11 +592,10 @@ const SmashOrPass = {
         AND optoutsmashorpass != 1
     GROUP BY user_id
     ORDER BY random()
-    LIMIT 100;`)
+    LIMIT 100;`),
    /**
     * unmatchUser({userId: 123, unmatchUser: 235})
-    */,
-   unmatchUser: db.prepare(
+    */ unmatchUser: db.prepare(
       `delete from matches where userID = $userId and shownUserID = $unmatchUser;`
    ),
 
