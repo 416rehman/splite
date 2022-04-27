@@ -22,6 +22,7 @@ module.exports = async (client) => {
     }, 30000);
 
     client.logger.info('Updating database and scheduling jobs...');
+    let i = 1;
     //FOR EACH GUILD
     for (const guild of client.guilds.cache.values()) {
         client.loadGuild(guild).then(async () => {
@@ -51,6 +52,12 @@ module.exports = async (client) => {
                     client.logger.error(err);
                 }
             }
+
+            /** ------------------------------------------------------------------------------------------------
+             * CACHE PROGRESS BAR
+             * ------------------------------------------------------------------------------------------------ */
+            console.log(`Servers Cached \r[${'='.repeat(Math.floor(i / client.guilds.cache.size * 50))}${' '.repeat(50 - Math.floor(i / client.guilds.cache.size * 50))}] ${i}/${client.guilds.cache.size}`);
+            i++;
         }).catch(err => {
             client.logger.error(`Failed to load guild ${guild.name}`);
             client.logger.error(err);
