@@ -1,6 +1,7 @@
 //entry point
 const Client = require('./src/Client.js');
 require('./src/utils/prototypes').arrayProto(Array)
+const config = require('./config.json');
 
 global.__basedir = __dirname;
 
@@ -21,7 +22,7 @@ const intents = [
     // "GUILD_PRESENCES"
 ];
 
-const client = new Client(require('./config.json'), {
+const client = new Client(config, {
     intents,
     partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
     allowedMentions: {parse: ['users', 'roles'], repliedUser: true}
@@ -29,13 +30,50 @@ const client = new Client(require('./config.json'), {
 
 client.loadEvents('./src/events');
 
+function createWebhookServer(client) {
+
+    return server;
+}
+
 client.login(client.token).then(() => {
     client.loadCommands('./src/commands');
     client.loadTopics('./data/geoguessr');
     client.handleMusicEvents();
+
+    if (config.useWebhookServer){
+        // Load all webhook events
+        client.loadWebhooks('./src/webhooks');
+
+        const PORT = 8080;
+        const http = require('http');
+        const server = http.createServer((req, res) => {
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+        });
+
+        // create a route for the webhook
+        server.on('request', (req, res) => {
+            if (req.method === 'POST') {
+                const endpoint = req.url.split('/')[1];
+                if (client.webhooks.has(endpoint)) {
+                    const webhook = client.webhooks.get(endpoint);
+                    webhook.validate(req, res);
+                    webhook.handle(req, res);
+                } else {
+                    res.writeHead(404, {'Content-Type': 'text/plain'});
+                    res.end('404 Not Found');
+                }
+            }
+        });
+
+        server.listen(PORT, () => {
+            console.log(`Webhook server listening @ http://localhost:${PORT}`);
+        });
+
+    }
 })
 
 process.on('unhandledRejection', err => {
     client.logger.error(err);
     console.log(err);
 });
+
