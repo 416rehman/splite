@@ -397,8 +397,9 @@ async function generateImgFlipImage(
       request(options, function (error, response) {
          const res = JSON.parse(response.body);
 
-         if (res.data.url) resolve(res.data.url || error);
-         else reject(`${error}`);
+         if (res.success == true && res.data.url) {
+            resolve(res.data.url || error);
+         } else reject(res.error_message);
       });
    });
 }
