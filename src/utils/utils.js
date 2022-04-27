@@ -454,7 +454,7 @@ function getTopGGVote(client, userId) {
 }
 
 /**
- * Schedule crown role rotation if checks pass
+ * Alternates the characters between upper and lower case
  * @param {string} str
  */
 function spongebobText(str) {

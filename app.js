@@ -1,6 +1,6 @@
 //entry point
 const Client = require('./src/Client.js');
-require('./src/utils/prototypes').arrayProto(Array)
+require('./src/utils/prototypes').arrayProto(Array);
 const config = require('./config.json');
 
 global.__basedir = __dirname;
@@ -12,35 +12,22 @@ if (process.version.slice(1).split('.')[0] < 16) {
 }
 
 // Client setup
-const intents = [
-    "GUILDS",
-    "GUILD_BANS",
-    "GUILD_VOICE_STATES",
-    "GUILD_MESSAGES",
-    "GUILD_MESSAGE_REACTIONS",
-    "GUILD_MEMBERS",
-    // "GUILD_PRESENCES"
+const intents = ['GUILDS', 'GUILD_BANS', 'GUILD_VOICE_STATES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MEMBERS', // "GUILD_PRESENCES"
 ];
 
 const client = new Client(config, {
     intents,
     partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-    allowedMentions: {parse: ['users', 'roles'], repliedUser: true}
+    allowedMentions: {parse: ['users', 'roles'], repliedUser: true},
 });
 
 client.loadEvents('./src/events');
-
-function createWebhookServer(client) {
-
-    return server;
-}
-
 client.login(client.token).then(() => {
     client.loadCommands('./src/commands');
     client.loadTopics('./data/geoguessr');
     client.handleMusicEvents();
 
-    if (config.useWebhookServer){
+    if (config.useWebhookServer) {
         // Load all webhook events
         client.loadWebhooks('./src/webhooks');
 
@@ -58,7 +45,8 @@ client.login(client.token).then(() => {
                     const webhook = client.webhooks.get(endpoint);
                     webhook.validate(req, res);
                     webhook.handle(req, res);
-                } else {
+                }
+                else {
                     res.writeHead(404, {'Content-Type': 'text/plain'});
                     res.end('404 Not Found');
                 }
@@ -68,12 +56,10 @@ client.login(client.token).then(() => {
         server.listen(PORT, () => {
             console.log(`Webhook server listening @ http://localhost:${PORT}`);
         });
-
     }
-})
+});
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
     client.logger.error(err);
     console.log(err);
 });
-

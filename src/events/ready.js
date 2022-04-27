@@ -36,19 +36,20 @@ module.exports = async (client) => {
             /** ------------------------------------------------------------------------------------------------
              * RUNNING COMMANDS
              * ------------------------------------------------------------------------------------------------ */
-            client.utils.createCollections(client, guild)
+            client.utils.createCollections(client, guild);
 
             /** ------------------------------------------------------------------------------------------------
              * VERIFICATION
              * ------------------------------------------------------------------------------------------------ */
-                // Fetch verification message
+            // Fetch verification message
             const {verification_channel_id: verificationChannelId, verification_message_id: verificationMessageId} =
                     client.db.settings.selectVerification.get(guild.id);
             const verificationChannel = guild.channels.cache.get(verificationChannelId);
             if (verificationChannel && verificationChannel.viewable) {
                 try {
                     await verificationChannel.messages.fetch(verificationMessageId);
-                } catch (err) { // Message was deleted
+                }
+                catch (err) { // Message was deleted
                     client.logger.error(err);
                 }
             }
