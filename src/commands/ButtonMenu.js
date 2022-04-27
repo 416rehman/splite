@@ -3,19 +3,19 @@ const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 /**
  * Reaction Menu class
  */
-module.exports = class ButtonMenu {
+module.exports = class LeaderboardMenu {
     /**
-     * Create new ButtonMenu
-     * @param {Client} client
-     * @param {TextChannel} channel
-     * @param {GuildMember} member
-     * @param {MessageEmbed} embed
-     * @param {Array} arr
-     * @param {int} interval
-     * @param {Object} functions
-     * @param {int} timeout
-     * @param components
-     * @param {function} callback
+     * Create new LeaderboardMenu
+     * @param client Discord client instance
+     * @param channel Discord channel to send message to
+     * @param member The user to have the menu open for
+     * @param embed The embed to use for the menu
+     * @param arr Array of String of leaderboard entries
+     * @param perPage Amount of entries to show per page
+     * @param behaviorOverride Override the behavior of buttons, use null to use default behavior
+     * @param timeout Timeout for the menu to close
+     * @param components Any additional components to add to the menu
+     * @param callback Callback function to call when the leaderboard is sent. Will be passed the sent message
      */
     constructor(
         client,
@@ -23,8 +23,8 @@ module.exports = class ButtonMenu {
         member,
         embed,
         arr = null,
-        interval = 10,
-        functions,
+        perPage = 10,
+        behaviorOverride,
         timeout = 120000,
         components,
         callback = null
@@ -69,7 +69,7 @@ module.exports = class ButtonMenu {
          * The size of each array window
          * @type {int}
          */
-        this.interval = interval;
+        this.interval = perPage;
 
         /**
          * The current array window start
@@ -111,10 +111,10 @@ module.exports = class ButtonMenu {
         ];
 
         /**
-         * The functions for the buttons
+         * The behaviorOverride for the buttons
          * @type {Object}
          */
-        this.functions = functions || {
+        this.functions = behaviorOverride || {
             first: this.first.bind(this),
             previous: this.previous.bind(this),
             next: this.next.bind(this),
