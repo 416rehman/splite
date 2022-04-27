@@ -34,6 +34,7 @@ class Client extends Discord.Client {
         };
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
+        this.webhooks = new Discord.Collection();
         this.topics = [];
         this.token = config.token;
         this.apiKeys = config.apiKeys;
@@ -129,7 +130,7 @@ class Client extends Discord.Client {
         const embed = new Discord.MessageEmbed()
             .setAuthor({
                 name: `${this.user.tag}`,
-                iconURL: this.user.displayAvatarURL({ format: 'png', dynamic: true })
+                iconURL: this.user.displayAvatarURL({format: 'png', dynamic: true})
             })
             .setTitle(`${fail} System Error: \`${error}\``)
             .setDescription(`\`\`\`diff\n- System Failure\n+ ${errorMessage}\`\`\``)
@@ -175,40 +176,37 @@ class Client extends Discord.Client {
                 }
             });
         });
+        // this.logger.info(`\n${table.toString()}`);
+        return this;
+    }
+
+    loadWebhooks(path) {
+        this.logger.info('Loading webhooks...');
+        let table = new AsciiTable('Webhooks');
+        table.setHeading('Endpoint', 'Description', 'Status');
+
+
+        const webhooks = readdirSync(path).filter(file => file.endsWith('.webhook.js'));
+        console.log("WEBHOOKS: ", webhooks);
+        console.log({webhooks});
+
+        webhooks.forEach(f => {
+            const Webhook = require(resolve(__basedir, join(path, f)));
+            const webhook = new Webhook(this); // Instantiate the specific command
+            if (webhook.name && !webhook.disabled) {
+                // Map command
+                this.webhooks.set(webhook.name, webhook);
+
+                table.addRow(`/${webhook.name}`, webhook.description || '', 'pass');
+            } else {
+                this.logger.warn(`${f} failed to load`);
+                table.addRow(`/${webhook.name}`, webhook.description || '', 'fail');
+            }
+        });
         this.logger.info(`\n${table.toString()}`);
         return this;
     }
 
-    //
-    // /**
-    //  * Loads all available slash commands
-    //  * @param path
-    //  */
-    // loadSlashCommands(path) {
-    //     this.logger.info(`Loading Slash Commands`)
-    //     const table = new AsciiTable('Slash Commands').setHeading('Name', 'Type', 'Status');
-    //
-    //     const folders = readdirSync(path).filter(file => !file.endsWith('.js'))
-    //
-    //     folders.forEach(folder => {
-    //         this.logger.info(`Folder: ${folder}`)
-    //         const commands = readdirSync(resolve(__basedir, join(path, folder))).filter(f => f.endsWith('.js'))
-    //         commands.forEach(f => {
-    //             const Command = require(resolve(__basedir, join(path, folder, f)));
-    //             const slashCommand = new Command(this);
-    //
-    //             if (slashCommand.name && !slashCommand.disabled && slashCommand) {
-    //                 this.slashCommands.set(slashCommand.name, slashCommand);
-    //                 table.addRow(f, slashCommand.type, 'Pass');
-    //                 this.logger.info(`Loaded Slash Command: ${f} | ${slashCommand.description} | Type: ${slashCommand.type}`)
-    //             } else {
-    //                 table.addRow(f, '', 'Fail');
-    //                 this.logger.error(`Failed Loading Command: ${f}`)
-    //             }
-    //         })
-    //     })
-    //     this.logger.info(table.toString())
-    // }
 
     /**
      * Registers all slash commands across all the guilds
@@ -391,8 +389,6 @@ class Client extends Discord.Client {
                 this.db.users.insertBatch(chunk);
             })
 
-            console.log(`Finished caching members for ${guild.name}`);
-
             if (prune) {
                 /** ------------------------------------------------------------------------------------------------
                  * CHECK DATABASE
@@ -414,7 +410,7 @@ class Client extends Discord.Client {
             }
         })
 
-        await guild.me.setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
+        await guild.members.cache.get(this.user.id).setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
     }
 
     async extractSettings(guild, createSettings) {
