@@ -1,6 +1,7 @@
 module.exports = {
   apps : [{
-    script: './app.js',
-    watch: './src'
+	  name: 'splite',
+	  script: './app.js',
+	  watch: './src'
   }]
 };

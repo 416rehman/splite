@@ -36,88 +36,89 @@ Splite is a free to use multipurpose Discord bot. It is designed to be a flexibl
 
 
 ## Modifying Functionality
-
+Commands are stored in `/src/commands/{category}/` directory<br>
+Events are stored in `/src/events/` directory<br>
 ### Command Handler
-Commands are stored `/src/commands/commands/{category}/` directory<br>
-Slash Commands are stored `/src/commands/slashCommands/{category}/` directory<br><br>
+
+
 Splite has a powerful command handler that extends the calypso handler, allowing you to serve both classic commands and slash commands from the same command class.<br>
-Features include
+
+**Command Handler's Features:**
 1. Cooldowns
 2. Exclusive / Instanced Commands (Only one instance of the command will be run per user, until the done() method is called)
 3. Aliases
 4. Categories/Types
+5. VC Only Commands
+6. NSFW Only Commands
+7. User Blacklist (Bot owner can use `blacklist @user` to blacklist a user)
 
 
-### Creating Classic vs Slash Commands - Code Sample
-#### Classic Command - Shows the prefix of the bot
+### Creating Classic and Slash Commands - Code Sample
+A command can be implemented using a classic text-based command, a slash command, or both.
+
+In this section you will see how to create a command that can be used both as a classic command and a slash command.
+
+#### Hybrid (Text and Slash) Command - Shows the avatar of a user
+Classic text commands use the `run(message, args)` method of the Command class.
+Slash commands use the `interact(interaction, args, author)` method of the Command class.
+
 ```javascript
-module.exports = class prefixCommand extends Command {
+// src/commands/fun/avatar.js
+
+// Avatar Command
+module.exports = class AvatarCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'prefix',
-            description: 'Shows the prefix of the bot',
+            name: 'avatar',
+            aliases: ['profilepic', 'pic', 'av'],
+            usage: 'avatar [user mention/ID]',
+            description: 'Displays a user\'s avatar (or your own, if no user is mentioned).',
             type: client.types.INFO,
-            examples: ['prefix'],
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            cooldown: 5
-        });
-    }
-
-    async run(message, args) {
-        console.log(`The first argument is ${args[0]}`)
-        const prefix = message.client.db.settings.selectPrefix.pluck().get(message.guild.id);
-        message.channel.send({
-            embeds: [new MessageEmbed().setTitle(`${message.client.config.name}'s Prefix`)
-                .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
-                .addField(`Current Prefix`, `**\`${prefix}\`**`)
-                .setThumbnail(message.client.user.displayAvatarURL())
-                .setFooter({
-          text: message.member.displayName,
-          iconURL: message.author.displayAvatarURL({dynamic: true})
-        })
-                .setTimestamp()]
-        })
-    }
-} 
-```
-
-#### Slash Command - Shows the prefix of the bot
-```javascript
-module.exports = class prefixCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: 'prefix',
-            description: 'Shows the prefix of the bot',
-            type: client.types.INFO,
-            examples: ['prefix'],
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            cooldown: 5,
+            examples: ['avatar @split'],
             slashCommand: new SlashCommandBuilder()
-                .addStringOption(options => options
-                    .setName('argument name')
-                    .setDescription(`argument description`))
+                .addUserOption(option => option.setName('user').setDescription('The user to display the avatar of.'))
         });
     }
 
-    async run(interaction, args) {
-        console.log(`The first argument is ${args[0]}`)
-        const prefix = interaction.client.db.settings.selectPrefix.pluck().get(interaction.guild_id);
-        interaction.reply({
-            embeds: [new MessageEmbed().setTitle(`${interaction.client.config.name}'s Prefix`)
-                .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
-                .addField(`Current Prefix`, `**\`${prefix}\`**`)
-                .setThumbnail(interaction.client.user.displayAvatarURL())
-                .setFooter({
-                    text: interaction.author.tag,
-                    iconURL: interaction.author.displayAvatarURL({dynamic: true})
-                })
-                .setTimestamp()],
-            ephemeral: true
-        })
+    // Text based command
+    run(message, args) {
+        const member = this.getMemberFromMention(message, args[0]) ||
+            message.guild.members.cache.get(args[0]) ||
+            message.member;
+
+        displayAvatar.call(this, member, message)
     }
+
+    // Slash command
+    async interact(interaction, args, author) {
+        const user = interaction.options.getUser('user') || interaction.member;
+        displayAvatar.call(this, user, interaction, true);
+    }
+};
+
+// The logic of the command, gets a user's avatar and sends it to the channel
+function displayAvatar(user, context, isInteraction = false) {
+    const embed = new MessageEmbed()
+        .setAuthor({
+            name: this.getUserIdentifier(user),
+            iconURL: this.getAvatarURL(user)
+        })
+        .setDescription(`[Avatar URL](${this.getAvatarURL(user)})`)
+        .setTitle(`${this.getUserIdentifier(user)}'s Avatar`)
+        .setImage(this.getAvatarURL(user))
+        .setFooter({
+            text: context.member.displayName,
+            iconURL: this.getAvatarURL(context.member)
+        })
+        .setTimestamp()
+        .setColor(user.displayHexColor);
+
+    if (isInteraction)
+        return context.reply({embeds: [embed]});
+
+    context.channel.send({embeds: [embed]});
 }
 ```
-
 
 ### Cooldowns
 Cooldowns are handled by the commands own instance. Each command has a cooldowns collection and a default cooldown of 2 seconds. A cooldown can be specified by adding the `cooldown`option in the constructor of the command.
@@ -128,6 +129,8 @@ This is useful for commands whose functionality might not be instant. For exampl
 
 In the below example, once the user calls the `prefix` command, they won't be able to call it again, until 30 seconds after that command has been run.
 ```javascript
+// src/commands/info/prefix.js
+
 module.exports = class prefixCommand extends Command {
     constructor(client) {
         super(client, {
@@ -137,9 +140,13 @@ module.exports = class prefixCommand extends Command {
             examples: ['prefix'],
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
             cooldown: 10,
+            // exclusive:true will make the command wait for the done() method 
+            // to be called before allowing the user to call the command again
             exclusive: true
         });
     }
+    
+    // Text based command
     async run(interaction, args) {
         const prefix = interaction.client.db.settings.selectPrefix.pluck().get(interaction.guild_id);
         message.reply({

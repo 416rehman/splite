@@ -1,222 +1,294 @@
-const {MessageEmbed} = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 
 /**
  * Reaction Menu class
  */
 class ReactionMenu {
+   /**
+    * Create new ReactionMenu
+    * @param {Client} client
+    * @param {TextChannel} channel
+    * @param {GuildMember} member
+    * @param {MessageEmbed} embed
+    * @param {Array} arr
+    * @param {int} interval
+    * @param {Message} overwrite
+    * @param {Object} functions
+    * @param {int} timeout
+    * @param components
+    * @param {function} callback
+    */
+   constructor(
+      client,
+      channel,
+      member,
+      embed,
+      arr = null,
+      interval = 10,
+      overwrite = null,
+      functions,
+      timeout = 120000,
+      components,
+      callback = null
+   ) {
+      /**
+       * The Client
+       * @type {Client}
+       */
+      this.client = client;
 
-    /**
-     * Create new ReactionMenu
-     * @param {Client} client
-     * @param {TextChannel} channel
-     * @param {GuildMember} member
-     * @param {MessageEmbed} embed
-     * @param {Array} arr
-     * @param {int} interval
-     * @param {Message} overwrite
-     * @param {Object} reactions
-     * @param {int} timeout
-     * @param components
-     * @param {function} callback
-     */
-    constructor(client, channel, member, embed, arr = null, interval = 10, overwrite = null, reactions, timeout = 120000, components, callback = null) {
+      /**
+       * The text channel
+       * @type {TextChannel}
+       */
+      this.channel = channel;
+      this.callback = callback;
+      /**
+       * The member ID snowflake
+       * @type {string}
+       */
+      this.memberId = member.id;
 
-        /**
-         * The Client
-         * @type {Client}
-         */
-        this.client = client;
+      /**
+       * The embed passed to the Reaction Menu
+       * @type {MessageEmbed}
+       */
+      this.embed = embed;
 
-        /**
-         * The text channel
-         * @type {TextChannel}
-         */
-        this.channel = channel;
-        this.callback = callback;
-        /**
-         * The member ID snowflake
-         * @type {string}
-         */
-        this.memberId = member.id;
+      /**
+       * JSON from the embed
+       * @type {Object}
+       */
+      this.json = this.embed.toJSON();
 
-        /**
-         * The embed passed to the Reaction Menu
-         * @type {MessageEmbed}
-         */
-        this.embed = embed;
+      /**
+       * The array to be iterated over
+       * @type {Array}
+       */
+      this.arr = arr;
 
-        /**
-         * JSON from the embed
-         * @type {Object}
-         */
-        this.json = this.embed.toJSON();
+      /**
+       * The size of each array window
+       * @type {int}
+       */
+      this.interval = interval;
 
-        /**
-         * The array to be iterated over
-         * @type {Array}
-         */
-        this.arr = arr;
+      /**
+       * The current array window start
+       * @type {int}
+       */
+      this.current = 0;
 
-        /**
-         * The size of each array window
-         * @type {int}
-         */
-        this.interval = interval;
+      /**
+       * The max length of the array
+       * @type {int}
+       */
+      this.max = this.arr ? arr.length : null;
 
-        /**
-         * The current array window start
-         * @type {int}
-         */
-        this.current = 0;
+      /**
+       * The buttons to be displayed
+       * @type {MessageButton[]}
+       */
+      this.buttons = [
+         new MessageButton()
+            .setCustomId(`first`)
+            .setLabel(`⏮️`)
+            .setStyle("PRIMARY"),
+         new MessageButton()
+            .setCustomId(`previous`)
+            .setLabel(`◀️`)
+            .setStyle("PRIMARY"),
+         new MessageButton()
+            .setCustomId(`next`)
+            .setLabel(`▶️`)
+            .setStyle("PRIMARY"),
+         new MessageButton()
+            .setCustomId(`last`)
+            .setLabel(`⏭️`)
+            .setStyle("PRIMARY"),
+         new MessageButton()
+            .setCustomId(`stop`)
+            .setLabel(`⏹️`)
+            .setStyle("DANGER"),
+      ];
 
-        /**
-         * The max length of the array
-         * @type {int}
-         */
-        this.max = (this.arr) ? arr.length : null;
+      /**
+       * The functions for the buttons
+       * @type {Object}
+       */
+      this.functions = functions || {
+         first: this.first.bind(this),
+         previous: this.previous.bind(this),
+         next: this.next.bind(this),
+         last: this.last.bind(this),
+         stop: this.stop.bind(this),
+      };
 
-        /**
-         * The reactions for menu
-         * @type {Object}
-         */
-        this.reactions = reactions || {
-            '⏪': this.first.bind(this),
-            '◀️': this.previous.bind(this),
-            '▶️': this.next.bind(this),
-            '⏩': this.last.bind(this),
-            '⏹️': this.stop.bind(this)
-        };
+      /**
+       * The emojis used as keys
+       * @type {Array<string>}
+       */
+      this.emojis = Object.keys(this.functions);
 
-        /**
-         * The emojis used as keys
-         * @type {Array<string>}
-         */
-        this.emojis = Object.keys(this.reactions);
+      /**
+       * The collector timeout
+       * @type {int}
+       */
+      this.timeout = timeout;
 
-        /**
-         * The collector timeout
-         * @type {int}
-         */
-        this.timeout = timeout;
+      const first = new MessageEmbed(this.json);
+      const description = this.arr
+         ? this.arr.slice(this.current, this.interval)
+         : null;
 
-        const first = new MessageEmbed(this.json);
-        const description = (this.arr) ? this.arr.slice(this.current, this.interval) : null;
+      if (description)
+         first
+            .setTitle(
+               this.embed.title +
+                  " " +
+                  this.client.utils.getRange(
+                     this.arr,
+                     this.current,
+                     this.interval
+                  )
+            )
+            .setDescription(description.join("\n"));
 
-        if (description) first
-            .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-            .setDescription(description.join('\n'));
-
-
-        this.channel.send({embeds: [first], components: components || []}).then(message => {
-
+      const row = new MessageActionRow();
+      this.buttons.forEach((button) => row.addComponents(button));
+      this.channel
+         .send({
+            embeds: [first],
+            components: components ? [...components, row] : [row] || [],
+         })
+         .then((message) => {
             /**
-             * The menu message
+             * The sent message
              * @type {Message}
              */
             this.message = message;
+            this.createCollector();
 
-            this.addReactions().then(r =>
-                this.createCollector()
-            );
-            if (this.callback) this.callback(message)
-        });
-    }
+            if (this.callback) this.callback(message);
+         });
+   }
 
-    /**
-     * Adds reactions to the message
-     */
-    async addReactions() {
-        for (const emoji of this.emojis) {
-            await this.message.react(emoji);
-        }
-    }
+   /**
+    * Creates a button collector
+    */
+   createCollector() {
+      const filter = (button) => {
+         button.deferUpdate();
+         return button.user.id === this.memberId;
+      };
+      const collector = this.message.createMessageComponentCollector({
+         filter,
+         componentType: "BUTTON",
+         time: this.timeout,
+      });
 
-    /**
-     * Creates a reaction collector
-     */
-    createCollector() {
-        const filter = (reaction, user) => {
-            return (this.emojis.includes(reaction.emoji.name) || this.emojis.includes(reaction.emoji.id)) &&
-                user.id == this.memberId
-        };
+      // On collect
+      collector.on("collect", async (btn) => {
+         let newPage = this.functions[btn.customId];
+         if (typeof newPage === "function") newPage = newPage();
+         if (newPage) await this.message.edit({ embeds: [newPage] });
+      });
 
-        // Create collector
-        const collector = this.message.createReactionCollector({filter, time: this.timeout});
+      // On end
+      collector.on("end", () => {
+         this.message.edit({ components: [] });
+      });
 
-        // On collect
-        collector.on('collect', async reaction => {
-            let newPage = this.reactions[reaction.emoji.name] || this.reactions[reaction.emoji.id];
-            if (typeof newPage === 'function') newPage = newPage();
-            if (newPage) await this.message.edit({embeds: [newPage]});
-            await reaction.users.remove(this.memberId);
-        });
+      this.collector = collector;
+   }
 
-        // On end
-        collector.on('end', () => {
-            this.message.reactions.removeAll();
-        });
+   /**
+    * Skips to the first array interval
+    */
+   first() {
+      if (this.current === 0) return;
+      this.current = 0;
+      return new MessageEmbed(this.json)
+         .setTitle(
+            this.embed.title +
+               " " +
+               this.client.utils.getRange(this.arr, this.current, this.interval)
+         )
+         .setDescription(
+            this.arr
+               .slice(this.current, this.current + this.interval)
+               .join("\n")
+         );
+   }
 
-        this.collector = collector;
-    }
+   /**
+    * Goes back an array interval
+    */
+   previous() {
+      if (this.current === 0) return;
+      this.current -= this.interval;
+      if (this.current < 0) this.current = 0;
+      return new MessageEmbed(this.json)
+         .setTitle(
+            this.embed.title +
+               " " +
+               this.client.utils.getRange(this.arr, this.current, this.interval)
+         )
+         .setDescription(
+            this.arr
+               .slice(this.current, this.current + this.interval)
+               .join("\n")
+         );
+   }
 
-    /**
-     * Skips to the first array interval
-     */
-    first() {
-        if (this.current === 0) return;
-        this.current = 0;
-        return new MessageEmbed(this.json)
-            .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-            .setDescription(this.arr.slice(this.current, this.current + this.interval).join('\n'));
-    }
+   /**
+    * Goes to the next array interval
+    */
+   next() {
+      const cap = this.max - (this.max % this.interval);
+      if (this.current === cap || this.current + this.interval === this.max)
+         return;
+      this.current += this.interval;
+      if (this.current >= this.max) this.current = cap;
+      const max =
+         this.current + this.interval >= this.max
+            ? this.max
+            : this.current + this.interval;
+      return new MessageEmbed(this.json)
+         .setTitle(
+            this.embed.title +
+               " " +
+               this.client.utils.getRange(this.arr, this.current, this.interval)
+         )
+         .setDescription(this.arr.slice(this.current, max).join("\n"));
+   }
 
-    /**
-     * Goes back an array interval
-     */
-    previous() {
-        if (this.current === 0) return;
-        this.current -= this.interval;
-        if (this.current < 0) this.current = 0;
-        return new MessageEmbed(this.json)
-            .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-            .setDescription(this.arr.slice(this.current, this.current + this.interval).join('\n'));
-    }
+   /**
+    * Goes to the last array interval
+    */
+   last() {
+      const cap = this.max - (this.max % this.interval);
+      if (this.current === cap || this.current + this.interval === this.max)
+         return;
+      this.current = cap;
+      if (this.current === this.max) this.current -= this.interval;
+      return new MessageEmbed(this.json)
+         .setTitle(
+            this.embed.title +
+               " " +
+               this.client.utils.getRange(this.arr, this.current, this.interval)
+         )
+         .setDescription(this.arr.slice(this.current, this.max).join("\n"));
+   }
 
-    /**
-     * Goes to the next array interval
-     */
-    next() {
-        const cap = this.max - (this.max % this.interval);
-        if (this.current === cap || this.current + this.interval === this.max) return;
-        this.current += this.interval;
-        if (this.current >= this.max) this.current = cap;
-        const max = (this.current + this.interval >= this.max) ? this.max : this.current + this.interval;
-        return new MessageEmbed(this.json)
-            .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-            .setDescription(this.arr.slice(this.current, max).join('\n'));
-    }
-
-    /**
-     * Goes to the last array interval
-     */
-    last() {
-        const cap = this.max - (this.max % this.interval);
-        if (this.current === cap || this.current + this.interval === this.max) return;
-        this.current = cap;
-        if (this.current === this.max) this.current -= this.interval;
-        return new MessageEmbed(this.json)
-            .setTitle(this.embed.title + ' ' + this.client.utils.getRange(this.arr, this.current, this.interval))
-            .setDescription(this.arr.slice(this.current, this.max).join('\n'));
-    }
-
-    /**
-     * Stops the collector
-     */
-    stop() {
-        this.collector.stop();
-    }
+   /**
+    * Stops the collector
+    */
+   stop() {
+      this.collector.stop();
+   }
 }
 
 module.exports = {
-    ReactionMenu
-}
+   ReactionMenu,
+};
