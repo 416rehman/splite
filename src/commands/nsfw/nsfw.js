@@ -16,8 +16,11 @@ module.exports = class nsfwCommand extends Command {
         });
     }
 
+    // Commands of type NSFW will only be available in NSFW channels
     run(message) {
-        const embed = new MessageEmbed().setTitle('Example Command').setDescription('This is an example command.');
+        const embed = new MessageEmbed()
+            .setTitle('Example Command')
+            .setDescription('This is an example command.');
         message.reply({
             embeds: [embed]
         });
