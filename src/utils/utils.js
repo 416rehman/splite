@@ -1,9 +1,9 @@
 const {MessageEmbed, Collection} = require('discord.js');
 const schedule = require('node-schedule');
 const {stripIndent} = require('common-tags');
-const emojis = require("./emojis.json")
-const request = require('request')
-const config = require('../../config.json')
+const emojis = require('./emojis.json');
+const request = require('request');
+const config = require('../../config.json');
 
 /**
  * Capitalizes a string
@@ -52,7 +52,8 @@ function trimStringFromArray(arr, maxLen = 2048, joinChar = '\n') {
     if (string.length > maxLen) {
         string = string.slice(0, string.length - (string.length - diff));
         string = string.slice(0, string.lastIndexOf(joinChar));
-        string = string + `\nAnd **${arr.length - string.split('\n').length}** more...`;
+        string =
+            string + `\nAnd **${arr.length - string.split('\n').length}** more...`;
     }
     return string;
 }
@@ -64,11 +65,12 @@ function trimStringFromArray(arr, maxLen = 2048, joinChar = '\n') {
  * @param {int} interval
  */
 function getRange(arr, current, interval) {
-    const max = (arr.length > current + interval) ? current + interval : arr.length;
+    const max = arr.length > current + interval ? current + interval : arr.length;
     current = current + 1;
-    return (arr.length == 1 || arr.length == current || interval == 1) ? `[${current}]` : `[${current} - ${max}]`;
+    return arr.length == 1 || arr.length == current || interval == 1
+        ? `[${current}]`
+        : `[${current} - ${max}]`;
 }
-
 
 /**
  * Gets the ordinal numeral of a number
@@ -76,7 +78,8 @@ function getRange(arr, current, interval) {
  */
 function getOrdinalNumeral(number) {
     let numberStr = number.toString();
-    if (numberStr === '11' || numberStr === '12' || numberStr === '13') return numberStr + 'th';
+    if (numberStr === '11' || numberStr === '12' || numberStr === '13')
+        return numberStr + 'th';
     if (numberStr.endsWith(1)) return numberStr + 'st';
     else if (numberStr.endsWith(2)) return numberStr + 'nd';
     else if (numberStr.endsWith(3)) return numberStr + 'rd';
@@ -90,14 +93,17 @@ function getOrdinalNumeral(number) {
  * @param modLog
  */
 async function getCaseNumber(client, guild, modLog) {
-
-    const message = (await modLog.messages.fetch({limit: 100})).filter(m => m.member === guild.me &&
-        m.embeds[0] &&
-        m.embeds[0].type == 'rich' &&
-        m.embeds[0].footer &&
-        m.embeds[0].footer.text &&
-        m.embeds[0].footer.text.startsWith('Case')
-    ).first();
+    const message = (await modLog.messages.fetch({limit: 100}))
+        .filter(
+            (m) =>
+                m.member === guild.me &&
+                m.embeds[0] &&
+                m.embeds[0].type == 'rich' &&
+                m.embeds[0].footer &&
+                m.embeds[0].footer.text &&
+                m.embeds[0].footer.text.startsWith('Case')
+        )
+        .first();
 
     if (message) {
         const footer = message.embeds[0].footer.text;
@@ -125,18 +131,20 @@ function getStatus(...args) {
  */
 function replaceKeywords(message) {
     if (!message) return message;
-    else return message
-        .replace(/\?member/g, '`?member`')
-        .replace(/\?username/g, '`?username`')
-        .replace(/\?tag/g, '`?tag`')
-        .replace(/\?size/g, '`?size`');
+    else
+        return message
+            .replace(/\?member/g, '`?member`')
+            .replace(/\?username/g, '`?username`')
+            .replace(/\?tag/g, '`?tag`')
+            .replace(/\?size/g, '`?size`');
 }
 
 function getEmojiForJoinVoting(guild, client) {
-    const {joinvoting_emoji: joinVotingEmoji} = client.db.settings.selectJoinVotingMessage.get(guild.id)
+    const {joinvoting_emoji: joinVotingEmoji} =
+        client.db.settings.selectJoinVotingMessage.get(guild.id);
     let emoji = joinVotingEmoji || '`None`';
     if (emoji && !isNaN(joinVotingEmoji)) {
-        emoji = guild.emojis.cache.find(e => e.id === emoji) || null;
+        emoji = guild.emojis.cache.find((e) => e.id === emoji) || null;
     }
     return emoji;
 }
@@ -147,12 +155,13 @@ function getEmojiForJoinVoting(guild, client) {
  */
 function replaceCrownKeywords(message) {
     if (!message) return message;
-    else return message
-        .replace(/\?member/g, '`?member`')
-        .replace(/\?username/g, '`?username`')
-        .replace(/\?tag/g, '`?tag`')
-        .replace(/\?role/g, '`?role`')
-        .replace(/\?points/g, '`?points`');
+    else
+        return message
+            .replace(/\?member/g, '`?member`')
+            .replace(/\?username/g, '`?username`')
+            .replace(/\?tag/g, '`?tag`')
+            .replace(/\?role/g, '`?role`')
+            .replace(/\?points/g, '`?points`');
 }
 
 /**
@@ -162,14 +171,17 @@ function replaceCrownKeywords(message) {
  * @param crownRoleId
  */
 async function transferCrown(client, guild, crownRoleId) {
-
     const crownRole = guild.roles.cache.get(crownRoleId);
 
     // If crown role is unable to be found
     if (!crownRole) {
-        return client.sendSystemErrorMessage(guild, 'crown update', stripIndent`
+        return client.sendSystemErrorMessage(
+            guild,
+            'crown update',
+            stripIndent`
       Unable to transfer crown role, it may have been modified or deleted
-    `);
+    `
+        );
     }
 
     const leaderboard = client.db.users.selectLeaderboard.all(guild.id);
@@ -178,22 +190,30 @@ async function transferCrown(client, guild, crownRoleId) {
     let quit = false;
 
     // Remove role from losers
-    await Promise.all(guild.members.cache.map(async member => { // Good alternative to handling async forEach
-        if (member.roles.cache.has(crownRole.id)) {
-            try {
-                await member.roles.remove(crownRole);
-            } catch (err) {
+    await Promise.all(
+        guild.members.cache.map(async (member) => {
+            // Good alternative to handling async forEach
+            if (member.roles.cache.has(crownRole.id)) {
+                try {
+                    await member.roles.remove(crownRole);
+                }
+                catch (err) {
+                    quit = true;
+                    // Clear points
+                    client.db.users.wipeAllPoints.run(guild.id);
 
-                quit = true;
-                // Clear points
-                client.db.users.wipeAllPoints.run(guild.id);
-
-                return client.sendSystemErrorMessage(guild, 'crown update', stripIndent`
+                    return client.sendSystemErrorMessage(
+                        guild,
+                        'crown update',
+                        stripIndent`
           Unable to transfer crown role, please check the role hierarchy and ensure I have the Manage Roles permission
-        `, err.message);
+        `,
+                        err.message
+                    );
+                }
             }
-        }
-    }));
+        })
+    );
 
     // Clear points
     client.db.users.wipeAllPoints.run(guild.id);
@@ -203,10 +223,16 @@ async function transferCrown(client, guild, crownRoleId) {
     // Give role to winner
     try {
         await winner.roles.add(crownRole);
-    } catch (err) {
-        return client.sendSystemErrorMessage(guild, 'crown update', stripIndent`
+    }
+    catch (err) {
+        return client.sendSystemErrorMessage(
+            guild,
+            'crown update',
+            stripIndent`
       Unable to transfer crown role, please check the role hierarchy and ensure I have the Manage Roles permission
-    `, err.message);
+    `,
+            err.message
+        );
     }
 
     // Get crown channel and crown channel
@@ -218,7 +244,9 @@ async function transferCrown(client, guild, crownRoleId) {
     if (
         crownChannel &&
         crownChannel.viewable &&
-        crownChannel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+        crownChannel
+            .permissionsFor(guild.me)
+            .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
         crownMessage
     ) {
         crownMessage = crownMessage
@@ -227,10 +255,18 @@ async function transferCrown(client, guild, crownRoleId) {
             .replace(/`?\?tag`?/g, winner.user.tag) // Tag substitution
             .replace(/`?\?role`?/g, crownRole) // Role substitution
             .replace(/`?\?points`?/g, points); // Points substitution
-        crownChannel.send({embeds: [new MessageEmbed().setDescription(crownMessage).setColor(guild.me.displayHexColor)]});
+        crownChannel.send({
+            embeds: [
+                new MessageEmbed()
+                    .setDescription(crownMessage)
+                    .setColor(guild.me.displayHexColor),
+            ],
+        });
     }
 
-    client.logger.info(`${guild.name}: Assigned crown role to ${winner.user.tag} and reset server points`);
+    client.logger.info(
+        `${guild.name}: Assigned crown role to ${winner.user.tag} and reset server points`
+    );
 }
 
 /**
@@ -239,8 +275,8 @@ async function transferCrown(client, guild, crownRoleId) {
  * @param {Guild} guild
  */
 function scheduleCrown(client, guild) {
-
-    const {crown_role_id: crownRoleId, crown_schedule: cron} = client.db.settings.selectCrown.get(guild.id);
+    const {crown_role_id: crownRoleId, crown_schedule: cron} =
+        client.db.settings.selectCrown.get(guild.id);
 
     if (crownRoleId && cron) {
         guild.job = schedule.scheduleJob(cron, async () => {
@@ -248,8 +284,9 @@ function scheduleCrown(client, guild) {
         });
 
         client.logger.info(`${guild.name}: Successfully scheduled job`);
-    } else {
-        console.error(`${guild.name}: Failed to schedule job`)
+    }
+    else {
+        console.error(`${guild.name}: Failed to schedule job`);
     }
 }
 
@@ -264,40 +301,44 @@ function createCollections(client, guild) {
 function createProgressBar(percentage) {
     if (percentage > 100) percentage = 100;
     if (percentage < 5) percentage = 5;
-    let progressBar = ``;
-    const fives = Math.floor(percentage / 5)
+    let progressBar = '';
+    const fives = Math.floor(percentage / 5);
     //Empty
     if (fives === 0) {
-        progressBar += emojis.EmptyBegin
+        progressBar += emojis.EmptyBegin;
         let i = 0;
-        while (i < 8) progressBar += emojis.EmptyMid, i++;
+        while (i < 8) (progressBar += emojis.EmptyMid), i++;
         progressBar += emojis.EmptyEnd;
-    } else {
+    }
+    else {
         if (fives > 1) {
-            let tens = Math.floor(fives / 2)
+            let tens = Math.floor(fives / 2);
             let endWithHalfMid = fives % 2;
 
             for (let i = 0; i < tens; i++) {
-                if (i === 0) progressBar += emojis.FillBegin
-                else if (i === 9) progressBar += emojis.FillEnd
+                if (i === 0) progressBar += emojis.FillBegin;
+                else if (i === 9) progressBar += emojis.FillEnd;
                 else progressBar += emojis.FillMid;
             }
 
             const empties = 10 - tens;
             if (empties > 0) {
-                if (empties === 1 && endWithHalfMid) progressBar += emojis.HalfEnd; //90+
+                if (empties === 1 && endWithHalfMid)
+                    progressBar += emojis.HalfEnd; //90+
                 else {
-                    if (endWithHalfMid) progressBar += emojis.HalfMid
+                    if (endWithHalfMid) progressBar += emojis.HalfMid;
                     for (let i = 0; i < empties - endWithHalfMid; i++) {
-                        if (i === empties - endWithHalfMid - 1) progressBar += emojis.EmptyEnd
-                        else progressBar += emojis.EmptyMid
+                        if (i === empties - endWithHalfMid - 1)
+                            progressBar += emojis.EmptyEnd;
+                        else progressBar += emojis.EmptyMid;
                     }
                 }
             }
-        } else {
-            progressBar += emojis.HalfBegin
+        }
+        else {
+            progressBar += emojis.HalfBegin;
             let i = 0;
-            while (i < 8) progressBar += emojis.EmptyMid, i++;
+            while (i < 8) (progressBar += emojis.EmptyMid), i++;
             progressBar += emojis.EmptyEnd;
         }
     }
@@ -308,17 +349,19 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/**
+ * Returns a random item based on the weight of the items
+ * @param input an object with key:weight fields
+ * @return {*}
+ */
 function weightedRandom(input) {
-    const array = []; // Just Checking...
-    for (let item in input) {
-        if (input.hasOwnProperty(item)) { // Safety
-            for (let i = 0; i < input[item]; i++) {
-                array.push(item);
-            }
-        }
+    const total = Object.keys(input).reduce((a, b) => a + input[b], 0);
+    const rand = getRandomInt(0, total);
+    let current = 0;
+    for (const item in input) {
+        current += input[item];
+        if (rand <= current) return item;
     }
-    // Probability Fun
-    return array[Math.floor(Math.random() * array.length)];
 }
 
 /**
@@ -329,76 +372,85 @@ function weightedRandom(input) {
  * @param {string} [color = ''] color
  * @param {string} [outlineColor = ''] outlineColor
  */
-async function generateImgFlipImage(templateID, text0, text1, color = '', outlineColor = '') {
-    return new Promise(((resolve, reject) => {
+function generateImgFlipImage(
+    templateID,
+    text0,
+    text1,
+    color = '',
+    outlineColor = ''
+) {
+    return new Promise((resolve, reject) => {
         let options = {
-            'method': 'POST',
-            'url': 'https://api.imgflip.com/caption_image',
-            'headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
+            method: 'POST',
+            url: 'https://api.imgflip.com/caption_image',
+            headers: {
+                'User-Agent':
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
             },
             formData: {
-                'template_id': `${templateID}`,
-                'username': config.apiKeys.imgflip.username,
-                'password': config.apiKeys.imgflip.password,
+                template_id: `${templateID}`,
+                username: config.apiKeys.imgflip.username,
+                password: config.apiKeys.imgflip.password,
                 'boxes[0][text]': text0,
                 'boxes[1][text]': text1,
                 'boxes[0][color]': color,
                 'boxes[1][color]': color,
                 'boxes[0][outline_color]': outlineColor,
-                'boxes[1][outline_color]': outlineColor
-            }
+                'boxes[1][outline_color]': outlineColor,
+            },
         };
-        request(options, function (error, response) {
-            const res = JSON.parse(response.body)
+        request(options, function(error, response) {
+            const res = JSON.parse(response.body);
 
             if (res.data.url) resolve(res.data.url || error);
-            else reject(`${error}`)
-        })
-    }))
+            else reject(`${error}`);
+        });
+    });
 }
 
-async function checkTopGGVote(client, userId) {
+function checkTopGGVote(client, userId) {
     //If cache has 5 minute old version, send that
     if (client.votes.has(userId)) {
-
-        let diff = (Math.abs(new Date() - client.votes.get(userId).time)) / 1000 / 60;
-        if (diff <= 5) return new Promise(((resolve, reject) => {
-            resolve(client.votes.get(userId).voted)
-        }))
+        let diff = Math.abs(new Date() - client.votes.get(userId).time) / 1000 / 60;
+        if (diff <= 5)
+            return new Promise((resolve) => {
+                resolve(client.votes.get(userId).voted);
+            });
     }
     //otherwise return check topgg api
     return getTopGGVote(client, userId);
 }
 
-async function getTopGGVote(client, userId) {
-
-    return new Promise(((resolve, reject) => {
+function getTopGGVote(client, userId) {
+    return new Promise((resolve) => {
         let options = {
-            'method': 'GET',
-            'url': `https://top.gg/api/bots/${config.apiKeys.topGG.manual.id}/check?userId=${userId}`,
-            'headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
-                'Authorization': config.apiKeys.topGG.manual.token
-            }
+            method: 'GET',
+            url: `https://top.gg/api/bots/${config.apiKeys.topGG.manual.id}/check?userId=${userId}`,
+            headers: {
+                'User-Agent':
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+                Authorization: config.apiKeys.topGG.manual.token,
+            },
         };
-        request(options, function (error, response) {
+        request(options, function(error, response) {
             try {
-                const res = JSON.parse(response.body)
+                const res = JSON.parse(response.body);
                 if (res) {
-                    client.votes.set(userId, {time: new Date(), voted: res.voted})
+                    client.votes.set(userId, {time: new Date(), voted: res.voted});
                     resolve(res.voted);
-                } else {
-                    client.votes.set(userId, {time: new Date(), voted: 0})
+                }
+                else {
+                    client.votes.set(userId, {time: new Date(), voted: 0});
                     resolve(0);
                 }
-            } catch (e) {
-                console.log(e)
-                client.votes.set(userId, {time: new Date(), voted: 0})
+            }
+            catch (e) {
+                console.log(e);
+                client.votes.set(userId, {time: new Date(), voted: 0});
                 resolve(0);
             }
-        })
-    }))
+        });
+    });
 }
 
 /**
@@ -406,11 +458,11 @@ async function getTopGGVote(client, userId) {
  * @param {string} str
  */
 function spongebobText(str) {
-    let newStr = ''
+    let newStr = '';
     str.split('').forEach((el, idx) => {
-        newStr += idx % 2 === 0 ? el.toLowerCase() : el.toUpperCase()
-    })
-    return newStr
+        newStr += idx % 2 === 0 ? el.toLowerCase() : el.toUpperCase();
+    });
+    return newStr;
 }
 
 /**
@@ -419,14 +471,18 @@ function spongebobText(str) {
  * @param {object} guild
  */
 async function replaceMentionsWithNames(content, guild) {
-    const mentionsInMsg = content.match(/<(@!?\d+)>/g)
+    const mentionsInMsg = content.match(/<(@!?\d+)>/g);
 
     if (mentionsInMsg) {
         for (let i = 0; i < mentionsInMsg.length; i++) {
-            const id = mentionsInMsg[i].replace('<@', '').replace('!', '').replace('&', '').replace('>', '')
-            const mem = await guild.members.fetch(id)
+            const id = mentionsInMsg[i]
+                .replace('<@', '')
+                .replace('!', '')
+                .replace('&', '')
+                .replace('>', '');
+            const mem = await guild.members.fetch(id);
 
-            content = content.replace(mentionsInMsg[i], mem.displayName)
+            content = content.replace(mentionsInMsg[i], mem.displayName);
         }
     }
     return content;
@@ -453,5 +509,5 @@ module.exports = {
     generateImgFlipImage,
     spongebobText,
     replaceMentionsWithNames,
-    checkTopGGVote
+    checkTopGGVote,
 };
