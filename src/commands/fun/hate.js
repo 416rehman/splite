@@ -29,11 +29,11 @@ module.exports = class HateCommand extends Command {
    }
 
    async interact(interaction, args) {
-      runHate.call(this, interaction, args);
+      await runHate.call(this, interaction, args, false);
    }
 
    async run(message, args) {
-      runHate.call(this, message, args);
+      await runHate.call(this, message, args, true);
    }
 };
 
@@ -41,13 +41,15 @@ module.exports = class HateCommand extends Command {
  * Run the hate command by responding to the message with an image
  * @param {any} interaction interaction object
  * @param {any} args arguments
+ * @param {boolean} [textCommand=false] whether the command is being run as a slash command
  */
-async function runHate(interaction, args) {
+async function runHate(interaction, args, textCommand = false) {
    try {
       const text = await interaction.client.utils.replaceMentionsWithNames(
          args.join(" "),
          interaction.guild
       );
+      console.log("before image flip");
       const buffer = await interaction.client.utils.generateImgFlipImage(
          242461078,
          `${text}`,
@@ -55,19 +57,29 @@ async function runHate(interaction, args) {
          "#EBDBD1",
          "#2E251E"
       );
-
+      console.log("after image flip");
       if (buffer) {
          const attachment = new MessageAttachment(
             buffer,
             "allmyhomieshate.png"
          );
 
-         await interaction.reply({ files: [attachment] });
-         // await msg.delete();
+         if (textCommand) {
+            await interaction.channel.send({ files: [attachment] });
+            await interaction.delete();
+         } else {
+            await interaction.reply({ files: [attachment] });
+         }
       }
    } catch (e) {
-      await interaction.reply({
-         embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-      });
+      if (textCommand) {
+         await interaction.channel.send({
+            embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
+         });
+      } else {
+         await interaction.reply({
+            embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
+         });
+      }
    }
 }
