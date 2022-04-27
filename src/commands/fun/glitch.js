@@ -1,32 +1,43 @@
-const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
-const {fail, load} = require("../../utils/emojis.json")
+const Command = require("../Command.js");
+const { MessageEmbed, MessageAttachment } = require("discord.js");
+const { fail, load } = require("../../utils/emojis.json");
 
 module.exports = class glitchCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: 'glitch',
+   constructor(client) {
+      super(client, {
+         name: "glitch",
 
-            usage: 'glitch <user mention/id>',
-            description: 'Generates a glitch image',
-            type: client.types.FUN,
-            examples: ['glitch @split']
-        });
-    }
+         usage: "glitch <user mention/id>",
+         description: "Generates a glitch image",
+         type: client.types.FUN,
+         examples: ["glitch @split"],
+      });
+   }
 
-    async run(message, args) {
-        const member = await this.getMemberFromMention(message, args[0]) || await message.guild.members.cache.get(args[0]) || message.author;
+   async run(message, args) {
+      const member =
+         (await this.getMemberFromMention(message, args[0])) ||
+         (await message.guild.members.cache.get(args[0])) ||
+         message.author;
 
-        message.channel.send({embeds: [new MessageEmbed().setDescription(`${load} Loading...`)]}).then(async msg => {
+      message.channel
+         .send({
+            embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+         })
+         .then(async (msg) => {
             try {
-                const buffer = await msg.client.ameApi.generate("glitch", {url: this.getAvatarURL(member, "png")});
-                const attachment = new MessageAttachment(buffer, "glitch.png");
+               const buffer = await msg.client.ameApi.generate("glitch", {
+                  url: this.getAvatarURL(member, "png"),
+               });
+               const attachment = new MessageAttachment(buffer, "glitch.png");
 
-                await message.channel.send({files: [attachment]})
-                await msg.delete()
+               await message.channel.send({ files: [attachment] });
+               await msg.delete();
             } catch (e) {
-                await msg.edit({embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)]})
+               await msg.edit({
+                  embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
+               });
             }
-        })
-    }
+         });
+   }
 };
