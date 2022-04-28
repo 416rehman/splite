@@ -9,6 +9,9 @@ const amethyste = require('amethyste-api');
 const {Collection} = require('discord.js');
 const {NekoBot} = require('nekobot-api');
 const {Player} = require('discord-player');
+const {stripIndents} = require('common-tags');
+const config = require('../config.json');
+const {createServer} = require('http');
 
 class Client extends Discord.Client {
     constructor(config, options) {
@@ -34,7 +37,7 @@ class Client extends Discord.Client {
         };
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
-        this.webhooks = new Discord.Collection();
+        this.webhookServer = null;
         this.topics = [];
         this.token = config.token;
         this.apiKeys = config.apiKeys;
@@ -55,8 +58,7 @@ class Client extends Discord.Client {
         //Create a new music player instance
         this.player = new Player(this, {
             ytdlOptions: {
-                quality: 'highestaudio',
-                highWaterMark: 1 << 25
+                quality: 'highestaudio', highWaterMark: 1 << 25
             }
         });
     }
@@ -122,15 +124,11 @@ class Client extends Discord.Client {
         const systemChannel = guild.channels.cache.get(systemChannelId);
 
         if ( // Check channel and permissions
-            !systemChannel ||
-            !systemChannel.viewable ||
-            !systemChannel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])
-        ) return;
+            !systemChannel || !systemChannel.viewable || !systemChannel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return;
 
         const embed = new Discord.MessageEmbed()
             .setAuthor({
-                name: `${this.user.tag}`,
-                iconURL: this.user.displayAvatarURL({format: 'png', dynamic: true})
+                name: `${this.user.tag}`, iconURL: this.user.displayAvatarURL({format: 'png', dynamic: true})
             })
             .setTitle(`${fail} System Error: \`${error}\``)
             .setDescription(`\`\`\`diff\n- System Failure\n+ ${errorMessage}\`\`\``)
@@ -181,29 +179,37 @@ class Client extends Discord.Client {
         return this;
     }
 
-    loadWebhooks(path) {
+    loadWebhooks(path, ROOT) {
+        this.webserver.endpoints = {};
         this.logger.info('Loading webhooks...');
         let table = new AsciiTable('Webhooks');
         table.setHeading('Endpoint', 'Description', 'Status');
 
+        readdirSync(path).filter(f => !f.endsWith('.js')).forEach(dir => {
+            const endpoints = readdirSync(resolve(__basedir, join(path, dir))).filter(file => file.endsWith('.js'));
 
-        const webhooks = readdirSync(path).filter(file => file.endsWith('.webhook.js'));
-        console.log('WEBHOOKS: ', webhooks);
-        console.log({webhooks});
+            endpoints.reverse().forEach(file => {
+                const Endpoint = require(resolve(__basedir, join(path, dir, file)));
+                const endpoint = new Endpoint(this);
 
-        webhooks.forEach(f => {
-            const Webhook = require(resolve(__basedir, join(path, f)));
-            const webhook = new Webhook(this); // Instantiate the specific command
-            if (webhook.name && !webhook.disabled) {
-                // Map command
-                this.webhooks.set(webhook.name, webhook);
+                //extract the endpoint name
+                const filename = file.split('.')[0].replace(/\//g, '-');
+                const name = `${ROOT}${dir}${filename === 'index' ? '' : `/${filename}`}`;
 
-                table.addRow(`/${webhook.name}`, webhook.description || '', 'pass');
-            }
-            else {
-                this.logger.warn(`${f} failed to load`);
-                table.addRow(`/${webhook.name}`, webhook.description || '', 'fail');
-            }
+                if (this.webserver.endpoints[name]) {
+                    this.logger.error(`${name} endpoint already exists`);
+                    return table.addRow(name, '', 'fail');
+                }
+
+                if (!endpoint.disabled) {
+                    this.webserver.endpoints[name] = endpoint;
+                    table.addRow(name, endpoint.description, 'pass');
+                }
+                else {
+                    table.addRow(name, endpoint.description, 'fail');
+                }
+            });
+
         });
         this.logger.info(`\n${table.toString()}`);
         return this;
@@ -243,16 +249,12 @@ class Client extends Discord.Client {
             const rest = new REST({version: '9'}).setToken(this.token);
             try {
                 const slashCommands = commands.map(c => {
-                    if (c.userPermissions && c.userPermissions.length > 0)
-                        c.slashCommand.setDefaultPermission(false);
+                    if (c.userPermissions && c.userPermissions.length > 0) c.slashCommand.setDefaultPermission(false);
 
                     return c.slashCommand.toJSON();
                 });
 
-                rest.put(
-                    Routes.applicationGuildCommands(id, guild.id),
-                    {body: slashCommands},
-                );
+                rest.put(Routes.applicationGuildCommands(id, guild.id), {body: slashCommands},);
 
                 guild.commands.fetch().then((registeredCommands) => {
                     let fullPermissions = registeredCommands.map(c => this.constructFullPermissions(commands, c, guild));
@@ -288,12 +290,9 @@ class Client extends Discord.Client {
         if (!matching_roles || matching_roles.length === 0) return null;
 
         return {
-            id: slashCommand.id,
-            permissions: matching_roles.last(10).map(r => {
+            id: slashCommand.id, permissions: matching_roles.last(10).map(r => {
                 return {
-                    id: r.id,
-                    type: 'ROLE',
-                    permission: true
+                    id: r.id, type: 'ROLE', permission: true
                 };
             })
         };
@@ -342,20 +341,12 @@ class Client extends Discord.Client {
          * UPDATE TABLES
          * ------------------------------------------------------------------------------------------------ */
         // Update settings table
-        this.db.settings.insertRow.run(
-            guild.id,
-            guild.name,
-            guild.systemChannelID, // Default channel
+        this.db.settings.insertRow.run(guild.id, guild.name, guild.systemChannelID, // Default channel
             null, //confessions_channel_id
             guild.systemChannelID, // Welcome channel
             guild.systemChannelID, // Farewell channel
             guild.systemChannelID,  // Crown Channel
-            modLog ? modLog.id : null,
-            adminRole ? adminRole.id : null,
-            modRole ? modRole.id : null,
-            muteRole ? muteRole.id : null,
-            crownRole ? crownRole.id : null,
-            null, //joinvoting_message_id
+            modLog ? modLog.id : null, adminRole ? adminRole.id : null, modRole ? modRole.id : null, muteRole ? muteRole.id : null, crownRole ? crownRole.id : null, null, //joinvoting_message_id
             null,  //joinvoting_emoji
             null,  //voting_channel_id
             0,     //anonymous
@@ -422,19 +413,16 @@ class Client extends Discord.Client {
          * FIND SETTINGS
          * ------------------------------------------------------------------------------------------------ */
         // Find mod log
-        const modLog = guild.channels.cache.find(c => c.name.replace('-', '').replace('s', '') === 'modlog' ||
-                c.name.replace('-', '').replace('s', '') === 'moderatorlog');
+        const modLog = guild.channels.cache.find(c => c.name.replace('-', '').replace('s', '') === 'modlog' || c.name.replace('-', '').replace('s', '') === 'moderatorlog');
 
         // Find admin and mod roles
-        const adminRole =
-            guild.roles.cache.find(r => r.name.toLowerCase() === 'admin' || r.name.toLowerCase() === 'administrator');
+        const adminRole = guild.roles.cache.find(r => r.name.toLowerCase() === 'admin' || r.name.toLowerCase() === 'administrator');
         const modRole = guild.roles.cache.find(r => r.name.toLowerCase() === 'mod' || r.name.toLowerCase() === 'moderator');
         let muteRole = guild.roles.cache.find(r => r.name.toLowerCase() === 'muted');
         if (createSettings && !muteRole) {
             try {
                 muteRole = await guild.roles.create({
-                    name: 'Muted',
-                    permissions: []
+                    name: 'Muted', permissions: []
                 });
             }
             catch (err) {
@@ -446,13 +434,10 @@ class Client extends Discord.Client {
                     if (channel.viewable && channel.permissionsFor(guild.me).has('MANAGE_ROLES')) {
                         if (channel.type === 'GUILD_TEXT') // Deny permissions in text channels
                             await channel.permissionOverwrites.edit(muteRole, {
-                                'SEND_MESSAGES': false,
-                                'ADD_REACTIONS': false
-                            });
-                        else if (channel.type === 'GUILD_VOICE' && channel.editable) // Deny permissions in voice channels
+                                'SEND_MESSAGES': false, 'ADD_REACTIONS': false
+                            }); else if (channel.type === 'GUILD_VOICE' && channel.editable) // Deny permissions in voice channels
                             await channel.permissionOverwrites.edit(muteRole, {
-                                'SPEAK': false,
-                                'STREAM': false
+                                'SPEAK': false, 'STREAM': false
                             });
                     }
                 }
@@ -466,9 +451,7 @@ class Client extends Discord.Client {
         if (createSettings && !crownRole) {
             try {
                 crownRole = await guild.roles.create({
-                    name: 'The Crown',
-                    permissions: [],
-                    hoist: true
+                    name: 'The Crown', permissions: [], hoist: true
                 });
             }
             catch (err) {
@@ -476,6 +459,43 @@ class Client extends Discord.Client {
             }
         }
         return {modLog, adminRole, modRole, muteRole, crownRole};
+    }
+
+
+    createWebServer(pathToEndpoints) {
+        const ROOT = '/';
+
+        const PORT = 1717;
+        this.webserver = createServer((req, res) => {
+            console.log(`${req.method} ${req.url}`);
+            if (req.method === 'POST') {
+                console.log('USING POST');
+                if (req.url.startsWith(ROOT)) {
+                    const endpoint = this.webserver.endpoints[req.url];
+                    // console.log(endpoint);
+                    if (endpoint) {
+                        endpoint.validate(req, res);
+                        endpoint.handle(req, res);
+                    }
+                    else {
+                        res.writeHead(404, '404 Not Found', {'Content-Type': 'text/plain'});
+                        res.end('404 Not Found');
+                    }
+                }
+            }
+            else {
+                console.log('USING GET');
+                res.writeHead(200, {'Content-Type': 'text/plain'});
+                res.end(stripIndents(`Status: Running\n
+            Add Splite to your server: ${config.inviteLink}\n
+            Join the support server: ${config.supportServer}`));
+            }
+        });
+
+        this.webserver.listen(PORT, () => {
+            this.loadWebhooks(pathToEndpoints, ROOT);
+            console.log(`Web server live @ http://localhost:${PORT}`);
+        });
     }
 }
 

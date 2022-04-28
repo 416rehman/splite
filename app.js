@@ -27,35 +27,15 @@ client.login(client.token).then(() => {
     client.loadTopics('./data/geoguessr');
     client.handleMusicEvents();
 
-    if (config.useWebhookServer) {
-        // Load all webhook events
-        client.loadWebhooks('./src/webhooks');
+    if (config.useWebServer) {
+        client.createWebServer('./src/endpoints');
+    }
+    else {
+        console.log('Skipped WebServer creation. Set "useWebServer" to true in config.json to enable it.');
+        if (config.apiKeys.topGG.useMode === 'webhook_mode') {
+            throw('"topGG.useMode" mode is set to webhook mode, but "useWebServer" is set to false. Consider setting "topGG.useMode" to "manual_mode" or setting "useWebServer" to true.');
+        }
 
-        const PORT = 8080;
-        const http = require('http');
-        const server = http.createServer((req, res) => {
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-        });
-
-        // create a route for the webhook
-        server.on('request', (req, res) => {
-            if (req.method === 'POST') {
-                const endpoint = req.url.split('/')[1];
-                if (client.webhooks.has(endpoint)) {
-                    const webhook = client.webhooks.get(endpoint);
-                    webhook.validate(req, res);
-                    webhook.handle(req, res);
-                }
-                else {
-                    res.writeHead(404, {'Content-Type': 'text/plain'});
-                    res.end('404 Not Found');
-                }
-            }
-        });
-
-        server.listen(PORT, () => {
-            console.log(`Webhook server listening @ http://localhost:${PORT}`);
-        });
     }
 });
 
