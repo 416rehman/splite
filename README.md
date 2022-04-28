@@ -390,7 +390,7 @@ Splite provides 2 modes for integrating with TopGG.
 1. **`api_mode`** (Default) uses TopGG API, caches the votes in memory, does not interact with database, and comes with the above mentioned limitation (5 minutes wait after voting)
 2. **`webhook_mode`** uses TopGG webhooks, does not use the cache and stores/retrieves the votes in database. Requires endpoint to be accessible by TopGG and is much more reliable.
 
-To use TopGG webhooks, first make sure splite's webserver is accessible from the internet by sending a GET request to `<yourIP>:17170`, if you are greeted with a 200 OK response, you can proceed to the next step.
+To use TopGG webhooks, first make sure Splite's webserver is enabled (`webserver.enabled` set to `true` in `config.json`) is accessible from the internet by sending a GET request to `<yourIP>:17170`, if you are greeted with a 200 OK response, you can proceed to the next step.
 
 Simply set `webserver.enabled` to `true` and `apiKeys.topGG.useMode` to `webhook_mode`in the `config.json` file.
 Then set the Webhook URL in [TopGG](https://docs.top.gg/resources/webhooks/) to your endpoint URL. (Default: `http://<yourIP>:17170/topgg/vote`)
