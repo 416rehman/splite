@@ -1,6 +1,6 @@
 {
   "name": "splite",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A fully customizable bot built with discord.js",
   "main": "app.js",
   "dependencies": {
@@ -18,6 +18,8 @@
     "he": "^1.2.0",
     "jimp": "^0.16.1",
     "jsdom": "^16.5.3",
+    "koa": "^2.13.4",
+    "koa-body": "^5.0.0",
     "minimist": ">=1.2.2",
     "moment": "^2.29.1",
     "ms": "^2.1.2",

@@ -253,6 +253,7 @@ slashCommand: new SlashCommandBuilder() // Builds a slash command using the name
 ### Endpoint Handler
 Splite also comes packed with a lightweight endpoint handler, powered by KoaJS. 
 This endpoint handler can help in creating a REST API for your bot, or by listening for external webhooks.
+Endpoint handler only work if the webserver is running, you can enable the webserver by setting `webserver.enabled` to `true` inside the `config.json` file.
 
 #### Endpoint Handler Features
 - Authorization: Set the `authorization` field to the authorization key you expect to receive from the webhook.

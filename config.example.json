@@ -15,7 +15,12 @@
   "feedbackChannelId": "ID of the feedback channel. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "serverLogId": "ID of the server log channelID. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "confessionReportsID": "ID of the channel where confession reports are sent. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
-  "useWebServer": false,
+  "webserver": {
+    "port": 17170,
+    "debug": true,
+    "https": false,
+    "enabled": true
+  },
   "apiKeys": {
     "catApi": "Visit https://thecatapi.com/signup",
     "googleApi": "Visit https://console.cloud.google.com/apis/library/youtube.googleapis.com  ",
@@ -25,8 +30,8 @@
       "password": "Visit https://imgflip.com/"
     },
     "topGG": {
-      "useMode": "manual_mode",
-      "manual_mode": {
+      "useMode": "api_mode",
+      "api_mode": {
         "token": "Visit https://top.gg/bot/:bot_id/webhooks",
         "id": "Visit https://docs.top.gg/api/@reference/"
       },
