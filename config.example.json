@@ -19,7 +19,7 @@
     "port": 17170,
     "debug": true,
     "https": false,
-    "enabled": true
+    "enabled": false
   },
   "apiKeys": {
     "catApi": "Visit https://thecatapi.com/signup",

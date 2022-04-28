@@ -2,6 +2,7 @@
 const Client = require('./src/Client.js');
 require('./src/utils/prototypes').arrayProto(Array);
 const config = require('./config.json');
+const Webserver = require('./src/Webserver.js');
 
 global.__basedir = __dirname;
 
@@ -27,13 +28,13 @@ client.login(client.token).then(() => {
     client.loadTopics('./data/geoguessr');
     client.handleMusicEvents();
 
-    if (config.useWebServer) {
-        client.createWebServer('./src/endpoints');
+    if (config.webserver.enabled) {
+        new Webserver(client);
     }
     else {
         console.log('Skipped WebServer creation. Set "useWebServer" to true in config.json to enable it.');
         if (config.apiKeys.topGG.useMode === 'webhook_mode') {
-            throw('"topGG.useMode" mode is set to webhook mode, but "useWebServer" is set to false. Consider setting "topGG.useMode" to "manual_mode" or setting "useWebServer" to true.');
+            throw('"topGG.useMode" mode is set to webhook mode, but "webserver.enabled" is set to false. Consider setting "topGG.useMode" to "api_mode" or setting "webserver.enabled" to true.');
         }
 
     }
