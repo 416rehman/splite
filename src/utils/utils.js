@@ -425,9 +425,7 @@ function checkTopGGVote(client, userId) {
     else if (client.config.apiKeys.topGG.useMode === 'webhook_mode') {
         return new Promise((resolve) => {
             const votes = client.db.integrations.selectRow.get(userId);
-            console.log(votes);
             if (votes && votes.topgg) {
-                console.log(votes.topgg);
                 resolve(votes.topgg && (Date.now() - votes.topgg) < 43200000);
             }
             else {
