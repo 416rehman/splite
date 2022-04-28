@@ -217,7 +217,13 @@ class Client extends Discord.Client {
                 rest.put(Routes.applicationGuildCommands(id, guild.id), {body: slashCommands},);
 
                 guild.commands.fetch().then((registeredCommands) => {
-                    let fullPermissions = registeredCommands.map(c => this.constructFullPermissions(commands, c, guild));
+                    let fullPermissions = registeredCommands.filter(c => c.applicationId === this.application.id).map(c => {
+                        if (!slashCommands.find(sc => sc.name === c.name)) {
+                            return rest.delete(Routes.applicationGuildCommand(id, guild.id, c.id));
+                        }
+
+                        return this.constructFullPermissions(commands, c, guild);
+                    });
 
                     Promise.all(fullPermissions).then((permissions) => {
                         permissions = permissions.filter(p => p !== undefined && p !== null); // filter out undefined and null values
