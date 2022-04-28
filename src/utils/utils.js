@@ -409,19 +409,36 @@ function generateImgFlipImage(
 }
 
 function checkTopGGVote(client, userId) {
-    //If cache has 5 minute old version, send that
-    if (client.votes.has(userId)) {
-        let diff = Math.abs(new Date() - client.votes.get(userId).time) / 1000 / 60;
-        if (diff <= 5)
-            return new Promise((resolve) => {
-                resolve(client.votes.get(userId).voted);
-            });
+    if (client.config.apiKeys.topGG.useMode === 'api_mode') {
+        //If cache has 5 minute old version, send that
+        if (client.votes.has(userId)) {
+            let diff = Math.abs(new Date() - client.votes.get(userId).time) / 1000 / 60;
+            if (diff <= 5)
+                return new Promise((resolve) => {
+                    resolve(client.votes.get(userId).voted);
+                });
+        }
+        //otherwise return check topgg api
+        return getTopGGVoteFromAPI(client, userId);
     }
-    //otherwise return check topgg api
-    return getTopGGVote(client, userId);
+    // If using webhook mode, check database for vote
+    else if (client.config.apiKeys.topGG.useMode === 'webhook_mode') {
+        return new Promise((resolve) => {
+            const votes = client.db.integrations.selectRow.get(userId);
+            console.log(votes);
+            if (votes && votes.topgg) {
+                console.log(votes.topgg);
+                resolve(votes.topgg && (Date.now() - votes.topgg) < 43200000);
+            }
+            else {
+                resolve(false);
+            }
+        });
+    }
+
 }
 
-function getTopGGVote(client, userId) {
+function getTopGGVoteFromAPI(client, userId) {
     return new Promise((resolve) => {
         let options = {
             method: 'GET',
