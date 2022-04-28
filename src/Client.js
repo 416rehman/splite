@@ -9,9 +9,6 @@ const amethyste = require('amethyste-api');
 const {Collection} = require('discord.js');
 const {NekoBot} = require('nekobot-api');
 const {Player} = require('discord-player');
-const {stripIndents} = require('common-tags');
-const config = require('../config.json');
-const {createServer} = require('http');
 
 class Client extends Discord.Client {
     constructor(config, options) {
@@ -37,7 +34,6 @@ class Client extends Discord.Client {
         };
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
-        this.webhookServer = null;
         this.topics = [];
         this.token = config.token;
         this.apiKeys = config.apiKeys;
@@ -176,42 +172,6 @@ class Client extends Discord.Client {
             });
         });
         // this.logger.info(`\n${table.toString()}`);
-        return this;
-    }
-
-    loadWebhooks(path, ROOT) {
-        this.webserver.endpoints = {};
-        this.logger.info('Loading webhooks...');
-        let table = new AsciiTable('Webhooks');
-        table.setHeading('Endpoint', 'Description', 'Status');
-
-        readdirSync(path).filter(f => !f.endsWith('.js')).forEach(dir => {
-            const endpoints = readdirSync(resolve(__basedir, join(path, dir))).filter(file => file.endsWith('.js'));
-
-            endpoints.reverse().forEach(file => {
-                const Endpoint = require(resolve(__basedir, join(path, dir, file)));
-                const endpoint = new Endpoint(this);
-
-                //extract the endpoint name
-                const filename = file.split('.')[0].replace(/\//g, '-');
-                const name = `${ROOT}${dir}${filename === 'index' ? '' : `/${filename}`}`;
-
-                if (this.webserver.endpoints[name]) {
-                    this.logger.error(`${name} endpoint already exists`);
-                    return table.addRow(name, '', 'fail');
-                }
-
-                if (!endpoint.disabled) {
-                    this.webserver.endpoints[name] = endpoint;
-                    table.addRow(name, endpoint.description, 'pass');
-                }
-                else {
-                    table.addRow(name, endpoint.description, 'fail');
-                }
-            });
-
-        });
-        this.logger.info(`\n${table.toString()}`);
         return this;
     }
 
@@ -459,43 +419,6 @@ class Client extends Discord.Client {
             }
         }
         return {modLog, adminRole, modRole, muteRole, crownRole};
-    }
-
-
-    createWebServer(pathToEndpoints) {
-        const ROOT = '/';
-
-        const PORT = 1717;
-        this.webserver = createServer((req, res) => {
-            console.log(`${req.method} ${req.url}`);
-            if (req.method === 'POST') {
-                console.log('USING POST');
-                if (req.url.startsWith(ROOT)) {
-                    const endpoint = this.webserver.endpoints[req.url];
-                    // console.log(endpoint);
-                    if (endpoint) {
-                        endpoint.validate(req, res);
-                        endpoint.handle(req, res);
-                    }
-                    else {
-                        res.writeHead(404, '404 Not Found', {'Content-Type': 'text/plain'});
-                        res.end('404 Not Found');
-                    }
-                }
-            }
-            else {
-                console.log('USING GET');
-                res.writeHead(200, {'Content-Type': 'text/plain'});
-                res.end(stripIndents(`Status: Running\n
-            Add Splite to your server: ${config.inviteLink}\n
-            Join the support server: ${config.supportServer}`));
-            }
-        });
-
-        this.webserver.listen(PORT, () => {
-            this.loadWebhooks(pathToEndpoints, ROOT);
-            console.log(`Web server live @ http://localhost:${PORT}`);
-        });
     }
 }
 
