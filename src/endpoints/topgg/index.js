@@ -1,9 +1,9 @@
-const Webhook = require('./Webhook');
-module.exports = class TopGGWebhook extends Webhook {
+const Endpoint = require('../Endpoint');
+
+module.exports = class TopGGWebhook extends Endpoint {
     constructor(client) {
         super(client, {
-            name: 'topgg',
-            description: 'Receives TopGG vote events.',
+            description: 'Status of TopGG webhook',
             authorization: client.config.apiKeys.topGG.webhook_mode.authorization,
             requestsPerMinute: 60,
             cooldownTime: 1000,
