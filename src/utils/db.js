@@ -83,7 +83,6 @@ db.prepare(
     current_member INTEGER DEFAULT 1 NOT NULL,
     afk TEXT,
     afk_time INTEGER,
-    voteRunning INTEGER,
     SmashRunning INTEGER,
     optOutSmashOrPass INTEGER,
     PRIMARY KEY (user_id, guild_id)
@@ -150,6 +149,17 @@ db.prepare(
   CREATE TABLE IF NOT EXISTS blacklist (
     user_id TEXT,
     PRIMARY KEY (user_id)
+  );
+`
+).run();
+
+// INTEGRATIONS TABLE - Tracks third party votes like topGG etc.
+db.prepare(
+    `
+  CREATE TABLE IF NOT EXISTS integrations (
+    user_id TEXT,
+    topgg DATE DEFAULT (datetime('now','localtime')),
+    PRIMARY KEY (user_id) 
   );
 `
 ).run();
@@ -669,6 +679,15 @@ const blacklist = {
     selectRow: db.prepare('SELECT * FROM blacklist WHERE user_id = ?;'),
 };
 
+// INTEGRATIONS TABLE
+const integrations = {
+    insertRow: db.prepare(
+        'INSERT OR IGNORE INTO integrations (user_id) VALUES (?);'
+    ),
+    setTopGG: db.prepare('INSERT OR REPLACE INTO integrations(user_id, topgg) VALUES(?, ?);'),
+    selectRow: db.prepare('SELECT * FROM integrations WHERE user_id = ?;'),
+};
+
 module.exports = {
     settings,
     users,
@@ -678,4 +697,5 @@ module.exports = {
     activities,
     blacklist,
     db,
+    integrations
 };
