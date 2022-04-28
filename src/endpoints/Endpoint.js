@@ -1,20 +1,18 @@
 module.exports = class Endpoint {
-    constructor(client, options) {
+    constructor(webserver, options) {
         // Validate all options passed
-        this.constructor.validateOptions(client, options);
+        this.constructor.validateOptions(webserver, options);
+        this.webserver = webserver;
 
-        this.client = client;
         this.description = options.description;
-        this.allowedHosts = options.allowedHosts;
         this.allowedIPs = options.allowedIPs;
         this.authorization = options.authorization;
         this.rateLimit = {
             rpm: options.rateLimit?.rpm || 0,                            // How many requests per minute are allowed per IP
             cooldown: options.rateLimit?.cooldown || 5000,               // How many milliseconds to ignore requests after hitting the rate limit. Minimum is 1000ms.
-            store: {},                                                  // The store to use for the rate limiter
+            store: {},                                                   // The store to use for the rate limiter
         };
         this.disabled = options.disabled;                               // Whether or not the webhook is disabled
-        this.method = options.method || 'POST';                         // Supported Methods: 'GET', 'POST'. Default: 'POST'
     }
 
     /**
@@ -50,19 +48,6 @@ module.exports = class Endpoint {
         }
     }
 
-    /**
-     * Validates the host of the request.
-     * @param host
-     * @return {boolean}
-     */
-    checkHost(host) {
-        if (this.allowedHosts) {
-            return !!this.allowedHosts.includes(host);
-        }
-        else {
-            return true;
-        }
-    }
 
     /**
      * Validates the IP of the request.
@@ -80,51 +65,85 @@ module.exports = class Endpoint {
 
     validate(request) {
         if (this.checkRateLimit(request.ip)) {
+            if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] ${request.ip} is rate limited.`);
             return {
                 status: 429,
-                body: 'Rate limit exceeded. Please try again later. (Cooldown: ' + this.rateLimitCooldown + 'ms)'
+                body: 'Rate limit exceeded. Please try again later. (Cooldown: ' + this.rateLimit.cooldown + 'ms)'
             };
         }
 
         if (!this.checkAuthorization(request.headers.authorization)) {
+            if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] ${request.ip} is unauthorized. Invalid authorization header.`);
             return {
                 status: 401, body: 'Unauthorized. Invalid authorization header.'
             };
         }
 
-        if (!this.checkHost(request.headers.host)) {
-            return {
-                status: 403, body: 'Forbidden. You are not allowed to access this endpoint.'
-            };
-        }
-
         if (!this.checkIP(request.ip)) {
+            if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] ${request.ip} is unauthorized. IP not allowed.`);
             return {
                 status: 403, body: 'Forbidden. You are not allowed to access this endpoint.',
             };
         }
     }
 
-    /**
-     * Runs the webhook logic - OVERRIDE THIS METHOD
-     * @param body
-     * @return {Promise<void>}
-     */
-    execute(req, res) {
+
+    // eslint-disable-next-line no-unused-vars
+    get(req, res) {
+        if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] ${req.ip} requested ${req.url}. NOT IMPLEMENTED`);
         return {
-            status: 200, body: `NOT OVERRIDDEN. req: ${req} res: ${res}`
+            status: 405, body: 'Method not allowed.'
         };
     }
 
-    handle(req, res) {
-        const ret = this.execute(req);
-
-        res.writeHead(ret.status || 200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify(ret.body || {message: 'No body'}));
+    // eslint-disable-next-line no-unused-vars
+    post(req, res) {
+        if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] ${req.ip} requested ${req.url}. NOT IMPLEMENTED`);
+        return {
+            status: 405, body: 'Method not allowed.'
+        };
     }
 
-    static validateOptions(client, options) {
-        if (!client) throw new Error('No client was found');
+    handle(ctx) {
+        const validationError = this.validate(ctx.request);
+        if (validationError) {
+            ctx.status = validationError.status;
+            ctx.body = validationError.body;
+            if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})${ctx.request.ip} requested ${ctx.request.url}. ${validationError.body}`);
+
+            return;
+        }
+
+        if (ctx.request.method === 'GET') {
+            if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})${ctx.request.ip} requested ${ctx.request.url}.`);
+
+            const data = this.get(ctx.request, ctx.response);
+            if (data) {
+                if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})Response from ${ctx.request.url} to ${ctx.request.ip}: [${data.status}] ${data.body}`);
+                ctx.response.status = data.status;
+                ctx.response.body = data.body;
+            }
+        }
+        else if (ctx.request.method === 'POST') {
+            if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})${ctx.request.ip} requested ${ctx.request.url}.`);
+
+            const data = this.post(ctx.request, ctx.response);
+            if (data) {
+                if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})Response from ${ctx.request.url} to ${ctx.request.ip}: [${data.status}] ${data.body}`);
+                ctx.response.status = data.status;
+                ctx.response.body = data.body;
+            }
+        }
+        else {
+            if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})${ctx.request.ip} requested ${ctx.request.url}. Method not supported.`);
+            return {
+                status: 405, body: 'Method not allowed.'
+            };
+        }
+    }
+
+    static validateOptions(webserver, options) {
+        if (!webserver) throw new Error('No webserver was found');
         if (typeof options !== 'object')
             throw new TypeError('Command options is not an Object');
 
@@ -136,16 +155,6 @@ module.exports = class Endpoint {
                 throw new Error('Description is too long. Max 100 characters');
         }
 
-        if (options.allowedHosts) {
-            // allowedHosts
-            if (!Array.isArray(options.allowedHosts))
-                throw new TypeError('allowedHosts is not an Array. To allow all hosts, remove this property.');
-            for (let i = 0; i < options.allowedHosts.length; i++) {
-                if (typeof options.allowedHosts[i] !== 'string')
-                    throw new TypeError('allowedHosts is not an Array of strings');
-            }
-        }
-
         if (options.allowedIPs) {
             // allowedIPs
             if (!Array.isArray(options.allowedIPs))
@@ -154,14 +163,6 @@ module.exports = class Endpoint {
                 if (typeof options.allowedIPs[i] !== 'string')
                     throw new TypeError('allowedIPs is not an Array of strings');
             }
-        }
-
-        if (options.method) {
-            // method
-            if (typeof options.method !== 'string')
-                throw new TypeError('method is not a string. To use default method of POST, remove this property.');
-            if (options.method.toLowerCase() !== 'post' && options.method.toLowerCase() !== 'get')
-                throw new Error('method is not a valid method. Must be either "post" or "get"');
         }
 
         if (options.ratelimit) {
