@@ -24,7 +24,7 @@ module.exports = class InviteMeCommand extends Command {
                     .setTitle('Vote On Top.gg')
                     .setThumbnail('https://top.gg/images/logoinverted.png')
                     .setDescription(
-                        `Click [here](https://top.gg/bot/${message.client.config.apiKeys.TopGGID}/vote) to vote. \n\n
+                        `Click [here](https://top.gg/bot/${message.client.config.apiKeys.topGG.api_mode.id}/vote) to vote. \n\n
                 **Voting Perks**\n${emojis.Voted}**+10%** Gambling Odds - Check your odds: \`${prefix}odds\` \
                 \n*Perks will be activated 5 mins after voting*
                 `
