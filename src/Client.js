@@ -28,6 +28,7 @@ class Client extends Discord.Client {
             MOD: 'mod',
             MUSIC: 'music',
             ADMIN: 'admin',
+            MANAGER: 'manager',
             OWNER: 'owner',
         };
         this.commands = new Discord.Collection();
@@ -95,7 +96,16 @@ class Client extends Discord.Client {
      * @param {User} user
      */
     isOwner(user) {
-        return user.id === this.config.ownerId || this.config.extraOwnerIds?.includes(user.id);
+        return this.config.owners.includes(user.id);
+    }
+
+    /**
+     * Checks if user is a bot manager
+     * @param user
+     * @return {*}
+     */
+    isManager(user) {
+        return this.config.managers.includes(user.id) || this.isOwner(user);
     }
 
     /**

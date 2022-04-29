@@ -75,11 +75,17 @@ class Command {
         this.examples = options.examples || null;
 
         /**
-         * If command can only be used by owner
+         * If command can only be used by bot owner
          * @type {boolean}
          */
         this.ownerOnly = options.ownerOnly || false;
 
+        /**
+         * If command can only be used by bot manager AND owner
+         * @type {boolean}
+         */
+        this.managerOnly = options.managerOnly || false;
+        
         /**
          * If command can only be used by owner
          * @type {boolean}
@@ -476,6 +482,7 @@ class Command {
         if (!this.ownerOnly && !perms) return true;
         if (ownerOverride && this.client.isOwner(member)) return true;
         if (this.ownerOnly && !this.client.isOwner(member)) return false;
+        if (this.managerOnly && !this.client.isManager(member)) return false;
         console.log(member.permissions.has('ADMINISTRATOR'));
         if (member.permissions.has('ADMINISTRATOR')) return true;
         if (perms) {

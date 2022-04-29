@@ -6,8 +6,10 @@
   "inviteLink": "https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=8&scope=bot%20applications.commands",
   "botLogoURL": "https://i.imgur.com/B0XSinY.png",
   "ownerDiscordTag": "split#0007",
-  "ownerId": "123456789012346578..",
-  "extraOwnerIds": [
+  "owners": [
+    "123456789012346578"
+  ],
+  "managers": [
     "123456789012346578",
     "123456789012346578"
   ],

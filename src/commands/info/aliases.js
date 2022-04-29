@@ -45,6 +45,7 @@ module.exports = class AliasesCommand extends Command {
             MOD,
             MUSIC,
             ADMIN,
+            MANAGER,
             OWNER,
         } = message.client.types;
         const {capitalize} = message.client.utils;
@@ -59,6 +60,7 @@ module.exports = class AliasesCommand extends Command {
             [MOD]: `${emojis.mod} ${capitalize(MOD)}`,
             [MUSIC]: `${emojis.music} ${capitalize(MUSIC)}`,
             [ADMIN]: `${emojis.admin} ${capitalize(ADMIN)}`,
+            [MANAGER]: `${emojis.manager} ${capitalize(MANAGER)}`,
             [OWNER]: `${emojis.owner} ${capitalize(OWNER)}`,
         };
 

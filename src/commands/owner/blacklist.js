@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class BlacklistCommand extends Command {
     constructor(client) {
@@ -8,7 +8,7 @@ module.exports = class BlacklistCommand extends Command {
             aliases: ['obl', 'globalignore', 'oignore'],
             usage: 'blacklist <user mention/ID>',
             description:
-            'Blacklist a user - Splite will ignore the user commands globally.',
+                'Blacklist a user - Splite will ignore the user commands globally.',
             type: client.types.OWNER,
             ownerOnly: true,
             examples: ['blacklist @notSplit'],
@@ -17,8 +17,8 @@ module.exports = class BlacklistCommand extends Command {
 
     run(message, args) {
         const member =
-         this.getMemberFromMention(message, args[0]) ||
-         message.guild.members.cache.get(args[0]);
+            this.getMemberFromMention(message, args[0]) ||
+            message.guild.members.cache.get(args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -26,6 +26,15 @@ module.exports = class BlacklistCommand extends Command {
                 'Please mention a user or provide a valid user ID'
             );
         try {
+            if (!message.client.isOwner(message.author)) {
+                if (message.client.isManager(member))
+                    return this.sendErrorMessage(
+                        message,
+                        0,
+                        'You cannot blacklist a bot manager or owner'
+                    );
+            }
+
             message.client.db.blacklist.add.run(member.id);
             const embed = new MessageEmbed()
                 .setTitle('Blacklist')
@@ -36,7 +45,7 @@ module.exports = class BlacklistCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            message.channel.send({ embeds: [embed] });
+            message.channel.send({embeds: [embed]});
         }
         catch (e) {
             this.sendErrorMessage(
