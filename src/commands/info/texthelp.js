@@ -52,7 +52,7 @@ module.exports = class textHelpCommand extends Command {
             message.client.aliases.get(args[0]);
         if (
             command &&
-            (command.type != OWNER || message.client.isOwner(message.member)) &&
+            (command.type !== OWNER || message.client.isOwner(message.member)) &&
             !disabledCommands.includes(command.name)
         ) {
             embed // Build specific command help embed
@@ -158,8 +158,8 @@ module.exports = class textHelpCommand extends Command {
 
             embed.addField(
                 '**Links**',
-                `**[Invite Me](${message.client.link}) | ` +
-                `Developed By ${message.client.ownerTag}**`
+                `**[Invite Me](${message.client.config.inviteLink}) | ` +
+                `Developed By ${message.client.config.ownerDiscordTag}**`
             );
         }
         message.channel.send({embeds: [embed]});

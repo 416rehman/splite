@@ -24,11 +24,11 @@ module.exports = class InviteMeCommand extends Command {
             )
             .setDescription(
                 oneLine`
-        Click [here](${message.client.link})
+        Click [here](${message.client.config.inviteLink})
         to invite me to your server!
       `
             )
-            .addField('Developed By', `**${message.client.ownerTag}**`)
+            .addField('Developed By', `**${message.client.config.ownerDiscordTag}**`)
             .setFooter({
                 text: message.member.displayName,
                 iconURL: message.author.displayAvatarURL(),

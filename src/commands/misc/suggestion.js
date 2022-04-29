@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {oneLine} = require('common-tags');
 
 module.exports = class FeedbackCommand extends Command {
     constructor(client) {
@@ -16,7 +16,7 @@ module.exports = class FeedbackCommand extends Command {
 
     run(message, args) {
         const feedbackChannel = message.client.channels.cache.get(
-            message.client.feedbackChannelId
+            message.client.config.feedbackChannelId
         );
         if (!feedbackChannel)
             return this.sendErrorMessage(
@@ -38,7 +38,7 @@ module.exports = class FeedbackCommand extends Command {
         // Send report
         const feedbackEmbed = new MessageEmbed()
             .setTitle('Suggestion')
-            .setThumbnail(feedbackChannel.guild.iconURL({ dynamic: true }))
+            .setThumbnail(feedbackChannel.guild.iconURL({dynamic: true}))
             .setDescription(feedback)
             .addField('User', message.member.toString(), true)
             .addField('Server', message.guild.name, true)
@@ -48,7 +48,7 @@ module.exports = class FeedbackCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        feedbackChannel.send({ embeds: [feedbackEmbed] });
+        feedbackChannel.send({embeds: [feedbackEmbed]});
 
         // Send response
         if (feedback.length > 1024) feedback = feedback.slice(0, 1021) + '...';
@@ -58,7 +58,7 @@ module.exports = class FeedbackCommand extends Command {
             .setDescription(
                 oneLine`
         Successfully sent feedback!
-        Please contact the developer (${message.client.ownerTag}) to further discuss your feedback.
+        Please contact the developer (${message.client.config.ownerDiscordTag}) to further discuss your feedback.
       `
             )
             .addField('Member', message.member.toString(), true)
@@ -69,6 +69,6 @@ module.exports = class FeedbackCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };

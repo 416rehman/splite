@@ -124,7 +124,7 @@ module.exports = class HelpCommand extends Command {
                 .setTimestamp()
                 .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
                 .setColor(message.guild.me.displayHexColor)
-                .addField('**Links**', `[Invite Me](${message.client.link}) | [Support Server](${message.client.config.supportServer}) | ` + `Developed By ${message.client.ownerTag}`);
+                .addField('**Links**', `[Invite Me](${message.client.config.inviteLink}) | [Support Server](${message.client.config.supportServer}) | ` + `Developed By ${message.client.config.ownerDiscordTag}`);
 
             const chunks = 4; //tweak this to add more items per line
             let rows = new Array(Math.ceil(allButtons.length / chunks))

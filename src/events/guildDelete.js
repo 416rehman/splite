@@ -1,9 +1,9 @@
-const { MessageEmbed } = require('discord.js');
-const { fail } = require('../utils/emojis.json');
+const {MessageEmbed} = require('discord.js');
+const {fail} = require('../utils/emojis.json');
 
 module.exports = (client, guild) => {
     client.logger.info(`${client.name} has left ${guild.name}`);
-    const serverLog = client.channels.cache.get(client.serverLogId);
+    const serverLog = client.channels.cache.get(client.config.serverLogId);
     if (serverLog)
         serverLog.send({
             embeds: [

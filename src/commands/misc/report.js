@@ -58,7 +58,7 @@ module.exports = class reportCommand extends Command {
 };
 
 function sendBugReport(report, context, isInteraction) {
-    const reportChannel = this.client.channels.cache.get(this.client.bugReportChannelId);
+    const reportChannel = this.client.channels.cache.get(this.client.config.bugReportChannelId);
 
     if (!reportChannel) return context.reply({
         content: 'The bug report channel could not be found. Please contact the bot owner.',
@@ -87,7 +87,7 @@ function sendBugReport(report, context, isInteraction) {
         .setThumbnail('https://i.imgur.com/B0XSinY.png')
         .setDescription(oneLine`
         Successfully sent bug report!
-        Please contact the developer (${context.client.ownerTag}) if you wish to further discuss your issue.
+        Please contact the developer (${context.client.config.ownerDiscordTag}) if you wish to further discuss your issue.
       `)
         .addField('Member', context.member.toString(), true)
         .addField('Message', report)

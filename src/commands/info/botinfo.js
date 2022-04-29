@@ -16,7 +16,7 @@ module.exports = class BotInfoCommand extends Command {
     }
 
     run(message) {
-        const botOwner = message.client.ownerTag;
+        const botOwner = message.client.config.ownerDiscordTag;
         const prefix = message.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);
@@ -39,8 +39,8 @@ module.exports = class BotInfoCommand extends Command {
             .addField('Tech', `\`\`\`asciidoc\n${tech}\`\`\``)
             .addField(
                 'Links',
-                `**[Invite Me](${message.client.link}) | ` +
-                `Developed By ${message.client.ownerTag}**`
+                `**[Invite Me](${message.client.config.inviteLink}) | ` +
+                `Developed By ${message.client.config.ownerDiscordTag}**`
             )
             .setImage('https://i.imgur.com/B0XSinY.png')
             .setFooter({

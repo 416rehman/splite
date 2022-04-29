@@ -23,7 +23,7 @@ const client = new Client(config, {
 });
 
 client.loadEvents('./src/events');
-client.login(client.token).then(() => {
+client.login(client.config.token).then(() => {
     client.loadCommands('./src/commands');
     client.loadTopics('./data/geoguessr');
     client.handleMusicEvents();

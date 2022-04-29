@@ -65,7 +65,7 @@ module.exports = class AliasesCommand extends Command {
         if (
             args[0] &&
             types.includes(type) &&
-            (type != OWNER || message.client.isOwner(message.member))
+            (type !== OWNER || message.client.isOwner(message.member))
         ) {
             message.client.commands.forEach((command) => {
                 if (
@@ -156,8 +156,8 @@ module.exports = class AliasesCommand extends Command {
 
             embed.addField(
                 '**Links**',
-                `**[Invite Me](${message.client.link}) | ` +
-                `Developed By ${message.client.ownerTag}**`
+                `**[Invite Me](${message.client.config.inviteLink}) | ` +
+                `Developed By ${message.client.config.ownerDiscordTag}**`
             );
         }
 

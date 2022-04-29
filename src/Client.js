@@ -14,10 +14,8 @@ class Client extends Discord.Client {
     constructor(config, options) {
         super(options);
 
-        this.name = config.botName;
         this.config = config;
-        this.link = config.inviteLink;
-        this.ownerTag = config.ownerDiscordTag;
+        this.name = config.botName;
         this.logger = require('./utils/logger.js');
         this.db = require('./utils/db.js');
         this.types = {
@@ -35,16 +33,9 @@ class Client extends Discord.Client {
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
         this.topics = [];
-        this.token = config.token;
-        this.apiKeys = config.apiKeys;
         this.ameApi = new amethyste(config.apiKeys.amethyste);
         this.nekoApi = new NekoBot();
-        this.ownerId = config.ownerId;
-        this.extraOwnerIds = config.extraOwnerIds;
-        this.bugReportChannelId = config.bugReportChannelId;
-        this.feedbackChannelId = config.feedbackChannelId;
         this.serverLogId = config.serverLogId;
-        this.confessionReportsID = config.confessionReportsID;
         this.utils = require('./utils/utils.js');
         this.logger.info('Initializing...');
         this.odds = new Map();
@@ -104,7 +95,7 @@ class Client extends Discord.Client {
      * @param {User} user
      */
     isOwner(user) {
-        return user.id === this.ownerId || this.extraOwnerIds?.includes(user.id);
+        return user.id === this.config.ownerId || this.config.extraOwnerIds?.includes(user.id);
     }
 
     /**
@@ -206,7 +197,7 @@ class Client extends Discord.Client {
     registerSlashCommands(guild, commands, id) {
         return new Promise(((resolve, reject) => {
 
-            const rest = new REST({version: '9'}).setToken(this.token);
+            const rest = new REST({version: '9'}).setToken(this.config.token);
             try {
                 const slashCommands = commands.map(c => {
                     if (c.userPermissions && c.userPermissions.length > 0) c.slashCommand.setDefaultPermission(false);

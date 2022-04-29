@@ -7,7 +7,7 @@ module.exports = async (client, interaction) => {
             //Blacklisted user
             if (command.checkBlacklist(interaction.user)) return interaction
                 .reply({
-                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${command.client.ownerTag}\`** for appeals.`),],
+                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${command.client.config.ownerDiscordTag}\`** for appeals.`),],
                 })
                 .then((msg) => setTimeout(() => msg.delete(), 15000));
 

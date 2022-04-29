@@ -16,7 +16,7 @@ module.exports = class YoutubeCommand extends Command {
     }
 
     async run(message, args) {
-        const apiKey = message.client.apiKeys.googleApi;
+        const apiKey = message.client.config.apiKeys.googleApi;
         const videoName = args.join(' ');
         if (!videoName)
             return this.sendErrorMessage(

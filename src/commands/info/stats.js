@@ -17,8 +17,8 @@ module.exports = class StatsCommand extends Command {
 
     async run(message) {
         const d = moment.duration(message.client.uptime);
-        const days = d.days() == 1 ? `${d.days()} day` : `${d.days()} days`;
-        const hours = d.hours() == 1 ? `${d.hours()} hour` : `${d.hours()} hours`;
+        const days = d.days() === 1 ? `${d.days()} day` : `${d.days()} days`;
+        const hours = d.hours() === 1 ? `${d.hours()} hour` : `${d.hours()} hours`;
         const clientStats = stripIndent`
       Servers   :: ${message.client.guilds.cache.size}
       Users     :: ${message.client.users.cache.size}
@@ -56,8 +56,8 @@ module.exports = class StatsCommand extends Command {
             .addField('Server', `\`\`\`asciidoc\n${serverStats}\`\`\``)
             .addField(
                 '**Links**',
-                `**[Invite Me](${message.client.link}) | ` +
-                `Developed By ${message.client.ownerTag}**`
+                `**[Invite Me](${message.client.config.inviteLink}) | ` +
+                `Developed By ${message.client.config.ownerDiscordTag}**`
             )
             .setFooter({
                 text: message.member.displayName,

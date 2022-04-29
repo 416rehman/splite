@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { stripIndent, oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {stripIndent, oneLine} = require('common-tags');
 
 module.exports = class SettingsCommand extends Command {
     constructor(client) {
@@ -19,52 +19,52 @@ module.exports = class SettingsCommand extends Command {
     }
 
     run(message, args) {
-        const { trimArray, replaceKeywords, replaceCrownKeywords } =
-         message.client.utils;
+        const {trimArray, replaceKeywords, replaceCrownKeywords} =
+            message.client.utils;
 
         // Set values
         const row = message.client.db.settings.selectRow.get(message.guild.id);
 
         const prefix = `\`${row.prefix}\``;
         const systemChannel =
-         message.guild.channels.cache.get(row.system_channel_id) || '`None`';
+            message.guild.channels.cache.get(row.system_channel_id) || '`None`';
         const joinVotingChannel =
-         message.guild.channels.cache.get(row.voting_channel_id) || '`None`';
+            message.guild.channels.cache.get(row.voting_channel_id) || '`None`';
         const joinVotingMessage = row.joinvoting_message_id || '`None`';
         //Emoji
         let joinVotingEmoji =
-         message.client.utils.getEmojiForJoinVoting(
-             message.guild,
-             message.client
-         ) || '`None`';
+            message.client.utils.getEmojiForJoinVoting(
+                message.guild,
+                message.client
+            ) || '`None`';
 
         const confessionChannel =
-         message.guild.channels.cache.get(row.confessions_channel_id) ||
-         '`None`';
+            message.guild.channels.cache.get(row.confessions_channel_id) ||
+            '`None`';
         const starboardChannel =
-         message.guild.channels.cache.get(row.starboard_channel_id) || '`None`';
+            message.guild.channels.cache.get(row.starboard_channel_id) || '`None`';
         const modLog =
-         message.guild.channels.cache.get(row.mod_log_id) || '`None`';
+            message.guild.channels.cache.get(row.mod_log_id) || '`None`';
         const memberLog =
-         message.guild.channels.cache.get(row.member_log_id) || '`None`';
+            message.guild.channels.cache.get(row.member_log_id) || '`None`';
         const nicknameLog =
-         message.guild.channels.cache.get(row.nickname_log_id) || '`None`';
+            message.guild.channels.cache.get(row.nickname_log_id) || '`None`';
         const roleLog =
-         message.guild.channels.cache.get(row.role_log_id) || '`None`';
+            message.guild.channels.cache.get(row.role_log_id) || '`None`';
         const messageEditLog =
-         message.guild.channels.cache.get(row.message_edit_log_id) || '`None`';
+            message.guild.channels.cache.get(row.message_edit_log_id) || '`None`';
         const messageDeleteLog =
-         message.guild.channels.cache.get(row.message_delete_log_id) ||
-         '`None`';
+            message.guild.channels.cache.get(row.message_delete_log_id) ||
+            '`None`';
         const verificationChannel =
-         message.guild.channels.cache.get(row.verification_channel_id) ||
-         '`None`';
+            message.guild.channels.cache.get(row.verification_channel_id) ||
+            '`None`';
         const welcomeChannel =
-         message.guild.channels.cache.get(row.welcome_channel_id) || '`None`';
+            message.guild.channels.cache.get(row.welcome_channel_id) || '`None`';
         const farewellChannel =
-         message.guild.channels.cache.get(row.farewell_channel_id) || '`None`';
+            message.guild.channels.cache.get(row.farewell_channel_id) || '`None`';
         const crownChannel =
-         message.guild.channels.cache.get(row.crown_channel_id) || '`None`';
+            message.guild.channels.cache.get(row.crown_channel_id) || '`None`';
         let modChannels = [];
         if (row.mod_channel_ids) {
             for (const channel of row.mod_channel_ids.split(' ')) {
@@ -76,17 +76,17 @@ module.exports = class SettingsCommand extends Command {
         }
         if (modChannels.length === 0) modChannels = '`None`';
         const adminRole =
-         message.guild.roles.cache.get(row.admin_role_id) || '`None`';
+            message.guild.roles.cache.get(row.admin_role_id) || '`None`';
         const modRole =
-         message.guild.roles.cache.get(row.mod_role_id) || '`None`';
+            message.guild.roles.cache.get(row.mod_role_id) || '`None`';
         const muteRole =
-         message.guild.roles.cache.get(row.mute_role_id) || '`None`';
+            message.guild.roles.cache.get(row.mute_role_id) || '`None`';
         const autoRole =
-         message.guild.roles.cache.get(row.auto_role_id) || '`None`';
+            message.guild.roles.cache.get(row.auto_role_id) || '`None`';
         const verificationRole =
-         message.guild.roles.cache.get(row.verification_role_id) || '`None`';
+            message.guild.roles.cache.get(row.verification_role_id) || '`None`';
         const crownRole =
-         message.guild.roles.cache.get(row.crown_role_id) || '`None`';
+            message.guild.roles.cache.get(row.crown_role_id) || '`None`';
         const autoKick = row.auto_kick
             ? `After \`${row.auto_kick}\` warn(s)`
             : '`disabled`';
@@ -154,12 +154,12 @@ module.exports = class SettingsCommand extends Command {
             crownMessage = crownMessage.slice(0, 1021) + '...';
 
         /** ------------------------------------------------------------------------------------------------
-       * CATEGORY CHECKS
-       * ------------------------------------------------------------------------------------------------ */
+         * CATEGORY CHECKS
+         * ------------------------------------------------------------------------------------------------ */
         let setting = args.join('').toLowerCase();
         if (setting.endsWith('setting')) setting = setting.slice(0, -7);
         const embed = new MessageEmbed()
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(message.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: message.member.displayName,
                 iconURL: message.author.displayAvatarURL(),
@@ -231,7 +231,7 @@ module.exports = class SettingsCommand extends Command {
                 .addField('Channel', verificationChannel.toString(), true)
                 .addField('Status', verificationStatus.toString(), true)
                 .addField('Message', verificationMessage.toString());
-            return message.channel.send({ embeds: [embed] });
+            return message.channel.send({embeds: [embed]});
         case 'w':
         case 'welcome':
         case 'welcomes':
@@ -240,7 +240,7 @@ module.exports = class SettingsCommand extends Command {
                 .addField('Channel', welcomeChannel.toString(), true)
                 .addField('Status', welcomeStatus, true)
                 .addField('Message', welcomeMessage);
-            return message.channel.send({ embeds: [embed] });
+            return message.channel.send({embeds: [embed]});
         case 'f':
         case 'farewell':
         case 'farewells':
@@ -249,7 +249,7 @@ module.exports = class SettingsCommand extends Command {
                 .addField('Channel', farewellChannel.toString(), true)
                 .addField('Status', farewellStatus, true)
                 .addField('Message', farewellMessage);
-            return message.channel.send({ embeds: [embed] });
+            return message.channel.send({embeds: [embed]});
         case 'p':
         case 'point':
         case 'points':
@@ -272,7 +272,7 @@ module.exports = class SettingsCommand extends Command {
                 .addField('Schedule', crownSchedule, true)
                 .addField('Status', crownStatus)
                 .addField('Message', crownMessage);
-            return message.channel.send({ embeds: [embed] });
+            return message.channel.send({embeds: [embed]});
         case 'j':
         case 'join':
         case 'joinvote':
@@ -302,8 +302,8 @@ module.exports = class SettingsCommand extends Command {
             );
 
         /** ------------------------------------------------------------------------------------------------
-       * FULL SETTINGS
-       * ------------------------------------------------------------------------------------------------ */
+         * FULL SETTINGS
+         * ------------------------------------------------------------------------------------------------ */
 
         embed
             .setTitle('Settings')
@@ -318,7 +318,7 @@ module.exports = class SettingsCommand extends Command {
             .addField('Points', '`3` settings', true)
             .addField('Crown', '`4` settings', true)
             .addField('JoinVoting', '`3` settings', true)
-            .addField('Invite Me', `[Click Here](${message.client.link})`, true);
-        message.channel.send({ embeds: [embed] });
+            .addField('Invite Me', `[Click Here](${message.client.config.inviteLink})`, true);
+        message.channel.send({embeds: [embed]});
     }
 };

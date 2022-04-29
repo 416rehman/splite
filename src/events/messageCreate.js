@@ -75,7 +75,7 @@ module.exports = async (client, message) => {
             //Blacklisted user
             if (command.checkBlacklist(message.author)) return message
                 .reply({
-                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${message.client.ownerTag}\`** for appeals.`),],
+                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${message.client.config.ownerDiscordTag}\`** for appeals.`),],
                 })
                 .then((msg) => {
                     setTimeout(() => msg.delete(), 15000);
@@ -163,12 +163,12 @@ module.exports = async (client, message) => {
                 .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
                 .addField('Invite Me', oneLine`
           You can add me to your server by clicking 
-          [here](${message.client.link})!
+          [here](${message.client.config.inviteLink})!
         `)
                 .addField('Support', oneLine`
           If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`)
                 .setFooter({
-                    text: `DM ${message.client.ownerTag} to speak directly with the developer!`,
+                    text: `DM ${message.client.config.ownerDiscordTag} to speak directly with the developer!`,
                 })
                 .setColor(message.guild.me.displayHexColor);
             message.channel.send({embeds: [embed]});
