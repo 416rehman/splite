@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const pkg = require(__basedir + '/package.json');
-const {owner} = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
+const emojis = require('../../utils/emojis.json');
 
 module.exports = class BotInfoCommand extends Command {
     constructor(client) {
@@ -16,7 +16,6 @@ module.exports = class BotInfoCommand extends Command {
     }
 
     run(message) {
-        const botOwner = message.client.config.ownerDiscordTag;
         const prefix = message.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);
@@ -35,12 +34,10 @@ module.exports = class BotInfoCommand extends Command {
             )
             .addField('Prefix', `\`${prefix}\``, true)
             .addField('Client ID', `\`${message.client.user.id}\``, true)
-            .addField(`Developer ${owner}`, botOwner.toString(), true)
             .addField('Tech', `\`\`\`asciidoc\n${tech}\`\`\``)
             .addField(
                 'Links',
-                `**[Invite Me](${message.client.config.inviteLink}) | ` +
-                `Developed By ${message.client.config.ownerDiscordTag}**`
+                `**[Invite Me](${message.client.config.inviteLink})**`
             )
             .setImage('https://i.imgur.com/B0XSinY.png')
             .setFooter({
@@ -49,6 +46,16 @@ module.exports = class BotInfoCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
+
+        if (this.client.owners.length > 0) {
+            embed.addField('Developed By', `${this.client.owners[0]}`);
+            if (this.client.owners.length > 1)
+                embed.addField(`${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, this.client.owners.map((owner) => `${owner}`).join(', '));
+        }
+        if (this.client.managers.length > 0) {
+            embed.addField(`${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, this.client.managers.map((manager) => `${manager}`).join(', '));
+        }
+
         message.channel.send({embeds: [embed]});
     }
 };
