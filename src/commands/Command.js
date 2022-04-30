@@ -75,18 +75,6 @@ class Command {
         this.examples = options.examples || null;
 
         /**
-         * If command can only be used by bot owner
-         * @type {boolean}
-         */
-        this.ownerOnly = options.ownerOnly || false;
-
-        /**
-         * If command can only be used by bot manager AND owner
-         * @type {boolean}
-         */
-        this.managerOnly = options.managerOnly || false;
-        
-        /**
          * If command can only be used by owner
          * @type {boolean}
          */
@@ -125,7 +113,7 @@ class Command {
             this.slashCommand = options.slashCommand;
             this.slashCommand.setName(this.name);
             this.slashCommand.setDescription(
-                (this.ownerOnly ? 'RESTRICTED COMMAND: ' : '') + this.description
+                (this.type === this.client.types.OWNER ? 'RESTRICTED COMMAND: ' : '') + this.description
             );
         }
 
@@ -217,10 +205,6 @@ class Command {
                 'Command examples is not an Array of permission key strings'
             );
 
-        // Owner only
-        if (options.ownerOnly && typeof options.ownerOnly !== 'boolean')
-            throw new TypeError('Command ownerOnly is not a boolean');
-
         // Disabled
         if (options.disabled && typeof options.disabled !== 'boolean')
             throw new TypeError('Command disabled is not a boolean');
@@ -243,8 +227,8 @@ class Command {
 
     /**
      * Runs the command
-     * @param {Message} message
-     * @param {string[]} args
+     * @param  message
+     * @param args
      */
     // eslint-disable-next-line no-unused-vars
     run(message, args) {
@@ -479,10 +463,10 @@ class Command {
         ownerOverride = true,
         perms = this.userPermissions
     ) {
-        if (!this.ownerOnly && !perms) return true;
+        if (this.type !== this.client.types.OWNER && !perms) return true;
         if (ownerOverride && this.client.isOwner(member)) return true;
-        if (this.ownerOnly && !this.client.isOwner(member)) return false;
-        if (this.managerOnly && !this.client.isManager(member)) return false;
+        if (this.type !== this.client.types.OWNER && !this.client.isOwner(member)) return false;
+        if (this.type !== this.client.types.MANAGER && !this.client.isManager(member)) return false;
         console.log(member.permissions.has('ADMINISTRATOR'));
         if (member.permissions.has('ADMINISTRATOR')) return true;
         if (perms) {
