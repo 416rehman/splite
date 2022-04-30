@@ -5,11 +5,18 @@ module.exports = async (client, interaction) => {
         let command = client.commands.get(interaction.commandName);
         if (command.slashCommand) {
             //Blacklisted user
-            if (command.checkBlacklist(interaction.user)) return interaction
-                .reply({
-                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted. Please contact the developer **\`${command.client.config.ownerDiscordTag}\`** for appeals.`),],
-                })
-                .then((msg) => setTimeout(() => msg.delete(), 15000));
+            if (command.checkBlacklist(interaction.user)) {
+                const replyEmbed = new MessageEmbed()
+                    .setDescription(`${fail} You are blacklisted.`);
+                if (client.owners.length) {
+                    replyEmbed.addField('If you think this is a mistake', `contact ${client.owners[0]}`);
+                }
+                return interaction
+                    .reply({
+                        embeds: [replyEmbed],
+                    })
+                    .then((msg) => setTimeout(() => msg.delete(), 15000));
+            }
 
             // check cooldown
             const cooldown = await command.isOnCooldown(interaction.user.id);
