@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
+const ButtonMenu = require('../ButtonMenu');
 
 module.exports = class AliasesCommand extends Command {
     constructor(client) {
@@ -67,13 +68,15 @@ module.exports = class AliasesCommand extends Command {
         if (
             args[0] &&
             types.includes(type) &&
-            (type !== OWNER || message.client.isOwner(message.member))
+            (type !== OWNER || message.client.isOwner(message.member)) &&
+            (type !== MANAGER || message.client.isManager(message.member))
         ) {
+            console.log(`TYPE: ${type}`);
             message.client.commands.forEach((command) => {
                 if (
                     command.aliases &&
                     command.type === type &&
-                    !disabledCommands.includes(command.name)
+                    !disabledCommands.includes(command.name) && !command.name.startsWith('clear')
                 )
                     aliases[command.type].push(
                         `**${command.name}:** ${command.aliases
@@ -82,20 +85,12 @@ module.exports = class AliasesCommand extends Command {
                     );
             });
 
-            embed
-                .setTitle(`Alias Type: \`${capitalize(type)}\``)
+            embed.setTitle(`Alias Type: \`${capitalize(type)}\``)
                 .setThumbnail(
                     `${
                         message.client.config.botLogoURL ||
                         'https://i.imgur.com/B0XSinY.png'
                     }`
-                )
-                .addField(
-                    `**${emojiMap[type]} [${aliases[type].reduce(
-                        (a, b) => a + b.split(' ').slice(1).length,
-                        0
-                    )}]**`,
-                    aliases[type].join('\n')
                 )
                 .setFooter({
                     text: message.member.displayName,
@@ -103,6 +98,26 @@ module.exports = class AliasesCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
+
+
+            if (aliases[type].length <= 20) {
+                const range = aliases[type].length === 1 ? '[1]' : `[1 - ${aliases[type].length}]`;
+                message.channel.send({
+                    embeds: [
+                        embed
+                            .setTitle(`Alias Type: \`${capitalize(type)}\` ${range}`)
+                            .setDescription(aliases[type].join('\n')),
+                    ],
+                });
+            }
+            else
+                new ButtonMenu(
+                    message.client,
+                    message.channel,
+                    message.member,
+                    embed,
+                    aliases[type]
+                );
         }
         else if (type) {
             return this.sendErrorMessage(
@@ -112,6 +127,7 @@ module.exports = class AliasesCommand extends Command {
             );
         }
         else {
+            console.log('NO TYPE PROVIDED');
             message.client.commands.forEach((command) => {
                 if (command.aliases && !disabledCommands.includes(command.name))
                     aliases[command.type].push(
@@ -144,6 +160,8 @@ module.exports = class AliasesCommand extends Command {
             for (const type of Object.values(message.client.types)) {
                 if (type === OWNER && !message.client.isOwner(message.member))
                     continue;
+                if (type === MANAGER && !message.client.isManager(message.member))
+                    continue;
                 if (aliases[type][0])
                     embed.addField(
                         `**${emojiMap[type]}**`,
@@ -158,11 +176,13 @@ module.exports = class AliasesCommand extends Command {
 
             embed.addField(
                 '**Links**',
-                `**[Invite Me](${message.client.config.inviteLink}) | ` +
-                `Developed By ${message.client.config.ownerDiscordTag}**`
+                `**[Invite Me](${message.client.config.inviteLink})**`
             );
-        }
+            if (this.client.owners.length) {
+                embed.addField('Developed By', `${this.client.owners[0]}`);
+            }
 
-        message.channel.send({embeds: [embed]});
+            message.channel.send({embeds: [embed]});
+        }
     }
 };
