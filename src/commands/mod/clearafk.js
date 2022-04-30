@@ -11,7 +11,6 @@ module.exports = class clearafkCommand extends Command {
             examples: ['clearafk'],
             clientPermissions: [],
             userPermissions: ['KICK_MEMBERS'],
-            ownerOnly: false,
         });
     }
 
