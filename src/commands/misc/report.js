@@ -12,7 +12,6 @@ module.exports = class reportCommand extends Command {
             description: 'report a bug',
             type: client.types.INFO,
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            ownerOnly: false,
             cooldown: 5,
             slashCommand: new SlashCommandBuilder()
                 .addSubcommand((subcommand) => subcommand
@@ -87,7 +86,7 @@ function sendBugReport(report, context, isInteraction) {
         .setThumbnail('https://i.imgur.com/B0XSinY.png')
         .setDescription(oneLine`
         Successfully sent bug report!
-        Please contact the developer (${context.client.config.ownerDiscordTag}) if you wish to further discuss your issue.
+         ${this.client.owners[0] && `To further discuss your issue, contact ${this.client.owners[0]}`}
       `)
         .addField('Member', context.member.toString(), true)
         .addField('Message', report)
