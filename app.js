@@ -28,6 +28,21 @@ client.login(client.config.token).then(() => {
     client.loadTopics('./data/geoguessr');
     client.handleMusicEvents();
 
+    if (config.owners.length) {
+        client.owners = config.owners.map(ownerId => client.users.fetch(ownerId).then(user => `<@${user.id}> ||${user.username}#${user.discriminator}||`));
+
+        Promise.all(client.owners).then(owners => {
+            client.owners = owners;
+        });
+    }
+    if (config.managers.length) {
+        client.managers = config.managers.map(managerId => client.users.fetch(managerId).then(user => `<@${user.id}> ||${user.username}#${user.discriminator}||`));
+
+        Promise.all(client.managers).then(owners => {
+            client.managers = owners;
+        });
+    }
+
     if (config.webserver.enabled) {
         new Webserver(client);
     }
