@@ -30,7 +30,12 @@ module.exports = class Webserver {
                 }
 
                 ctx.body = {
-                    status: client?.ws?.ping ? 'online' : 'offline',
+                    status: {
+                        bot: client?.ws?.ping ? 'online' : 'offline',
+                        webserver: 'online'
+                    },
+                    inviteLink: this.config.inviteLink,
+                    supportServer: this.config.supportServer,
                     uptime: client?.ws?.uptime,
                     endpoints: Object.keys(this.endpoints).map(key => {
                         return {
