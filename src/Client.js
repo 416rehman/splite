@@ -42,6 +42,8 @@ class Client extends Discord.Client {
         this.odds = new Map();
         this.votes = new Map();
         this.slashCommands = new Collection();
+        this.owners = null;
+        this.managers = null;
 
         //Create a new music player instance
         this.player = new Player(this, {
@@ -426,6 +428,14 @@ class Client extends Discord.Client {
             }
         }
         return {modLog, adminRole, modRole, muteRole, crownRole};
+    }
+
+    getOwnerFromId(id) {
+        return this.owners.find(o => o.startsWith(`<@${id}>`));
+    }
+
+    getManagerFromId(id) {
+        return this.managers.find(m => m.startsWith(`<@${id}>`));
     }
 }
 
