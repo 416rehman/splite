@@ -10,8 +10,7 @@ module.exports = class ServersCommand extends Command {
             aliases: ['servs'],
             usage: 'servers',
             description: `Displays a list of ${client.name}'s joined servers.`,
-            type: client.types.OWNER,
-            ownerOnly: true,
+            type: client.types.MANAGER,
         });
     }
 
@@ -33,7 +32,7 @@ module.exports = class ServersCommand extends Command {
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
 
-        if (servers.length <= 10) {
+        if (servers.length <= 25) {
             const range = servers.length === 1 ? '[1]' : `[1 - ${servers.length}]`;
             message.channel.send({
                 embeds: [
@@ -49,7 +48,8 @@ module.exports = class ServersCommand extends Command {
                 message.channel,
                 message.member,
                 embed,
-                servers
+                servers,
+                25
             );
     }
 };

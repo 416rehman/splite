@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 const rgx = /^(?:<@!?)?(\d+)>?$/;
 
@@ -11,7 +11,6 @@ module.exports = class LeaveGuildCommand extends Command {
             usage: 'leaveguild <server ID>',
             description: `Forces ${client.name} to leave the specified server.`,
             type: client.types.OWNER,
-            ownerOnly: true,
             examples: ['leaveguild 709992782252474429'],
         });
     }
@@ -41,6 +40,6 @@ module.exports = class LeaveGuildCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };

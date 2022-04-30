@@ -9,8 +9,7 @@ module.exports = class BlacklistCommand extends Command {
             usage: 'blacklist <user mention/ID>',
             description:
                 'Blacklist a user - Splite will ignore the user commands globally.',
-            type: client.types.OWNER,
-            ownerOnly: true,
+            type: client.types.MANAGER,
             examples: ['blacklist @notSplit'],
         });
     }

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class BlastCommand extends Command {
     constructor(client) {
@@ -8,7 +8,6 @@ module.exports = class BlastCommand extends Command {
             usage: 'blast <message>',
             description: `Sends a message to every server that ${client.name} is in that has a system channel.`,
             type: client.types.OWNER,
-            ownerOnly: true,
             examples: ['blast Hello World!'],
         });
     }
@@ -27,16 +26,16 @@ module.exports = class BlastCommand extends Command {
         const guilds = [];
         message.client.guilds.cache.forEach((guild) => {
             const systemChannelId =
-            message.client.db.settings.selectSystemChannelId
-                .pluck()
-                .get(guild.id);
+                message.client.db.settings.selectSystemChannelId
+                    .pluck()
+                    .get(guild.id);
             const systemChannel = guild.channels.cache.get(systemChannelId);
             if (
                 systemChannel &&
-            systemChannel.viewable &&
-            systemChannel
-                .permissionsFor(guild.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                systemChannel.viewable &&
+                systemChannel
+                    .permissionsFor(guild.me)
+                    .has(['SEND_MESSAGES', 'EMBED_LINKS'])
             ) {
                 const embed = new MessageEmbed()
                     .setTitle(`${message.client.name} System Message`)
@@ -47,7 +46,7 @@ module.exports = class BlastCommand extends Command {
                     .setFooter({
                         text: 'Don\'t want this message here? Use the "setsystemchannel" command to change it',
                     });
-                systemChannel.send({ embeds: [embed] });
+                systemChannel.send({embeds: [embed]});
             }
             else guilds.push(guild.name);
         });
@@ -65,7 +64,7 @@ module.exports = class BlastCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            message.channel.send({ embeds: [embed] });
+            message.channel.send({embeds: [embed]});
         }
     }
 };

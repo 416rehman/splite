@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class EvalCommand extends Command {
     constructor(client) {
@@ -8,7 +8,6 @@ module.exports = class EvalCommand extends Command {
             usage: 'eval <code>',
             description: 'Executes the provided code and shows output.',
             type: client.types.OWNER,
-            ownerOnly: true,
             examples: ['eval 1 + 1'],
         });
     }
@@ -27,7 +26,7 @@ module.exports = class EvalCommand extends Command {
             try {
                 let output = eval(input);
                 if (typeof output !== 'string')
-                    output = require('util').inspect(output, { depth: 0 });
+                    output = require('util').inspect(output, {depth: 0});
 
                 embed
                     .addField(
@@ -61,7 +60,7 @@ module.exports = class EvalCommand extends Command {
                     .setColor('#FF0000');
             }
 
-            message.channel.send({ embeds: [embed] });
+            message.channel.send({embeds: [embed]});
         }
         else {
             message.channel.send('(╯°□°)╯︵ ┻━┻ MY token. **MINE**.');

@@ -8,9 +8,8 @@ module.exports = class rebuildCommand extends Command {
             aliases: ['rebuilddata', 'rebuildserver', 'rebuilduser'],
             usage: 'rebuild <server ID>',
             description: 'rebuilds all the server data from the database.',
-            type: client.types.OWNER,
-            ownerOnly: true,
             examples: ['rebuild 123456789012345678'],
+            type: client.types.OWNER,
         });
     }
 

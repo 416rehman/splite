@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class WipePointsCommand extends Command {
     constructor(client) {
@@ -8,16 +8,15 @@ module.exports = class WipePointsCommand extends Command {
             aliases: ['oclearo', 'oco'],
             usage: 'clearodds <user mention/ID>',
             description: 'Clear the provided user\'s winning odds for gambling.',
-            type: client.types.OWNER,
-            ownerOnly: true,
+            type: client.types.MANAGER,
             examples: ['clearodds @split'],
         });
     }
 
     run(message, args) {
         const member =
-         this.getMemberFromMention(message, args[0]) ||
-         message.guild.members.cache.get(args[0]);
+            this.getMemberFromMention(message, args[0]) ||
+            message.guild.members.cache.get(args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -36,6 +35,6 @@ module.exports = class WipePointsCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class WhitelistCommand extends Command {
     constructor(client) {
@@ -8,16 +8,15 @@ module.exports = class WhitelistCommand extends Command {
             aliases: ['owl', 'globaunignore', 'ounignore'],
             usage: 'blacklist <user mention/ID>',
             description: 'Removes a user\'s blacklist status',
-            type: client.types.OWNER,
-            ownerOnly: true,
+            type: client.types.MANAGER,
             examples: ['whitelist @Split'],
         });
     }
 
     run(message, args) {
         const member =
-         this.getMemberFromMention(message, args[0]) ||
-         message.guild.members.cache.get(args[0]);
+            this.getMemberFromMention(message, args[0]) ||
+            message.guild.members.cache.get(args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -25,6 +24,15 @@ module.exports = class WhitelistCommand extends Command {
                 'Please mention a user or provide a valid user ID'
             );
         try {
+            if (!message.client.isOwner(message.author)) {
+                if (message.client.isManager(member))
+                    return this.sendErrorMessage(
+                        message,
+                        0,
+                        'You cannot whitelist a bot manager or owner'
+                    );
+            }
+
             message.client.db.blacklist.remove.run(member.id);
             const embed = new MessageEmbed()
                 .setTitle('Whitelist')
@@ -35,7 +43,7 @@ module.exports = class WhitelistCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            message.channel.send({ embeds: [embed] });
+            message.channel.send({embeds: [embed]});
         }
         catch (e) {
             this.sendErrorMessage(

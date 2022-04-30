@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 const rgx = /^(?:<@!?)?(\d+)>?$/;
 
@@ -10,9 +10,8 @@ module.exports = class WipeAllTotalPointsCommand extends Command {
             aliases: ['wipeatp', 'watp'],
             usage: 'wipealltotalpoints <server ID>',
             description:
-            'Wipes all members\' points and total points in the server with the provided ID.',
+                'Wipes all members\' points and total points in the server with the provided ID.',
             type: client.types.OWNER,
-            ownerOnly: true,
             examples: ['wipealltotalpoints 709992782252474429'],
         });
     }
@@ -44,6 +43,6 @@ module.exports = class WipeAllTotalPointsCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };
