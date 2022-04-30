@@ -11,7 +11,6 @@ module.exports = class confessCommand extends Command {
             type: client.types.FUN,
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
             userPermissions: [],
-            ownerOnly: false,
             cooldown: 5,
             slashCommand: new SlashCommandBuilder().addStringOption((option) =>
                 option

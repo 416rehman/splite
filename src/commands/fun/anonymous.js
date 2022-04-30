@@ -11,8 +11,6 @@ module.exports = class anonymous extends Command {
                 'Post an anonymous message in current channel. COST: 50 points',
             type: client.types.FUN,
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: [],
-            ownerOnly: false,
             cooldown: 5,
             slashCommand: new SlashCommandBuilder().addStringOption((option) =>
                 option
