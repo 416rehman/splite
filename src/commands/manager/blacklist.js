@@ -8,7 +8,7 @@ module.exports = class BlacklistCommand extends Command {
             aliases: ['obl', 'globalignore', 'oignore'],
             usage: 'blacklist <user mention/ID>',
             description:
-                'Blacklist a user - Splite will ignore the user commands globally.',
+                'Blacklist a user - User will not be able to use the bot in any server the bot is in.',
             type: client.types.MANAGER,
             examples: ['blacklist @notSplit'],
         });
