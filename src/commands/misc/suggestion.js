@@ -58,9 +58,7 @@ module.exports = class FeedbackCommand extends Command {
             .setDescription(
                 oneLine`
         Successfully sent feedback!
-        Please contact the developer (${message.client.config.ownerDiscordTag}) to further discuss your feedback.
-      `
-            )
+        ${this.client.owners[0] && `To further discuss your feedback, contact ${this.client.owners[0]}`}`)
             .addField('Member', message.member.toString(), true)
             .addField('Message', feedback)
             .setFooter({
