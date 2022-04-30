@@ -3,6 +3,7 @@ const {MessageEmbed} = require('discord.js');
 const moment = require('moment');
 const {mem, cpu, os} = require('node-os-utils');
 const {stripIndent} = require('common-tags');
+const emojis = require('../../utils/emojis.json');
 
 module.exports = class StatsCommand extends Command {
     constructor(client) {
@@ -56,8 +57,7 @@ module.exports = class StatsCommand extends Command {
             .addField('Server', `\`\`\`asciidoc\n${serverStats}\`\`\``)
             .addField(
                 '**Links**',
-                `**[Invite Me](${message.client.config.inviteLink}) | ` +
-                `Developed By ${message.client.config.ownerDiscordTag}**`
+                `**[Invite Me](${message.client.config.inviteLink})**`
             )
             .setFooter({
                 text: message.member.displayName,
@@ -65,6 +65,16 @@ module.exports = class StatsCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
+
+        if (this.client.owners.length > 0) {
+            embed.addField('Developed By', `${this.client.owners[0]}`);
+            if (this.client.owners.length > 1)
+                embed.addField(`${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, this.client.owners.join(', '));
+        }
+        if (this.client.managers.length > 0) {
+            embed.addField(`${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, this.client.managers.join(', '));
+        }
+
         message.channel.send({embeds: [embed]});
     }
 };

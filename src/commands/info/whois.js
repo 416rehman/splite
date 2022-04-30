@@ -23,6 +23,8 @@ const flags = {
     SYSTEM: 'System',
     VERIFIED_BOT: `${emojis.verified_bot} \`Verified Bot\``,
     EARLY_VERIFIED_BOT_DEVELOPER: `${emojis.verified_developer} \`Early Verified Bot Developer\``,
+    SPLITE_MANAGER: `${emojis.manager} \`Splite Bot Manager\``,
+    SPLITE_OWNER: `${emojis.owner} \`Splite Bot Owner\``,
 };
 
 const elevatedPerms = ['ADMINISTRATOR', 'MANAGE_GUILD', 'MANAGE_ROLES', 'MANAGE_CHANNELS', 'BAN_MEMBERS', 'KICK_MEMBERS', 'MANAGE_MESSAGES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS_AND_STICKERS',];
@@ -42,6 +44,8 @@ module.exports = class WhoIsCommand extends Command {
     async run(message, args) {
         const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]) || message.member;
         const userFlags = (await member.user.fetchFlags()).toArray();
+        if (this.client.getOwnerFromId(member.user.id)) userFlags.push('SPLITE_OWNER');
+        if (this.client.getManagerFromId(member.user.id)) userFlags.push('SPLITE_MANAGER');
         const activities = [];
         let customStatus;
         if (member.presence?.activities) {
@@ -102,7 +106,7 @@ module.exports = class WhoIsCommand extends Command {
         if (userFlags.length > 0) embed.addField('Badges', userFlags.map((flag) => flags[flag]).join('\n'));
         if (KeyPerms.length > 0) embed.addField(
             'Key Permissions',
-            `${message.guild.ownerId === member.id ? emojis.owner + ' **`OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``);
+            `${message.guild.ownerId === member.id ? emojis.owner + ' **`SERVER OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``);
         message.channel.send({embeds: [embed]});
     }
 };

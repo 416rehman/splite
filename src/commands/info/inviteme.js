@@ -28,13 +28,16 @@ module.exports = class InviteMeCommand extends Command {
         to invite me to your server!
       `
             )
-            .addField('Developed By', `**${message.client.config.ownerDiscordTag}**`)
             .setFooter({
                 text: message.member.displayName,
                 iconURL: message.author.displayAvatarURL(),
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
+
+        if (this.client.owners.length > 0) {
+            embed.addField('Developed By', `${this.client.owners[0]}`, true);
+        }
         if (message.client.config.botLogoURL)
             message.channel.send({embeds: [embed]});
     }

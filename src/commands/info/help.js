@@ -33,9 +33,12 @@ module.exports = class HelpCommand extends Command {
         const {capitalize} = message.client.utils;
 
         const command = message.client.commands.get(args[0]) || message.client.aliases.get(args[0]);
-        if (command && (command.type !== OWNER || message.client.isOwner(message.member)) && !disabledCommands.includes(command.name)) {
-            embed // Build specific command help embed
-                .setTitle(`Command: \`${command.name}\``)
+
+        // Build specific command help embed
+        if (command
+            && ((command.type !== OWNER || message.client.isOwner(message.member)) || (command.type !== MANAGER || message.client.isManager(message.member)))
+            && !disabledCommands.includes(command.name)) {
+            embed.setTitle(`Command: \`${command.name}\``)
                 .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
                 .setDescription(command.description)
                 .addField('Usage', `\`${prefix}${command.usage}\``, true)
@@ -75,7 +78,8 @@ module.exports = class HelpCommand extends Command {
 
             message.client.commands.forEach((command) => {
                 if (!disabledCommands.includes(command.name) && !command.name.startsWith('clear') && !command.name.startsWith('texthelp')) {
-                    if (command.ownerOnly && !message.client.isOwner(message.member)) return;
+                    if (command.type === this.client.types.OWNER && !message.client.isOwner(message.member)) return;
+                    if (command.type === this.client.types.MANAGER && !message.client.isManager(message.member)) return;
 
                     if (command.userPermissions && command.userPermissions.every((p) => message.member.permissions.has(p)) && !all) commands[command.type].push(`\`${command.name}\``); else if (!command.userPermissions || all) commands[command.type].push(`\`${command.name}\``);
                 }
@@ -125,7 +129,7 @@ module.exports = class HelpCommand extends Command {
                 .setTimestamp()
                 .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
                 .setColor(message.guild.me.displayHexColor)
-                .addField('**Links**', `[Invite Me](${message.client.config.inviteLink}) | [Support Server](${message.client.config.supportServer}) | ` + `Developed By ${message.client.config.ownerDiscordTag}`);
+                .addField('**Links**', `[Invite Me](${message.client.config.inviteLink}) | [Support Server](${message.client.config.supportServer})`);
 
             const chunks = 4; //tweak this to add more items per line
             let rows = new Array(Math.ceil(allButtons.length / chunks))
@@ -169,11 +173,11 @@ module.exports = class HelpCommand extends Command {
                 b.deferUpdate();
             });
             collector.on('end', () => {
-                tempEmbed.setFooter({
+                embed.setFooter({
                     text: `Expired! \nFor text-only help command, type ${prefix}texthelp \n` + message?.member?.displayName,
                     iconURL: message.author.displayAvatarURL(),
                 });
-                msg.edit({components: [], embeds: [tempEmbed]});
+                msg.edit({components: [], embeds: [embed]});
             });
         }
     }

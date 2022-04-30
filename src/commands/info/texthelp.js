@@ -51,13 +51,13 @@ module.exports = class textHelpCommand extends Command {
         const command =
             message.client.commands.get(args[0]) ||
             message.client.aliases.get(args[0]);
+        // Build specific command help embed
         if (
             command &&
-            (command.type !== OWNER || message.client.isOwner(message.member)) &&
+            ((command.type !== OWNER || message.client.isOwner(message.member)) || (command.type !== MANAGER || message.client.isManager(message.member))) &&
             !disabledCommands.includes(command.name)
         ) {
-            embed // Build specific command help embed
-                .setTitle(`Command: \`${command.name}\``)
+            embed.setTitle(`Command: \`${command.name}\``)
                 .setThumbnail(
                     `${
                         message.client.config.botLogoURL ||
@@ -135,6 +135,8 @@ module.exports = class textHelpCommand extends Command {
             for (const type of Object.values(message.client.types)) {
                 if (type === OWNER && !message.client.isOwner(message.member))
                     continue;
+                if (type === MANAGER && !message.client.isManager(message.member))
+                    continue;
                 if (commands[type][0]) {
                     embed.addField(
                         `**${emojiMap[type]} [${commands[type].length}]**`,
@@ -148,8 +150,10 @@ module.exports = class textHelpCommand extends Command {
             }
 
             let viewHelp = '';
-            if (message.member.permissions.has('MANAGE_GUILD'))
+            if (message.member.permissions.has('MANAGE_GUILD')) {
                 viewHelp = '`/view` View details of a confession.';
+            }
+
             embed.addField(
                 `${emojis.verified_developer} **/Slash Commands**`,
                 `\`/anonymous\` Post anonymous message. **Cost: 50 points**\
@@ -160,9 +164,17 @@ module.exports = class textHelpCommand extends Command {
 
             embed.addField(
                 '**Links**',
-                `**[Invite Me](${message.client.config.inviteLink}) | ` +
-                `Developed By ${message.client.config.ownerDiscordTag}**`
+                `**[Invite Me](${message.client.config.inviteLink})}**`
             );
+        }
+
+        if (this.client.owners.length > 0) {
+            embed.addField('Developed By', `${this.client.owners[0]}`);
+            if (this.client.owners.length > 1)
+                embed.addField(`${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, this.client.owners.join(', '));
+        }
+        if (this.client.managers.length > 0) {
+            embed.addField(`${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, this.client.managers.join(', '));
         }
         message.channel.send({embeds: [embed]});
     }
