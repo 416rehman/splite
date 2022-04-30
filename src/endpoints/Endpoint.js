@@ -8,8 +8,8 @@ module.exports = class Endpoint {
         this.allowedIPs = options.allowedIPs;
         this.authorization = options.authorization;
         this.rateLimit = {
-            rpm: options.rateLimit?.rpm || 0,                            // How many requests per minute are allowed per IP
-            cooldown: options.rateLimit?.cooldown || 5000,               // How many milliseconds to ignore requests after hitting the rate limit. Minimum is 1000ms.
+            rpm: options.rateLimit?.rpm || 30,                            // How many requests per minute are allowed per IP, default 30. 0 = No rate limit
+            cooldown: options.rateLimit?.cooldown || 60000,              // How many milliseconds to ignore requests after hitting the rate limit. Default 60000 (1 minute)
             store: {},                                                   // The store to use for the rate limiter
         };
         this.disabled = options.disabled;                               // Whether or not the webhook is disabled
@@ -121,7 +121,13 @@ module.exports = class Endpoint {
             if (data) {
                 if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})Response from ${ctx.request.url} to ${ctx.request.ip}: [${data.status}] ${data.body}`);
                 ctx.response.status = data.status;
-                ctx.response.body = data.body;
+                ctx.response.body = {
+                    endpoint: {
+                        description: this.description,
+                        method: 'GET'
+                    },
+                    ...data.body
+                };
             }
         }
         else if (ctx.request.method === 'POST') {

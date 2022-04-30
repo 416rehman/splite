@@ -1,4 +1,5 @@
 const Koa = require('koa');
+const json = require('koa-json');
 const KoaBody = require('koa-body');
 const config = require('../config.json');
 const AsciiTable = require('ascii-table');
@@ -17,13 +18,17 @@ module.exports = class Webserver {
         this.db = require('./utils/db.js');
         this.client = client;
 
-        this.app.use((ctx) => {
-            if (ctx.path === this.root) {
-                ctx.type = 'application/json';
+        this.app.use(json());
 
+        this.app.use((ctx) => {
+            ctx.type = 'application/json';
+
+            // Default response
+            if (ctx.path === this.root) {
                 if (this.config.webserver.debug) {
                     this.logger.debug(`[WEBSERVER] ${ctx.ip} requested ${ctx.path}`);
                 }
+
                 ctx.body = {
                     status: client?.ws?.ping ? 'online' : 'offline',
                     uptime: client?.ws?.uptime,
@@ -38,6 +43,7 @@ module.exports = class Webserver {
                 return;
             }
 
+            // Endpoint handler
             const endpoint = this.endpoints[ctx.path];
             if (endpoint) {
                 endpoint.handle(ctx);

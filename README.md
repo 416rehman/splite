@@ -26,7 +26,7 @@ the repo on GitHub to help with development! ⭐
 
 ### Features
 
-- Robust and flexible command handler supporting text-based and slash commands.
+- Robust and flexible command handler supporting text-based and slash commands, restrict to permission level, VCs, NSFW channels, bot owners, bot managers, and more.
 - Endpoint handler to listen to and respond to external web requests (Webhooks).
 - Music Module to play music in voice channels from YouTube, SoundCloud, and Spotify.
 - Logging features
@@ -45,6 +45,7 @@ the repo on GitHub to help with development! ⭐
     - [Command Handler Features](#command-handler-features)
     - [Creating Classic and Slash Commands - Code Sample](#creating-classic-and-slash-commands---code-sample)
     - [Hybrid (Text and Slash) Command - Shows the avatar of a user](#hybrid-text-and-slash-command---shows-the-avatar-of-a-user)
+    - [Command Types](#command-types)
     - [Cooldowns](#cooldowns)
     - [Exclusive](#exclusive)
     - [Command Options](#command-options)
@@ -95,6 +96,8 @@ slash commands from the same command class.<br>
 5. VC Only Commands
 6. NSFW Only Commands
 7. User Blacklist (Bot owner can use `blacklist @user` to blacklist a user)
+8. Restricted Commands - `Owner` type commands can only be used by the bot owner, `Manager` type commands can only
+   be used by the bot managers and owners.
 
 #### Creating Classic and Slash Commands - Code Sample
 
@@ -118,7 +121,7 @@ module.exports = class AvatarCommand extends Command {
             aliases: ['profilepic', 'pic', 'av'],
             usage: 'avatar [user mention/ID]',
             description: 'Displays a user\'s avatar (or your own, if no user is mentioned).',
-            type: client.types.INFO,
+            type: client.types.INFO,    // Default is MISC (See command types below)
             examples: ['avatar @split'],
             slashCommand: new SlashCommandBuilder()
                 .addUserOption(option => option.setName('user').setDescription('The user to display the avatar of.'))
@@ -164,6 +167,73 @@ function displayAvatar(user, context, isInteraction = false) {
     context.channel.send({embeds: [embed]});
 }
 ```
+
+#### Command Types
+- **MISC:** This is the default type, and is used for commands that do not fit into any other category.
+- **INFO:** Commands that do not change the state of the data and are used to display information.
+- **FUN:** Commands that are used to entertain people.
+- **POINTS:** Commands that are used to manage user points, gambling, economy, etc.
+- **SMASHORPASS:** Commands that are used by the Smash or Pass system.
+- **NSFW:** Commands that are NSFW (Not Safe For Work). **NOTE**:These command will only work in NSFW channels.
+- **MOD:** Commands that can be used by server moderators to manage the server.
+- **MUSIC:** Commands that are used by the music system.
+- **ADMIN:** Commands that can be used by server admins to manage the server.
+- **MANAGER:** Commands that can be used by bot managers. **NOTE** These commands can ONLY be used by bot managers (set in config.json).
+- **OWNER:**  Commands that can be used by the bot owner. **NOTE** These commands can ONLY be used by the bot owner (set in config.json).
+
+#### Restrictions
+These are the restrictions that can be set for a command.
+
+##### Restrict command to Voice Channels
+To restrict a text command to only be used if a user is in a voice channel, add and set the `voiceChannelOnly` property to `true`.
+
+Example:
+```js
+voiceChannelOnly: true // Default is false
+```
+
+##### Restrict command to NSFW channels
+To restrict a command to only be used in NSFW channels, add and set the `nsfwOnly` property to `true`.
+
+Example:
+```js
+nsfwOnly: true // Default is false
+```
+##### Restrict command to a specific permission level
+To restrict a command so only users with a specific permission level can use it, add the permissions to the `userPermissions` property.
+
+Example: 
+```js
+userPermissions: ['KICK_MEMBERS', 'MANAGE_MESSAGES'] // Default is null
+```
+
+##### Restrict commands to Splite Bot Owners
+To restrict a command to only be used by Splite Bot Owners, set the type to `OWNER`.
+
+Example:
+```js
+type: 'OWNER' // Default is 'MISC'
+```
+Make sure to add the bot owners' ID(s) to the `owners` array in the config.json file.
+```js
+/// config.json
+  "owners": ["123456789012346578", "123456789012346579"], // Add the bot owners' ID(s) here
+```
+
+##### Restrict commands to Splite Bot Managers
+To restrict a command to only be used by Splite Bot Managers, set the type to `MANAGER`.
+
+Example:
+```js
+type: 'MANAGER' // Default is 'MISC'
+```
+Make sure to add the bot managers' ID(s) to the `managers` array in the config.json file.
+```js
+/// config.json
+  "managers": ["123456789012346578", "123456789012346579"], // Add the bot managers' ID(s) here
+```
+
+
 
 #### Cooldowns
 
@@ -238,7 +308,7 @@ name: "The name of the command - Must be unique",
 aliases: ["The aliases of the command - Must be unique"],
 usage: "A usage example for the command",
 description: "The description of the command",
-type: "Should be the same as the folder name of the command. Valid choices: INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER",
+type: "Should be the same as the folder name of the command. Valid choices: INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER, MANAGER",
 clientPermissions: ["The permissions the client needs to run the command. Valid values in src/utils/permissions.json"],
 userPermissions: ["The permissions the user needs to run the command. Valid values in src/utils/permissions.json"],
 examples: ["An example of how to use the command"],
@@ -304,8 +374,8 @@ The following options are available for Endpoint handlers:
 ```javascript
 description: 'This is a sample webhook', // Description of the endpoint
 rateLimit: {       // Rate limit info - Leave out to disable rate limiting
-    rpm: 1,        // Requests per minute - 0 for unlimited
-    cooldown: 60000 // Cooldown (in milliseconds) for the IP after reaching the rate limit - Leave out to disable cooldown
+    rpm: 30,        // Requests per minute. Default: 30 - Set to 0 to disable rate limiting
+    cooldown: 60000 // Cooldown (in milliseconds) for the IP after reaching the rate limit - Default: 60000 (1 minute)
 },
 allowedIPs: ['192.168.0.1', '192.168.0.2'], // Array of IPs that are allowed to use this endpoint - Leave out to disable check
 authorization: 'ASDFAGASDGASDFASDFA', // Expects authorization header with this value to access this endpoint - Leave out to disable check
@@ -400,45 +470,35 @@ To modify the functionality of this endpoint, you can edit the `src/endpoints/to
 
 ## Commands
 
-**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [27]**
+For the deployed list of commands, visit the [Commands Endpoint](https://splite.ahmadz.ai/commands).
 
-`activity`, `admins`, `aliases`, `avatar`, `botinfo`, `channelinfo`, `emojis`, `help`, `inviteme`, `mods`, `permissions`
-, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `editsnipe`, `stats`
-, `uptime`, `whois`, `ratemyprofessor`, `vote`, `modactivity`
+**![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [30]**
 
-**![:fun~1:](https://cdn.discordapp.com/emojis/838614336749568020.gif?v=1) Fun [84]**
+`activity`, `admins`, `aliases`, `avatar`, `banner`, `botinfo`, `calculator`, `channelinfo`, `editsnipe`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `texthelp`, `uptime`, `vote`, `whois`, `report`, `clearafk`, `modactivity`
 
-`8ball`, `afk`, `approved`, `awooify`, `baguette`, `beautiful`, `bio`, `bird`, `biryani`, `blur`, `blurple`, `brazzers`
-, `burn`, `cat`, `catfact`, `challenger`, `changemymind`, `circle`, `clyde`, `coinflip`, `contrast`, `crush`, `dadjoke`
-, `deepfry`, `dictator`, `distort`, `dither`, `dog`, `dogfact`, `duck`, `dungeon`, `emboss`, `emojify`, `enlarge`
-, `fire`, `fox`, `frame`, `gay`, `geoguessr`, `glitch`, `greyple`, `greyscale`, `hate`, `instagram`, `insult`, `invert`
-, `jail`, `magik`, `meme`, `missionpassed`, `mock`, `moustache`, `nsfw`, `pickup`, `pixelize`, `posterize`, `ps4`
-, `redple`, `rejected`, `rip`, `roll`, `rps`, `scary`, `sepia`, `sharpen`, `shibe`, `ship`, `sniper`, `thanos`
-, `thouart`, `threats`, `tobecontinued`, `trap`, `triggered`, `trumptweet`, `unsharpen`, `urban`, `tatoo`, `wanted`
-, `wasted`, `whowouldwin`, `yesno`, `yomomma`, `youtube`
+**![:fun~1:](https://cdn.discordapp.com/emojis/838614336749568020.gif?v=1) Fun [88]**
+
+`8ball`, `afk`, `anonymous`, `approved`, `awooify`, `baguette`, `beautiful`, `bio`, `bird`, `biryani`, `blur`, `blurple`, `brazzers`, `burn`, `cat`, `catfact`, `challenger`, `changemymind`, `circle`, `clyde`, `coinflip`, `confess`, `contrast`, `crush`, `dadjoke`, `deepfry`, `dictator`, `distort`, `dog`, `dogfact`, `duck`, `dungeon`, `emboss`, `emojify`, `enlarge`, `fire`, `fox`, `frame`, `gay`, `geoguessr`, `glitch`, `greyple`, `greyscale`, `hate`, `instagram`, `insult`, `invert`, `jail`, `magik`, `meme`, `missionpassed`, `mock`, `moustache`, `nsfw`, `pickup`, `pixelize`, `posterize`, `ps4`, `quickclick`, `redple`, `rejected`, `rip`, `roll`, `rps`, `scary`, `sepia`, `sharpen`, `shibe`, `ship`, `snake`, `sniper`, `thanos`, `thouart`, `threats`, `tobecontinued`, `trap`, `triggered`, `trumptweet`, `unsharpen`, `urban`, `tatoo`, `view`, `wanted`, `wasted`, `whowouldwin`, `yesno`, `yomomma`, `youtube`
 
 **![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [12]**
 
-`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `points`, `pointsper`, `position`, `rigship`
-, `totalpoints`, `odds`
+`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `odds`, `points`, `pointsper`, `position`, `rigship`, `totalpoints`
 
-**![:smashorpass:](https://cdn.discordapp.com/emojis/838588533497266217.gif?v=1) Smash or Pass [4]**
+**![:smashorpass:](https://cdn.discordapp.com/emojis/838588533497266217.gif?v=1) Smash or Pass [5]**
 
 `matches`, `optout`, `resetsmashorpass`, `smashorpass`, `unmatch`
 
-**![:misc~1:](https://cdn.discordapp.com/emojis/838614337928953886.gif?v=1) Misc [2]**
+**![:misc~1:](https://cdn.discordapp.com/emojis/838614337928953886.gif?v=1) Misc [1]**
 
-`feedback`, `reportbug`
+`feedback`
 
-**![:mods:](https://cdn.discordapp.com/emojis/838614337904050237.gif?v=1) Mod [20]**
+**![:mods:](https://cdn.discordapp.com/emojis/838614337904050237.gif?v=1) Mod [21]**
 
-`addemoji`, `addrole`, `ban`, `kick`, `members`, `mute`, `purge`, `purgebot`, `removeemoji`, `role`, `setnickname`
-, `slowmode`, `softban`, `testfarewell`, `testwelcome`, `unban`, `unmute`, `warn`, `warnpurge`, `warns`
+`addemoji`, `addrole`, `ban`, `clearwarns`, `kick`, `members`, `mute`, `purge`, `purgebot`, `removeemoji`, `role`, `setnickname`, `slowmode`, `softban`, `testfarewell`, `testwelcome`, `unban`, `unmute`, `warn`, `warnpurge`, `warns`
 
 **![:music:](https://cdn.discordapp.com/emojis/920916668484579328.gif?v=1) Music [16]**
 
-`back`, `filter`, `loop`, `nowplaying`, `pause`, `play`, `progress`, `queue`, `resume`, `save`, `search`, `seek`
-, `shuffle`, `skip`, `stop`, `volume`
+`back`, `clear`, `filter`, `loop`, `nowplaying`, `pause`, `play`, `progress`, `queue`, `resume`, `save`, `search`, `seek`, `shuffle`, `skip`, `stop`, `volume`
 
 **![:admin~1:](https://cdn.discordapp.com/emojis/838614338515370064.gif?v=1) Admin [33]**
 
@@ -451,10 +511,13 @@ To modify the functionality of this endpoint, you can edit the `src/endpoints/to
 , `setverificationmessage`, `setverificationrole`, `setviewconfessionsrole`, `setwelcomechannel`, `setwelcomemessage`
 , `toggleanonymous`, `togglecommand`, `toggletype`
 
-**![:owner~1:](https://cdn.discordapp.com/emojis/832778968243503144.png?v=1) Owner [12]**
+**![:manager~1:](https://cdn.discordapp.com/emojis/969740401927934073.png?v=1) Manager [7]**
 
-`blacklist`, `blast`, `eval`, `leaveguild`, `servers`, `setodds`, `setpoints`, `whitelist`, `wipeallpoints`
-, `wipealltotalpoints`, `wipepoints`, `wipetotalpoints`
+`blacklist`, `clearodds`, `servers`, `setodds`, `setpoints`, `whitelist`, `wipepoints`
+
+**![:owner~1:](https://cdn.discordapp.com/emojis/832778968243503144.png?v=1) Owner [7]**
+
+`blast`, `eval`, `leaveguild`, `wipeallpoints`, `wipealltotalpoints`, `wipepoints`, `wipetotalpoints`
 
 ![:verified_developer:](https://cdn.discordapp.com/emojis/832779434641719306.png?v=1) **/Slash Commands**
 
