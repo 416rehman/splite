@@ -221,17 +221,22 @@ class Client extends Discord.Client {
 
                 guild.commands.fetch().then((registeredCommands) => {
                     let fullPermissions = registeredCommands.filter(c => c.applicationId === this.application.id).map(c => {
+                        // if the command is removed, remove it from the guild
                         if (!slashCommands.find(sc => sc.name === c.name)) {
                             return rest.delete(Routes.applicationGuildCommand(id, guild.id, c.id));
                         }
 
+                        // Create permissions for the commands
                         return this.constructFullPermissions(commands, c, guild);
                     });
 
                     Promise.all(fullPermissions).then((permissions) => {
                         permissions = permissions.filter(p => p !== undefined && p !== null); // filter out undefined and null values
-                        guild.commands?.permissions.set({fullPermissions: permissions});
-                        console.log(`Updated command permissions for ${guild.name}`);
+                        console.log(permissions);
+                        if (permissions.length) {
+                            guild.commands?.permissions.set({fullPermissions: permissions});
+                            console.log(`Updated command permissions for ${guild.name}`);
+                        }
                     });
                 });
 
