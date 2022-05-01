@@ -71,7 +71,7 @@ module.exports = class AliasesCommand extends Command {
             (type !== OWNER || message.client.isOwner(message.member)) &&
             (type !== MANAGER || message.client.isManager(message.member))
         ) {
-            console.log(`TYPE: ${type}`);
+
             message.client.commands.forEach((command) => {
                 if (
                     command.aliases &&
@@ -127,7 +127,7 @@ module.exports = class AliasesCommand extends Command {
             );
         }
         else {
-            console.log('NO TYPE PROVIDED');
+
             message.client.commands.forEach((command) => {
                 if (command.aliases && !disabledCommands.includes(command.name))
                     aliases[command.type].push(

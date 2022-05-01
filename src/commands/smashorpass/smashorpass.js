@@ -69,7 +69,7 @@ module.exports = class smashOrPassCommand extends Command {
             id,
             error = `${emojis.fail} Stopped Playing!`
         ) => {
-            console.log('stopping smash or pass');
+
             this.done(message.author.id);
             msg.edit({
                 embeds: [
@@ -359,7 +359,6 @@ function nextUser(message, usersQueue, points, prefix) {
 
 function handleSmashOrPass(msg, author, points, currentUser, collector) {
     return new Promise((resolve, reject) => {
-        console.log('HANDLE SMASH');
         collector.resetTimer();
         const date = new Date();
 

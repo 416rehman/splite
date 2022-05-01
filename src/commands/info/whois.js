@@ -87,24 +87,25 @@ module.exports = class WhoIsCommand extends Command {
             .addField('User', member.toString(), true)
             .addField('Discriminator', `\`#${member.user.discriminator}\``, true)
             .addField('ID', `\`${member.id}\``, true)
-            .addField('Status', statuses[member.presence?.status || 'offline'], true)
             .addField('Bot', `\`${member.user.bot}\``, true)
             .addField('Color Role', member.roles.color?.toString() || '`None`', true)
             .addField('Highest Role', member.roles.highest.toString(), true)
             .addField('Joined server on', `\`${moment(member.joinedAt).format('MMM DD YYYY')}\``, true)
             .addField('Joined Discord on', `\`${moment(member.user.createdAt).format('MMM DD YYYY')}\``, true)
-            .addField('Roles', roles || '`None`')
             .setFooter({
                 text: message.member.displayName, iconURL: message.author.displayAvatarURL(),
             })
             .setTimestamp()
             .setColor(member.displayHexColor);
+
+        if (this.client.enabledIntents.find(i => i === this.client.intents.GUILD_PRESENCES)) await embed.addField('Status', statuses[member.presence?.status || 'offline'], true);
         if (activities.length > 0) embed.setDescription(activities.join('\n'));
-        if (customStatus) embed.spliceFields(0, 0, {
+        if (customStatus) await embed.spliceFields(0, 0, {
             name: 'Custom Status', value: customStatus,
         });
-        if (userFlags.length > 0) embed.addField('Badges', userFlags.map((flag) => flags[flag]).join('\n'));
-        if (KeyPerms.length > 0) embed.addField(
+        if (userFlags.length > 0) await embed.addField('Badges', userFlags.map((flag) => flags[flag]).join('\n'), true);
+        await embed.addField('Roles', roles || '`None`');
+        if (KeyPerms.length > 0) await embed.addField(
             'Key Permissions',
             `${message.guild.ownerId === member.id ? emojis.owner + ' **`SERVER OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``);
         message.channel.send({embeds: [embed]});

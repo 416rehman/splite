@@ -48,7 +48,7 @@ module.exports = class confessCommand extends Command {
         let n = d.valueOf();
         n = n.toString();
         n = n.slice(n.length - 6);
-        console.log('wtf');
+
         const ftr = client.utils.weightedRandom({
             0: 50,
             1: 50,

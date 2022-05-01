@@ -234,7 +234,7 @@ class Client extends Discord.Client {
 
                     Promise.all(fullPermissions).then((permissions) => {
                         permissions = permissions.filter(p => p !== undefined && p !== null); // filter out undefined and null values
-                        console.log(permissions);
+
                         if (permissions.length) {
                             guild.commands?.permissions.set({fullPermissions: permissions});
                             console.log(`Updated command permissions for ${guild.name}`);

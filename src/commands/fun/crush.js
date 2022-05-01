@@ -24,7 +24,7 @@ module.exports = class crushCommand extends Command {
             })
             .then(async (msg) => {
                 try {
-                    console.log(this.getAvatarURL(member));
+
                     const buffer = await msg.client.ameApi.generate('crush', {
                         url: this.getAvatarURL(member, 'png'),
                     });

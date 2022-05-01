@@ -108,7 +108,7 @@ module.exports = class RoleCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            console.log(failed.length);
+
             if (failed.length) embed.addField('Failed', failed.join('\n'), true);
             return message.channel.send({embeds: [embed]});
         }
