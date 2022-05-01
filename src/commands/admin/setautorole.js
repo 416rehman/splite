@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetAutoRoleCommand extends Command {
     constructor(client) {
@@ -24,14 +24,14 @@ module.exports = class SetAutoRoleCommand extends Command {
             .pluck()
             .get(message.guild.id);
         const oldAutoRole =
-         message.guild.roles.cache.find((r) => r.id === autoRoleId) || '`None`';
+            message.guild.roles.cache.find((r) => r.id === autoRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(message.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+                iconURL: message.author.displayAvatarURL({dynamic: true}),
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
@@ -51,7 +51,7 @@ module.exports = class SetAutoRoleCommand extends Command {
         embed.setDescription(
             `The \`auto role\` was successfully updated. ${success}\nUse \`clearautorole\` to clear the current \`auto role\`.`
         );
-        const autoRole = await this.getRole(message, args[0]);
+        const autoRole = await this.getGuildRole(message.guild, args[0]);
         if (!autoRole)
             return this.sendErrorMessage(
                 message,

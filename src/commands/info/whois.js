@@ -42,7 +42,7 @@ module.exports = class WhoIsCommand extends Command {
     }
 
     async run(message, args) {
-        const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]) || message.member;
+        const member = (await this.getGuildMember(message.guild, args[0])) || message.member;
         const userFlags = (await member.user.fetchFlags()).toArray();
         if (this.client.getOwnerFromId(member.user.id)) userFlags.push('BOT_OWNER');
         if (this.client.getManagerFromId(member.user.id)) userFlags.push('BOT_MANAGER');

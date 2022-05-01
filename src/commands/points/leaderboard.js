@@ -23,10 +23,7 @@ module.exports = class LeaderboardCommand extends Command {
         });
     }
 
-    async run(message, args) {
-        if (message.guild.members.cache.size === message.guild.memberCount)
-            console.log('CACHE COMPLETE');
-
+    run(message, args) {
         let max = parseInt(args[0]);
         if (!max || max < 0) max = 10;
         else if (max > 25) max = 25;
@@ -37,16 +34,9 @@ module.exports = class LeaderboardCommand extends Command {
             .map((row) => row.user_id)
             .indexOf(message.author.id);
 
-        const members = [];
-        let count = 1;
-        for (const row of leaderboard) {
-            members.push(
-                oneLine`**${count}.** ${await message.guild.members.cache.get(
-                    row.user_id
-                )} - \`${row.points}\` ${emojis.point}`
-            );
-            count++;
-        }
+        const members = leaderboard.map((row, idx) => {
+            return oneLine`**${idx + 1}.** <@${row.user_id}> - \`${row.points}\` ${emojis.point}`;
+        });
 
         const embed = new MessageEmbed()
             .setThumbnail(message.guild.iconURL({dynamic: true}))
@@ -58,7 +48,7 @@ module.exports = class LeaderboardCommand extends Command {
             .setColor(message.guild.me.displayHexColor);
 
         if (members.length <= max) {
-            const range = members.length == 1 ? '[1]' : `[1 - ${members.length}]`;
+            const range = members.length === 1 ? '[1]' : `[1 - ${members.length}]`;
             message.channel.send({
                 embeds: [
                     embed
@@ -66,8 +56,6 @@ module.exports = class LeaderboardCommand extends Command {
                         .setDescription(members.join('\n')),
                 ],
             });
-
-            // Reaction Menu
         }
         else {
             embed

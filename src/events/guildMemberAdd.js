@@ -1,6 +1,6 @@
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const moment = require('moment');
-const { stripIndent } = require('common-tags');
+const {stripIndent} = require('common-tags');
 
 module.exports = async (client, member) => {
     client.logger.info(
@@ -8,8 +8,8 @@ module.exports = async (client, member) => {
     );
 
     /** ------------------------------------------------------------------------------------------------
-    * MEMBER LOG
-    * ------------------------------------------------------------------------------------------------ */
+     * MEMBER LOG
+     * ------------------------------------------------------------------------------------------------ */
     // Get member log
     const memberLogId = client.db.settings.selectMemberLogId
         .pluck()
@@ -17,18 +17,18 @@ module.exports = async (client, member) => {
     const memberLog = member.guild.channels.cache.get(memberLogId);
     if (
         memberLog &&
-      memberLog.viewable &&
-      memberLog
-          .permissionsFor(member.guild.me)
-          .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+        memberLog.viewable &&
+        memberLog
+            .permissionsFor(member.guild.me)
+            .has(['SEND_MESSAGES', 'EMBED_LINKS'])
     ) {
         const embed = new MessageEmbed()
             .setTitle('Member Joined')
             .setAuthor({
                 name: `${member.guild.name}`,
-                iconURL: member.guild.iconURL({ dynamic: true }),
+                iconURL: member.guild.iconURL({dynamic: true}),
             })
-            .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+            .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`${member} (**${member.user.tag}**)`)
             .addField(
                 'Account created on',
@@ -36,12 +36,12 @@ module.exports = async (client, member) => {
             )
             .setTimestamp()
             .setColor(member.guild.me.displayHexColor);
-        memberLog.send({ embeds: [embed] });
+        memberLog.send({embeds: [embed]});
     }
 
     /** ------------------------------------------------------------------------------------------------
-    * AUTO ROLE
-    * ------------------------------------------------------------------------------------------------ */
+     * AUTO ROLE
+     * ------------------------------------------------------------------------------------------------ */
     // Get auto role
     const autoRoleId = client.db.settings.selectAutoRoleId
         .pluck()
@@ -64,8 +64,8 @@ module.exports = async (client, member) => {
     }
 
     /** ------------------------------------------------------------------------------------------------
-    * WELCOME MESSAGES
-    * ------------------------------------------------------------------------------------------------ */
+     * WELCOME MESSAGES
+     * ------------------------------------------------------------------------------------------------ */
     // Get welcome channel
     let {
         welcome_channel_id: welcomeChannelId,
@@ -76,17 +76,17 @@ module.exports = async (client, member) => {
     // Send welcome message
     if (
         welcomeChannel &&
-      welcomeChannel.viewable &&
-      welcomeChannel
-          .permissionsFor(member.guild.me)
-          .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
-      welcomeMessage
+        welcomeChannel.viewable &&
+        welcomeChannel
+            .permissionsFor(member.guild.me)
+            .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+        welcomeMessage
     ) {
         welcomeMessage = welcomeMessage
             .replace(/`?\?member`?/g, member) // Member mention substitution
             .replace(/`?\?username`?/g, member.user.username) // Username substitution
             .replace(/`?\?tag`?/g, member.user.tag) // Tag substitution
-            .replace(/`?\?size`?/g, member.guild.members.cache.size); // Guild size substitution
+            .replace(/`?\?size`?/g, member.guild.memberCount); // Guild size substitution
         welcomeChannel.send({
             embeds: [
                 new MessageEmbed()
@@ -97,8 +97,8 @@ module.exports = async (client, member) => {
     }
 
     /** ------------------------------------------------------------------------------------------------
-    * RANDOM COLOR
-    * ------------------------------------------------------------------------------------------------ */
+     * RANDOM COLOR
+     * ------------------------------------------------------------------------------------------------ */
     // Assign random color
     const randomColor = client.db.settings.selectRandomColor
         .pluck()
@@ -130,8 +130,8 @@ module.exports = async (client, member) => {
     }
 
     /** ------------------------------------------------------------------------------------------------
-    * USERS TABLE
-    * ------------------------------------------------------------------------------------------------ */
+     * USERS TABLE
+     * ------------------------------------------------------------------------------------------------ */
     // Update users table
     client.db.users.insertRow.run(
         member.id,

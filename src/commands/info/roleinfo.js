@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const moment = require('moment');
-const permissions = require('../../utils/permissions.json');
+const {permissions} = require('../../utils/constants.json');
 
 module.exports = class RoleInfoCommand extends Command {
     constructor(client) {
@@ -16,9 +16,7 @@ module.exports = class RoleInfoCommand extends Command {
     }
 
     run(message, args) {
-        const role =
-         this.getRoleFromMention(message, args[0]) ||
-         message.guild.roles.cache.get(args[0]);
+        const role = this.getGuildRole(message.guild, args.join(' '));
         if (!role)
             return this.sendErrorMessage(
                 message,
@@ -42,7 +40,7 @@ module.exports = class RoleInfoCommand extends Command {
 
         const embed = new MessageEmbed()
             .setTitle('Role Information')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(message.guild.iconURL({dynamic: true}))
             .addField('Role', role.toString(), true)
             .addField('Role ID', `\`${role.id}\``, true)
             .addField('Position', position, true)
@@ -66,6 +64,6 @@ module.exports = class RoleInfoCommand extends Command {
             })
             .setTimestamp()
             .setColor(role.hexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };

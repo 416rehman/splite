@@ -29,16 +29,7 @@ module.exports = class MatchesCommand extends Command {
 
         let matches, name;
         if (args.length > 0) {
-            const member =
-                (await this.getMemberFromMention(message, args[0])) ||
-                (await message.guild.members.cache.get(
-                    args[0] ||
-                    (await message.guild.members.cache.find((m) =>
-                        m.displayName
-                            .toLowerCase()
-                            .startsWith(args[0].toLowerCase())
-                    ))
-                ));
+            const member = await this.getGuildMember(message.guild, args[0]);
             if (member == undefined)
                 return message
                     .reply(

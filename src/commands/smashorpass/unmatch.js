@@ -24,27 +24,18 @@ module.exports = class unmatchCommand extends Command {
             .pluck()
             .get(message.guild.id);
         if (args[0] !== undefined || args[0] != null) {
-            let member;
-            if (args[0].startsWith('<@'))
-                member =
-                    this.getMemberFromMention(message, args[0]) ||
-                    message.guild.members.cache.get(args[0]);
-            else if (/^[0-9]{18}$/g.test(args[0])) {
-                member = message.guild.members.cache.get(args[0]);
-                if (member === undefined) {
-                    const mRow = await message.client.db.users.selectRowUserOnly.get(
-                        args[0]
-                    );
-                    const mGuild = await message.client.guilds.cache.get(
-                        mRow.guild_id
-                    );
-                    member = await mGuild.members.cache.get(mRow.user_id);
-                }
-            }
-            else
-                member = message.guild.members.cache.find((r) =>
-                    r.user.username.toLowerCase().startsWith(args[0].toLowerCase())
+            let member = (await this.getGuildMember(message.guild, args[0]));
+
+            // get from another guild
+            if (!member || !member.id) {
+                const mRow = await message.client.db.users.selectRowUserOnly.get(
+                    args[0]
                 );
+                const mGuild = await message.client.guilds.cache.get(
+                    mRow.guild_id
+                );
+                member = await mGuild.members.fetch(mRow.user_id);
+            }
 
             if (member === undefined)
                 return message.channel.send(
@@ -57,6 +48,7 @@ module.exports = class unmatchCommand extends Command {
                 userId: member.user.id,
                 userId2: message.author.id,
             });
+
             if (match != null) {
                 const embed = new MessageEmbed()
                     .setTitle(

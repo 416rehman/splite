@@ -22,10 +22,7 @@ module.exports = class RoleCommand extends Command {
     async run(message, args) {
         if (!args[0]) return this.sendHelpMessage(message);
         const memberArg = args.shift();
-        const member =
-            (await this.getMemberFromMention(message, memberArg)) ||
-            (await message.guild.members.cache.get(memberArg)) ||
-            (await this.getMemberFromText(message, memberArg));
+        const member = await this.getGuildMember(message.guild, memberArg);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -52,7 +49,7 @@ module.exports = class RoleCommand extends Command {
         for (const arg of args) {
             if (arg.startsWith('+')) {
                 const cleanedArg = arg.replace('+', '');
-                const role = await this.getRole(message, cleanedArg);
+                const role = await this.getGuildRole(message.guild, cleanedArg);
                 if (!role)
                     return this.sendErrorMessage(
                         message,
@@ -65,7 +62,7 @@ module.exports = class RoleCommand extends Command {
             }
             else if (arg.startsWith('-')) {
                 const cleanedArg = arg.replace('-', '');
-                const role = await this.getRole(message, cleanedArg);
+                const role = await this.getGuildRole(message.guild, cleanedArg);
                 if (!role)
                     return this.sendErrorMessage(
                         message,
@@ -77,7 +74,7 @@ module.exports = class RoleCommand extends Command {
                 else failed.push(`-${role}`);
             }
             else {
-                const role = await this.getRole(message, arg);
+                const role = await this.getGuildRole(message.guild, arg);
                 if (!role)
                     return this.sendErrorMessage(
                         message,

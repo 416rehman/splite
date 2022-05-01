@@ -18,15 +18,23 @@ module.exports = class ModsCommand extends Command {
         const modRoleId = message.client.db.settings.selectModRoleId
             .pluck()
             .get(message.guild.id);
-        const modRole = message.guild.roles.cache.get(modRoleId) || '`None`';
+
+        const modRole = message.guild.roles.cache.get(modRoleId);
+
+        if (!modRole) {
+            return message.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setTitle('No admin role has been set.')
+                        .setDescription('To set a mod role, use the `setmodrole` command.')
+                        .setColor(message.guild.me.displayHexColor),
+                ]
+            });
+        }
 
         const mods = [
-            ...message.guild.members.cache
-                .filter((m) => {
-                    if (m.roles.cache.find((r) => r === modRole)) return true;
-                })
-                .sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
-                .values(),
+            ...modRole.members.sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
+                .values()
         ];
 
         const embed = new MessageEmbed()
@@ -35,7 +43,7 @@ module.exports = class ModsCommand extends Command {
             .addField('Mod Role', modRole.toString())
             .addField(
                 'Mod Count',
-                `**${mods.length}** out of **${message.guild.members.cache.size}** members`
+                `**${mods.length}** out of **${message.guild.memberCount}** members`
             )
             .setFooter({
                 text: message.member.displayName,

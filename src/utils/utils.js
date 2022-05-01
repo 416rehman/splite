@@ -185,13 +185,12 @@ async function transferCrown(client, guild, crownRoleId) {
     }
 
     const leaderboard = client.db.users.selectLeaderboard.all(guild.id);
-    const winner = guild.members.cache.get(leaderboard[0].user_id);
+    const winner = guild.members.fetch(leaderboard[0].user_id);
     const points = client.db.users.selectPoints.pluck().get(winner.id, guild.id);
     let quit = false;
 
-    // Remove role from losers
     await Promise.all(
-        guild.members.cache.map(async (member) => {
+        (await guild.members.fetch()).map(async (member) => {
             // Good alternative to handling async forEach
             if (member.roles.cache.has(crownRole.id)) {
                 try {

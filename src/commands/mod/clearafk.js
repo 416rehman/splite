@@ -14,11 +14,8 @@ module.exports = class clearafkCommand extends Command {
         });
     }
 
-    run(message, args) {
-        const member =
-            this.getMemberFromMention(message, args[0]) ||
-            this.getMemberFromText(message, args[0]) ||
-            null;
+    async run(message, args) {
+        const member = await this.getGuildMember(message.guild, args.join(' '));
         if (!member.id)
             return message.reply(
                 'Please provide a valid member to clear their afk status.'

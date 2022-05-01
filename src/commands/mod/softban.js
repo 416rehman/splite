@@ -23,8 +23,7 @@ module.exports = class SoftBanCommand extends Command {
     async run(message, args) {
         if (!args[0]) return this.sendHelpMessage(message);
         const member =
-            (await this.getMemberFromMention(message, args[0])) ||
-            (await message.guild.members.cache.get(args[0]));
+            await this.getGuildMember(message.guild, args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,

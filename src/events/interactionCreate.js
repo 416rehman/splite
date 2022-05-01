@@ -32,7 +32,7 @@ module.exports = async (client, interaction) => {
                 ephemeral: true,
             });
 
-            const author = await interaction.guild.members.cache.get(interaction.user.id);
+            const author = await interaction.guild.members.fetch(interaction.user.id);
             const channel = await interaction.guild.channels.cache.get(interaction.channelId);
 
             if (author) {

@@ -6,18 +6,17 @@ module.exports = class rebuildCommand extends Command {
         super(client, {
             name: 'rebuild',
             aliases: ['rebuilddata', 'rebuildserver', 'rebuilduser'],
-            usage: 'rebuild <server ID>',
-            description: 'rebuilds all the server data from the database.',
+            usage: 'rebuild <server/>user ID>',
+            description: 'rebuilds all the server/user data from the database.',
             examples: ['rebuild 123456789012345678'],
             type: client.types.OWNER,
         });
     }
 
-    run(message, args) {
+    async run(message, args) {
         const guild = this.client.guilds.cache.get(args[0]);
         const member =
-            this.getMemberFromMention(message, args[0]) ||
-            message.guild.members.cache.get(args[0]);
+            await this.getGuildMember(message.guild, args[0]);
         if (!member && !guild)
             return this.sendErrorMessage(
                 message,

@@ -35,7 +35,7 @@ module.exports = class testWelcomeCommand extends Command {
                 .replace(/`?\?member`?/g, message.member) // Member mention substitution
                 .replace(/`?\?username`?/g, message.member.user.username) // Username substitution
                 .replace(/`?\?tag`?/g, message.member.user.tag) // Tag substitution
-                .replace(/`?\?size`?/g, message.guild.members.cache.size); // Guild size substitution
+                .replace(/`?\?size`?/g, message.guild.memberCount); // Guild size substitution
             welcomeChannel.send({
                 embeds: [
                     new MessageEmbed()

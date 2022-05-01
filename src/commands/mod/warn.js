@@ -18,8 +18,7 @@ module.exports = class WarnCommand extends Command {
     async run(message, args) {
         if (!args[0]) return this.sendHelpMessage(message);
         const member =
-            (await this.getMemberFromMention(message, args[0])) ||
-            (await message.guild.members.cache.get(args[0]));
+            await this.getGuildMember(message.guild, args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -91,8 +90,7 @@ module.exports = class WarnCommand extends Command {
         if (autoKick && warns.warns.length >= autoKick) {
             try {
                 const member =
-                    this.getMemberFromMention(message, args[0]) ||
-                    message.guild.members.cache.get(args[0]);
+                    (await this.getGuildMember(message.guild, args[0]));
                 const reason = `Warn limit reached. Automatically kicked by ${message.guild.me}.`;
                 await member.kick(reason);
                 this.sendModLogMessage(message, reason, {Member: member});

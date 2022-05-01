@@ -17,13 +17,7 @@ module.exports = class BannerCommand extends Command {
 
     async run(message, args) {
         const member = await message.client.api
-            .users(
-                (await this.getMemberFromMention(message, args[0]))?.id ||
-                (
-                    await message.guild.members.cache.get(args[0])
-                )?.id ||
-                message.member.id
-            )
+            .users((await this.getGuildMember(message.guild, args[0]))?.id || message.member.id)
             .get();
         const banner =
             member.banner &&

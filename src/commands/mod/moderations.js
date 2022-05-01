@@ -51,7 +51,6 @@ module.exports = class modActivityCommand extends Command {
             if (!args[0])
                 await this.sendMultipleMessageCount(
                     args,
-                    message.guild.members.cache,
                     message,
                     msg,
                     embed,
@@ -59,8 +58,8 @@ module.exports = class modActivityCommand extends Command {
                     1000,
                     row
                 );
-            else if (args[0]) {
-                const target = await this.getMemberOrRole(message, args);
+            else {
+                const target = await this.getGuildMemberOrRole(message.guild, args[0]);
                 let days = parseInt(args[1]) || 1000;
 
                 if (target) {
@@ -78,7 +77,6 @@ module.exports = class modActivityCommand extends Command {
                     else if (target.constructor.name === 'Role')
                         return this.sendMultipleMessageCount(
                             args,
-                            message.guild.members.cache,
                             message,
                             msg,
                             embed,
@@ -94,7 +92,6 @@ module.exports = class modActivityCommand extends Command {
                     days = parseInt(args[0]) || 1000;
                     await this.sendMultipleMessageCount(
                         args,
-                        message.guild.members.cache,
                         message,
                         msg,
                         embed,
@@ -114,7 +111,6 @@ module.exports = class modActivityCommand extends Command {
 
     async sendMultipleMessageCount(
         args,
-        collection,
         message,
         msg,
         embed,
@@ -125,19 +121,19 @@ module.exports = class modActivityCommand extends Command {
     ) {
         if (days > 1000 || days < 0) days = 1000;
 
-        let data;
+        let moderators;
         if (role) {
             if (role.members.size > 1000)
                 return msg.edit(
                     `${emojis.fail} This role has too many members, please try again with a role that has less than 1000 members.`
                 );
 
-            data = this.selectById(role.members.map((m) => {
+            moderators = this.selectById(role.members.map((m) => {
                 return m.id;
             }), message, days);
         }
         else {
-            data = message.client.db.activities.getGuildModerations.all(
+            moderators = message.client.db.activities.getGuildModerations.all(
                 message.guild.id,
                 days
             );
@@ -147,10 +143,9 @@ module.exports = class modActivityCommand extends Command {
         if (!max || max < 0) max = 10;
         else if (max > 25) max = 25;
 
-        const lb = data.flatMap((d) => {
-            const member = message.guild.members.cache.get(d.user_id);
-            if (!member) return [];
-            return {user: member, count: d.moderations || 0};
+        let lb = moderators.flatMap((d) => {
+            if (!d.user_id) return [];
+            return {user: `<@${d.user_id}>`, count: d.moderations || 0};
         });
 
         const descriptions = lb.map((e, idx) => {

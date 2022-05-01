@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class UnmuteCommand extends Command {
     constructor(client) {
@@ -30,8 +30,7 @@ module.exports = class UnmuteCommand extends Command {
             );
 
         const member =
-         (await this.getMemberFromMention(message, args[0])) ||
-         (await message.guild.members.cache.get(args[0]));
+            await this.getGuildMember(message.guild, args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -64,7 +63,7 @@ module.exports = class UnmuteCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            message.channel.send({ embeds: [embed] });
+            message.channel.send({embeds: [embed]});
         }
         catch (err) {
             message.client.logger.error(err.stack);
@@ -77,6 +76,6 @@ module.exports = class UnmuteCommand extends Command {
         }
 
         // Update mod log
-        this.sendModLogMessage(message, reason, { Member: member });
+        this.sendModLogMessage(message, reason, {Member: member});
     }
 };

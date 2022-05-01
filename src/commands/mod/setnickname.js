@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {oneLine, stripIndent} = require('common-tags');
 
 module.exports = class SetNicknameCommand extends Command {
     constructor(client) {
@@ -29,8 +29,7 @@ module.exports = class SetNicknameCommand extends Command {
     async run(message, args) {
         if (!args[0]) return this.sendHelpMessage(message, 'Set Nickname');
         const member =
-         (await this.getMemberFromMention(message, args[0])) ||
-         (await message.guild.members.cache.get(args[0]));
+            await this.getGuildMember(message.guild, args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -40,7 +39,7 @@ module.exports = class SetNicknameCommand extends Command {
         if (
             member.roles.highest.position >=
             message.member.roles.highest.position &&
-         member != message.member
+            member != message.member
         )
             return this.sendErrorMessage(
                 message,
@@ -67,7 +66,7 @@ module.exports = class SetNicknameCommand extends Command {
         }
         else {
             try {
-            // Change nickname
+                // Change nickname
                 const oldNickname = member.nickname || '`None`';
                 const nicknameStatus = `${oldNickname} ➔ ${nickname}`;
                 await member.setNickname(nickname);
@@ -83,7 +82,7 @@ module.exports = class SetNicknameCommand extends Command {
                     })
                     .setTimestamp()
                     .setColor(message.guild.me.displayHexColor);
-                message.channel.send({ embeds: [embed] });
+                message.channel.send({embeds: [embed]});
 
                 // Update mod log
                 this.sendModLogMessage(message, '', {

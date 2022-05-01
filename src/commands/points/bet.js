@@ -19,8 +19,8 @@ module.exports = class betCommand extends Command {
         });
     }
 
-    run(message, args) {
-        const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]);
+    async run(message, args) {
+        const member = await this.getGuildMember(message.guild, args[0]);
         if (!member) {
             this.done(message.author.id);
             return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');

@@ -34,12 +34,8 @@ module.exports = class ServerStaffCommand extends Command {
         // Get mod list
         if (modRole)
             modList = [
-                ...message.guild.members.cache
-                    .filter((m) => {
-                        if (m.roles.cache.find((r) => r === modRole)) return true;
-                    })
-                    .sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
-                    .values(),
+                ...modRole.members.sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
+                    .values()
             ];
 
         if (modList.length > 0)
@@ -49,12 +45,8 @@ module.exports = class ServerStaffCommand extends Command {
         // Get admin list
         if (adminRole)
             adminList = [
-                ...message.guild.members.cache
-                    .filter((m) => {
-                        if (m.roles.cache.find((r) => r === adminRole)) return true;
-                    })
-                    .sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
-                    .values(),
+                ...adminRole.members.sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
+                    .values()
             ];
 
         if (adminList.length > 0)

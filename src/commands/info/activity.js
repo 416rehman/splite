@@ -39,17 +39,22 @@ module.exports = class activityCommand extends Command {
                 row.addComponents(moderationButton);
             }
 
-            if (!args[0]) await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, 'Server Activity', 1000, row); else if (args[0]) {
-                const target = await this.getMemberOrRole(message, args);
+            if (!args[0]) await this.sendMultipleMessageCount(args, message, msg, embed, 'Server Activity', 1000, row);
+            else if (args[0]) {
+                const target = await this.getGuildMemberOrRole(message.guild, args[0]);
 
                 let days = parseInt(args[1]) || 1000;
 
                 if (target) {
-                    if (target.constructor.name === 'GuildMember' || target.constructor.name === 'User') return this.sendUserMessageCount(message, target, embed, msg, days); else if (target.constructor.name === 'Role') return this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `${target.name}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row, target);
+                    if (target.constructor.name === 'GuildMember' || target.constructor.name === 'User')
+                        return this.sendUserMessageCount(message, target, embed, msg, days);
+                    else if (target.constructor.name === 'Role')
+                        return this.sendMultipleMessageCount(args, message, msg, embed, `${target.name}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row, target);
                 }
+                // No Days given
                 else if (!args[1]) {
                     days = parseInt(args[0]) || 1000;
-                    await this.sendMultipleMessageCount(args, message.guild.members.cache, message, msg, embed, `Server ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row);
+                    await this.sendMultipleMessageCount(args, message, msg, embed, `Server ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`, days, row);
                 }
                 else {
                     msg.edit({embeds: [this.errorEmbed('Invalid user or role.')]});
@@ -58,7 +63,7 @@ module.exports = class activityCommand extends Command {
         });
     }
 
-    async sendMultipleMessageCount(args, collection, message, msg, embed, title, days = 1000, row, role) {
+    async sendMultipleMessageCount(args, message, msg, embed, title, days = 1000, row, role) {
         if (days > 1000 || days < 0) days = 1000;
         let data;
         if (role) {
@@ -74,9 +79,8 @@ module.exports = class activityCommand extends Command {
         if (!max || max < 0) max = 10; else if (max > 25) max = 25;
 
         const lb = data.flatMap((d) => {
-            const member = message.guild.members.cache.get(d.user_id);
-            if (!member) return [];
-            return {user: member, count: d.messages || 0};
+            if (!d.user_id) return [];
+            return {user: `<@${d.user_id}>`, count: d.messages || 0};
         });
 
         let i = 1;
@@ -87,7 +91,7 @@ module.exports = class activityCommand extends Command {
         });
 
         if (descriptions.length <= max) {
-            const range = descriptions.length == 1 ? '[1]' : `[1 - ${descriptions.length}]`;
+            const range = descriptions.length === 1 ? '[1]' : `[1 - ${descriptions.length}]`;
             await msg.edit({
                 embeds: [embed
                     .setTitle(`${title} ${range}`)

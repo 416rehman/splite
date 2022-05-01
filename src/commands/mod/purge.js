@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {oneLine, stripIndent} = require('common-tags');
 
 module.exports = class PurgeCommand extends Command {
     constructor(client) {
@@ -28,8 +28,8 @@ module.exports = class PurgeCommand extends Command {
 
     async run(message, args) {
         let channel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
+            this.getChannelFromMention(message, args[0]) ||
+            message.guild.channels.cache.get(args[0]);
         if (channel) {
             args.shift();
         }
@@ -46,8 +46,7 @@ module.exports = class PurgeCommand extends Command {
             );
 
         let member =
-         (await this.getMemberFromMention(message, args[0])) ||
-         (await message.guild.members.cache.get(args[0]));
+            await this.getGuildMember(message.guild, args[0]);
         if (member) {
             args.shift();
         }
@@ -78,7 +77,7 @@ module.exports = class PurgeCommand extends Command {
         // Find member messages if given
         let messages;
         if (member) {
-            messages = (await channel.messages.fetch({ limit: amount })).filter(
+            messages = (await channel.messages.fetch({limit: amount})).filter(
                 (m) => m.member.id === member.id
             );
         }
@@ -151,7 +150,7 @@ module.exports = class PurgeCommand extends Command {
                 }
 
                 message.channel
-                    .send({ embeds: [embed] })
+                    .send({embeds: [embed]})
                     .then((msg) => {
                         setTimeout(() => msg.delete(), 5000);
                     })

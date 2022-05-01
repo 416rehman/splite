@@ -1,11 +1,11 @@
-const { MessageEmbed } = require('discord.js');
-const { verify } = require('../utils/emojis.json');
-const { stripIndent } = require('common-tags');
-const { joinvoting } = require('../utils/joinVoting');
+const {MessageEmbed} = require('discord.js');
+const {verify} = require('../utils/emojis.json');
+const {stripIndent} = require('common-tags');
+const {joinvoting} = require('../utils/joinVoting');
 module.exports = async (client, messageReaction, user) => {
     if (client.user === user) return;
 
-    const { message, emoji } = messageReaction;
+    const {message, emoji} = messageReaction;
 
     // Verification
     if (emoji.id === verify.split(':')[2].slice(0, -1)) {
@@ -14,10 +14,10 @@ module.exports = async (client, messageReaction, user) => {
             verification_message_id: verificationMessageId,
         } = client.db.settings.selectVerification.get(message.guild.id);
         const verificationRole =
-         message.guild.roles.cache.get(verificationRoleId);
+            message.guild.roles.cache.get(verificationRoleId);
 
         if (verificationRole && message.id == verificationMessageId) {
-            const member = message.guild.members.cache.get(user.id);
+            const member = message.guild.members.fetch(user.id);
             if (!member.roles.cache.has(verificationRole)) {
                 try {
                     await member.roles.add(verificationRole);
@@ -27,7 +27,7 @@ module.exports = async (client, messageReaction, user) => {
                         member.guild,
                         'verification',
                         stripIndent`Unable to assign verification role,` +
-                     'please check the role hierarchy and ensure I have the Manage Roles permission',
+                        'please check the role hierarchy and ensure I have the Manage Roles permission',
                         err.message
                     );
                 }
@@ -41,26 +41,26 @@ module.exports = async (client, messageReaction, user) => {
             .pluck()
             .get(message.guild.id);
         const starboardChannel =
-         message.guild.channels.cache.get(starboardChannelId);
+            message.guild.channels.cache.get(starboardChannelId);
         if (
             !starboardChannel ||
-         !starboardChannel.viewable ||
-         !starboardChannel
-             .permissionsFor(message.guild.me)
-             .has(['SEND_MESSAGES', 'EMBED_LINKS']) ||
-         message.channel === starboardChannel
+            !starboardChannel.viewable ||
+            !starboardChannel
+                .permissionsFor(message.guild.me)
+                .has(['SEND_MESSAGES', 'EMBED_LINKS']) ||
+            message.channel === starboardChannel
         )
             return;
 
         const emojis = ['⭐', '🌟', '✨', '💫', '☄️'];
-        const messages = await starboardChannel.messages.fetch({ limit: 100 });
+        const messages = await starboardChannel.messages.fetch({limit: 100});
         const starred = messages.find((m) => {
             return emojis.some((e) => {
                 return (
                     m.content.startsWith(e) &&
-               m.embeds[0] &&
-               m.embeds[0].footer &&
-               m.embeds[0].footer.text == message.id
+                    m.embeds[0] &&
+                    m.embeds[0].footer &&
+                    m.embeds[0].footer.text == message.id
                 );
             });
         });
@@ -105,7 +105,7 @@ module.exports = async (client, messageReaction, user) => {
             const embed = new MessageEmbed()
                 .setAuthor({
                     name: message.author.tag,
-                    iconURL: message.author.displayAvatarURL({ dynamic: true }),
+                    iconURL: message.author.displayAvatarURL({dynamic: true}),
                 })
                 .setDescription(message.content)
                 .addField('Original', `[Jump!](${message.url})`)

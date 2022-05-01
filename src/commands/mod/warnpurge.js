@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const moment = require('moment');
 
 module.exports = class WarnPurgeCommand extends Command {
@@ -9,7 +9,7 @@ module.exports = class WarnPurgeCommand extends Command {
             aliases: ['purgewarn'],
             usage: 'warnpurge <user mention/ID> <message count> [reason]',
             description:
-            'Warns a member in your server and then purges their messages from the message count provided.',
+                'Warns a member in your server and then purges their messages from the message count provided.',
             type: client.types.MOD,
             clientPermissions: [
                 'SEND_MESSAGES',
@@ -25,8 +25,7 @@ module.exports = class WarnPurgeCommand extends Command {
     async run(message, args) {
         if (!args[0]) return this.sendHelpMessage(message, 'Warn Purge');
         const member =
-         (await this.getMemberFromMention(message, args[0])) ||
-         (await message.guild.members.cache.get(args[0]));
+            await this.getGuildMember(message.guild, args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -56,7 +55,7 @@ module.exports = class WarnPurgeCommand extends Command {
         // Warn
         let warns = message.client.db.users.selectWarns
             .pluck()
-            .get(member.id, message.guild.id) || { warns: [] };
+            .get(member.id, message.guild.id) || {warns: []};
         if (typeof warns == 'string') warns = JSON.parse(warns);
         const warning = {
             mod: message.member.id,
@@ -74,7 +73,7 @@ module.exports = class WarnPurgeCommand extends Command {
 
         // Purge
         const messages = (
-            await message.channel.messages.fetch({ limit: amount })
+            await message.channel.messages.fetch({limit: amount})
         ).filter((m) => m.member.id === member.id);
         if (messages.size > 0) await message.channel.bulkDelete(messages, true);
 
@@ -94,7 +93,7 @@ module.exports = class WarnPurgeCommand extends Command {
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
         message.client.logger.info(
             `${message.guild.name}: ${message.author.tag} warnpurged ${member.user.tag}`
         );

@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
+const {MessageEmbed} = require('discord.js');
+const {success} = require('../../utils/emojis.json');
 
 module.exports = class SetModRoleCommand extends Command {
     constructor(client) {
@@ -9,7 +9,7 @@ module.exports = class SetModRoleCommand extends Command {
             aliases: ['setmr', 'smr'],
             usage: 'setmodrole <role mention/ID>',
             description:
-            'Sets the `mod role` for your server.\nUse `clearmodrole` to clear the current `mod role`.',
+                'Sets the `mod role` for your server.\nUse `clearmodrole` to clear the current `mod role`.',
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['setmodrole @Mod', 'clearmodrole'],
@@ -21,15 +21,15 @@ module.exports = class SetModRoleCommand extends Command {
             .pluck()
             .get(message.guild.id);
         const oldModRole =
-         message.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
+            message.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(message.guild.iconURL({dynamic: true}))
 
             .setFooter({
                 text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+                iconURL: message.author.displayAvatarURL({dynamic: true}),
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
@@ -49,7 +49,7 @@ module.exports = class SetModRoleCommand extends Command {
         embed.setDescription(
             `The \`mod role\` was successfully updated. ${success}\nUse \`clearmodrole\` to clear the current \`mod role\`.`
         );
-        const modRole = await this.getRole(message, args[0]);
+        const modRole = await this.getGuildRole(message.guild, args[0]);
         if (!modRole)
             return this.sendErrorMessage(
                 message,

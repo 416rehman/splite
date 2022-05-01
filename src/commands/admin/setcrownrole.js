@@ -64,7 +64,7 @@ module.exports = class SetCrownRoleCommand extends Command {
 
         // Update role
         embed.setDescription(`The \`crown role\` was successfully updated. ${success}\nUse \`clearcrownrole\` to clear the current \`crown role\`.`);
-        const crownRole = await this.getRole(message, args[0]);
+        const crownRole = await this.getGuildRole(message.guild, args[0]);
         if (!crownRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
         message.client.db.settings.updateCrownRoleId.run(crownRole.id, message.guild.id);
 

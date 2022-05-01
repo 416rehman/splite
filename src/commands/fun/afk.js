@@ -14,7 +14,7 @@ module.exports = class AfkCommand extends Command {
         });
     }
 
-    run(message, args) {
+    async run(message, args) {
         try {
             const d = new Date();
 
@@ -25,17 +25,16 @@ module.exports = class AfkCommand extends Command {
                     message.author.id,
                     message.guild.id
                 );
-                message.guild.members.cache
-                    .get(message.author.id)
-                    .setNickname(
-                        `[AFK]${
-                            message.member.nickname
-                                ? message.member.nickname
-                                : message.member.displayName
-                        }`
-                    )
-                    .catch(() => {
-                    });
+
+                (await this.getGuildMember(message.guild, message.author.id))?.setNickname(
+                    `[AFK]${
+                        message.member.nickname
+                            ? message.member.nickname
+                            : message.member.displayName
+                    }`
+                ).catch(() => {
+                });
+
                 return message.channel.send(
                     `${idle} ${message.author} You have gone afk!`
                 );
@@ -47,15 +46,13 @@ module.exports = class AfkCommand extends Command {
                     message.author.id,
                     message.guild.id
                 );
-                message.guild.members.cache
-                    .get(message.author.id)
-                    .setNickname(
-                        `[AFK]${
-                            message.member.nickname
-                                ? message.member.nickname
-                                : message.member.displayName
-                        }`
-                    )
+                message.member.setNickname(
+                    `[AFK]${
+                        message.member.nickname
+                            ? message.member.nickname
+                            : message.member.displayName
+                    }`, 'AFK'
+                )
                     .catch(() => {
                     });
                 return message.channel.send(

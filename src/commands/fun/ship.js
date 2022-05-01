@@ -16,15 +16,10 @@ module.exports = class shipCommand extends Command {
     }
 
     async run(message, args) {
-        const member =
-            (await this.getMemberFromMention(message, args[0])) ||
-            (await message.guild.members.cache.get(args[0])) ||
-            message.guild.members.cache.filter((m) => !m.user.bot).random();
-        const member2 =
-            (await this.getMemberFromMention(message, args[1])) ||
-            (await message.guild.members.cache.get(args[1])) ||
-            message.author;
+        const member = await this.getGuildMember(message.guild, args[0] || this.client.db.users.getRandomWithBio.get(message.guild.id).user_id);
+        const member2 = await this.getGuildMember(message.guild, args[1]) || message.author;
 
+        if (!member || !member2) return this.sendErrorMessage(message, 'Could not find the user you specified.');
 
         let shipOddsTime;
         if (

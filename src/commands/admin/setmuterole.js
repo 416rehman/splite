@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
+const {MessageEmbed} = require('discord.js');
+const {success} = require('../../utils/emojis.json');
 
 module.exports = class SetMuteRoleCommand extends Command {
     constructor(client) {
@@ -9,7 +9,7 @@ module.exports = class SetMuteRoleCommand extends Command {
             aliases: ['setmur', 'smur'],
             usage: 'setmuterole <role mention/ID>',
             description:
-            'Sets the `mute role` your server.\nUse `clearmuterole` to clear the current `mute role`.',
+                'Sets the `mute role` your server.\nUse `clearmuterole` to clear the current `mute role`.',
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['setmuterole @Muted', 'clearmuterole'],
@@ -21,15 +21,15 @@ module.exports = class SetMuteRoleCommand extends Command {
             .pluck()
             .get(message.guild.id);
         const oldMuteRole =
-         message.guild.roles.cache.find((r) => r.id === muteRoleId) || '`None`';
+            message.guild.roles.cache.find((r) => r.id === muteRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(message.guild.iconURL({dynamic: true}))
 
             .setFooter({
                 text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+                iconURL: message.author.displayAvatarURL({dynamic: true}),
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
@@ -49,7 +49,7 @@ module.exports = class SetMuteRoleCommand extends Command {
         embed.setDescription(
             `The \`mute role\` was successfully updated. ${success}\nUse \`clearmuterole\` to clear the current \`mute role\``
         );
-        const muteRole = await this.getRole(message, args[0]);
+        const muteRole = await this.getGuildRole(message.guild, args[0]);
         if (!muteRole)
             return this.sendErrorMessage(
                 message,

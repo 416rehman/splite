@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed, MessageAttachment } = require('discord.js');
-const { fail, load } = require('../../utils/emojis.json');
+const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {fail, load} = require('../../utils/emojis.json');
 
 module.exports = class crushCommand extends Command {
     constructor(client) {
@@ -16,9 +16,7 @@ module.exports = class crushCommand extends Command {
 
     async run(message, args) {
         const member =
-         (await this.getMemberFromMention(message, args[0])) ||
-         (await message.guild.members.cache.get(args[0])) ||
-         message.author;
+            (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
 
         message.channel
             .send({
@@ -32,7 +30,7 @@ module.exports = class crushCommand extends Command {
                     });
                     const attachment = new MessageAttachment(buffer, 'crush.png');
 
-                    await message.channel.send({ files: [attachment] });
+                    await message.channel.send({files: [attachment]});
                     await msg.delete();
                 }
                 catch (e) {

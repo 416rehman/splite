@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed, MessageAttachment } = require('discord.js');
-const { fail, load } = require('../../utils/emojis.json');
+const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {fail, load} = require('../../utils/emojis.json');
 const fetch = require('node-fetch');
 module.exports = class whowouldwinCommand extends Command {
     constructor(client) {
@@ -16,13 +16,11 @@ module.exports = class whowouldwinCommand extends Command {
 
     async run(message, args) {
         const member =
-         (await this.getMemberFromMention(message, args[0])) ||
-         (await message.guild.members.cache.get(args[0])) ||
-         message.guild.members.cache.filter((m) => !m.user.bot).random();
+            await this.getGuildMember(message.guild, args[0] || this.client.db.users.getRandom.get(message.guild.id).user_id);
         const member2 =
-         (await this.getMemberFromMention(message, args[1])) ||
-         (await message.guild.members.cache.get(args[1])) ||
-         message.author;
+            (await this.getGuildMember(message.guild, args[1])) || message.author;
+
+        if (!member || !member2) return this.sendErrorMessage(message, 'Could not find the user you specified.');
 
         message.channel
             .send({
@@ -43,7 +41,7 @@ module.exports = class whowouldwinCommand extends Command {
                         'whowouldwin.png'
                     );
 
-                    const m = await message.channel.send({ files: [attachment] });
+                    const m = await message.channel.send({files: [attachment]});
                     if (m.channel.permissionsFor(m.guild.me).has('ADD_REACTIONS'))
                         m.react('👈').then(() => m.react('👉'));
 

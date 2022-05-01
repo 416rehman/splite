@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const permissions = require('../../utils/permissions.json');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {permissions} = require('../../utils/constants.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class PermissionsCommand extends Command {
     constructor(client) {
@@ -18,11 +18,9 @@ module.exports = class PermissionsCommand extends Command {
         });
     }
 
-    run(message, args) {
+    async run(message, args) {
         const member =
-         this.getMemberFromMention(message, args[0]) ||
-         message.guild.members.cache.get(args[0]) ||
-         message.member;
+            await this.getGuildMember(message.guild, args[0]) || message.member;
 
         // Get member permissions
         const memberPermissions = member.permissions.toArray();
@@ -35,7 +33,7 @@ module.exports = class PermissionsCommand extends Command {
 
         const embed = new MessageEmbed()
             .setTitle(`${member.displayName}'s Permissions`)
-            .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+            .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`\`\`\`diff\n${finalPermissions.join('\n')}\`\`\``)
             .setFooter({
                 text: message.member.displayName,
@@ -43,6 +41,6 @@ module.exports = class PermissionsCommand extends Command {
             })
             .setTimestamp()
             .setColor(member.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };

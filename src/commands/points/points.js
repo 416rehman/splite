@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 
 module.exports = class PointsCommand extends Command {
@@ -9,7 +9,7 @@ module.exports = class PointsCommand extends Command {
             aliases: ['bal', 'balance', 'money'],
             usage: 'points <user mention/ID>',
             description:
-            'Fetches a user\'s  points. If no user is given, your own points will be displayed.',
+                'Fetches a user\'s  points. If no user is given, your own points will be displayed.',
             type: client.types.POINTS,
             examples: ['points @split'],
         });
@@ -20,20 +20,18 @@ module.exports = class PointsCommand extends Command {
             .pluck()
             .get(message.guild.id);
         const member =
-         this.getMemberFromMention(message, args[0]) ||
-         message.guild.members.cache.get(args[0]) ||
-         message.member;
+            await this.getGuildMember(message.guild, args[0]) || message.member;
         const points =
-         message.client.db.users.selectPoints
-             .pluck()
-             .get(member.id, message.guild.id) || 0;
+            message.client.db.users.selectPoints
+                .pluck()
+                .get(member.id, message.guild.id) || 0;
         const voted = await message.client.utils.checkTopGGVote(
             message.client,
             member.id
         );
         const embed = new MessageEmbed()
             .setTitle(`${this.getUserIdentifier(member)}'s ${emojis.point}`)
-            .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+            .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(
                 `${voted ? `${emojis.Voted}**+10%** Gambling Odds` : ''}`
             )
@@ -41,10 +39,10 @@ module.exports = class PointsCommand extends Command {
             .addField(`Points ${emojis.point}`, `\`${points}\``, true)
             .setFooter({
                 text: `Boost your odds: ${prefix}vote`,
-                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+                iconURL: message.author.displayAvatarURL({dynamic: true}),
             })
             .setTimestamp()
             .setColor(member.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };

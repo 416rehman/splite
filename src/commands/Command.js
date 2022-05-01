@@ -1,5 +1,5 @@
 const {MessageEmbed} = require('discord.js');
-const permissions = require('../utils/permissions.json');
+const {permissions} = require('../utils/constants.json');
 const {Collection} = require('discord.js');
 const {fail} = require('../utils/emojis.json');
 const emojis = require('../utils/emojis.json');
@@ -199,6 +199,7 @@ class Command {
             }
         }
 
+
         // Examples
         if (options.examples && !Array.isArray(options.examples))
             throw new TypeError(
@@ -306,28 +307,33 @@ class Command {
      * @param {Message} message
      * @param {string} mention
      */
-    getMemberFromMention(message, mention) {
+    getMemberFromMention(guild, mention) {
         if (!mention) return;
-        const matches = mention.match(/^<@!?(\d+)>$/);
-        if (!matches) return;
-        const id = matches[1];
-        return message.guild.members.cache.get(id);
+        const userId = this.isMention(mention, 'user');
+        if (!userId) return;
+        return guild.members.fetch(userId);
     }
 
     /**
-     * Gets member from text
+     * Gets member from text or id
      * @param {Message} message
      * @param {string} text
      */
-    async getMemberFromText(message, text) {
-        return (
-            (await message.guild.members.cache.find((m) =>
-                m.displayName.toLowerCase().startsWith(text.toLowerCase())
-            )) ||
-            (await message.guild.members.cache.find((m) =>
-                m.displayName.toLowerCase().includes(text.toLowerCase())
-            ))
-        );
+    async getMemberFromText(guild, text) {
+        if (!text) return;
+        if (this.isSnowflake(text)) return guild.members.fetch(text);
+        else {
+            return (await guild.members.fetch({
+                query: text,
+            })).first();
+        }
+    }
+
+    /**
+     * Gets a member from id, username, or mention
+     */
+    async getGuildMember(guild, text) {
+        return await this.getMemberFromMention(guild, text) || this.getMemberFromText(guild, text);
     }
 
     /**
@@ -354,12 +360,11 @@ class Command {
      * @param {Message} message
      * @param {string} mention
      */
-    getRoleFromMention(message, mention) {
+    getRoleFromMention(guild, mention) {
         if (!mention) return;
-        const matches = mention.match(/^<@&(\d+)>$/);
-        if (!matches) return;
-        const id = matches[1];
-        return message.guild.roles.cache.get(id);
+        const roleId = this.isMention(mention, 'role');
+        if (!roleId) return;
+        return guild.roles.cache.get(roleId);
     }
 
     /**
@@ -367,35 +372,68 @@ class Command {
      * @param {Message} message
      * @param {string} text
      */
-    getRole(message, text) {
+    getGuildRole(guild, text) {
         if (text) {
-            let role;
-            if (text.startsWith('<@&') || /^[0-9]{18}$/g.test(text))
+            let role = null;
+
+            if (this.isMention(text, 'role'))
                 role =
-                    this.getRoleFromMention(message, text) ||
-                    message.guild.roles.cache.get(text);
+                    this.getRoleFromMention(guild, text) ||
+                    guild.roles.cache.get(text);
             else
-                role = message.guild.roles.cache.find((r) =>
-                    r.name.toLowerCase().startsWith(text.toLowerCase())
-                );
-            if (!role)
-                role = message.guild.roles.cache.find((r) =>
-                    r.name.toLowerCase().includes(text.toLowerCase())
-                );
+                role =
+                    guild.roles.cache.find(
+                        r => r.id === text.toLowerCase()
+                    ) || guild.roles.cache.find(
+                        r => r.name.toLowerCase() === text.toLowerCase()
+                    ) || guild.roles.cache.find(
+                        r => r.name.toLowerCase().startsWith(text.toLowerCase())
+                    );
+
             return role;
         }
     }
 
     /**
-     *
+     *  Gets a user or a role from a mention, id, or name
      */
-    async getMemberOrRole(message, args) {
-        return (
-            (await this.getRoleFromMention(message, args[0])) ||
-            (await this.getMemberFromMention(message, args[0])) ||
-            (await message.guild.roles.cache.get(args[0])) ||
-            (await message.guild.members.cache.get(args[0]))
-        );
+    async getGuildMemberOrRole(guild, text) {
+        if (!text) return;
+        const member = await this.getGuildMember(guild, text);
+        if (member) return member;
+        const role = await this.getGuildRole(guild, text);
+        if (role) return role;
+    }
+
+    /**
+     * Checks if a text is a valid mention
+     * @param {string} text
+     * @param {string} type The type of mention (i.e. 'user', 'role', 'channel')
+     * @returns {string || null} Returns the ID of the mention if valid, otherwise null
+     */
+    isMention(text, type = 'user') {
+        if (type === 'user') {
+            const matches = text.match(/^<@!?(\d+)>$/);
+            if (!matches) return null;
+            return matches[1];
+        }
+        else if (type === 'role') {
+            const matches = text.match(/^<@&(\d+)>$/);
+            if (!matches) return null;
+            return matches[1];
+        }
+        else if (type === 'channel') {
+            const matches = text.match(/^<#(\d+)>$/)[1] || null;
+            if (!matches) return null;
+            return matches;
+        }
+    }
+
+    /**
+     * Checks if a text is snowflake
+     */
+    isSnowflake(text) {
+        return /^[0-9]{18}$/g.test(text);
     }
 
     /**
@@ -467,7 +505,7 @@ class Command {
         if (ownerOverride && this.client.isOwner(member)) return true;
         if (this.type !== this.client.types.OWNER && !this.client.isOwner(member)) return false;
         if (this.type !== this.client.types.MANAGER && !this.client.isManager(member)) return false;
-        console.log(member.permissions.has('ADMINISTRATOR'));
+
         if (member.permissions.has('ADMINISTRATOR')) return true;
         if (perms) {
             const missingPermissions = channel

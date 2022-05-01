@@ -17,19 +17,20 @@ module.exports = class findStatusCommand extends Command {
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['findstatus #general cool status'],
+            disabled: !client.enabledIntents.find(n => n === client.intents.GUILD_PRESENCES)
         });
     }
 
     async run(message, args) {
-        let role =
-            this.getRoleFromMention(message, args[0]) ||
-            (await message.guild.roles.cache.get(args[0])) ||
-            null;
-        if (role) {
+        // role
+        let target = this.getGuildRole(message.guild, args[0]);
+        if (target) {
             args.shift();
-            role = role.members;
+            target = target.members;
         }
-        else role = message.guild.members.cache;
+        // all
+        else target = await message.guild.members.fetch();
+
         if (args.length <= 0)
             return message.reply(
                 `${emojis.fail} Please provide text to search for.`
@@ -50,7 +51,7 @@ module.exports = class findStatusCommand extends Command {
             const max = 5;
 
             let results = [];
-            role.forEach((m) => {
+            target.forEach((m) => {
                 if (!m.presence) return;
                 for (const activity of m.presence.activities.values()) {
                     if (

@@ -65,7 +65,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
 
         // Update role
         embed.setDescription(`The \`verification role\` was successfully updated. ${success}\nUse \`clearverificationrole\` role to clear the current \`verification role\`.`);
-        const verificationRole = await this.getRole(message, args[0]);
+        const verificationRole = await this.getGuildRole(message.guild, args[0]);
         if (!verificationRole) return this.sendErrorMessage(message, 0, 'Please mention a role or provide a valid role ID');
         message.client.db.settings.updateVerificationRoleId.run(verificationRole.id, message.guild.id);
 

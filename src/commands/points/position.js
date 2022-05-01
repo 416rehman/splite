@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {oneLine} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
 
 module.exports = class PositionCommand extends Command {
@@ -18,11 +18,9 @@ module.exports = class PositionCommand extends Command {
         });
     }
 
-    run(message, args) {
+    async run(message, args) {
         const member =
-         this.getMemberFromMention(message, args[0]) ||
-         message.guild.members.cache.get(args[0]) ||
-         message.member;
+            await this.getGuildMember(message.guild, args[0]) || message.member;
         const leaderboard = message.client.db.users.selectLeaderboard.all(
             message.guild.id
         );
@@ -33,11 +31,11 @@ module.exports = class PositionCommand extends Command {
             .get(member.id, message.guild.id);
         const embed = new MessageEmbed()
             .setTitle(`${member.displayName}'s Position`)
-            .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+            .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`${member} is in **${ordinalPos}** place!`)
             .addField(
                 'Position',
-                `\`${pos}\` of \`${message.guild.members.cache.size}\``,
+                `\`${pos}\` of \`${message.guild.memberCount}\``,
                 true
             )
             .addField(`Points ${emojis.point}`, `\`${points}\``, true)
@@ -47,6 +45,6 @@ module.exports = class PositionCommand extends Command {
             })
             .setTimestamp()
             .setColor(member.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+        message.channel.send({embeds: [embed]});
     }
 };

@@ -23,7 +23,7 @@ module.exports = class smashOrPassCommand extends Command {
         To opt-out of the game, use the command "toggleSmashOrPass"
       `,
             type: client.types.SMASHORPASS,
-            examples: ['smashorpass', 'sop', 'smash'],
+            examples: ['smashorpass', 'sop', 'smash', 'smash splite'],
             clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES', 'EMBED_LINKS'],
             exclusive: true,
         });
@@ -106,15 +106,7 @@ module.exports = class smashOrPassCommand extends Command {
         // MENTIONED A USER
         if (args.length) {
             const member =
-                (await this.getMemberFromMention(message, args[0])) ||
-                (await message.guild.members.cache.get(
-                    args[0] ||
-                    (await message.guild.members.cache.find((m) =>
-                        m.displayName
-                            .toLowerCase()
-                            .startsWith(args[0].toLowerCase())
-                    ))
-                ));
+                await this.getGuildMember(message.guild, args.join(' '));
             if (member == undefined) {
                 this.done(message.author.id);
                 return message.reply(
@@ -329,7 +321,7 @@ function nextUser(message, usersQueue, points, prefix) {
             const guild = message.client.guilds.cache.get(newUser.guild_id);
 
             if (guild) {
-                const currentUser = guild.members.cache.get(newUser.user_id);
+                const currentUser = guild.members.fetch(newUser.user_id);
                 if (currentUser) {
                     let bio =
                         message.client.db.bios.selectBio.get(currentUser.id).bio ||

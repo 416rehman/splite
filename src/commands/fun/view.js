@@ -19,7 +19,7 @@ module.exports = class viewCommand extends Command {
         });
     }
 
-    interact(interaction, args) {
+    async interact(interaction, args) {
         const client = interaction.client;
         const prefix = client.db.settings.selectPrefix
             .pluck()
@@ -36,9 +36,7 @@ module.exports = class viewCommand extends Command {
 
         const guild = client.guilds.cache.get(interaction.guild.id);
         const role = guild.roles.cache.find((r) => r.id === viewConfessionsRole);
-        const user = guild.members.cache.find(
-            (u) => u.id === interaction.member.user.id
-        );
+        const user = await guild.members.fetch(interaction.member.user.id);
 
         if (!user.roles.cache.has(role.id))
             return interaction.reply({
@@ -49,7 +47,7 @@ module.exports = class viewCommand extends Command {
         const row = client.db.confessions.selectConfessionByID.get(args[0].value);
 
         if (row && row.guild_id === interaction.guild.id) {
-            const sender = guild.members.cache.get(row.author_id);
+            const sender = guild.members.fetch(row.author_id);
             const senderTxt = sender
                 ? 'Tag: ' + sender.user.username + '#' + sender.user.discriminator
                 : '';

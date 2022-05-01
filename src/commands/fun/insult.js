@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
 
 module.exports = class insultCommand extends Command {
@@ -16,9 +16,7 @@ module.exports = class insultCommand extends Command {
 
     async run(message, args) {
         const member =
-         (await this.getMemberFromMention(message, args[0])) ||
-         (await message.guild.members.cache.get(args[0])) ||
-         message.author;
+            (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
         try {
             const res = await fetch(
                 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
@@ -33,7 +31,7 @@ module.exports = class insultCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            message.channel.send({ embeds: [embed] });
+            message.channel.send({embeds: [embed]});
         }
         catch (err) {
             message.client.logger.error(err.stack);

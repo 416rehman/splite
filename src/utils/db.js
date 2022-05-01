@@ -66,6 +66,17 @@ db.prepare(
 `
 ).run();
 
+// BIOS TABLE
+db.prepare(
+    `
+  CREATE TABLE IF NOT EXISTS bios (
+    user_id TEXT,
+    bio TEXT,
+    PRIMARY KEY (user_id)
+  );
+`
+).run();
+
 // USERS TABLE
 db.prepare(
     `
@@ -114,17 +125,6 @@ db.prepare(
     liked TEXT,
     dateandtime TEXT,
     PRIMARY KEY (matchID)
-  );
-`
-).run();
-
-// BIOS TABLE
-db.prepare(
-    `
-  CREATE TABLE IF NOT EXISTS bios (
-    user_id TEXT,
-    bio TEXT,
-    PRIMARY KEY (user_id)
   );
 `
 ).run();
@@ -402,6 +402,18 @@ const settings = {
     ),
 };
 
+// BIOS TABLE
+const bios = {
+    insertRow: db.prepare(`
+    INSERT OR IGNORE INTO bios (
+      user_id,
+      bio
+    ) VALUES (?, ?);
+  `),
+    selectBio: db.prepare('SELECT bio FROM bios WHERE user_id = ?;'),
+    updateBio: db.prepare('UPDATE bios SET bio = ? WHERE user_id = ?;'),
+};
+
 // USERS TABLE
 const users = {
     insertRow: db.prepare(`
@@ -513,6 +525,14 @@ const users = {
         'UPDATE users SET optOutSmashOrPass = ? WHERE user_id = ?;'
     ),
     deleteUser: db.prepare('DELETE FROM users WHERE user_id = ?;'),
+    // selects a random user from the user table where isCurrent is true, and join bio table where the user_id matches the user_id in the user table
+    getRandomWithBio: db.prepare(
+        'SELECT * FROM users JOIN bios ON users.user_id = bios.user_id WHERE users.guild_id = ? AND users.current_member = 1 AND users.bot = 0 ORDER BY RANDOM() LIMIT 1;'
+    )
+    ,
+    getRandom: db.prepare(
+        'SELECT * FROM users WHERE guild_id = ? AND users.current_member = 1 AND users.bot = 0 ORDER BY RANDOM() LIMIT 1;'
+    ),
 };
 
 // BOT CONFESSIONS TABLE
@@ -625,18 +645,6 @@ const SmashOrPass = {
     getSeenByUser: db.prepare(
         'select shownUserID, dateandtime, liked from matches where userID = ? and shownUserID = ?;'
     ),
-};
-
-// BIOS TABLE
-const bios = {
-    insertRow: db.prepare(`
-    INSERT OR IGNORE INTO bios (
-      user_id,
-      bio
-    ) VALUES (?, ?);
-  `),
-    selectBio: db.prepare('SELECT bio FROM bios WHERE user_id = ?;'),
-    updateBio: db.prepare('UPDATE bios SET bio = ? WHERE user_id = ?;'),
 };
 
 // ACTIVITIES TABLE

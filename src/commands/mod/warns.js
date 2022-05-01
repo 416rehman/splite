@@ -16,11 +16,10 @@ module.exports = class WarnsCommand extends Command {
         });
     }
 
-    run(message, args) {
+    async run(message, args) {
         if (!args[0]) return this.sendHelpMessage(message);
         const member =
-            this.getMemberFromMention(message, args[0]) ||
-            message.guild.members.cache.get(args[0]);
+            await this.getGuildMember(message.guild, args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
@@ -46,7 +45,7 @@ module.exports = class WarnsCommand extends Command {
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
 
-        const buildEmbed = (current, embed) => {
+        const buildEmbed = async (current, embed) => {
             const max = count > current + 5 ? current + 5 : count;
             let amount = 0;
             for (let i = current; i < max; i++) {
@@ -55,8 +54,7 @@ module.exports = class WarnsCommand extends Command {
                     .addField('Reason', warns.warns[i].reason)
                     .addField(
                         'Moderator',
-                        message.guild.members.cache
-                            .get(warns.warns[i].mod)
+                        (await message.guild.members.fetch(warns.warns[i].mod))
                             ?.toString() || '`Unable to find moderator`',
                         true
                     )

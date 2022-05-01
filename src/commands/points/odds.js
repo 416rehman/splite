@@ -18,7 +18,7 @@ module.exports = class WipePointsCommand extends Command {
         const prefix = message.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);
-        const member = this.getMemberFromMention(message, args[0]) || message.guild.members.cache.get(args[0]) || message.member;
+        const member = (await this.getGuildMember(message.guild, args[0])) || message.member;
         if (!member) return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
         const modifier = (await message.client.utils.checkTopGGVote(message.client, member.id)) ? 10 : 0;
         const odds = (message.client.odds.get(member.id)?.win || 55) + modifier;

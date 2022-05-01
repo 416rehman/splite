@@ -20,7 +20,7 @@ module.exports = class ServerInfoCommand extends Command {
         const roleCount = message.guild.roles.cache.size - 1; // Don't count @everyone
 
         // Get member stats
-        const members = [...message.guild.members.cache.values()];
+        const members = [...(await message.guild.members.fetch()).values()];
         const memberCount = members.length;
         const online = members.filter((m) => m.presence?.status === 'online').length;
         const offline = members.filter((m) => m.presence?.status === 'offline').length;
@@ -28,26 +28,31 @@ module.exports = class ServerInfoCommand extends Command {
         const afk = members.filter((m) => m.presence?.status === 'idle').length;
         const bots = members.filter((b) => b.user.bot).length;
 
+        const intentIsEnabled = this.client.enabledIntents.find(i => i === this.client.intents.GUILD_PRESENCES);
+
         // Get channel stats
         const channels = [...message.guild.channels.cache.values()];
         const channelCount = channels.length;
+
         const textChannels = channels
-            .filter((c) => c.type === 'text' && c.viewable)
+            .filter((c) => c.type === 'GUILD_TEXT' && c.viewable)
             .sort((a, b) => a.rawPosition - b.rawPosition);
-        const voiceChannels = channels.filter((c) => c.type === 'voice').length;
-        const newsChannels = channels.filter((c) => c.type === 'news').length;
-        const categoryChannels = channels.filter((c) => c.type === 'category').length;
+        const voiceChannels = channels.filter((c) => c.type === 'GUILD_VOICE').length;
+        const newsChannels = channels.filter((c) => c.type === 'GUILD_NEWS').length;
+        const categoryChannels = channels.filter((c) => c.type === 'GUILD_CATEGORY').length;
 
         const systemchannel = message.client.db.settings.selectSystemChannelId
             .pluck()
             .get(message.guild.id);
         const serverStats = stripIndent`
       Members  :: [ ${memberCount} ]
-               :: ${online} Online
+               :: ${bots} Bots
+               ` + (intentIsEnabled ? `:: ${online} Online
                :: ${dnd} Busy
                :: ${afk} AFK
-               :: ${offline} Offline
-               :: ${bots} Bots
+               :: ${offline} Offline` : '\n') +
+            stripIndent`
+            
       Channels :: [ ${channelCount} ]
                :: ${textChannels.length} Text
                :: ${voiceChannels} Voice

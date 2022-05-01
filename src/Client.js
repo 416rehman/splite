@@ -9,11 +9,13 @@ const amethyste = require('amethyste-api');
 const {Collection} = require('discord.js');
 const {NekoBot} = require('nekobot-api');
 const {Player} = require('discord-player');
+const {enabledIntents, allIntents} = require('../intents.js');
 
 class Client extends Discord.Client {
     constructor(config, options) {
-        super(options);
-
+        super({...options, intents: enabledIntents,});
+        this.intents = allIntents;
+        this.enabledIntents = enabledIntents;
         this.config = config;
         this.name = config.botName;
         this.logger = require('./utils/logger.js');
@@ -326,11 +328,10 @@ class Client extends Discord.Client {
             0,     //anonymous
             null      //view_confessions_role
         );
-
         /** ------------------------------------------------------------------------------------------------
          * Force Cache all members
          * ------------------------------------------------------------------------------------------------ */
-        guild.members.fetch().then(members => {
+        guild.members.fetch().then(async members => {
             const toBeInserted = members.map(member => {
                 // Update bios table
                 this.db.bios.insertRow.run(member.id, null);
@@ -359,13 +360,14 @@ class Client extends Discord.Client {
             });
 
             if (prune) {
+                const guildMembers = await guild.members.fetch();
                 /** ------------------------------------------------------------------------------------------------
                  * CHECK DATABASE
                  * ------------------------------------------------------------------------------------------------ */
                 // If member left the guild, set their status to left
                 const currentMemberIds = this.db.users.selectCurrentMembers.all(guild.id).map(row => row.user_id);
                 for (const id of currentMemberIds) {
-                    if (!guild.members.cache.has(id)) {
+                    if (!guildMembers.has(id)) {
                         this.db.users.updateCurrentMember.run(0, id, guild.id);
                         this.db.users.wipeTotalPoints.run(id, guild.id);
                     }
@@ -374,12 +376,12 @@ class Client extends Discord.Client {
                 // If member joined the guild, add to database
                 const missingMemberIds = this.db.users.selectMissingMembers.all(guild.id).map(row => row.user_id);
                 for (const id of missingMemberIds) {
-                    if (guild.members.cache.has(id)) this.db.users.updateCurrentMember.run(1, id, guild.id);
+                    if (guildMembers.has(id)) this.db.users.updateCurrentMember.run(1, id, guild.id);
                 }
             }
         });
 
-        await guild.members.cache.get(this.user.id).setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
+        await (await guild.members.fetch(this.user.id)).setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
     }
 
     async extractSettings(guild, createSettings) {

@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
+const {MessageEmbed} = require('discord.js');
+const {success} = require('../../utils/emojis.json');
 
 module.exports = class SetAdminRoleCommand extends Command {
     constructor(client) {
@@ -9,7 +9,7 @@ module.exports = class SetAdminRoleCommand extends Command {
             aliases: ['setar', 'sar'],
             usage: 'setadminrole <role mention/ID>',
             description:
-            'Sets the `admin role` for your server.\nTo clear the `admin role`, type `clearadminrole`',
+                'Sets the `admin role` for your server.\nTo clear the `admin role`, type `clearadminrole`',
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['setadminrole @Admin', 'clearadminrole'],
@@ -21,16 +21,16 @@ module.exports = class SetAdminRoleCommand extends Command {
             .pluck()
             .get(message.guild.id);
         const oldAdminRole =
-         message.guild.roles.cache.find((r) => r.id === adminRoleId) ||
-         '`None`';
+            message.guild.roles.cache.find((r) => r.id === adminRoleId) ||
+            '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(message.guild.iconURL({dynamic: true}))
 
             .setFooter({
                 text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+                iconURL: message.author.displayAvatarURL({dynamic: true}),
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
@@ -40,7 +40,7 @@ module.exports = class SetAdminRoleCommand extends Command {
             return message.channel.send({
                 embeds: [
                     embed
-                        .addField('Current Admin Role', `${oldAdminRole}` || '`None`')
+                        .addField('Current Admin Role', `${oldAdminRole}`)
                         .setDescription(this.description),
                 ],
             });
@@ -50,7 +50,7 @@ module.exports = class SetAdminRoleCommand extends Command {
         embed.setDescription(
             `The \`admin role\` was successfully updated. ${success}\nTo clear the \`admin role\`, type \`clearadminrole\``
         );
-        const adminRole = await this.getRole(message, args[0]);
+        const adminRole = await this.getGuildRole(message.guild, args[0]);
         if (!adminRole)
             return this.sendErrorMessage(
                 message,

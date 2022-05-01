@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
-const { oneLine } = require('common-tags');
+const {oneLine} = require('common-tags');
 
 module.exports = class YoMommaCommand extends Command {
     constructor(client) {
@@ -19,10 +19,7 @@ module.exports = class YoMommaCommand extends Command {
     }
 
     async run(message, args) {
-        const member =
-         this.getMemberFromMention(message, args[0]) ||
-         message.guild.members.cache.get(args[0]) ||
-         message.member;
+        const member = await this.getGuildMember(message.guild, args[0]) || message.member;
         try {
             const res = await fetch('https://api.yomomma.info');
             let joke = (await res.json()).joke;
@@ -38,7 +35,7 @@ module.exports = class YoMommaCommand extends Command {
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
-            message.channel.send({ embeds: [embed] });
+            message.channel.send({embeds: [embed]});
         }
         catch (err) {
             message.client.logger.error(err.stack);

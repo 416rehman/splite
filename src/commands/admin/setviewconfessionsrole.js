@@ -75,7 +75,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
         embed.setDescription(
             `The \`view confessions role\` was successfully updated. ${success}\nUse \`clearviewconfessionsrole\` to clear the current \`view-confessions role\``
         );
-        const confessionsRole = await this.getRole(message, args[0]);
+        const confessionsRole = await this.getGuildRole(message.guild, args[0]);
         if (!confessionsRole)
             return this.sendErrorMessage(
                 message,

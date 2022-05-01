@@ -41,8 +41,8 @@ module.exports = (client, oldMessage, newMessage) => {
             .permissionsFor(newMessage.guild.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS'])) {
             try {
-                if (newMessage.content.length > 1024) newMessage.content = newMessage.content.slice(0, 1021) + '...';
-                if (oldMessage.content.length > 1024) oldMessage.content = oldMessage.content.slice(0, 1021) + '...';
+                if (newMessage.content?.length > 1024) newMessage.content = newMessage.content.slice(0, 1021) + '...';
+                if (oldMessage.content?.length > 1024) oldMessage.content = oldMessage.content.slice(0, 1021) + '...';
             }
             catch (e) {
                 console.log(e);

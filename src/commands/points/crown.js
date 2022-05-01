@@ -19,13 +19,15 @@ module.exports = class CrownCommand extends Command {
             message.guild.id
         );
         const crownRole =
-            message.guild.roles.cache.get(crown_role_id) || '`None`';
+            message.guild.roles.cache.get(crown_role_id);
+        if (!crownRole) {
+            return this.sendErrorMessage(
+                message,
+                'There is no crown role set up for this server. Use the `setcrownrole` command to set one up.'
+            );
+        }
         const crowned = [
-            ...message.guild.members.cache
-                .filter((m) => {
-                    if (m.roles.cache.find((r) => r === crownRole)) return true;
-                })
-                .values(),
+            ...crownRole.members.values()
         ];
 
         let description = `${

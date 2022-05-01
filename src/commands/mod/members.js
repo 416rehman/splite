@@ -14,18 +14,19 @@ module.exports = class MembersCommand extends Command {
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
             userPermissions: ['MANAGE_ROLES'],
             examples: ['members @bots', 'members 711797614697250856', 'members bots',],
+            disabled: !client.enabledIntents.find(i => i === client.intents.GUILD_PRESENCES)
         });
     }
 
-    run(message, args) {
+    async run(message, args) {
         if (!args.length > 0) {
-            const members = [...message.guild.members.cache.values()];
+            const members = [...(await message.guild.members.fetch({cache: false})).values()];
             const online = members.filter((m) => m.presence?.status === 'online').length;
             const offline = members.filter((m) => !m.presence || m.presence?.status === 'offline').length;
             const dnd = members.filter((m) => m.presence?.status === 'dnd').length;
             const afk = members.filter((m) => m.presence?.status === 'idle').length;
             const embed = new MessageEmbed()
-                .setTitle(`Member Status [${message.guild.members.cache.size}]`)
+                .setTitle(`Member Status [${message.guild.memberCount}]`)
                 .setThumbnail(message.guild.iconURL({dynamic: true}))
                 .setDescription(stripIndent`
         ${emojis.online} **Online:** \`${online}\` members
@@ -41,8 +42,7 @@ module.exports = class MembersCommand extends Command {
             return message.channel.send({embeds: [embed]});
         }
 
-        let role;
-        if (args[0].startsWith('<@&') || /^[0-9]{18}$/g.test(args[0])) role = this.getRoleFromMention(message, args[0]) || message.guild.roles.cache.get(args[0]); else role = message.guild.roles.cache.find((r) => r.name.toLowerCase().startsWith(args[0].toLowerCase()));
+        let role = this.getGuildRole(message.guild, args.join(' '));
 
         if (!role) return this.sendErrorMessage(message, 0, 'Failed to find that role, try using a role ID');
         let description = '';

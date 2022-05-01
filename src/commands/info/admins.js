@@ -18,24 +18,31 @@ module.exports = class AdminsCommand extends Command {
         const adminRoleId = message.client.db.settings.selectAdminRoleId
             .pluck()
             .get(message.guild.id);
-        const adminRole = message.guild.roles.cache.get(adminRoleId) || '`None`';
+        const adminRole = message.guild.roles.cache.get(adminRoleId);
+
+        if (!adminRoleId) {
+            return message.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setTitle('No admin role has been set.')
+                        .setDescription('To set an admin role, use the `setadminrole` command.')
+                        .setColor(message.guild.me.displayHexColor),
+                ]
+            });
+        }
 
         const admins = [
-            ...message.guild.members.cache
-                .filter((m) => {
-                    if (m.roles.cache.find((r) => r === adminRole)) return true;
-                })
-                .sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
-                .values(),
+            ...adminRole.members.sort((a, b) => (a.joinedAt > b.joinedAt ? 1 : -1))
+                .values()
         ];
 
         const embed = new MessageEmbed()
             .setTitle(`Admin List [${admins.length}]`)
             .setThumbnail(message.guild.iconURL({dynamic: true}))
-            .addField('Admin Role', adminRole)
+            .addField('Admin Role', adminRole.toString())
             .addField(
                 'Admin Count',
-                `**${admins.length}** out of **${message.guild.members.cache.size}** members`
+                `**${admins.length}** out of **${message.guild.memberCount}** members`
             )
             .setFooter({
                 text: message.member.displayName,
