@@ -44,11 +44,11 @@ module.exports = class EightBallCommand extends Command {
    }
 
    async interact(interaction, args) {
-      run8ball.call(this, args, interaction);
+      await run8ball.call(this, args, interaction);
    }
 
    async run(message, args) {
-      run8ball.call(this, args, message, true);
+      await run8ball.call(this, args, message, true);
    }
 };
 
