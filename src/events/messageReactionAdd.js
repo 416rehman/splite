@@ -16,8 +16,8 @@ module.exports = async (client, messageReaction, user) => {
         const verificationRole =
             message.guild.roles.cache.get(verificationRoleId);
 
-        if (verificationRole && message.id == verificationMessageId) {
-            const member = message.guild.members.fetch(user.id);
+        if (verificationRole && message.id === verificationMessageId) {
+            const member = await message.guild.members.fetch(user.id);
             if (!member.roles.cache.has(verificationRole)) {
                 try {
                     await member.roles.add(verificationRole);

@@ -25,8 +25,8 @@ module.exports = class SampleWebhook extends Endpoint {
         };
     }
 
+    // eslint-disable-next-line no-unused-vars
     post(req, res) {
-        console.log(req.body);
         return {
             status: 200,
             body: {

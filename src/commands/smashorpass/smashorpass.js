@@ -113,7 +113,7 @@ module.exports = class smashOrPassCommand extends Command {
                     `${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`
                 );
             }
-            if (member.user.id == message.author.id) {
+            if (member.user.id === message.author.id) {
                 this.done(message.author.id);
                 return message.reply(
                     `${emojis.fail} No stupid, how are you gonna 🔥Smash yourself?? :neutral_face:`
@@ -129,7 +129,7 @@ module.exports = class smashOrPassCommand extends Command {
                     userId: member.user.id,
                     userId2: message.author.id,
                 });
-                if (seenBefore.liked == 'yes') {
+                if (seenBefore.liked === 'yes') {
                     if (matched) {
                         this.done(message.author.id);
                         return await message.reply(
@@ -321,10 +321,9 @@ function nextUser(message, usersQueue, points, prefix) {
             const guild = message.client.guilds.cache.get(newUser.guild_id);
 
             if (guild) {
-                const currentUser = guild.members.fetch(newUser.user_id);
-                if (currentUser) {
+                guild.members.fetch(newUser.user_id).then(currentUser => {
                     let bio =
-                        message.client.db.bios.selectBio.get(currentUser.id).bio ||
+                        message.client.db.bios.selectBio.get(currentUser.id)?.bio ||
                         `*This user has not set a bio!* Set a bio \`${prefix}bio\``;
                     message.edit({
                         embeds: [
@@ -347,8 +346,10 @@ function nextUser(message, usersQueue, points, prefix) {
                         ],
                     });
                     resolve(currentUser);
-                }
-                else reject(`${emojis.fail} User not found. Please try again.`);
+                }).catch(() => {
+                    reject(`${emojis.fail} User not found. Please try again.`);
+                });
+
             }
             else reject(`${emojis.fail} Could not find guild ${newUser.guild_id}`);
         }
