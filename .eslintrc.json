@@ -4,12 +4,19 @@
     "es6": true,
     "node": true
   },
+  "plugins": [
+    "unused-imports"
+  ],
   "extends": "eslint:recommended",
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2020,
     "sourceType": "module"
   },
   "rules": {
+    "indent": [
+      "error",
+      4
+    ],
     "quotes": [
       "error",
       "single"
@@ -18,18 +25,23 @@
       "error",
       "always"
     ],
-    "indent": [
-      "error",
+    "brace-style": [
       2,
-      { "SwitchCase": 1 }
+      "stroustrup",
+      {
+        "allowSingleLine": true
+      }
     ],
-    "brace-style": [2, "1tbs", { "allowSingleLine": true }],
+    "block-spacing": "error",
     "require-await": 2,
-    "space-before-function-paren": ["error", {
-      "anonymous": "never",
-      "named": "never",
-      "asyncArrow": "always"
-    }],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
     "no-console": 0
   },
   "globals": {

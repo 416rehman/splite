@@ -1,27 +1,45 @@
 {
   "botName": "Splite",
   "defaultPrefix": "..",
-  "token": "BOT_TOKEN",
+  "token": "BOT_TOKEN..",
   "supportServer": "https://discord.gg/8Uk2REYmd3",
   "inviteLink": "https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=8&scope=bot%20applications.commands",
   "botLogoURL": "https://i.imgur.com/B0XSinY.png",
-  "ownerDiscordTag": "split#0007",
-  "ownerId": "123456789012346578",
-  "extraOwnerIds": ["123456789012346578", "123456789012346578"],
+  "owners": [
+    "123456789012346578"
+  ],
+  "managers": [
+    "123456789012346578",
+    "123456789012346578"
+  ],
   "bugReportChannelId": "ID of the bug report channel. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "feedbackChannelId": "ID of the feedback channel. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "serverLogId": "ID of the server log channelID. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "confessionReportsID": "ID of the channel where confession reports are sent. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
+  "webserver": {
+    "port": 17170,
+    "debug": true,
+    "https": false,
+    "enabled": false
+  },
   "apiKeys": {
     "catApi": "Visit https://thecatapi.com/signup",
-      "googleApi": "Visit https://console.cloud.google.com/apis/library/youtube.googleapis.com  ",
+    "googleApi": "Visit https://console.cloud.google.com/apis/library/youtube.googleapis.com  ",
     "amethyste": "Visit https://api.amethyste.moe/",
-    "imgflip" : {
+    "imgflip": {
       "username": "Visit https://imgflip.com/",
       "password": "Visit https://imgflip.com/"
     },
-    "TopGGToken": "Visit https://top.gg/bot/:bot_id/webhooks",
-    "TopGGID": "Visit https://docs.top.gg/api/@reference/"
+    "topGG": {
+      "useMode": "api_mode",
+      "api_mode": {
+        "token": "Visit https://top.gg/bot/:bot_id/webhooks",
+        "id": "Visit https://docs.top.gg/api/@reference/"
+      },
+      "webhook_mode": {
+        "authorization": "webhook_mode requires useWebServer to be true. Visit https://top.gg/bot/:bot_id/webhooks"
+      }
+    }
   },
   "music": {
     "DJ": {
