@@ -1,42 +1,42 @@
-const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const Command = require("../Command.js");
+const { MessageEmbed, MessageAttachment } = require("discord.js");
+const { fail, load } = require("../../utils/emojis.json");
 
 module.exports = class scaryCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: 'scary',
+   constructor(client) {
+      super(client, {
+         name: "scary",
 
-            usage: 'scary <user mention/id>',
-            description: 'Generates a scary image',
-            type: client.types.FUN,
-            examples: ['scary @split'],
-        });
-    }
+         usage: "scary <user mention/id>",
+         description: "Generates a scary image",
+         type: client.types.FUN,
+         examples: ["scary @split"],
+      });
+   }
 
-    async run(message, args) {
-        const member =
-            (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
+   async run(message, args) {
+      const member =
+         (await this.getGuildMember(message.guild, args.join(" "))) ||
+         message.author;
 
-        message.channel
-            .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
-            })
-            .then(async (msg) => {
-                try {
-                    const buffer = await msg.client.ameApi.generate('scary', {
-                        url: this.getAvatarURL(member, 'png'),
-                    });
-                    const attachment = new MessageAttachment(buffer, 'scary.png');
+      message.channel
+         .send({
+            embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+         })
+         .then(async (msg) => {
+            try {
+               const buffer = await msg.client.ameApi.generate("scary", {
+                  url: this.getAvatarURL(member, "png"),
+               });
+               const attachment = new MessageAttachment(buffer, "scary.png");
 
-                    await message.channel.send({files: [attachment]});
-                    await msg.delete();
-                }
-                catch (e) {
-                    await msg.edit({
-                        embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-                    });
-                }
-            });
-    }
+               await message.channel.send({ files: [attachment] });
+               await msg.delete();
+            } catch (e) {
+               await msg.edit({
+                  embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
+               });
+            }
+         });
+   }
 };

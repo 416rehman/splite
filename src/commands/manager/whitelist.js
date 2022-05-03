@@ -1,56 +1,54 @@
-const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const Command = require("../Command.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = class WhitelistCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: 'whitelist',
-            aliases: ['owl', 'globaunignore', 'ounignore'],
-            usage: 'blacklist <user mention/ID>',
-            description: 'Removes a user\'s blacklist status',
-            type: client.types.MANAGER,
-            examples: ['whitelist @Split'],
-        });
-    }
+   constructor(client) {
+      super(client, {
+         name: "whitelist",
+         aliases: ["owl", "globaunignore", "ounignore"],
+         usage: "blacklist <user mention/ID>",
+         description: "Removes a user's blacklist status",
+         type: client.types.MANAGER,
+         examples: ["whitelist @Split"],
+      });
+   }
 
-    async run(message, args) {
-        const member =
-            await this.getGuildMember(message.guild, args[0]);
-        if (!member)
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please mention a user or provide a valid user ID'
-            );
-        try {
-            if (!message.client.isOwner(message.author)) {
-                if (message.client.isManager(member))
-                    return this.sendErrorMessage(
-                        message,
-                        0,
-                        'You cannot whitelist a bot manager or owner'
-                    );
-            }
+   async run(message, args) {
+      const member = await this.getGuildMember(message.guild, args[0]);
+      if (!member)
+         return this.sendErrorMessage(
+            message,
+            0,
+            "Please mention a user or provide a valid user ID"
+         );
+      try {
+         if (!message.client.isOwner(message.author)) {
+            if (message.client.isManager(member))
+               return this.sendErrorMessage(
+                  message,
+                  0,
+                  "You cannot whitelist a bot manager or owner"
+               );
+         }
 
-            message.client.db.blacklist.remove.run(member.id);
-            const embed = new MessageEmbed()
-                .setTitle('Whitelist')
-                .setDescription(`Successfully whitelisted ${member}.`)
-                .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
-                })
-                .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
-            message.channel.send({embeds: [embed]});
-        }
-        catch (e) {
-            this.sendErrorMessage(
-                message,
-                0,
-                'An error occured while whitelisting the user.',
-                e.message
-            );
-        }
-    }
+         message.client.db.blacklist.remove.run(member.id);
+         const embed = new MessageEmbed()
+            .setTitle("Whitelist")
+            .setDescription(`Successfully whitelisted ${member}.`)
+            .setFooter({
+               text: message.member.displayName,
+               iconURL: message.author.displayAvatarURL(),
+            })
+            .setTimestamp()
+            .setColor(message.guild.me.displayHexColor);
+         message.channel.send({ embeds: [embed] });
+      } catch (e) {
+         this.sendErrorMessage(
+            message,
+            0,
+            "An error occured while whitelisting the user.",
+            e.message
+         );
+      }
+   }
 };

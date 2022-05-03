@@ -1,49 +1,48 @@
-const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const fetch = require('node-fetch');
-const {oneLine} = require('common-tags');
+const Command = require("../Command.js");
+const { MessageEmbed } = require("discord.js");
+const fetch = require("node-fetch");
+const { oneLine } = require("common-tags");
 
 module.exports = class ThouArtCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: 'thouart',
-            aliases: ['elizabethan', 'ta'],
-            usage: 'thouart [user mention/ID]',
-            description: oneLine`
+   constructor(client) {
+      super(client, {
+         name: "thouart",
+         aliases: ["elizabethan", "ta"],
+         usage: "thouart [user mention/ID]",
+         description: oneLine`
         Says a random Elizabethan insult to the specified user. 
         If no user is given, then the insult will be directed at you!
       `,
-            type: client.types.FUN,
-            examples: ['thouart @split'],
-        });
-    }
+         type: client.types.FUN,
+         examples: ["thouart @split"],
+      });
+   }
 
-    async run(message, args) {
-        const member =
-            await this.getGuildMember(message.guild, args[0]) || message.member;
-        try {
-            const res = await fetch('http://quandyfactory.com/insult/json/');
-            let insult = (await res.json()).insult;
-            insult = insult.charAt(0).toLowerCase() + insult.slice(1);
-            const embed = new MessageEmbed()
-                .setTitle('🎭  Thou Art  🎭')
-                .setDescription(`${member}, ${insult}`)
-                .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
-                })
-                .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
-            message.channel.send({embeds: [embed]});
-        }
-        catch (err) {
-            message.client.logger.error(err.stack);
-            this.sendErrorMessage(
-                message,
-                1,
-                'Please try again in a few seconds',
-                err.message
-            );
-        }
-    }
+   async run(message, args) {
+      const member =
+         (await this.getGuildMember(message.guild, args[0])) || message.member;
+      try {
+         const res = await fetch("http://quandyfactory.com/insult/json/");
+         let insult = (await res.json()).insult;
+         insult = insult.charAt(0).toLowerCase() + insult.slice(1);
+         const embed = new MessageEmbed()
+            .setTitle("🎭  Thou Art  🎭")
+            .setDescription(`${member}, ${insult}`)
+            .setFooter({
+               text: message.member.displayName,
+               iconURL: message.author.displayAvatarURL(),
+            })
+            .setTimestamp()
+            .setColor(message.guild.me.displayHexColor);
+         message.channel.send({ embeds: [embed] });
+      } catch (err) {
+         message.client.logger.error(err.stack);
+         this.sendErrorMessage(
+            message,
+            1,
+            "Please try again in a few seconds",
+            err.message
+         );
+      }
+   }
 };

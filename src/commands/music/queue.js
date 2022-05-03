@@ -1,93 +1,92 @@
-const {MessageEmbed} = require('discord.js');
-const {fail} = require('../../utils/emojis.json');
-const Command = require('../Command');
-const ButtonMenu = require('../ButtonMenu');
+const { MessageEmbed } = require("discord.js");
+const { fail } = require("../../utils/emojis.json");
+const Command = require("../Command");
+const ButtonMenu = require("../ButtonMenu");
 
 module.exports = class MusicQueueCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: 'queue',
-            aliases: ['q'],
-            usage: 'queue',
-            voiceChannelOnly: true,
-            type: client.types.MUSIC,
-        });
-    }
+   constructor(client) {
+      super(client, {
+         name: "queue",
+         aliases: ["q"],
+         usage: "queue",
+         voiceChannelOnly: true,
+         type: client.types.MUSIC,
+      });
+   }
 
-    run(message) {
-        const max = 10;
-        const methods = ['', '🔂', '🔁'];
+   run(message) {
+      const max = 10;
+      const methods = ["", "🔂", "🔁"];
 
-        if (!message.member.voice.channel)
-            return message.channel.send(
-                `${fail} - You're not in a voice channel !`
-            );
-        if (
-            message.guild.me.voice.channel &&
-            message.member.voice.channel.id !== message.guild.me.voice.channel.id
-        )
-            return message.channel.send(
-                `${fail} - You are not in the same voice channel !`
-            );
+      if (!message.member.voice.channel)
+         return message.channel.send(
+            `${fail} - You're not in a voice channel !`
+         );
+      if (
+         message.guild.me.voice.channel &&
+         message.member.voice.channel.id !== message.guild.me.voice.channel.id
+      )
+         return message.channel.send(
+            `${fail} - You are not in the same voice channel !`
+         );
 
-        const queue = this.client.player.getQueue(message.guild.id);
+      const queue = this.client.player.getQueue(message.guild.id);
 
-        if (!this.client.player.getQueue(message.guild.id))
-            return message.channel.send(`${fail} - No songs currently playing !`);
+      if (!this.client.player.getQueue(message.guild.id))
+         return message.channel.send(`${fail} - No songs currently playing !`);
 
-        const q = [];
-        q.push(
-            `**Playing Now** : [${queue.nowPlaying().title}](${
-                queue.nowPlaying().url
-            })\n*\`Requested By : ${
-                queue.nowPlaying().requestedBy.username
-            }\`*\n\n`
-        );
-        queue.tracks.map((track, i) => {
-            return q.push(
-                `**#${track === queue.nowPlaying() ? 'Playing' : i + 1}** - [${
-                    track.title
-                }](${track.url})\n\`Requested by : ${
-                    track.requestedBy.username
-                }\`\n`
-            );
-        });
+      const q = [];
+      q.push(
+         `**Playing Now** : [${queue.nowPlaying().title}](${
+            queue.nowPlaying().url
+         })\n*\`Requested By : ${
+            queue.nowPlaying().requestedBy.username
+         }\`*\n\n`
+      );
+      queue.tracks.map((track, i) => {
+         return q.push(
+            `**#${track === queue.nowPlaying() ? "Playing" : i + 1}** - [${
+               track.title
+            }](${track.url})\n\`Requested by : ${
+               track.requestedBy.username
+            }\`\n`
+         );
+      });
 
-        if (q.length <= max + 1) {
-            const range = q.length === 1 ? '[1]' : `[1 - ${q.length}]`;
-            message.channel.send({
-                embeds: [
-                    new MessageEmbed()
-                        .setTitle(
-                            `Server Queue ${range} ${methods[queue.repeatMode]}`
-                        )
-                        .setDescription(q.join('\n')),
-                ],
+      if (q.length <= max + 1) {
+         const range = q.length === 1 ? "[1]" : `[1 - ${q.length}]`;
+         message.channel.send({
+            embeds: [
+               new MessageEmbed()
+                  .setTitle(
+                     `Server Queue ${range} ${methods[queue.repeatMode]}`
+                  )
+                  .setDescription(q.join("\n")),
+            ],
+         });
+      } else {
+         const embed = new MessageEmbed()
+            .setTitle(
+               `Server Queue - ${q.length - 1} | ${
+                  this.client.player.getQueue(message.guild.id).repeatMode
+                     ? "(looped)"
+                     : ""
+               }`
+            )
+            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setFooter({
+               text: "Expires after two minutes.",
+               iconURL: message.author.displayAvatarURL({ dynamic: true }),
             });
-        }
-        else {
-            const embed = new MessageEmbed()
-                .setTitle(
-                    `Server Queue - ${q.length - 1} | ${
-                        this.client.player.getQueue(message.guild.id).repeatMode
-                            ? '(looped)'
-                            : ''
-                    }`
-                )
-                .setThumbnail(message.guild.iconURL({dynamic: true}))
-                .setFooter({
-                    text: 'Expires after two minutes.',
-                    iconURL: message.author.displayAvatarURL({dynamic: true}),
-                });
 
-            new ButtonMenu(
-                this.client,
-                message.channel,
-                message.member,
-                embed,
-                q,
-                max
-            );
-        }
-    }
+         new ButtonMenu(
+            this.client,
+            message.channel,
+            message.member,
+            embed,
+            q,
+            max
+         );
+      }
+   }
 };
