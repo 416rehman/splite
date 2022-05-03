@@ -584,6 +584,7 @@ const SmashOrPass = {
             and AlsoLikesMe.shownUserID = $userId
     where matches.userID = $userId and matches.liked = 'yes'
     group by AlsoLikesMe.userID
+
     order by AlsoLikesMe.dateandtime desc;`)
     /**
      * Check if 2 users match
@@ -626,6 +627,7 @@ const SmashOrPass = {
         AND optoutsmashorpass != 1
     GROUP BY user_id
     ORDER BY random()
+
     LIMIT 100;`)
     /**
      * unmatchUser({userId: 123, unmatchUser: 235})
