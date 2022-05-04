@@ -1,5 +1,7 @@
 const {MessageEmbed} = require('discord.js');
+const wait = require('node:timers/promises').setTimeout;
 const {fail} = require('../utils/emojis.json');
+
 module.exports = async (client, interaction) => {
     if (interaction.isCommand()) {
         let command = client.commands.get(interaction.commandName);
@@ -15,7 +17,10 @@ module.exports = async (client, interaction) => {
                     .reply({
                         embeds: [replyEmbed],
                     })
-                    .then((msg) => setTimeout(() => msg.delete(), 15000));
+                    .then(
+                        await wait(15000),
+                        await interaction.deleteReply()
+                    );
             }
 
             // check cooldown
