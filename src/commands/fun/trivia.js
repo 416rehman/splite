@@ -28,11 +28,13 @@ module.exports = class TriviaCommand extends Command {
     }
 
     run(message) {
+        if (!this.client.topics?.trivia?.length) return message.channel.send('There are no trivia questions available.');
+
         const row = new MessageActionRow().addComponents(
             new MessageSelectMenu()
                 .setCustomId('trivia-topic')
                 .setPlaceholder('Select a topic')
-                .addOptions(this.client.topics.map(topic => {
+                .addOptions(this.client.topics.trivia.map(topic => {
                     return {
                         label: this.client.utils.capitalize(topic.replace('-', ' ')),
                         // description: topic,
