@@ -78,7 +78,7 @@ class Command {
          * If command can only be used by owner
          * @type {boolean}
          */
-        this.nsfwOnly = options.nsfwOnly || this.type == 'NSFW 18+';
+        this.nsfwOnly = options.nsfwOnly || this.type === 'NSFW 18+';
 
         /**
          * If command is enabled
@@ -321,7 +321,7 @@ class Command {
      */
     async getMemberFromText(guild, text) {
         if (!text) return;
-        if (this.isSnowflake(text)) return guild.members.fetch(text);
+        if (this.isSnowflake(text)) return await guild.members.fetch(text);
         else {
             return (await guild.members.fetch({
                 query: text,
