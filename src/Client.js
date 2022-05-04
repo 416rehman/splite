@@ -84,7 +84,7 @@ class Client extends Discord.Client {
     loadTopics(path, type) {
         readdir(path, (err, files) => {
             if (err) this.logger.error(err);
-            files = files.filter(f => f.split('.').pop() === 'yml');
+            files = files.filter(f => f.split('.').pop() === 'yaml');
             if (files.length === 0) return this.logger.warn('No topics found');
             this.logger.info(`${files.length} topic(s) found...`);
             this.topics[type] = [];
