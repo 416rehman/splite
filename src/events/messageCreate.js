@@ -75,7 +75,7 @@ module.exports = async (client, message) => {
             //Blacklisted user
             if (command.checkBlacklist(message.author)) return message
                 .reply({
-                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted.  ${this.client.owners[0] && `For appeals, contact ${this.client.owners[0]}`}`),],
+                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted.  ${client.owners[0] && `For appeals, contact ${client.owners[0]}`}`),],
                 })
                 .then((msg) => {
                     setTimeout(() => msg.delete(), 15000);
@@ -168,7 +168,7 @@ module.exports = async (client, message) => {
                 .addField('Support', oneLine`
           If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`)
                 .setColor(message.guild.me.displayHexColor);
-            if (this.client.owners.length) {
+            if (client.owners.length) {
                 embed.setFooter({
                     text: `To speak directly with the developer, DM ${message.client.owners[0]}`,
                 });
