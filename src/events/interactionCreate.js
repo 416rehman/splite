@@ -17,10 +17,10 @@ module.exports = async (client, interaction) => {
                     .reply({
                         embeds: [replyEmbed],
                     })
-                    .then(
-                        await wait(15000),
-                        await interaction.deleteReply()
-                    );
+                    .then(async ()=>{
+                        await wait(15000);
+                        await interaction.deleteReply();
+                    });
             }
 
             // check cooldown
