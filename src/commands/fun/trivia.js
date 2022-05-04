@@ -80,7 +80,7 @@ module.exports = class TriviaCommand extends Command {
                 // Get user answer
                 const questionEmbed = new MessageEmbed()
                     .setTitle('Trivia')
-                    .addField('Topic', `\`${topic.replace('-', ' ')}\``)
+                    .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
                     .addField('Question', `${question}`)
                     .setFooter({
                         text: `Expires in ${timeout / 1000} seconds`,
