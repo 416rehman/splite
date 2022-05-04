@@ -258,6 +258,8 @@ async function transferCrown(client, guild, crownRoleId) {
             embeds: [
                 new MessageEmbed()
                     .setDescription(crownMessage)
+                    .setFooter({text: 'Upcoming Crown Transfer --> '})
+                    .setTimestamp(guild.job.nextInvocation())
                     .setColor(guild.me.displayHexColor),
             ],
         });
