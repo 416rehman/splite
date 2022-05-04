@@ -1,7 +1,6 @@
 const Command = require('../Command.js');
 const {
     MessageEmbed,
-    MessageCollector,
     MessageActionRow,
     MessageSelectMenu,
 } = require('discord.js');
@@ -11,6 +10,7 @@ const {oneLine} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
 
 const reward = 10;
+const timeout = 30000;
 
 module.exports = class TriviaCommand extends Command {
     constructor(client) {
@@ -21,7 +21,7 @@ module.exports = class TriviaCommand extends Command {
             description: oneLine`
         Compete against your friends in a game of trivia (anyone can answer).
         Correct answer rewards ${reward} points.
-        The question will expire after 30 seconds.
+        The question will expire after ${timeout / 1000} seconds.
       `,
             type: client.types.FUN,
             examples: ['trivia sports']
@@ -52,24 +52,24 @@ module.exports = class TriviaCommand extends Command {
                 return option.user.id === message.author.id;
             };
 
-            const collector = msg.createMessageComponentCollector({
+            const selectCollector = msg.createMessageComponentCollector({
                 filter,
                 componentType: 'SELECT_MENU',
-                time: this.timeout,
                 maxUsers: 1
             });
 
-            collector.on('collect', (component) => {
+            selectCollector.on('collect', (component) => {
                 const topic = component.values[0];
                 if (!topic) return;
                 msg.delete();
 
                 // Get question and answers
                 const path = __basedir + '/data/trivia/' + topic + '.yaml';
-                const questions = YAML.parse(fs.readFileSync(path, 'utf-8')).questions;
-                const n = Math.floor(Math.random() * questions.length);
-                const question = questions[n].question;
-                const answers = questions[n].answers;
+                const questions = YAML.parse(fs.readFileSync(path, 'utf-8'));
+                // get random question
+                const n = Math.floor(Math.random() * Object.keys(questions).length);
+                const question = Object.keys(questions)[n];
+                const answers = questions[question];
                 const origAnswers = [...answers].map(a => `\`${a}\``);
 
                 // Clean answers
@@ -83,7 +83,7 @@ module.exports = class TriviaCommand extends Command {
                     .addField('Topic', `\`${topic.replace('-', ' ')}\``)
                     .addField('Question', `${question}`)
                     .setFooter({
-                        text: message.member.displayName,
+                        text: `Expires in ${timeout / 1000} seconds`,
                         iconURL: message.author.displayAvatarURL()
                     })
                     .setTimestamp()
@@ -98,9 +98,10 @@ module.exports = class TriviaCommand extends Command {
 
                 let winner;
 
-                const collector = new MessageCollector(message.channel, msg => {
-                    if (!msg.author.bot) return true;
-                }, {time: 30000}); // Wait 30 seconds
+                const collector = msg.channel.createMessageCollector({
+                    filter: (m) => !m.author.bot,
+                    time: timeout
+                }); // Wait 30 seconds
 
                 collector.on('collect', msg => {
                     if (answers.includes(msg.content.trim().toLowerCase().replace(/\.|'|-|\s/g, ''))) {
