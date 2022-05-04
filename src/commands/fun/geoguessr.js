@@ -3,7 +3,7 @@ const {MessageEmbed, MessageCollector} = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
 const {oneLine} = require('common-tags');
-const {points} = require('../../utils/emojis.json');
+const emojis = require('../../utils/emojis.json');
 
 const reward = 10;
 
@@ -98,7 +98,7 @@ module.exports = class geoGuessrCommand extends Command {
                 message.channel.send({
                     embeds: [
                         answerEmbed.setDescription(
-                            `Congratulations ${winner}, you gave the correct answer! **+${reward} Points!** ${points}`
+                            `Congratulations ${winner}, you gave the correct answer! **+${reward} Points!** ${emojis.points}`
                         ),
                     ],
                 });

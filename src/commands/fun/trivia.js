@@ -8,6 +8,7 @@ const {
 const fs = require('fs');
 const YAML = require('yaml');
 const {oneLine} = require('common-tags');
+const emojis = require('../../utils/emojis.json');
 
 const reward = 10;
 
@@ -20,7 +21,7 @@ module.exports = class TriviaCommand extends Command {
             description: oneLine`
         Compete against your friends in a game of trivia (anyone can answer).
         Correct answer rewards ${reward} points.
-        The question will expire after 15 seconds.
+        The question will expire after 30 seconds.
       `,
             type: client.types.FUN,
             examples: ['trivia sports']
@@ -99,7 +100,7 @@ module.exports = class TriviaCommand extends Command {
 
                 const collector = new MessageCollector(message.channel, msg => {
                     if (!msg.author.bot) return true;
-                }, {time: 15000}); // Wait 15 seconds
+                }, {time: 30000}); // Wait 30 seconds
 
                 collector.on('collect', msg => {
                     if (answers.includes(msg.content.trim().toLowerCase().replace(/\.|'|-|\s/g, ''))) {
@@ -124,7 +125,7 @@ module.exports = class TriviaCommand extends Command {
                             message.guild.id
                         );
                         message.channel.send({
-                            embeds: [answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! **+${reward} Points!**`)]
+                            embeds: [answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! **+${reward} Points!** ${emojis.points}`)]
                         });
                     }
                     else message.channel.send({
