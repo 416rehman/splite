@@ -525,8 +525,9 @@ class Command {
     ) {
         if (this.type !== this.client.types.OWNER && !perms) return true;
         if (ownerOverride && this.client.isOwner(member)) return true;
-        if (this.type !== this.client.types.OWNER && !this.client.isOwner(member)) return false;
-        if (this.type !== this.client.types.MANAGER && !this.client.isManager(member)) return false;
+
+        if (this.type === this.client.types.OWNER && !this.client.isOwner(member)) return false;
+        if (this.type === this.client.types.MANAGER && (!this.client.isManager(member) || !this.client.isOwner(member))) return false;
 
         if (member.permissions.has('ADMINISTRATOR')) return true;
         if (perms) {

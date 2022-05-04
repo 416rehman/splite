@@ -100,8 +100,8 @@ module.exports = class geoGuessrCommand extends Command {
                 message.channel.send({
                     embeds: [
                         answerEmbed.setDescription(
-                            `Congratulations ${winner}, you gave the correct answer! **+${reward} Points!** ${emojis.points}`
-                        ),
+                            `Congratulations ${winner}, you gave the correct answer!`
+                        ).addField('Points Earned', `**+${reward}** ${emojis.point}`),
                     ],
                 });
             }

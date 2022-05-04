@@ -19,7 +19,7 @@ module.exports = class shipCommand extends Command {
         const member = await this.getGuildMember(message.guild, args[0] || this.client.db.users.getRandomWithBio.get(message.guild.id).user_id);
         const member2 = await this.getGuildMember(message.guild, args[1]) || message.author;
 
-        if (!member || !member2) return this.sendErrorMessage(message, 'Could not find the user you specified.');
+        if (!member || !member2) return this.sendErrorMessage(message, 0, 'Could not find the user you specified.');
 
         let shipOddsTime;
         if (
@@ -31,7 +31,21 @@ module.exports = class shipCommand extends Command {
         if (shipOddsTime && new Date().getTime() - shipOddsTime < 1800000) {
             shipScore = message.client.utils.getRandomInt(85, 100);
         }
-        else shipScore = message.client.utils.getRandomInt(0, 100);
+        else {
+            const selector = message.client.utils.weightedRandom({0: 10, 1:20, 2:70});
+            switch (selector) {
+            case 0: {
+                shipScore = message.client.utils.getRandomInt(0, 30);
+                break;
+            }
+            case 1: {
+                shipScore = message.client.utils.getRandomInt(30, 50);
+                break;
+            }
+            default:
+                shipScore = message.client.utils.getRandomInt(50, 100);
+            }
+        }
 
         if (shipScore < 5) shipScore = 0;
         try {
@@ -70,6 +84,7 @@ module.exports = class shipCommand extends Command {
                 await message.channel.send({
                     embeds: [
                         new MessageEmbed()
+                            .setColor('LUMINOUS_VIVID_PINK')
                             .setDescription(
                                 `\`${
                                     member2.user
