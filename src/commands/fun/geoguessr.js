@@ -3,7 +3,10 @@ const {MessageEmbed, MessageCollector} = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
 const {oneLine} = require('common-tags');
-const reward = 25;
+const {points} = require('../../utils/emojis.json');
+
+const reward = 10;
+
 module.exports = class geoGuessrCommand extends Command {
     constructor(client) {
         super(client, {
@@ -21,14 +24,12 @@ module.exports = class geoGuessrCommand extends Command {
     }
 
     run(message) {
-        message.client.db.settings.selectPrefix
-            .pluck()
-            .get(message.guild.id);
+        if (!this.client.topics?.geoguessr?.length) return message.channel.send('There are no geoGuessr questions available.');
         const topic =
-            message.client.topics[
-                Math.floor(Math.random() * message.client.topics.length)
+            message.client.topics.geoguessr[
+                Math.floor(Math.random() * message.client.topics.geoguessr.length)
             ];
-        
+
         // Get question and answers
         const path = __basedir + '/data/geoguessr/' + topic + '.yml';
         const questions = YAML.parse(fs.readFileSync(path, 'utf-8')).questions;
@@ -97,7 +98,7 @@ module.exports = class geoGuessrCommand extends Command {
                 message.channel.send({
                     embeds: [
                         answerEmbed.setDescription(
-                            `Congratulations ${winner}, you gave the correct answer! +${reward} Points!`
+                            `Congratulations ${winner}, you gave the correct answer! **+${reward} Points!** ${points}`
                         ),
                     ],
                 });
