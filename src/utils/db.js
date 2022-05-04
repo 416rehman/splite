@@ -55,7 +55,7 @@ db.prepare(
     voice_points INTEGER DEFAULT 1 NOT NULL, 
     crown_role_id TEXT,
     crown_channel_id TEXT,
-    crown_message TEXT DEFAULT "?member has won ?role for today! Points have been reset, better luck tomorrow!",
+    crown_message TEXT DEFAULT "?member has won ?role for today! Points have been reset, better luck next time!",
     crown_schedule TEXT DEFAULT "0 */24 * * *",
     joinvoting_message_id TEXT,
     joinvoting_emoji TEXT,
