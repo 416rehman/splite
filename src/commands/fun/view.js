@@ -47,7 +47,7 @@ module.exports = class viewCommand extends Command {
         const row = client.db.confessions.selectConfessionByID.get(args[0].value);
 
         if (row && row.guild_id === interaction.guild.id) {
-            const sender = guild.members.fetch(row.author_id);
+            const sender = await guild.members.fetch(row.author_id);
             const senderTxt = sender
                 ? 'Tag: ' + sender.user.username + '#' + sender.user.discriminator
                 : '';
