@@ -11,6 +11,7 @@
       "better-sqlite3": "^7.4.3",
       "cheerio": "^1.0.0-rc.10",
       "common-tags": "^1.8.0",
+      "cron-parser": "^4.4.0",
       "discord-player": "^5.1.0",
       "discord.js": "^13.6.0",
       "fast-sort": "^3.0.2",
