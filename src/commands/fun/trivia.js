@@ -29,6 +29,7 @@ module.exports = class TriviaCommand extends Command {
     }
 
     run(message) {
+        console.log(this.client.topics);
         if (!this.client.topics?.trivia?.length) return message.channel.send('There are no trivia questions available.');
 
         const row = new MessageActionRow().addComponents(
