@@ -37,7 +37,7 @@ module.exports = class shipCommand extends Command {
                 shipScore = message.client.utils.getRandomInt(0, 100);
             }
             else {
-                shipScore = message.client.utils.getRandomInt(40, 100);
+                shipScore = message.client.utils.getRandomInt(50, 100);
             }
         }
 
