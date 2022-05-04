@@ -20,7 +20,8 @@ const client = new Client(config, {
 client.loadEvents('./src/events');
 client.login(client.config.token).then(() => {
     client.loadCommands('./src/commands');
-    client.loadTopics('./data/trivia');
+    client.loadTopics('./data/geoguessr', 'geoguessr');
+    client.loadTopics('./data/trivia', 'trivia');
     client.handleMusicEvents();
 
     if (config.owners.length) {
