@@ -65,7 +65,7 @@ module.exports = class TriviaCommand extends Command {
                 msg.delete();
 
                 // Get question and answers
-                const path = __basedir + '/data/trivia/' + topic + '.yml';
+                const path = __basedir + '/data/trivia/' + topic + '.yaml';
                 const questions = YAML.parse(fs.readFileSync(path, 'utf-8')).questions;
                 const n = Math.floor(Math.random() * questions.length);
                 const question = questions[n].question;

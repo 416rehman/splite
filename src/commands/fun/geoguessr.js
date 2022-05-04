@@ -31,7 +31,7 @@ module.exports = class geoGuessrCommand extends Command {
             ];
 
         // Get question and answers
-        const path = __basedir + '/data/geoguessr/' + topic + '.yml';
+        const path = __basedir + '/data/geoguessr/' + topic + '.yaml';
         const questions = YAML.parse(fs.readFileSync(path, 'utf-8')).questions;
         const n = Math.floor(Math.random() * questions.length);
         const question = questions[n].question;
