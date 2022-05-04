@@ -244,6 +244,28 @@ class Command {
         throw new Error(`The ${this.name} command has no interact(interaction, args, author) method`);
     }
 
+        /**
+     * Creates and sends command failure embed
+     * @param {Message} interaction
+     * @param {int} errorType
+     * @param {string} reason 
+     * @param {string} errorInteraction 
+     */
+    sendErrorInteraction(interaction, errorType, reason, errorInteraction = null) {
+        errorType = this.errorTypes[errorType];
+        const prefix = interaction.client.db.settings.selectPrefix.pluck().get(interaction.guild.id);
+        const embed = new MessageEmbed()
+        //   .setAuthor(`${interaction.user.tag}`, interaction.member.displayAvatarURL({ dynamic: true }))
+        .setTitle(`${fail} Error: \`${this.name}\``)
+        .setDescription(`\`\`\`diff\n- ${errorType}\n+ ${reason}\`\`\``)
+        .addField('Usage', `\`${prefix}${this.usage}\``)
+        .setTimestamp()
+        .setColor(interaction.guild.me.displayHexColor);
+        if (this.examples) embed.addField('Examples', this.examples.map(e => `\`${prefix}${e}\``).join('\n'));
+        if (errorInteraction) embed.addField('Error Message', `\`\`\`${errorInteraction}\`\`\``);
+        interaction.reply({embeds: [embed], ephemeral: true});
+    }
+
     /**
      * If this.exclusive is true, a user can call this command once
      * until this method is called to remove the user from this.currentUsers
