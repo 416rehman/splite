@@ -176,7 +176,7 @@ class Client extends Discord.Client {
                 }
             });
         });
-        // this.logger.info(`\n${table.toString()}`);
+        this.logger.info(`\n${table.toString()}`);
         return this;
     }
 
