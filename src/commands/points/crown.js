@@ -40,8 +40,8 @@ module.exports = class CrownCommand extends Command {
             .setTitle('Crowned Members')
             .setDescription(description)
             .addField('Crown Role', crownRole.toString())
-            .setFooter({text: 'Crown transfer will occur at 20:00 EST'})
-            .setTimestamp()
+            .setFooter({text: 'Upcoming Crown Transfer --> '})
+            .setTimestamp(message.guild.job.nextInvocation())
             .setColor(message.guild.me.displayHexColor);
         message.channel.send({embeds: [embed]});
     }
