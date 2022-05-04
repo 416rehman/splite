@@ -32,11 +32,17 @@ module.exports = class shipCommand extends Command {
             shipScore = message.client.utils.getRandomInt(85, 100);
         }
         else {
-            const selector = message.client.utils.weightedRandom({0: 30, 1:70});
-            if (selector === 0) {
-                shipScore = message.client.utils.getRandomInt(0, 100);
+            const selector = message.client.utils.weightedRandom({0: 10, 1:20, 2:70});
+            switch (selector) {
+            case 0: {
+                shipScore = message.client.utils.getRandomInt(0, 30);
+                break;
             }
-            else {
+            case 1: {
+                shipScore = message.client.utils.getRandomInt(30, 50);
+                break;
+            }
+            default:
                 shipScore = message.client.utils.getRandomInt(50, 100);
             }
         }
