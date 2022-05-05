@@ -8,8 +8,8 @@ module.exports = class gambleCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'gamble',
-            aliases: ['spin', 'coinflip', 'heads', 'tails', 'roll'],
-            usage: 'gamble <point count>',
+            aliases: ['spin', 'heads', 'tails', 'roll'],
+            usage: 'gamble <point count / "all">',
             description: 'Gamble your points.',
             type: client.types.POINTS,
             examples: ['gamble 1000'],
@@ -27,7 +27,7 @@ module.exports = class gambleCommand extends Command {
             .pluck()
             .get(message.author.id, message.guild.id);
         if (isNaN(amount) === true || !amount) {
-            if (args[0] === 'all') amount = points;
+            if (args[0] === 'all' || args[0] === 'max') amount = points;
             else {
                 this.done(message.author.id);
                 return this.sendErrorMessage(

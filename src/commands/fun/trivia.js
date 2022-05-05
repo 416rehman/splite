@@ -29,6 +29,7 @@ module.exports = class TriviaCommand extends Command {
     }
 
     run(message) {
+        console.log(this.client.topics);
         if (!this.client.topics?.trivia?.length) return message.channel.send('There are no trivia questions available.');
 
         const row = new MessageActionRow().addComponents(
@@ -45,6 +46,7 @@ module.exports = class TriviaCommand extends Command {
         );
 
         message.reply({
+            embeds: [new MessageEmbed().setDescription('**Trivia** - Please select a category.')],
             components: [row]
         }).then(msg => {
             const filter = (option) => {
@@ -55,13 +57,16 @@ module.exports = class TriviaCommand extends Command {
             const selectCollector = msg.createMessageComponentCollector({
                 filter,
                 componentType: 'SELECT_MENU',
-                maxUsers: 1
+                maxUsers: 1,
+                time: 30000
             });
 
             selectCollector.on('collect', (component) => {
                 const topic = component.values[0];
                 if (!topic) return;
-                msg.delete();
+                msg.edit({
+                    components: []
+                });
 
                 // Get question and answers
                 const path = __basedir + '/data/trivia/' + topic + '.yaml';
@@ -92,7 +97,7 @@ module.exports = class TriviaCommand extends Command {
                 const url = question.match(/\bhttps?:\/\/\S+/gi);
                 if (url) questionEmbed.setImage(url[0]);
 
-                message.channel.send({
+                msg.edit({
                     embeds: [questionEmbed]
                 });
 
@@ -126,13 +131,17 @@ module.exports = class TriviaCommand extends Command {
                             message.guild.id
                         );
                         message.channel.send({
-                            embeds: [answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer! **+${reward} Points!** ${emojis.points}`)]
+                            embeds: [
+                                answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer!`)
+                                    .addField('Points Earned', `**+${reward}** ${emojis.point}`),
+                            ]
                         });
                     }
-                    else message.channel.send({
+                    else msg.edit({
                         embeds: [
                             answerEmbed
                                 .setDescription('Sorry, time\'s up! Better luck next time.')
+                                .addField('Question', `${question}`)
                                 .addField('Correct Answers', origAnswers.join('\n'))
                         ]
                     });
