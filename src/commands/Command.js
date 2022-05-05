@@ -637,7 +637,7 @@ class Command {
      * @param {Message} message
      * @param title
      */
-    sendHelpMessage(message, title) {
+    sendHelpMessage(message, title = this.name + ' Help') {
         const prefix = message.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);
