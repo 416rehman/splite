@@ -38,7 +38,7 @@ module.exports = class viewCommand extends Command {
         const role = guild.roles.cache.find((r) => r.id === viewConfessionsRole);
         const user = await guild.members.fetch(interaction.member.user.id);
 
-        if (!user.roles.cache.has(role.id))
+        if (!this.client.isManager(user) || !this.client.isOwner(user) || !user.roles.cache.has(role.id))
             return interaction.reply({
                 content: '**You don\'t have perms to run this command**',
                 ephemeral: true,
