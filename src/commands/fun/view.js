@@ -10,16 +10,14 @@ module.exports = class viewCommand extends Command {
             type: client.types.FUN,
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
             cooldown: 5,
-            slashCommand: new SlashCommandBuilder().addIntegerOption((option) =>
-                option
-                    .setName('id')
-                    .setDescription('ID of the confession')
-                    .setRequired(true)
-            ),
+            slashCommand: new SlashCommandBuilder().addIntegerOption((option) => option
+                .setName('id')
+                .setDescription('ID of the confession')
+                .setRequired(true)),
         });
     }
 
-    async interact(interaction, args) {
+    async interact(interaction, args, author) {
         const client = interaction.client;
         const prefix = client.db.settings.selectPrefix
             .pluck()
@@ -28,44 +26,35 @@ module.exports = class viewCommand extends Command {
             .pluck()
             .get(interaction.guild.id);
 
-        if (!viewConfessionsRole)
-            return interaction.reply({
-                content: `No role is set to run this command. To set a role to run this command type, \`${prefix}setviewconfessionsrole\``,
-                ephemeral: true,
-            });
+        if ((!client.isManager(author.user) || !client.isOwner(author.user)) && !viewConfessionsRole) return interaction.reply({
+            content: `No role is set to run this command. To set a role to run this command type, \`${prefix}setviewconfessionsrole\``,
+            ephemeral: true,
+        });
+
 
         const guild = client.guilds.cache.get(interaction.guild.id);
         const role = guild.roles.cache.find((r) => r.id === viewConfessionsRole);
-        const user = await guild.members.fetch(interaction.member.user.id);
+        const user = await guild.members.fetch(author.user.id);
 
-        if (!this.client.isManager(user) || !this.client.isOwner(user) || !user.roles.cache.has(role.id))
-            return interaction.reply({
-                content: '**You don\'t have perms to run this command**',
-                ephemeral: true,
-            });
+        if ((!client.isManager(author.user) || !client.isOwner(author.user)) && !user.roles.cache.has(role.id)) return interaction.reply({
+            content: '**You don\'t have perms to run this command**', ephemeral: true,
+        });
 
         const row = client.db.confessions.selectConfessionByID.get(args[0].value);
 
         if (row && row.guild_id === interaction.guild.id) {
             const sender = await guild.members.fetch(row.author_id);
-            const senderTxt = sender
-                ? 'Tag: ' + sender.user.username + '#' + sender.user.discriminator
-                : '';
+            const senderTxt = sender ? 'Tag: ' + sender.user.username + '#' + sender.user.discriminator : '';
 
             return interaction.reply({
                 content: `Confession ID: **\`${row.confession_id}\`** \
             \nContent: **\`${row.content}\`**\
-            \nSent By: ${
-    sender || 'Someone not in the server'
-} \`${senderTxt} | ID: ${row.author_id}\`\
-            \nDate/Time: **\`${row.timeanddate}\`**`,
-                ephemeral: true,
+            \nSent By: ${sender || 'Someone not in the server'} \`${senderTxt} | ID: ${row.author_id}\`\
+            \nDate/Time: **\`${row.timeanddate}\`**`, ephemeral: true,
             });
         }
-        else
-            return interaction.reply({
-                content: 'Error: Can\'t find that confession! Please check the confession ID',
-                ephemeral: true,
-            });
+        else return interaction.reply({
+            content: 'Error: Can\'t find that confession! Please check the confession ID', ephemeral: true,
+        });
     }
 };
