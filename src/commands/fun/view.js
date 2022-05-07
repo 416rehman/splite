@@ -26,7 +26,7 @@ module.exports = class viewCommand extends Command {
             .pluck()
             .get(interaction.guild.id);
 
-        if ((!client.isManager(author.user) || !client.isOwner(author.user))) {
+        if ((!client.isManager(author.user))) {
             if (!viewConfessionsRole) return interaction.reply({
                 content: `No role is set to run this command. To set a role to run this command type, \`${prefix}setviewconfessionsrole\``,
                 ephemeral: true,
@@ -37,7 +37,7 @@ module.exports = class viewCommand extends Command {
         const role = guild.roles.cache.find((r) => r.id === viewConfessionsRole);
         const user = await guild.members.fetch(author.user.id);
 
-        if (!(client.isManager(author.user) || client.isOwner(author.user))) {
+        if (!(client.isManager(author.user))) {
             if (!user.roles.cache.has(role.id)) return interaction.reply({
                 content: '**You don\'t have perms to run this command**', ephemeral: true,
             });
