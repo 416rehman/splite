@@ -495,19 +495,45 @@ class Command {
         return channel.nsfw;
     }
 
+    /**
+     * Returns false, or an embed, if user doesn't have permission to run the command. Else returns true
+     * @param member
+     * @param channel
+     * @param ownerOverride
+     * @param perms
+     * @returns {boolean|MessageEmbed}
+     */
     checkUserPermissions(
         member,
         channel,
         ownerOverride = true,
         perms = this.userPermissions
     ) {
-        if (this.type !== this.client.types.OWNER && !perms) return true;
-        if (ownerOverride && this.client.isOwner(member)) return true;
+        // Override all permissions if owner and ownerOverride is true
+        if (ownerOverride && this.client.isOwner(member)) {
+            return true;
+        }
 
-        if (this.type === this.client.types.OWNER && !this.client.isOwner(member)) return false;
-        if (this.type === this.client.types.MANAGER && (!this.client.isManager(member) || !this.client.isOwner(member))) return false;
+        // Owner / Manager commands
+        if (this.type === this.client.types.OWNER || this.type === this.client.types.MANAGER) {
+            if (this.type === this.client.types.OWNER && this.client.isOwner(member)) {
+                return true;
+            }
+            if (this.type === this.client.types.MANAGER && (this.client.isManager(member) || this.client.isOwner(member))) {
+                return true;
+            }
+        }
+        // User commands
+        else {
+            if (!perms) {
+                return true;
+            }
 
-        if (member.permissions.has('ADMINISTRATOR')) return true;
+            if (member.permissions.has('ADMINISTRATOR')) {
+                return true;
+            }
+        }
+
         if (perms) {
             const missingPermissions = channel
                 .permissionsFor(member)
@@ -529,7 +555,8 @@ class Command {
                     .setColor('RANDOM');
             }
         }
-        return true;
+
+        return false;
     }
 
     checkClientPermissions(channel, guild, perms = this.clientPermissions) {
