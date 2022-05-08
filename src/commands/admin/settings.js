@@ -105,9 +105,6 @@ module.exports = class SettingsCommand extends Command {
         let crownMessage = row.crown_message
             ? replaceCrownKeywords(row.crown_message)
             : '`None`';
-        const crownSchedule = row.crown_schedule
-            ? `\`${row.crown_schedule}\``
-            : '`None`';
         let disabledCommands = '`None`';
         if (row.disabled_commands)
             disabledCommands = row.disabled_commands
@@ -269,9 +266,10 @@ module.exports = class SettingsCommand extends Command {
                 .setTitle('Settings: `Crown`')
                 .addField('Role', crownRole.toString(), true)
                 .addField('Channel', crownChannel.toString(), true)
-                .addField('Schedule', crownSchedule, true)
-                .addField('Status', crownStatus)
+                .addField('Status', `${crownStatus}`)
                 .addField('Message', crownMessage);
+            if (message.guild.job.nextInvocation())
+                embed.addField('Next Crown Transfer', `\`${message.guild.job.nextInvocation()}\``);
             return message.channel.send({embeds: [embed]});
         case 'j':
         case 'join':

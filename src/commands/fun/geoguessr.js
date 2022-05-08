@@ -1,9 +1,13 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageCollector} = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
 const {oneLine} = require('common-tags');
-const reward = 25;
+const emojis = require('../../utils/emojis.json');
+
+const reward = 10;
+const timeout = 30000;
+
 module.exports = class geoGuessrCommand extends Command {
     constructor(client) {
         super(client, {
@@ -13,7 +17,7 @@ module.exports = class geoGuessrCommand extends Command {
             description: oneLine`
         Compete against your friends in a game of geoGuessr (anyone can answer).
         Correct answer rewards ${reward} points.
-        The question will expire after 15 seconds.
+        The question will expire after ${timeout / 1000} seconds.
       `,
             type: client.types.FUN,
             examples: ['geoguessr'],
@@ -21,21 +25,21 @@ module.exports = class geoGuessrCommand extends Command {
     }
 
     run(message) {
-        message.client.db.settings.selectPrefix
-            .pluck()
-            .get(message.guild.id);
+        if (!this.client.topics?.geoguessr?.length) return message.channel.send('There are no geoGuessr questions available.');
         const topic =
-            message.client.topics[
-                Math.floor(Math.random() * message.client.topics.length)
+            message.client.topics.geoguessr[
+                Math.floor(Math.random() * message.client.topics.geoguessr.length)
             ];
-        
-        // Get question and answers
-        const path = __basedir + '/data/geoguessr/' + topic + '.yml';
-        const questions = YAML.parse(fs.readFileSync(path, 'utf-8')).questions;
-        const n = Math.floor(Math.random() * questions.length);
-        const question = questions[n].question;
-        const answers = questions[n].answers;
-        const origAnswers = [...answers].map((a) => `\`${a}\``);
+
+        const path = __basedir + '/data/geoguessr/' + topic + '.yaml';
+        const questions = YAML.parse(fs.readFileSync(path, 'utf-8'));
+
+        // get random question
+        const n = Math.floor(Math.random() * Object.keys(questions).length);
+        const question = Object.keys(questions)[n];
+        const answers = questions[question];
+        const origAnswers = [...answers].map(a => `\`${a}\``);
+
         // Clean answers
         for (let i = 0; i < answers.length; i++) {
             answers[i] = answers[i]
@@ -47,11 +51,11 @@ module.exports = class geoGuessrCommand extends Command {
         // Get user answer
         const questionEmbed = new MessageEmbed()
             .setTitle('geoGuessr')
-            .addField('Topic', `\`${topic}\``)
+            .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
             .addField('Question', `${question}`)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: `Expires in ${timeout / 1000} seconds`,
+                iconURL: message.author.displayAvatarURL()
             })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
@@ -59,13 +63,12 @@ module.exports = class geoGuessrCommand extends Command {
         if (url) questionEmbed.setImage(url[0]);
         message.channel.send({embeds: [questionEmbed]});
         let winner;
-        const collector = new MessageCollector(
-            message.channel,
-            (msg) => {
-                if (!msg.author.bot) return true;
-            },
-            {time: 15000}
-        ); // Wait 15 seconds
+
+        const collector = message.channel.createMessageCollector({
+            filter: (m) => !m.author.bot,
+            time: timeout
+        }); // Wait 30 seconds
+
         collector.on('collect', (msg) => {
             if (
                 answers.includes(
@@ -97,8 +100,8 @@ module.exports = class geoGuessrCommand extends Command {
                 message.channel.send({
                     embeds: [
                         answerEmbed.setDescription(
-                            `Congratulations ${winner}, you gave the correct answer! +${reward} Points!`
-                        ),
+                            `Congratulations ${winner}, you gave the correct answer!`
+                        ).addField('Points Earned', `**+${reward}** ${emojis.point}`),
                     ],
                 });
             }

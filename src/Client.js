@@ -35,7 +35,7 @@ class Client extends Discord.Client {
         };
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
-        this.topics = [];
+        this.topics = {};
         this.ameApi = new amethyste(config.apiKeys.amethyste);
         this.nekoApi = new NekoBot();
         this.serverLogId = config.serverLogId;
@@ -79,16 +79,18 @@ class Client extends Discord.Client {
     /**
      * Loads all available geoGuessr topics
      * @param {string} path
+     * @param type - The type of topic to load
      */
-    loadTopics(path) {
+    loadTopics(path, type) {
         readdir(path, (err, files) => {
             if (err) this.logger.error(err);
-            files = files.filter(f => f.split('.').pop() === 'yml');
+            files = files.filter(f => f.split('.').pop() === 'yaml');
             if (files.length === 0) return this.logger.warn('No topics found');
             this.logger.info(`${files.length} topic(s) found...`);
+            this.topics[type] = [];
             files.forEach(f => {
                 const topic = f.substring(0, f.indexOf('.'));
-                this.topics.push(topic);
+                this.topics[type].push(topic);
                 this.logger.info(`Loading topic: ${topic}`);
             });
         });
@@ -176,7 +178,7 @@ class Client extends Discord.Client {
                 }
             });
         });
-        // this.logger.info(`\n${table.toString()}`);
+        this.logger.info(`\n${table.toString()}`);
         return this;
     }
 

@@ -78,7 +78,7 @@ class Command {
          * If command can only be used by owner
          * @type {boolean}
          */
-        this.nsfwOnly = options.nsfwOnly || this.type == 'NSFW 18+';
+        this.nsfwOnly = options.nsfwOnly || this.type === 'NSFW 18+';
 
         /**
          * If command is enabled
@@ -321,7 +321,7 @@ class Command {
      */
     async getMemberFromText(guild, text) {
         if (!text) return;
-        if (this.isSnowflake(text)) return guild.members.fetch(text);
+        if (this.isSnowflake(text)) return await guild.members.fetch(text);
         else {
             return (await guild.members.fetch({
                 query: text,
@@ -495,40 +495,68 @@ class Command {
         return channel.nsfw;
     }
 
+    /**
+     * Returns false, or an embed, if user doesn't have permission to run the command. Else returns true
+     * @param member
+     * @param channel
+     * @param ownerOverride
+     * @param perms
+     * @returns {boolean|MessageEmbed}
+     */
     checkUserPermissions(
         member,
         channel,
         ownerOverride = true,
         perms = this.userPermissions
     ) {
-        if (this.type !== this.client.types.OWNER && !perms) return true;
-        if (ownerOverride && this.client.isOwner(member)) return true;
-        if (this.type !== this.client.types.OWNER && !this.client.isOwner(member)) return false;
-        if (this.type !== this.client.types.MANAGER && !this.client.isManager(member)) return false;
+        // Override all permissions if owner and ownerOverride is true
+        if (ownerOverride && this.client.isOwner(member)) {
+            return true;
+        }
 
-        if (member.permissions.has('ADMINISTRATOR')) return true;
-        if (perms) {
-            const missingPermissions = channel
-                .permissionsFor(member)
-                .missing(perms)
-                .map((p) => permissions[p]);
-            if (missingPermissions.length !== 0) {
-                return new MessageEmbed()
-                    .setAuthor({
-                        name: `${member.tag}`,
-                        iconURL: member.displayAvatarURL({dynamic: true}),
-                    })
-                    .setTitle(`Missing User Permissions: \`${this.name}\``)
-                    .setDescription(
-                        `\`\`\`diff\n${missingPermissions
-                            .map((p) => `- ${p}`)
-                            .join('\n')}\`\`\``
-                    )
-                    .setTimestamp()
-                    .setColor('RANDOM');
+        // Owner / Manager commands
+        if (this.type === this.client.types.OWNER || this.type === this.client.types.MANAGER) {
+            if (this.type === this.client.types.OWNER && this.client.isOwner(member)) {
+                return true;
+            }
+            if (this.type === this.client.types.MANAGER && (this.client.isManager(member) || this.client.isOwner(member))) {
+                return true;
             }
         }
-        return true;
+        // User commands
+        else {
+            if (!perms || !perms.length) {
+                return true;
+            }
+
+            if (perms) {
+                const missingPermissions = channel
+                    .permissionsFor(member)
+                    .missing(perms)
+                    .map((p) => permissions[p]);
+                if (missingPermissions.length !== 0) {
+                    return new MessageEmbed()
+                        .setAuthor({
+                            name: `${member.tag}`,
+                            iconURL: member.displayAvatarURL({dynamic: true}),
+                        })
+                        .setTitle(`Missing User Permissions: \`${this.name}\``)
+                        .setDescription(
+                            `\`\`\`diff\n${missingPermissions
+                                .map((p) => `- ${p}`)
+                                .join('\n')}\`\`\``
+                        )
+                        .setTimestamp()
+                        .setColor('RANDOM');
+                }
+            }
+
+            if (member.permissions.has('ADMINISTRATOR')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     checkClientPermissions(channel, guild, perms = this.clientPermissions) {
@@ -636,7 +664,7 @@ class Command {
      * @param {Message} message
      * @param title
      */
-    sendHelpMessage(message, title) {
+    sendHelpMessage(message, title = this.name + ' Help') {
         const prefix = message.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);

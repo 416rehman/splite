@@ -61,8 +61,9 @@ module.exports = {
                                 .send(`Sorry, you were voted off of the server. You received ${yesVotes} 👍 and ${noVotes} 👎`)
                                 .catch(() => console.log('Can\'t send DM to your user!'));
                             try {
-                                if (msg.guild.members.fetch(user.id).bannable) {
-                                    await msg.guild.members.fetch(user.id).ban({
+                                const target = await msg.guild.members.fetch(user.id);
+                                if (target.bannable) {
+                                    await target.ban({
                                         days: 0, reason: `${client.name} JoinVoting - Voted Off`,
                                     });
                                 }

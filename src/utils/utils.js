@@ -1,6 +1,6 @@
-const { MessageEmbed, Collection } = require('discord.js');
+const {MessageEmbed, Collection} = require('discord.js');
 const schedule = require('node-schedule');
-const { stripIndent } = require('common-tags');
+const {stripIndent} = require('common-tags');
 const emojis = require('./emojis.json');
 const request = require('request');
 const config = require('../../config.json');
@@ -53,7 +53,7 @@ function trimStringFromArray(arr, maxLen = 2048, joinChar = '\n') {
         string = string.slice(0, string.length - (string.length - diff));
         string = string.slice(0, string.lastIndexOf(joinChar));
         string =
-         string + `\nAnd **${arr.length - string.split('\n').length}** more...`;
+            string + `\nAnd **${arr.length - string.split('\n').length}** more...`;
     }
     return string;
 }
@@ -66,9 +66,9 @@ function trimStringFromArray(arr, maxLen = 2048, joinChar = '\n') {
  */
 function getRange(arr, current, interval) {
     const max =
-      arr.length > current + interval ? current + interval : arr.length;
+        arr.length > current + interval ? current + interval : arr.length;
     current = current + 1;
-    return arr.length == 1 || arr.length == current || interval == 1
+    return arr.length === 1 || arr.length === current || interval === 1
         ? `[${current}]`
         : `[${current} - ${max}]`;
 }
@@ -94,15 +94,14 @@ function getOrdinalNumeral(number) {
  * @param modLog
  */
 async function getCaseNumber(client, guild, modLog) {
-    const message = (await modLog.messages.fetch({ limit: 100 }))
+    const message = (await modLog.messages.fetch({limit: 100}))
         .filter(
             (m) =>
                 m.member === guild.me &&
-            m.embeds[0] &&
-            m.embeds[0].type == 'rich' &&
-            m.embeds[0].footer &&
-            m.embeds[0].footer.text &&
-            m.embeds[0].footer.text.startsWith('Case')
+                m.embeds[0] &&
+                m.embeds[0].footer &&
+                m.embeds[0].footer.text &&
+                m.embeds[0].footer.text.startsWith('Case')
         )
         .first();
 
@@ -141,8 +140,8 @@ function replaceKeywords(message) {
 }
 
 function getEmojiForJoinVoting(guild, client) {
-    const { joinvoting_emoji: joinVotingEmoji } =
-      client.db.settings.selectJoinVotingMessage.get(guild.id);
+    const {joinvoting_emoji: joinVotingEmoji} =
+        client.db.settings.selectJoinVotingMessage.get(guild.id);
     let emoji = joinVotingEmoji || '`None`';
     if (emoji && !isNaN(joinVotingEmoji)) {
         emoji = guild.emojis.cache.find((e) => e.id === emoji) || null;
@@ -186,14 +185,12 @@ async function transferCrown(client, guild, crownRoleId) {
     }
 
     const leaderboard = client.db.users.selectLeaderboard.all(guild.id);
-    const winner = guild.members.fetch(leaderboard[0].user_id);
+    const winner = await guild.members.fetch(leaderboard[0].user_id);
     const points = client.db.users.selectPoints.pluck().get(winner.id, guild.id);
     let quit = false;
 
     await Promise.all(
-        (
-            await guild.members.fetch()
-        ).map(async (member) => {
+        (await guild.members.fetch()).map(async (member) => {
             // Good alternative to handling async forEach
             if (member.roles.cache.has(crownRole.id)) {
                 try {
@@ -238,18 +235,18 @@ async function transferCrown(client, guild, crownRoleId) {
     }
 
     // Get crown channel and crown channel
-    let { crown_channel_id: crownChannelId, crown_message: crownMessage } =
-      client.db.settings.selectCrown.get(guild.id);
+    let {crown_channel_id: crownChannelId, crown_message: crownMessage} =
+        client.db.settings.selectCrown.get(guild.id);
     const crownChannel = guild.channels.cache.get(crownChannelId);
 
     // Send crown message
     if (
         crownChannel &&
-      crownChannel.viewable &&
-      crownChannel
-          .permissionsFor(guild.me)
-          .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
-      crownMessage
+        crownChannel.viewable &&
+        crownChannel
+            .permissionsFor(guild.me)
+            .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+        crownMessage
     ) {
         crownMessage = crownMessage
             .replace(/`?\?member`?/g, winner) // Member mention substitution
@@ -261,6 +258,8 @@ async function transferCrown(client, guild, crownRoleId) {
             embeds: [
                 new MessageEmbed()
                     .setDescription(crownMessage)
+                    .setFooter({text: 'Upcoming Crown Transfer --> '})
+                    .setTimestamp(guild.job.nextInvocation())
                     .setColor(guild.me.displayHexColor),
             ],
         });
@@ -277,8 +276,8 @@ async function transferCrown(client, guild, crownRoleId) {
  * @param {Guild} guild
  */
 function scheduleCrown(client, guild) {
-    const { crown_role_id: crownRoleId, crown_schedule: cron } =
-      client.db.settings.selectCrown.get(guild.id);
+    const {crown_role_id: crownRoleId, crown_schedule: cron} =
+        client.db.settings.selectCrown.get(guild.id);
 
     if (crownRoleId && cron) {
         guild.job = schedule.scheduleJob(cron, async () => {
@@ -387,7 +386,7 @@ function generateImgFlipImage(
             url: 'https://api.imgflip.com/caption_image',
             headers: {
                 'User-Agent':
-               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
             },
             formData: {
                 template_id: `${templateID}`,
@@ -404,7 +403,7 @@ function generateImgFlipImage(
         request(options, function(error, response) {
             const res = JSON.parse(response.body);
 
-            if (res.success == true && res.data.url) {
+            if (res.success === true && res.data.url) {
                 resolve(res.data.url || error);
             }
             else reject(res.error_message);
@@ -417,7 +416,7 @@ function checkTopGGVote(client, userId) {
         //If cache has 5 minute old version, send that
         if (client.votes.has(userId)) {
             let diff =
-            Math.abs(new Date() - client.votes.get(userId).time) / 1000 / 60;
+                Math.abs(new Date() - client.votes.get(userId).time) / 1000 / 60;
             if (diff <= 5)
                 return new Promise((resolve) => {
                     resolve(client.votes.get(userId).voted);
@@ -447,7 +446,7 @@ function getTopGGVoteFromAPI(client, userId) {
             url: `https://top.gg/api/bots/${config.apiKeys.topGG.manual.id}/check?userId=${userId}`,
             headers: {
                 'User-Agent':
-               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
                 Authorization: config.apiKeys.topGG.manual.token,
             },
         };
@@ -455,17 +454,16 @@ function getTopGGVoteFromAPI(client, userId) {
             try {
                 const res = JSON.parse(response.body);
                 if (res) {
-                    client.votes.set(userId, { time: new Date(), voted: res.voted });
+                    client.votes.set(userId, {time: new Date(), voted: res.voted});
                     resolve(res.voted);
                 }
                 else {
-                    client.votes.set(userId, { time: new Date(), voted: 0 });
+                    client.votes.set(userId, {time: new Date(), voted: 0});
                     resolve(0);
                 }
             }
             catch (e) {
-                console.log(e);
-                client.votes.set(userId, { time: new Date(), voted: 0 });
+                client.votes.set(userId, {time: new Date(), voted: 0});
                 resolve(0);
             }
         });

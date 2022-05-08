@@ -45,7 +45,7 @@ module.exports = class reportCommand extends Command {
     interact(interaction, args) {
         if (interaction.options.getSubcommand() === 'confession') {
             const reportsChannel = interaction.client.channels.cache.get(interaction.client.config.confessionReportsID);
-            if (reportsChannel) reportsChannel.send(`${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) has reported Confession ID ${args[0].value}\n**Reason**\n||*${args[1]?.value || 'None'}*||`);
+            if (reportsChannel) reportsChannel.send(`${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) has reported Confession ID ${args[0].value}\n**Reason**\n||*${args[1]?.value || 'None'}*||`);
             return interaction.reply({
                 content: 'Your report has been received! Thank you', ephemeral: true,
             });
