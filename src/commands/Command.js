@@ -525,34 +525,34 @@ class Command {
         }
         // User commands
         else {
-            if (!perms) {
+            if (!perms || !perms.length) {
                 return true;
+            }
+
+            if (perms) {
+                const missingPermissions = channel
+                    .permissionsFor(member)
+                    .missing(perms)
+                    .map((p) => permissions[p]);
+                if (missingPermissions.length !== 0) {
+                    return new MessageEmbed()
+                        .setAuthor({
+                            name: `${member.tag}`,
+                            iconURL: member.displayAvatarURL({dynamic: true}),
+                        })
+                        .setTitle(`Missing User Permissions: \`${this.name}\``)
+                        .setDescription(
+                            `\`\`\`diff\n${missingPermissions
+                                .map((p) => `- ${p}`)
+                                .join('\n')}\`\`\``
+                        )
+                        .setTimestamp()
+                        .setColor('RANDOM');
+                }
             }
 
             if (member.permissions.has('ADMINISTRATOR')) {
                 return true;
-            }
-        }
-
-        if (perms) {
-            const missingPermissions = channel
-                .permissionsFor(member)
-                .missing(perms)
-                .map((p) => permissions[p]);
-            if (missingPermissions.length !== 0) {
-                return new MessageEmbed()
-                    .setAuthor({
-                        name: `${member.tag}`,
-                        iconURL: member.displayAvatarURL({dynamic: true}),
-                    })
-                    .setTitle(`Missing User Permissions: \`${this.name}\``)
-                    .setDescription(
-                        `\`\`\`diff\n${missingPermissions
-                            .map((p) => `- ${p}`)
-                            .join('\n')}\`\`\``
-                    )
-                    .setTimestamp()
-                    .setColor('RANDOM');
             }
         }
 
