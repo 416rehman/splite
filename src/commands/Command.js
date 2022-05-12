@@ -537,7 +537,7 @@ class Command {
                 if (missingPermissions.length !== 0) {
                     return new MessageEmbed()
                         .setAuthor({
-                            name: `${member.tag}`,
+                            name: `${member.username}`,
                             iconURL: member.displayAvatarURL({dynamic: true}),
                         })
                         .setTitle(`Missing User Permissions: \`${this.name}\``)
