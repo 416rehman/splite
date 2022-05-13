@@ -346,8 +346,17 @@ function createProgressBar(percentage) {
     return progressBar;
 }
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+/**
+ * Returns a random number between min and max, excluding the numbers in the exclude array
+ * @param min
+ * @param max
+ * @param exclude
+ * @return {number}
+ */
+function getRandomInt(min, max, exclude = []) {
+    const num = parseInt((Math.random() * (max - min + 1)) + min);
+    if (exclude.includes(num)) return getRandomInt(min, max, exclude);
+    else return num;
 }
 
 /**
