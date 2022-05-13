@@ -26,7 +26,8 @@ module.exports = class InviteMeCommand extends Command {
                     .setTitle('Vote On Top.gg')
                     .setThumbnail('https://top.gg/images/logoinverted.png')
                     .setDescription(
-                        `Click **[here](https://top.gg/bot/${message.client.config.apiKeys.topGG.api_mode.id}/vote)** to vote. \nUse the \`${prefix}odds\` command to check your odds.\n
+                        `Click **[here](https://top.gg/bot/${message.client.config.apiKeys.topGG.api_mode.id}/vote)** to vote. \n
+                        Use the \`${prefix}odds\` command to check your odds.\n
                         ${hasVoted ? `${emojis.Voted} Your active perks: ` : 'After voting, you will receive the following perks:'}`)
                     .setURL('https://top.gg/bot/${message.client.config.apiKeys.topGG.api_mode.id}/vote')
                     .addField('Gambling Odds', `${hasVoted ? emojis.Voted : ''} +${gamblingModifier}% Boost`, true)
