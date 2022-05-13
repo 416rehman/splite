@@ -22,10 +22,6 @@ module.exports = class WipePointsCommand extends Command {
 
     interact(interaction, args, author) {
         const amount = parseInt(interaction.options.getNumber('amount'));
-        interaction.reply({
-            content: `Dropping ${amount} points...`,
-            ephemeral: true
-        });
         this.handle(amount, author, interaction, true);
     }
 
