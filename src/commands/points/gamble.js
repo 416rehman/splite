@@ -25,7 +25,7 @@ module.exports = class gambleCommand extends Command {
             .pluck()
             .get(message.author.id, message.guild.id);
         if (isNaN(amount) === true || !amount) {
-            if (args[0] === 'all' || args[0] === 'max') amount = Math.max(points, this.client.config.stats.gambling.limit);
+            if (args[0] === 'all' || args[0] === 'max') amount = Math.min(points, this.client.config.stats.gambling.limit);
             else {
                 this.done(message.author.id);
                 return this.sendErrorMessage(
