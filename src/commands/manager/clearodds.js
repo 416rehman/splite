@@ -26,7 +26,7 @@ module.exports = class WipePointsCommand extends Command {
         const embed = new MessageEmbed()
             .setTitle('Clear Odds')
             .setDescription(
-                `Successfully cleared ${member}'s winning odds back to \`55%\`.`
+                `Successfully cleared ${member}'s winning odds back to \`${this.client.config.stats.gambling.winOdds * 100}%\`.`
             )
             .setFooter({
                 text: message.member.displayName,

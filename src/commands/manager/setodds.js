@@ -29,8 +29,8 @@ module.exports = class WipePointsCommand extends Command {
                 'Please provide the amount of points to set'
             );
         message.client.odds.set(member.id, {
-            lose: 100 - parseInt(args[1]),
-            win: parseInt(args[1]),
+            lose: (100 - parseInt(args[1])) / 100,
+            win: parseInt(args[1]) / 100,
         });
         const embed = new MessageEmbed()
             .setTitle('Set Odds')
