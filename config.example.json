@@ -22,6 +22,22 @@
     "https": false,
     "enabled": false
   },
+  "stats": {
+    "gambling": {
+      "winOdds": 0.5,
+      "limit": 1000
+    },
+    "betting": {
+      "limit": 1000
+    },
+    "robbing": {
+      "successOdds": 0.5
+    }
+  },
+  "votePerks": {
+    "gamblingWinOdds": 0.6,
+    "robbingSuccessOdds": 0.6
+  },
   "apiKeys": {
     "catApi": "Visit https://thecatapi.com/signup",
     "googleApi": "Visit https://console.cloud.google.com/apis/library/youtube.googleapis.com  ",
