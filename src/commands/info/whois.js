@@ -88,7 +88,10 @@ module.exports = class WhoIsCommand extends Command {
             .addField('Discriminator', `\`#${member.user.discriminator}\``, true)
             .addField('ID', `\`${member.id}\``, true)
             .addField('Bot', `\`${member.user.bot}\``, true)
-            .addField('Color Role', member.roles.color?.toString() || '`None`', true)
+            .addField('Voted on Top.gg', (await message.client.utils.checkTopGGVote(
+                this.client,
+                member.id
+            )) ? 'Yes' : 'No', true)
             .addField('Highest Role', member.roles.highest.toString(), true)
             .addField('Joined server on', `\`${moment(member.joinedAt).format('MMM DD YYYY')}\``, true)
             .addField('Joined Discord on', `\`${moment(member.user.createdAt).format('MMM DD YYYY')}\``, true)
