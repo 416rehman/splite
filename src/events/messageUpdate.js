@@ -57,7 +57,7 @@ module.exports = (client, oldMessage, newMessage) => {
                 messageEditLog.send({embeds: [embed]});
             }
             catch (e) {
-                console.log(e);
+                // console.log(e);
             }
         }
     }
