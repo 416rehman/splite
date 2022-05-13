@@ -31,7 +31,8 @@
       "limit": 1000
     },
     "robbing": {
-      "successOdds": 0.5
+      "successOdds": 0.5,
+      "limit": 1000
     }
   },
   "votePerks": {

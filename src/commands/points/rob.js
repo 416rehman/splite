@@ -61,6 +61,9 @@ module.exports = class WipePointsCommand extends Command {
             if (amount > target_balance) {
                 amount = target_balance;
             }
+            if (amount > this.client.config.stats.robbing.limit) {
+                amount = this.client.config.stats.robbing.limit;
+            }
             const hasVoted = (await this.client.utils.checkTopGGVote(
                 this.client,
                 author.id
@@ -118,7 +121,7 @@ module.exports = class WipePointsCommand extends Command {
                     .setFooter({
                         text: 'To check your balance, use the `points` command!',
                     });
-                
+
                 if (hasVoted) embed.setFooter({
                     text: 'Use the "vote" command to boost your chances of success!'
                 });
