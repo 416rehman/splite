@@ -308,7 +308,10 @@ function createProgressBar(percentage) {
     if (fives === 0) {
         progressBar += emojis.EmptyBegin;
         let i = 0;
-        while (i < 8) (progressBar += emojis.EmptyMid), i++;
+        while (i < 8) {
+            (progressBar += emojis.EmptyMid);
+            i++;
+        }
         progressBar += emojis.EmptyEnd;
     }
     else {
@@ -339,7 +342,10 @@ function createProgressBar(percentage) {
         else {
             progressBar += emojis.HalfBegin;
             let i = 0;
-            while (i < 8) (progressBar += emojis.EmptyMid), i++;
+            while (i < 8) {
+                (progressBar += emojis.EmptyMid);
+                i++;
+            }
             progressBar += emojis.EmptyEnd;
         }
     }
@@ -366,11 +372,11 @@ function getRandomInt(min, max, exclude = []) {
  */
 function weightedRandom(input) {
     const total = Object.keys(input).reduce((a, b) => a + input[b], 0);
-    const rand = getRandomInt(0, total);
+    const rand = Math.random() * total;
     let current = 0;
-    for (const item in input) {
-        current += input[item];
-        if (rand <= current) return item;
+    for (const key in input) {
+        current += input[key];
+        if (current > rand) return key;
     }
 }
 
