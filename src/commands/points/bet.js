@@ -50,18 +50,21 @@ module.exports = class betCommand extends Command {
                 });
         }
 
-        let amount = parseInt(args[1]);
-        if (isNaN(amount) === true || !amount) {
-            this.done(message.author.id);
-            return this.sendErrorMessage(message, 0, 'Please provide a valid point count');
-        }
-
         const points = message.client.db.users.selectPoints
             .pluck()
             .get(message.author.id, message.guild.id);
         const otherPoints = message.client.db.users.selectPoints
             .pluck()
             .get(member.user.id, message.guild.id);
+
+        let amount = parseInt(args[1]);
+        if (isNaN(amount) === true || !amount) {
+            if (args[0] === 'all' || args[0] === 'max') amount = Math.min(points, otherPoints, this.client.config.stats.betting.limit);
+            else {
+                this.done(message.author.id);
+                return this.sendErrorMessage(message, 0, 'Please provide a valid point count');
+            }
+        }
 
         if (amount < 0 || amount > points) {
             this.done(message.author.id);
