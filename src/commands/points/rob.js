@@ -57,7 +57,7 @@ module.exports = class WipePointsCommand extends Command {
                     .setDescription(`${this.getUserIdentifier(author)} is trying to rob ${this.getUserIdentifier(target)}...`)
             ]
         }).then((msg) => {
-            let amount = this.client.utils.getRandomInt(1, author_balance / 2);
+            let amount = this.client.utils.getRandomInt(1, Math.min(author_balance, target_balance) / 2);
             if (amount > target_balance) {
                 amount = target_balance;
             }
