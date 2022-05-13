@@ -5,8 +5,6 @@ const emojis = require('../../utils/emojis.json');
 const {MessageButton} = require('discord.js');
 const {MessageActionRow} = require('discord.js');
 
-const limit = 1000;
-
 module.exports = class betCommand extends Command {
     constructor(client) {
         super(client, {
@@ -34,7 +32,7 @@ module.exports = class betCommand extends Command {
                 });
         }
 
-        if (member.user.id == message.author.id) {
+        if (member.user.id === message.author.id) {
             this.done(message.author.id);
             return message
                 .reply(`${emojis.fail} No stupid, you NEVER bet against yourself!!`)
@@ -71,7 +69,7 @@ module.exports = class betCommand extends Command {
                 .reply(`${emojis.nep} Please provide an amount you currently have! You have ${points} points ${emojis.point}`)
                 .then((m) => setTimeout(() => m.delete(), 5000));
         }
-        if (amount > limit) amount = limit;
+        if (amount > this.client.config.stats.betting.limit) amount = this.client.config.stats.betting.limit;
         if (amount < 0 || amount > otherPoints) {
             this.done(message.author.id);
             return message
@@ -80,8 +78,6 @@ module.exports = class betCommand extends Command {
                     setTimeout(() => m.delete(), 5000);
                 });
         }
-
-        this.setInstance(member.user.id);
 
         const row = new MessageActionRow();
         row.addComponents(new MessageButton()
@@ -125,7 +121,7 @@ module.exports = class betCommand extends Command {
                                         });
 
                                         let winner = message.author;
-                                        if (d == 1) winner = member.user;
+                                        if (d === 1) winner = member.user;
 
                                         const winnerPoints = winner.id === member.id ? otherPoints : points;
 

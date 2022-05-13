@@ -56,16 +56,26 @@ module.exports = class WipePointsCommand extends Command {
                 new MessageEmbed()
                     .setDescription(`${this.getUserIdentifier(author)} is trying to rob ${this.getUserIdentifier(target)}...`)
             ]
-        }).then((msg) => {
+        }).then(async (msg) => {
             let amount = this.client.utils.getRandomInt(1, Math.min(author_balance, target_balance) / 2);
             if (amount > target_balance) {
                 amount = target_balance;
             }
-            const outcome = this.client.utils.weightedRandom({success: 0.6, fail: 0.4});
+            const hasVoted = (await this.client.utils.checkTopGGVote(
+                this.client,
+                author.id
+            ));
+
+            const outcome = this.client.utils.weightedRandom({
+                success: hasVoted ? this.client.config.stats.robbing.successOdds : this.client.config.votePerks.robbingSuccessOdds,
+                fail: 1 - this.client.config.stats.robbing.successOdds
+            });
+
             if (outcome === 'success') {
                 // take points from target and give them to author
                 this.client.db.users.updatePoints.run({points: -amount}, target.id, context.guild.id);
                 this.client.db.users.updatePoints.run({points: amount}, author.id, context.guild.id);
+
                 const verbs = [
                     'stole',
                     'got away with',
@@ -74,15 +84,25 @@ module.exports = class WipePointsCommand extends Command {
                     'fled with',
                     'ran away with',
                 ];
+
                 const embed = new MessageEmbed()
-                    .setTitle(`${this.getUserIdentifier(author)} robbed ${this.getUserIdentifier(target)}!`)
-                    .setDescription(`${emojis.success} They ${verbs[this.client.utils.getRandomInt(0, verbs.length - 1)]} **${amount}** ${emojis.point}`);
+                    .setTitle(`${hasVoted ? emojis.Voted : ''} ${this.getUserIdentifier(author)} robbed ${this.getUserIdentifier(target)}!`)
+                    .setDescription(`${emojis.success} They ${verbs[this.client.utils.getRandomInt(0, verbs.length - 1)]} **${amount}** ${emojis.point}`)
+                    .setFooter({
+                        text: 'To check your balance, use the `points` command!',
+                    });
+
+                if (hasVoted) embed.setFooter({
+                    text: 'Use the "vote" command to boost your chances of success!'
+                });
+
                 return isInteraction ? context.editReply({embeds: [embed]}) : msg.edit({embeds: [embed]});
             }
             else {
                 // take points from author and give them to target
                 this.client.db.users.updatePoints.run({points: -amount}, author.id, context.guild.id);
                 this.client.db.users.updatePoints.run({points: amount}, target.id, context.guild.id);
+
                 const versions = [
                     `${this.getUserIdentifier(target)} fought back and stole **${amount}** points.`,
                     `${this.getUserIdentifier(target)} thwarted ${this.getUserIdentifier(author)}'s robbery and stole **${amount}** points.`,
@@ -91,9 +111,18 @@ module.exports = class WipePointsCommand extends Command {
                     `${this.getUserIdentifier(target)} countered ${this.getUserIdentifier(author)}'s robbery and stole **${amount}** points.`,
                     `${this.getUserIdentifier(target)} overpowered ${this.getUserIdentifier(author)} and stole **${amount}** points.`,
                 ];
+
                 const embed = new MessageEmbed()
                     .setTitle(`${this.getUserIdentifier(author)} tried to rob ${this.getUserIdentifier(target)}!`)
-                    .setDescription(`${emojis.fail} ${versions[this.client.utils.getRandomInt(0, versions.length - 1)]} ${emojis.point}`);
+                    .setDescription(`${emojis.fail} ${versions[this.client.utils.getRandomInt(0, versions.length - 1)]} ${emojis.point}`)
+                    .setFooter({
+                        text: 'To check your balance, use the `points` command!',
+                    });
+                
+                if (hasVoted) embed.setFooter({
+                    text: 'Use the "vote" command to boost your chances of success!'
+                });
+
                 return isInteraction ? context.editReply({embeds: [embed]}) : msg.edit({embeds: [embed]});
             }
         });

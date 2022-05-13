@@ -2,8 +2,6 @@ const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 
-const limit = 99999999;
-
 module.exports = class gambleCommand extends Command {
     constructor(client) {
         super(client, {
@@ -44,10 +42,10 @@ module.exports = class gambleCommand extends Command {
                 `${emojis.nep} Please provide an amount you currently have! You have **${points} points** ${emojis.point}`
             );
         }
-        if (amount > limit) {
+        if (amount > this.client.config.stats.gambling.limit) {
             this.done(message.author.id);
             return message.reply(
-                `${emojis.fail} You can't bet more than ${limit} points ${emojis.point} at a time. Please try again!`
+                `${emojis.fail} You can't bet more than ${this.client.config.stats.gambling.limit} points ${emojis.point} at a time. Please try again!`
             );
         }
 
@@ -55,7 +53,7 @@ module.exports = class gambleCommand extends Command {
             message.client,
             message.author.id
         ))
-            ? 10
+            ? this.client.config.votePerks.gamblingWinOdds - this.client.config.stats.gambling.winOdds
             : 0;
         const embed = new MessageEmbed()
             .setTitle(
@@ -76,13 +74,14 @@ module.exports = class gambleCommand extends Command {
             .then((msg) => {
                 setTimeout(() => {
                     let odds = message.client.odds.get(message.author.id) || {
-                        lose: 45,
-                        win: 55,
+                        win: this.client.config.stats.gambling.winOdds,
+                        lose: 1 - this.client.config.stats.gambling.winOdds,
                     };
                     odds.win += modifier;
                     odds.lose -= modifier;
 
                     const outcome = message.client.utils.weightedRandom(odds);
+
                     //Loss
                     if (outcome === 'lose') {
                         const embed = new MessageEmbed()
