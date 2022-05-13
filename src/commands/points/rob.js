@@ -95,7 +95,7 @@ module.exports = class WipePointsCommand extends Command {
                         text: 'To check your balance, use the `points` command!',
                     });
 
-                if (hasVoted) embed.setFooter({
+                if (!hasVoted) embed.setFooter({
                     text: 'Use the "vote" command to boost your chances of success!'
                 });
 
@@ -122,7 +122,7 @@ module.exports = class WipePointsCommand extends Command {
                         text: 'To check your balance, use the `points` command!',
                     });
 
-                if (hasVoted) embed.setFooter({
+                if (!hasVoted) embed.setFooter({
                     text: 'Use the "vote" command to boost your chances of success!'
                 });
 
