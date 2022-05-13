@@ -113,11 +113,12 @@ module.exports = async (client, message) => {
                         .then((m) => setTimeout(() => m.delete(), 15000)); // Return early so bot doesn't respond
                 }
             }
-
             // Check permissions
             const permissionErrors = command.checkPermissionErrors(message.member, message.channel, message.guild);
+
             if (!permissionErrors) return;
             if (permissionErrors instanceof MessageEmbed) return message.reply({embeds: [permissionErrors]});
+
 
             // check nsfw channel
             if (!command.checkNSFW(message.channel)) return message.reply({

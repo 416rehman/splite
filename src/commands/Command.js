@@ -450,7 +450,7 @@ class Command {
     }
 
     /**
-     * Returns an embed of errors
+     * Returns false or an embed of errors if permissions are missing. Returns true if permission check is passed
      * @param member
      * @param channel
      * @param guild
@@ -463,7 +463,7 @@ class Command {
         )
             return new MessageEmbed()
                 .setAuthor({
-                    name: `${member.tag}`,
+                    name: `${this.getUserIdentifier(member)}`,
                     iconURL: member.displayAvatarURL({dynamic: true}),
                 })
                 .setTitle(`Missing Client Permissions: \`${this.name}\``)
@@ -474,6 +474,7 @@ class Command {
                 .setColor('RANDOM');
         const clientPermission = this.checkClientPermissions(channel, guild);
         if (clientPermission instanceof MessageEmbed) return clientPermission;
+
         const userPermission = this.checkUserPermissions(
             member,
             channel,
@@ -534,10 +535,11 @@ class Command {
                     .permissionsFor(member)
                     .missing(perms)
                     .map((p) => permissions[p]);
+
                 if (missingPermissions.length !== 0) {
                     return new MessageEmbed()
                         .setAuthor({
-                            name: `${member.username}`,
+                            name: `${this.getUserIdentifier(member)}`,
                             iconURL: member.displayAvatarURL({dynamic: true}),
                         })
                         .setTitle(`Missing User Permissions: \`${this.name}\``)
@@ -548,6 +550,9 @@ class Command {
                         )
                         .setTimestamp()
                         .setColor('RANDOM');
+                }
+                else {
+                    return true;
                 }
             }
 
