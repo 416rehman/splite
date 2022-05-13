@@ -6,7 +6,7 @@ module.exports = class gambleCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'gamble',
-            aliases: ['spin', 'heads', 'tails', 'roll'],
+            aliases: ['spin', 'heads', 'tails', 'roll', 'bank'],
             usage: 'gamble <point count / "all">',
             description: 'Gamble your points.',
             type: client.types.POINTS,
