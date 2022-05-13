@@ -36,8 +36,8 @@ module.exports = class WipePointsCommand extends Command {
         const embed = new MessageEmbed()
             .setTitle(`${member.displayName}'s Odds`)
             .setDescription(
-                `${hasVoted ? `${emojis.Voted} +${Math.ceil(gamblingModifier * 100)}% boost to gambling odds\n${emojis.Voted} +${Math.ceil(robbingModifier * 100)}% boost to robbing odds.` : `To boost your odds, use the \`${prefix}vote\` command.`}\n` +
-                `${hasRiggedShipping ? `${emojis.Voted} Ship Odds are in your favour.` : 'To rig ship odds, use the `!rig` command'}`)
+                `${hasVoted ? `${emojis.Voted} **+${Math.ceil(gamblingModifier * 100)}**% boost to gambling odds\n${emojis.Voted} **+${Math.ceil(robbingModifier * 100)}**% boost to robbing odds.` : `To boost your odds, use the \`${prefix}vote\` command.`}\n` +
+                `${hasRiggedShipping ? `${emojis.Voted} Ship Odds are in your favour.` : `To rig ship odds, use the \`${prefix}rig\` command`}`)
 
             .addField('Gambling Win Odds', `**${gamblingOdds}%** ${gamblingProgressBar}\n\n**Robbing Success Odds**\n**${robbingOdds}%** ${robbingProgressBar}`)
             .addField('Voted?', `${hasVoted ? `${emojis.success}` : `${emojis.fail}`}`, true)
