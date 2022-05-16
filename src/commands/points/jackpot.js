@@ -164,6 +164,9 @@ module.exports = class raffleCommand extends Command {
 
 
         try {
+            // take points from user
+            this.client.db.users.updatePoints.run({points: -startingAmount}, author.id, context.guild.id);
+
             context.channel
                 .send({
                     embeds: [embed],
