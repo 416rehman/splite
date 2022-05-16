@@ -7,7 +7,7 @@ const enabledIntents = [
     intents.GUILD_MESSAGES,
     intents.GUILD_MESSAGE_REACTIONS,
     intents.GUILD_MEMBERS,
-    intents.GUILD_PRESENCES,
+    // intents.GUILD_PRESENCES,
 ];
 
 module.exports = {
