@@ -178,7 +178,10 @@ module.exports = class raffleCommand extends Command {
                     collector.on('collect', (b) => {
                         if (entries.length >= 20) {
                             collector.stop();
-                            return b.reply('The lottery is full! No more entries are allowed.');
+                            return b.reply({
+                                content: 'The lottery is full! No more entries are allowed.',
+                                ephemeral: true,
+                            });
                         }
 
                         const userPoints = this.client.db.users.selectPoints
@@ -186,7 +189,10 @@ module.exports = class raffleCommand extends Command {
                             .get(b.user.id, context.guild.id);
 
                         if (userPoints <= 0) {
-                            return b.reply('You do not have enough points to enter the lottery.');
+                            return b.reply({
+                                content: 'You do not have enough points to enter the lottery.',
+                                ephemeral: true
+                            });
                         }
 
                         const totalPoints = calculateJackpot();
