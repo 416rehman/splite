@@ -1,6 +1,7 @@
 const {MessageEmbed} = require('discord.js');
 
 module.exports = (client, message) => {
+    if (!message.author) return;
     try {
         if (message.guild.snipes.has(message.channel.id) && !message.author.bot)
             message.guild.snipes.delete(message.channel.id);
@@ -43,7 +44,7 @@ module.exports = (client, message) => {
                 .get(message.guild.id);
             const starboardChannel =
                 message.guild.channels.cache.get(starboardChannelId);
-            if (message.channel == starboardChannel) return;
+            if (message.channel === starboardChannel) return;
 
             // Get message delete log
             const messageDeleteLogId = client.db.settings.selectMessageDeleteLogId
