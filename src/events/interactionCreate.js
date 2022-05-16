@@ -17,7 +17,7 @@ module.exports = async (client, interaction) => {
                     .reply({
                         embeds: [replyEmbed],
                     })
-                    .then(async ()=>{
+                    .then(async () => {
                         await wait(15000);
                         await interaction.deleteReply();
                     });
@@ -31,7 +31,7 @@ module.exports = async (client, interaction) => {
             });
 
             // check if instance already running
-            const instanceExists = command.isInstanceRunning(interaction.user.id);
+            const instanceExists = command.isInstanceRunning(interaction.user.id, interaction.channel.id);
             if (instanceExists) return interaction.reply({
                 embeds: [new MessageEmbed().setDescription('Command already in progress, please wait for it.'),],
                 ephemeral: true,
@@ -100,7 +100,8 @@ module.exports = async (client, interaction) => {
                     });
                 }
 
-                if (command.exclusive) command.setInstance(interaction.user.id); // Track instance
+                if (command.exclusive) command.setInstance(interaction.user.id, null); // Track per-user instance
+                if (command.channelExclusive) command.setInstance(null, interaction.channelId); // Track per-channel instance
                 command.setCooldown(interaction.user.id);
 
                 return command.interact(interaction, interaction.options._hoistedOptions || null, author); // Run command

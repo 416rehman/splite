@@ -92,7 +92,7 @@ module.exports = async (client, message) => {
                 });
 
             // check if an instance of the command is already running
-            const instanceExists = command.isInstanceRunning(message.author.id);
+            const instanceExists = command.isInstanceRunning(message.author.id, message.channel.id);
             if (instanceExists) return message
                 .reply({
                     embeds: [new MessageEmbed().setDescription(`${fail} Command already in progress, please wait for it.`),],
@@ -150,7 +150,8 @@ module.exports = async (client, message) => {
             message.command = true; // Add flag for messageUpdate event
             message.channel.sendTyping();
 
-            if (command.exclusive) command.setInstance(message.author.id); // Track instance
+            if (command.exclusive) command.setInstance(message.author.id); // Track user instance
+            if (command.channelExclusive) command.setInstance(null, message.channel.id); // Track channel instance
             command.setCooldown(message.author.id);
 
             return command.run(message, args); // Run command

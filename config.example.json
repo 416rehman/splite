@@ -1,5 +1,5 @@
 {
-  "botName": "Splite",
+  "botName": "Ace",
   "defaultPrefix": "..",
   "token": "BOT_TOKEN..",
   "supportServer": "https://discord.gg/8Uk2REYmd3",
@@ -33,6 +33,10 @@
     "robbing": {
       "successOdds": 0.5,
       "limit": 1000
+    },
+    "jackpot": {
+      "limit": 10000000,
+      "maxEntries": 15
     }
   },
   "votePerks": {

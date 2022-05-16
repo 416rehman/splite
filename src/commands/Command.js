@@ -121,6 +121,12 @@ class Command {
          * If true, the command will only be run if the author is in a voice channel
          */
         this.voiceChannelOnly = options.voiceChannelOnly;
+
+        /**
+         * If true, only one instance of the command will run per channel until the done() method is called. Good for heavy commands.
+         */
+        this.channelExclusive = options.channelExclusive;
+        if (this.channelExclusive) this.channelInstances = new Collection();
     }
 
     /**
@@ -224,6 +230,13 @@ class Command {
             typeof options.voiceChannelOnly !== 'boolean'
         )
             throw new TypeError('Command voiceChannelOnly is not a boolean');
+
+        // ChannelExclusive
+        if (
+            options.channelExclusive &&
+            typeof options.channelExclusive !== 'boolean'
+        )
+            throw new TypeError('Command channelExclusive is not a boolean');
     }
 
     /**
@@ -245,40 +258,74 @@ class Command {
     }
 
     /**
-     * If this.exclusive is true, a user can call this command once
-     * until this method is called to remove the user from this.currentUsers
+     * If this.exclusive or this.channelExclusive is true, this method will finish the commands execution and allow any future instance of the command to run
+     * Pass both userId and channelId to finish the command for both user and channel, otherwise pass only the userId or the channelId to finish the command for only one of them.
      *
      * @param userId
+     * @param channelId
      */
-    done(userId) {
-        if (!this.exclusive) return;
-        this.instances.delete(userId);
+    done(userId, channelId) {
+        if (userId) {
+            if (!this.exclusive) return;
+            this.instances.delete(userId);
+        }
+        if (channelId) {
+            if (!this.channelExclusive) return;
+            this.channelInstances.delete(channelId);
+        }
     }
 
     /**
-     * Sets an instance for the user so they cannot call this command again until done() method is called.
+     * Pass a userId and or a channelId to set the command as being used by the user or channel respectively. Requires this.exclusive or this.channelExclusive to be true.
      * @param userId
+     * @param channelId
      */
-    setInstance(userId) {
-        if (!this.exclusive) return;
-        this.instances.set(userId, Date.now());
+    setInstance(userId, channelId) {
+        if (userId && this.exclusive) {
+            this.instances.set(userId, Date.now());
+        }
+
+        if (channelId && this.channelExclusive) {
+            this.channelInstances.set(channelId, Date.now());
+        }
     }
 
     /**
-     * If this.exclusive, check if the user has already called this command
+     * If exclusive or channelExclusive is true, this method will return true if the command is being used by the user or channel respectively.
      * @param userId
+     * @param channelId
      * @returns {any}
      */
-    isInstanceRunning(userId) {
-        if (!this.exclusive || !this.instances) return;
-        const instance = this.instances.get(userId);
+    isInstanceRunning(userId, channelId) {
+        let isUserInstanceRunning = false;
+        let isChannelInstanceRunning = false;
 
-        //if instance was started more than 5 minutes ago, force-reset it.
-        if (instance && Date.now() - instance > 1000 * 60 * 5) {
-            this.done(userId);
-            return false;
+        if (userId && this.exclusive && this.instances) {
+            const userInstance = this.instances.get(userId);
+            if (userInstance) {
+                //if instance was started more than 5 minutes ago, force-reset it.
+                if (Date.now() - userInstance > 1000 * 60 * 5) {
+                    this.done(userId, null);
+                    isUserInstanceRunning = false;
+                }
+
+                isUserInstanceRunning = true;
+            }
         }
-        return instance;
+
+        if (channelId && this.channelExclusive && this.channelInstances) {
+            const channelInstance = this.channelInstances.get(channelId);
+            if (channelInstance) {
+                //if instance was started more than 5 minutes ago, force-reset it.
+                if (Date.now() - channelInstance > 1000 * 60 * 5) {
+                    this.done(null, channelId);
+                    isChannelInstanceRunning = false;
+                }
+                isChannelInstanceRunning = true;
+            }
+        }
+
+        return isUserInstanceRunning || isChannelInstanceRunning;
     }
 
     /**

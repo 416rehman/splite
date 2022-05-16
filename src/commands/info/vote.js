@@ -29,7 +29,7 @@ module.exports = class InviteMeCommand extends Command {
                         `Click **[here](https://top.gg/bot/${message.client.config.apiKeys.topGG.api_mode.id}/vote)** to vote. \n
                         Use the \`${prefix}odds\` command to check your odds.\n
                         ${hasVoted ? `${emojis.Voted} Your active perks: ` : 'After voting, you will receive the following perks:'}`)
-                    .setURL('https://top.gg/bot/${message.client.config.apiKeys.topGG.api_mode.id}/vote')
+                    .setURL(`https://top.gg/bot/${message.client.config.apiKeys.topGG.api_mode.id}/vote`)
                     .addField('Gambling Odds', `${hasVoted ? emojis.Voted : ''} +${gamblingModifier}% Boost`, true)
                     .addField('Robbing', `${hasVoted ? emojis.Voted : ''} +${robbingModifier}% Boost`, true)
                     .setFooter({
