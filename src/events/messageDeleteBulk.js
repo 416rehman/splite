@@ -2,13 +2,16 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = (client, messages) => {
     const message = messages.first();
+    const prefix = message.client.db.settings.selectPrefix
+        .pluck()
+        .get(message.guild.id); // Get prefix
+
+    const snipeMessage = messages.find(m => !m.author.bot && !client.utils.isEmptyMessage(m) && !client.utils.isCommandOrBotMessage(m, prefix));
 
     // Add to snipe cache
-    if (message.author && !message.webhookId && (message.content || message.embeds.length > 0)) {
+    if (snipeMessage?.author && !snipeMessage.author.bot) {
         try {
-            if (message.guild.snipes.has(message.channel.id) && !message.author.bot)
-                message.guild.snipes.delete(message.channel.id);
-            message.guild.snipes.set(message.channel.id, message);
+            snipeMessage.guild.snipes.set(snipeMessage.channel.id, snipeMessage);
         }
         catch (e) {
             console.log(e);

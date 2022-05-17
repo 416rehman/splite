@@ -2,20 +2,22 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = (client, message) => {
     if (!message.author) return;
+    const prefix = message.client.db.settings.selectPrefix
+        .pluck()
+        .get(message.guild.id); // Get prefix
+
     try {
-        if (message.guild.snipes.has(message.channel.id) && !message.author.bot)
-            message.guild.snipes.delete(message.channel.id);
-        message.guild.snipes.set(message.channel.id, message);
-        // Check for webhook and that message is not empty
-        if (
-            message.webhookId ||
-            (!message.content && message.embeds.length === 0)
-        )
-            return;
+        if (!message.author.bot && !client.utils.isEmptyMessage(message) && !client.utils.isCommandOrBotMessage(message, prefix)) {
+            // console.log({message});
+            message.guild.snipes.set(message.channel.id, message);
+        }
     }
     catch (e) {
         console.log(e);
     }
+
+    // Check for webhook and that message is not empty
+    if (client.utils.isEmptyMessage(message)) return;
 
     const embed = new MessageEmbed();
     try {

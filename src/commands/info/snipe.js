@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
+
 module.exports = class SnipeCommand extends Command {
     constructor(client) {
         super(client, {
@@ -20,7 +21,7 @@ module.exports = class SnipeCommand extends Command {
 
         const snipedMSg = message.guild.snipes.get(message.channel.id);
 
-        if (snipedMSg && (snipedMSg.content || snipedMSg.attachments.size > 0)) {
+        if (snipedMSg && !this.client.utils.isEmptyMessage(snipedMSg)) {
             embed
                 .setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
                 .setFooter({
@@ -39,7 +40,19 @@ module.exports = class SnipeCommand extends Command {
                     name: `${snipedMSg.author.username}#${snipedMSg.author.discriminator}`,
                     iconURL: snipedMSg.author.displayAvatarURL(),
                 });
-            msg.edit({embeds: [embed]});
+
+            const payload = {
+                embeds: [embed],
+                // iterate over the attachments values and add them to files, remove the first one
+                files: snipedMSg.attachments.size > 1 ? [...snipedMSg.attachments.values()].slice(1).map(a => {
+                    return {
+                        attachment: a.url,
+                        name: a.name
+                    };
+                }) : [],
+            };
+
+            msg.edit(payload);
         }
         else {
             embed
