@@ -7,7 +7,7 @@ module.exports = (client, message) => {
         .get(message.guild.id); // Get prefix
 
     try {
-        if (!message.author.bot && !client.utils.isEmptyMessage(message) && !client.utils.isCommandOrBotMessage(message, prefix)) {
+        if (!message.author.bot && !client.utils.isEmptyMessage(message) && !client.utils.isCommandOrBotMessage(message, prefix) && !message.content.includes('purge')) {
             // console.log({message});
             message.guild.snipes.set(message.channel.id, message);
         }
