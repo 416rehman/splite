@@ -352,6 +352,11 @@ function createProgressBar(percentage) {
     return progressBar;
 }
 
+// is message empty? Check if the message is a webhook, or has no content, or has no attachments
+function isEmptyMessage(message) {
+    return message.webhookId && !message.content && message.embeds.length === 0 && message.attachments.length === 0;
+}
+
 /**
  * Returns a random number between min and max, excluding the numbers in the exclude array
  * @param min
@@ -520,6 +525,18 @@ async function replaceMentionsWithNames(content, guild) {
     return content;
 }
 
+function isCommandOrBotMessage(msg, prefix) {
+    const cmd = msg.content
+        .trim()
+        .split(/ +/g)
+        .shift()
+        .slice(prefix.length)
+        .toLowerCase();
+    const command =
+        msg.client.commands.get(cmd) || msg.client.aliases.get(cmd);
+    if (msg.author.bot || command) return true;
+}
+
 module.exports = {
     capitalize,
     removeElement,
@@ -542,4 +559,6 @@ module.exports = {
     spongebobText,
     replaceMentionsWithNames,
     checkTopGGVote,
+    isEmptyMessage,
+    isCommandOrBotMessage
 };
