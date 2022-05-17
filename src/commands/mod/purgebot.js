@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {oneLine, stripIndent} = require('common-tags');
 
 module.exports = class PurgeBotCommand extends Command {
     constructor(client) {
@@ -25,13 +25,13 @@ module.exports = class PurgeBotCommand extends Command {
 
     async run(message, args) {
         let channel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
+            this.getChannelFromMention(message, args[0]) ||
+            message.guild.channels.cache.get(args[0]);
         if (channel) args.shift();
         else channel = message.channel;
 
         // Check type and viewable
-        if (channel.type != 'GUILD_TEXT' || !channel.viewable)
+        if (channel.type !== 'GUILD_TEXT' || !channel.viewable)
             return this.sendErrorMessage(
                 message,
                 0,
@@ -64,18 +64,10 @@ module.exports = class PurgeBotCommand extends Command {
 
         // Find messages
         let messages = (
-            await message.channel.messages.fetch({ limit: amount })
+            await message.channel.messages.fetch({limit: amount})
         ).filter((msg) => {
             // Filter for commands or bot messages
-            const cmd = msg.content
-                .trim()
-                .split(/ +/g)
-                .shift()
-                .slice(prefix.length)
-                .toLowerCase();
-            const command =
-            message.client.commands.get(cmd) || message.client.aliases.get(cmd);
-            if (msg.author.bot || command) return true;
+            return this.client.utils.isCommandOrBotMessage(msg, prefix);
         });
 
         if (messages.size === 0) {
@@ -130,7 +122,7 @@ module.exports = class PurgeBotCommand extends Command {
                     .setColor(message.guild.me.displayHexColor);
 
                 message.channel
-                    .send({ embeds: [embed] })
+                    .send({embeds: [embed]})
                     .then((msg) => {
                         setTimeout(() => msg.delete(), 10000);
                     })
