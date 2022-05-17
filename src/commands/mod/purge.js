@@ -36,7 +36,7 @@ module.exports = class PurgeCommand extends Command {
         else channel = message.channel;
 
         // Check type and viewable
-        if (channel.type != 'GUILD_TEXT' || !channel.viewable)
+        if (channel.type !== 'GUILD_TEXT' || !channel.viewable)
             return this.sendErrorMessage(
                 message,
                 0,
