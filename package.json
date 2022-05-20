@@ -30,6 +30,7 @@
     "node-os-utils": "^1.3.1",
     "node-pre-gyp": "^0.11.0",
     "node-schedule": "^1.3.2",
+    "openai": "^2.0.5",
     "opusscript": "^0.0.8",
     "request": "^2.88.2",
     "twemoji-parser": "^13.0.0",
@@ -52,12 +53,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/certifiedrehman/spliteBot.git"
+    "url": "git+https://github.com/certifiedrehman/splite.git"
   },
   "author": "Rehman Ahmadzai",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/certifiedrehman/spliteBot"
+    "url": "https://github.com/certifiedrehman/splite"
   },
   "basedOn": "https://github.com/sabattle/CalypsoBot"
 }

@@ -10,6 +10,7 @@ const {Collection} = require('discord.js');
 const {NekoBot} = require('nekobot-api');
 const {Player} = require('discord-player');
 const {enabledIntents, allIntents} = require('../intents.js');
+const {Configuration, OpenAIApi} = require('openai');
 
 class Client extends Discord.Client {
     constructor(config, options) {
@@ -53,6 +54,10 @@ class Client extends Discord.Client {
                 quality: 'highestaudio', highWaterMark: 1 << 25
             }
         });
+
+        this.openai = new OpenAIApi(new Configuration({
+            apiKey: config.apiKeys.openAI.apiKey,
+        }));
     }
 
     /**

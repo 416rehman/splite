@@ -23,7 +23,7 @@ module.exports = class smashOrPassCommand extends Command {
         To opt-out of the game, use the command "toggleSmashOrPass"
       `,
             type: client.types.SMASHORPASS,
-            examples: ['smashorpass', 'sop', 'smash', 'smash splite'],
+            examples: ['smashorpass', 'sop', 'smash', 'smash @user'],
             clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES', 'EMBED_LINKS'],
             exclusive: true,
         });
@@ -107,7 +107,7 @@ module.exports = class smashOrPassCommand extends Command {
         if (args.length) {
             const member =
                 await this.getGuildMember(message.guild, args.join(' '));
-            if (member == undefined) {
+            if (!member) {
                 this.done(message.author.id);
                 return message.reply(
                     `${emojis.fail} Failed to find a user with that name, please try mentioning them or use their user ID.`

@@ -60,6 +60,9 @@
       "webhook_mode": {
         "authorization": "webhook_mode requires useWebServer to be true. Visit https://top.gg/bot/:bot_id/webhooks"
       }
+    },
+    "openAI": {
+      "apiKey": "Visit https://beta.openai.com/account/api-keys"
     }
   },
   "music": {

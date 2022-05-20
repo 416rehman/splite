@@ -13,7 +13,7 @@ module.exports = class SetCrownScheduleCommand extends Command {
             aliases: ['setcs', 'scs', 'crownscedule'],
             usage: 'setcrownschedule <cron>',
             description: stripIndent`
-        Sets the schedule for Calypso's crown role rotation. 
+        Sets the schedule for the crown role rotation. 
         The format is cron-style:
         \`\`\`*    *    *    *    *
         ┬    ┬    ┬    ┬    ┬
