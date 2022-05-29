@@ -354,7 +354,7 @@ function createProgressBar(percentage) {
 
 // is message empty? Check if the message is a webhook, or has no content, or has no attachments
 function isEmptyMessage(message) {
-    return message.webhookId && !message.content && message.embeds.length === 0 && message.attachments.length === 0;
+    return message?.webhookId && !message?.content && message?.embeds?.length === 0 && message?.attachments?.length === 0;
 }
 
 /**
@@ -526,8 +526,7 @@ async function replaceMentionsWithNames(content, guild) {
 }
 
 function isCommandOrBotMessage(msg, prefix) {
-    const cmd = msg.content
-        .trim()
+    const cmd = msg?.content?.trim()
         .split(/ +/g)
         .shift()
         .slice(prefix.length)
