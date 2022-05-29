@@ -6,10 +6,10 @@ module.exports = (client, messages) => {
         .pluck()
         .get(message.guild.id); // Get prefix
 
-    const snipeMessage = messages.find(m => !m.author.bot && !client.utils.isEmptyMessage(m) && !client.utils.isCommandOrBotMessage(m, prefix));
+    const snipeMessage = messages.find(m => !m.author?.bot && !client.utils.isEmptyMessage(m) && !client.utils.isCommandOrBotMessage(m, prefix));
 
     // Add to snipe cache
-    if (snipeMessage?.author && !snipeMessage.author.bot) {
+    if (snipeMessage?.author && !snipeMessage.author?.bot) {
         try {
             snipeMessage.guild.snipes.set(snipeMessage.channel.id, snipeMessage);
         }
