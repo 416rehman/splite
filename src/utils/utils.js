@@ -527,13 +527,13 @@ async function replaceMentionsWithNames(content, guild) {
 
 function isCommandOrBotMessage(msg, prefix) {
     const cmd = msg?.content?.trim()
-        .split(/ +/g)
-        .shift()
-        .slice(prefix.length)
-        .toLowerCase();
+        ?.split(/ +/g)
+        ?.shift()
+        ?.slice(prefix.length)
+        ?.toLowerCase();
     const command =
-        msg.client.commands.get(cmd) || msg.client.aliases.get(cmd);
-    if (msg.author.bot || command) return true;
+        msg?.client?.commands?.get(cmd) || msg?.client?.aliases?.get(cmd);
+    if (msg?.author?.bot || command) return true;
 }
 
 module.exports = {
