@@ -120,7 +120,7 @@ module.exports = class Endpoint {
             const data = this.get(ctx.request, ctx.response);
             if (data) {
                 if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})Response from ${ctx.request.url} to ${ctx.request.ip}: [${data.status}] ${data.body}`);
-                ctx.response.status = data.status;
+                ctx.response.status = data.status || 200;
                 ctx.response.body = {
                     endpoint: {
                         description: this.description,
@@ -136,8 +136,8 @@ module.exports = class Endpoint {
             const data = this.post(ctx.request, ctx.response);
             if (data) {
                 if (this.webserver.config.webserver.debug) console.log(`[WEBSERVER] (${ctx.request.method})Response from ${ctx.request.url} to ${ctx.request.ip}: [${data.status}] ${data.body}`);
-                ctx.response.status = data.status;
-                ctx.response.body = data.body;
+                ctx.response.status = data.status || 200;
+                ctx.response.body = data.body || {};
             }
         }
         else {
