@@ -13,6 +13,7 @@ module.exports = class TopGGVoteEndpoint extends Endpoint {
     // eslint-disable-next-line no-unused-vars
     post(req, res) {
         if (req.body?.user) {
+            console.log(`[TopGG] Received vote from ${req.body.user}`);
             this.webserver.db.integrations.setTopGG.run(req.body.user, Date.now());
         }
     }
