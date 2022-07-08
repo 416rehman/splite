@@ -145,9 +145,10 @@ The scanning technology, used in banks, to read the numbers at the bottom of che
   - MICR
 The small program which allows a piece of computer hardware to work with the operating system is called what?:
   - driver
-This unit of a computer system is the unit where the actual execution of instructions takes place during processing operation?:
+This part of a computer system is the unit where the actual execution of instructions takes place during processing operation?:
   - Arithmetic Logic Unit
   - Arithmetic Logic
+  - ALU
 To enable RIP routing for a specific subnet, the configuration command network 192.168.5.64 was entered by the network administrator. What address, if any, appears in the running configuration file to identify this network?:
   - 192.168.5.0
 Video-sharing site that was founded by three former PayPal employees in February 2005.:
