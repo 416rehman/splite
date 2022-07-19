@@ -5,6 +5,7 @@ name: Deploy to Server
 on:
   push:
     branches: [ production ]
+  workflow_dispatch:
 
 jobs:
   deploy:
