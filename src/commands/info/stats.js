@@ -66,12 +66,12 @@ module.exports = class StatsCommand extends Command {
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
 
-        if (this.client.owners.length > 0) {
+        if (this.client.owners?.length > 0) {
             embed.addField('Developed By', `${this.client.owners[0]}`);
             if (this.client.owners.length > 1)
                 embed.addField(`${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, this.client.owners.join(', '));
         }
-        if (this.client.managers.length > 0) {
+        if (this.client.managers?.length > 0) {
             embed.addField(`${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, this.client.managers.join(', '));
         }
 
