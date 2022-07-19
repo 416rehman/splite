@@ -30,6 +30,4 @@ jobs:
             cd /root/apps/splite
             git pull -f
             echo "Applying Changes complete"
-            docker-compose down
-            docker-compose up -d
             
