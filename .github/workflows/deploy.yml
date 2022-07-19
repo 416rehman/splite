@@ -22,12 +22,13 @@ jobs:
           # Script
           script: |
             echo "Backing up database"
-            cd /root/scripts/
+            cd /root/scripts/splite/
             ./splite-data-backup.sh
             echo "Backing up database complete"
             echo "Applying Changes"
-            cd /root/splite
+            cd /root/apps/splite
             git pull -f
             echo "Applying Changes complete"
-            pm2 reload splite
+            docker-compose down
+            docker-compose up -d
             
