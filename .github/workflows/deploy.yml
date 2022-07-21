@@ -26,8 +26,9 @@ jobs:
             cd /root/scripts/splite/
             ./splite-data-backup.sh
             echo "Backing up database complete"
-            echo "Pulling Changes"
+            echo "Applying Changes"
             cd /root/apps/splite
             git pull -f
-            echo "Changes Pulled"
-            
+            echo "Applying Changes complete"
+            docker-compose down
+            docker-compose up -d          
