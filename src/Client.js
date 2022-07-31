@@ -153,8 +153,6 @@ class Client extends Discord.Client {
             const d = new Date(afkStatus.afk_time);
             this.db.users.updateAfk.run(null, 0, member.id, guild.id);
 
-            console.log('NICKNAME: ' + member.nickname);
-            console.log(member);
             if (member.nickname) {
                 member.setNickname(`${member.nickname.replace('[AFK]', '')}`)
                     .catch(() => {
@@ -294,7 +292,7 @@ class Client extends Discord.Client {
      * @return {{permissions: *, id}|null}
      */
     constructFullPermissions(allCommands, slashCommand, guild) {
-        const perms_required = allCommands.find(command => command.name === slashCommand.name).userPermissions;
+        const perms_required = allCommands.find(command => command.slashCommand.name === slashCommand.name).userPermissions;
         if (!perms_required || perms_required.length === 0) return;
 
         let matching_roles = guild.roles.cache.filter(r => r.permissions.has(perms_required));

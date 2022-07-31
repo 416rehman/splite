@@ -5,7 +5,7 @@ const {fail} = require('../utils/emojis.json');
 module.exports = async (client, interaction) => {
 
     if (interaction.isCommand()) {
-        let command = client.commands.get(interaction.commandName);
+        let command = client.commands.find(c => c.slashCommand && c.slashCommand.name === interaction.commandName);
         if (command.slashCommand) {
             //Blacklisted user
             if (command.checkBlacklist(interaction.user)) {

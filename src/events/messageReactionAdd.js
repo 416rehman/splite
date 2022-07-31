@@ -140,7 +140,7 @@ module.exports = async (client, messageReaction, user) => {
         joinvoting_message_id: joinvotingMessageId,
         joinvoting_emoji: joinvotingEmoji,
         voting_channel_id: votingChannelID,
-    } = message.client.db.settings.selectJoinVotingMessage.get(
+    } = client.db.settings.selectJoinVotingMessage.get(
         messageReaction.message.channel.guild.id
     );
     if (joinvotingMessageId && joinvotingEmoji && votingChannelID) {

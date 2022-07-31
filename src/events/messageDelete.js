@@ -2,7 +2,7 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = (client, message) => {
     if (!message.author) return;
-    const prefix = message.client.db.settings.selectPrefix
+    const prefix = client.db.settings.selectPrefix
         .pluck()
         .get(message.guild.id); // Get prefix
 

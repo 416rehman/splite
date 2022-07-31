@@ -16,8 +16,9 @@ module.exports = async (client, message) => {
 
     const mentionedUser = message.mentions.users.first();
     if (mentionedUser) {
-        const afkStatus = message.client.db.users.selectAfk.get(message.guild.id, mentionedUser.id);
-        if (afkStatus != null) {
+        const afkStatus = client.db.users.selectAfk.get(message.guild.id, mentionedUser.id);
+
+        if (afkStatus.afk != null) {
             const d = new Date(afkStatus.afk_time);
             message.reply(`${dnd} ${mentionedUser.username} is afk${afkStatus.afk ? `: ${afkStatus.afk} -` : '!'} **${moment(d).fromNow()}**`);
         }
@@ -41,7 +42,7 @@ module.exports = async (client, message) => {
 
     if (prefixRegex.test(message.content)) {
         // Get mod channels
-        let modChannelIds = message.client.db.settings.selectModChannelIds
+        let modChannelIds = client.db.settings.selectModChannelIds
             .pluck()
             .get(message.guild.id) || [];
         if (typeof modChannelIds === 'string') modChannelIds = modChannelIds.split(' ');
@@ -145,14 +146,14 @@ module.exports = async (client, message) => {
                 .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
                 .addField('Invite Me', oneLine`
           You can add me to your server by clicking 
-          [here](${message.client.config.inviteLink})!
+          [here](${client.config.inviteLink})!
         `)
                 .addField('Support', oneLine`
           If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`)
                 .setColor(message.guild.me.displayHexColor);
             if (client.owners.length) {
                 embed.setFooter({
-                    text: `To speak directly with the developer, DM ${message.client.owners[0]}`,
+                    text: `To speak directly with the developer, DM ${client.owners[0]}`,
                 });
             }
             message.channel.send({embeds: [embed]});

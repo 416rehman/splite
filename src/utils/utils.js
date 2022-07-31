@@ -119,6 +119,7 @@ async function getCaseNumber(client, guild, modLog) {
  * @param {...*} args
  */
 function getStatus(...args) {
+    console.log({args});
     for (const arg of args) {
         if (!arg) return 'disabled';
     }
