@@ -28,12 +28,11 @@ module.exports = class AiCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, null, true);
+        this.handle(interaction.options.getString('question'), interaction, true);
     }
 
-    async handle(context, args, isInteraction) {
-        let question = isInteraction ? context.options.getString('question') : args.join(' ');
-        //if question does not end with a question mark or a period, add one
+    async handle(question, context, isInteraction) {
+
         if (!question.endsWith('?') && !question.endsWith('.')) question += '?';
         const response = await this.client.openai.createCompletion('text-davinci-002', {
             prompt: question,
