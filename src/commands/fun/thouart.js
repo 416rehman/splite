@@ -2,6 +2,8 @@ const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
 const {oneLine} = require('common-tags');
+const {SlashCommandBuilder} = require('@discordjs/builders');
+const {load, fail} = require('../../utils/emojis.json');
 
 module.exports = class ThouArtCommand extends Command {
     constructor(client) {
@@ -15,35 +17,55 @@ module.exports = class ThouArtCommand extends Command {
       `,
             type: client.types.FUN,
             examples: ['thouart @split'],
+            slashCommand: new SlashCommandBuilder().addUserOption(u => u.setName('user').setRequired(false).setDescription('The user to insult')),
         });
     }
 
     async run(message, args) {
-        const member =
-            await this.getGuildMember(message.guild, args[0]) || message.member;
+        const member = await this.getGuildMember(message.guild, args[0]) || message.member;
+        await message.channel
+            .send({
+                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+            }).then(msg => {
+                message.loadingMessage = msg;
+                this.handle(member, message, false);
+            });
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getUser('user') || interaction.author;
+        this.handle(member, interaction, true);
+    }
+
+    async handle(targetUser, context, isInteraction) {
         try {
             const res = await fetch('http://quandyfactory.com/insult/json/');
             let insult = (await res.json()).insult;
             insult = insult.charAt(0).toLowerCase() + insult.slice(1);
-            const embed = new MessageEmbed()
-                .setTitle('🎭  Thou Art  🎭')
-                .setDescription(`${member}, ${insult}`)
-                .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
-                })
-                .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
-            message.channel.send({embeds: [embed]});
+
+            const payload = {
+                embeds: [new MessageEmbed()
+                    .setTitle('🎭  Thou Art  🎭')
+                    .setDescription(`${targetUser}, ${insult}`)
+                    .setFooter({
+                        text: this.getUserIdentifier(context.author),
+                        iconURL: this.getAvatarURL(context.author),
+                    })]
+            };
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
         }
         catch (err) {
-            message.client.logger.error(err.stack);
-            this.sendErrorMessage(
-                message,
-                1,
-                'Please try again in a few seconds',
-                err.message
-            );
+            const payload = {
+                embeds: [new MessageEmbed()
+                    .setTitle('Error')
+                    .setDescription(fail + ' ' + err.message)
+                    .setColor('RED')],
+            };
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
         }
     }
 };

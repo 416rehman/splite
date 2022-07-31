@@ -1,5 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
+const {load, fail} = require('../../utils/emojis.json');
 
 module.exports = class CoinFlipCommand extends Command {
     constructor(client) {
@@ -9,25 +11,72 @@ module.exports = class CoinFlipCommand extends Command {
             usage: 'coinflip',
             description: 'Flips a coin.',
             type: client.types.FUN,
+            slashCommand: new SlashCommandBuilder()
         });
     }
 
-    run(message) {
-        const n = Math.floor(Math.random() * 2);
-        let result;
-        if (n === 1) result = 'heads';
-        else result = 'tails';
-        const embed = new MessageEmbed()
-            .setTitle('½  Coinflip  ½')
-            .setDescription(
-                `I flipped a coin for you, ${message.member}. It was **${result}**!`
-            )
-            .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
-            })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
+    async run(message) {
+        await message.channel
+            .send({
+                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+            }).then(msg => {
+                message.loadingMessage = msg;
+                this.handle(message, false);
+            });
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        try {
+            const n = Math.floor(Math.random() * 2);
+            let result;
+            if (n === 1) result = 'heads';
+            else result = 'tails';
+            const embed = new MessageEmbed()
+                .setTitle('½  Coinflip  ½')
+                .setDescription(
+                    `I flipped a coin for you, <@${context.author.id}>! It was **${result}**!`
+                )
+                .setFooter({
+                    text: this.getUserIdentifier(context.author),
+                    iconURL: this.getAvatarURL(context.author),
+                })
+                .setTimestamp();
+
+            if (isInteraction) {
+                context.editReply({
+                    embeds: [embed],
+                });
+            }
+            else {
+                context.loadingMessage ? context.loadingMessage.edit({
+                    embeds: [embed],
+                }) : context.channel.send({
+                    embeds: [embed],
+                });
+            }
+        }
+        catch (err) {
+            const embed = new MessageEmbed()
+                .setTitle('Error')
+                .setDescription(fail + ' ' + err.message)
+                .setColor('RED');
+            if (isInteraction) {
+                context.editReply({
+                    embeds: [embed],
+                });
+            }
+            else {
+                context.loadingMessage ? context.loadingMessage.edit({
+                    embeds: [embed]
+                }) : context.channel.send({
+                    embeds: [embed]
+                });
+            }
+        }
     }
 };

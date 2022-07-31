@@ -1,5 +1,6 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 const answers = [
     'It is certain.',
     'It is decidedly so.',
@@ -32,17 +33,26 @@ module.exports = class EightBallCommand extends Command {
             description: 'Asks the Magic 8-Ball for some psychic wisdom.',
             type: client.types.FUN,
             examples: ['8ball Am I going to win the lottery?'],
+            slashCommand: new SlashCommandBuilder().addStringOption((o) => o.setName('question').setRequired(true).setDescription('The question you want to ask')),
         });
     }
 
     run(message, args) {
-        const question = args.join(' ');
-        if (!question)
+        if (!args.join(' '))
             return this.sendErrorMessage(
                 message,
                 0,
                 'Please provide a question to ask'
             );
+        this.handle(message, args, false);
+    }
+
+    interact(interaction) {
+        this.handle(interaction, null, true);
+    }
+
+    async handle(context, args, isInteraction) {
+        const question = isInteraction ? context.options.getString('question') : args.join(' ');
         const embed = new MessageEmbed()
             .setTitle('🎱  The Magic 8-Ball  🎱')
             .addField('Question', question)
@@ -51,11 +61,19 @@ module.exports = class EightBallCommand extends Command {
                 `${answers[Math.floor(Math.random() * answers.length)]}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+            .setTimestamp();
+        if (isInteraction) {
+            await context.reply({
+                embeds: [embed],
+            });
+        }
+        else {
+            context.reply({
+                embeds: [embed],
+            });
+        }
     }
 };

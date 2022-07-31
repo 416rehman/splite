@@ -138,8 +138,8 @@ module.exports = class MockCommand extends Command {
     }
 
     async interact(interaction) {
-        interaction.deferReply();
-        if (interaction.options.getSubcommand() == 'text') {
+        await interaction.deferReply();
+        if (interaction.options.getSubcommand() === 'text') {
             const text = interaction.options.getString('text');
             const payload = await createImagePayload.call(
                 this,
@@ -149,7 +149,7 @@ module.exports = class MockCommand extends Command {
             );
             interaction.reply(payload);
         }
-        else if (interaction.options.getSubcommand() == 'user') {
+        else if (interaction.options.getSubcommand() === 'user') {
             const user = interaction.options.getUser('user');
 
             interaction.channel.messages

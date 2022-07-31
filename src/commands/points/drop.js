@@ -20,17 +20,17 @@ module.exports = class WipePointsCommand extends Command {
         });
     }
 
-    interact(interaction, args, author) {
+    interact(interaction) {
         const amount = parseInt(interaction.options.getNumber('amount'));
-        this.handle(amount, author, interaction, true);
+        this.handle(amount, interaction.author, interaction, true);
     }
 
     run(message, args) {
         let amount = args && parseInt(args[0]);
-        this.handle(amount, message.author, message);
+        this.handle(amount, message.author, message, false);
     }
 
-    handle(amount, user, context) {
+    handle(amount, user, context, isInteraction) {
         let bal = this.client.db.users.selectPoints
             .pluck()
             .get(user.id, context.guild.id);
@@ -38,12 +38,10 @@ module.exports = class WipePointsCommand extends Command {
             return context.reply('You don\'t have any points.');
         }
         if (isNaN(amount)) {
-            console.log('Amount is not a number.', amount);
             return context.reply('You need to specify an amount.');
         }
 
         if (amount > bal) {
-            console.log(`${user.tag} tried to drop ${amount} points, but only has ${bal} points.`);
             return context.reply('You don\'t have enough points to drop.');
         }
         if (amount < 5) {
@@ -81,7 +79,11 @@ module.exports = class WipePointsCommand extends Command {
 
         const embed = new MessageEmbed()
             .setTitle(`${emojis.point} Points Dropped!`)
-            .setDescription('Guess the correct amount of points to pick them up.');
+            .setDescription('Guess the correct amount of points to pick them up.')
+            .setFooter({
+                text: this.getUserIdentifier(user),
+                iconURL: this.getAvatarURL(user),
+            });
 
         context.channel.send({
             embeds: [embed],
@@ -95,10 +97,10 @@ module.exports = class WipePointsCommand extends Command {
             });
 
             collector.on('collect', btn => {
-                // if (btn.user.id === user.id) return btn.reply({
-                //     content: 'You can\'t pick up your own points.',
-                //     ephemeral: true
-                // });
+                if (btn.user.id === user.id) return btn.reply({
+                    content: 'You can\'t pick up your own points.',
+                    ephemeral: true
+                });
 
                 if (btn.customId === `${amount}`) {
                     collector.stop('claimed');
@@ -120,6 +122,10 @@ module.exports = class WipePointsCommand extends Command {
                 }
 
             });
+            // delete the user command invokation
+            if (!isInteraction) {
+                context.delete();
+            }
         });
 
 

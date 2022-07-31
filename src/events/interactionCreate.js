@@ -41,7 +41,6 @@ module.exports = async (client, interaction) => {
             const channel = await interaction.guild.channels.cache.get(interaction.channelId);
 
             if (author) {
-                interaction.user = author;
                 interaction.author = author;
             }
             if (channel) {
@@ -104,7 +103,7 @@ module.exports = async (client, interaction) => {
                 if (command.channelExclusive) command.setInstance(null, interaction.channelId); // Track per-channel instance
                 command.setCooldown(interaction.user.id);
 
-                return command.interact(interaction, interaction.options._hoistedOptions || null, author); // Run command
+                return command.interact(interaction, interaction.options._hoistedOptions || null); // Run command
             }
         }
     }

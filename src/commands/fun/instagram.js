@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {MessageEmbed, MessageAttachment} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {load} = require('../../utils/emojis.json');
 
 module.exports = class instagramCommand extends Command {
     constructor(client) {
@@ -15,31 +15,40 @@ module.exports = class instagramCommand extends Command {
     }
 
     async run(message, args) {
-        const member =
-            (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
-
-        message.channel
+        const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
+        await message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
-            })
-            .then(async (msg) => {
-                try {
-                    const buffer = await msg.client.ameApi.generate('instagram', {
-                        url: this.getAvatarURL(member, 'png'),
-                    });
-                    const attachment = new MessageAttachment(
-                        buffer,
-                        'instagram.png'
-                    );
-
-                    await message.channel.send({files: [attachment]});
-                    await msg.delete();
-                }
-                catch (e) {
-                    await msg.edit({
-                        embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-                    });
-                }
+            }).then(msg => {
+                message.loadingMessage = msg;
+                this.handle(member, message, false);
             });
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getUser('user') || interaction.author;
+        this.handle(member, interaction, true);
+    }
+
+    async handle(targetUser, context, isInteraction) {
+        const buffer = await context.client.ameApi.generate('instagram', {
+            url: this.getAvatarURL(targetUser, 'png'),
+        });
+        const attachment = new MessageAttachment(buffer, 'instagram.png');
+
+        if (isInteraction) {
+            context.editReply({
+                files: [attachment],
+            });
+        }
+        else {
+            context.loadingMessage ? context.loadingMessage.edit({
+                files: [attachment],
+                embeds: []
+            }) : context.channel.send({
+                files: [attachment],
+            });
+        }
     }
 };

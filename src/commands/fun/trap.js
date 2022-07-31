@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {MessageEmbed, MessageAttachment} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {load} = require('../../utils/emojis.json');
 const fetch = require('node-fetch');
 module.exports = class trapCommand extends Command {
     constructor(client) {
@@ -16,41 +16,57 @@ module.exports = class trapCommand extends Command {
 
     async run(message, args) {
         const member =
-            (await this.getGuildMember(message.guild, args[0])) || message.author;
-        const member2 =
-            (await this.getGuildMember(message.guild, args[1])) || message.author;
+            await this.getGuildMember(message.guild, args[0] || this.client.db.users.getRandom.get(message.guild.id).user_id);
 
-        message.channel
+        if (!member) return this.sendErrorMessage(message, 'Could not find the user you specified.');
+
+        await message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
-            })
-            .then(async (msg) => {
-                try {
-                    const res = await fetch(
-                        encodeURI(
-                            `https://nekobot.xyz/api/imagegen?type=trap&name=${
-                                member2.username || member.username
-                            }&author=${
-                                member2 ? member.username : message.author.username
-                            }&image=${
-                                this.getAvatarURL(member2) || this.getAvatarURL(member)
-                            }`
-                        )
-                    );
-                    const json = await res.json();
-                    const attachment = new MessageAttachment(
-                        json.message,
-                        'trap.png'
-                    );
-
-                    await message.channel.send({files: [attachment]});
-                    await msg.delete();
-                }
-                catch (e) {
-                    await msg.edit({
-                        embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-                    });
-                }
+            }).then(msg => {
+                message.loadingMessage = msg;
+                this.handle(member, message, false);
             });
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getUser('user') || await this.getGuildMember(interaction.guild, this.client.db.users.getRandom.get(interaction.guild.id).user_id);
+        this.handle(member, interaction, true);
+    }
+
+    async handle(member, context, isInteraction) {
+        const url = encodeURI(
+            `https://nekobot.xyz/api/imagegen?type=trap&name=${
+                member.username || member.user.username
+            }&author=${
+                context.author.username || context.author.user.username
+            }&image=${
+                this.getAvatarURL(member, 'png', true)
+            }`
+        );
+
+        const res = await fetch(
+            url
+        );
+        const json = await res.json();
+        const attachment = new MessageAttachment(
+            json.message,
+            'trap.png'
+        );
+
+        if (isInteraction) {
+            context.editReply({
+                files: [attachment],
+            });
+        }
+        else {
+            context.loadingMessage ? context.loadingMessage.edit({
+                files: [attachment],
+                embeds: []
+            }) : context.channel.send({
+                files: [attachment],
+            });
+        }
     }
 };

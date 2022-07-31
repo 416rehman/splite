@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {MessageEmbed, MessageAttachment} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {load} = require('../../utils/emojis.json');
 
 module.exports = class missionpassedCommand extends Command {
     constructor(client) {
@@ -16,30 +16,39 @@ module.exports = class missionpassedCommand extends Command {
 
     async run(message, args) {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
-
-        message.channel
+        await message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
-            })
-            .then(async (msg) => {
-                try {
-                    const buffer = await msg.client.ameApi.generate(
-                        'missionpassed',
-                        {url: this.getAvatarURL(member, 'png')}
-                    );
-                    const attachment = new MessageAttachment(
-                        buffer,
-                        'missionpassed.png'
-                    );
-
-                    await message.channel.send({files: [attachment]});
-                    await msg.delete();
-                }
-                catch (e) {
-                    await msg.edit({
-                        embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-                    });
-                }
+            }).then(msg => {
+                message.loadingMessage = msg;
+                this.handle(member, message, false);
             });
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getUser('user') || interaction.author;
+        this.handle(member, interaction, true);
+    }
+
+    async handle(targetUser, context, isInteraction) {
+        const buffer = await context.client.ameApi.generate('missionpassed', {
+            url: this.getAvatarURL(targetUser, 'png'),
+        });
+        const attachment = new MessageAttachment(buffer, 'missionpassed.png');
+
+        if (isInteraction) {
+            context.editReply({
+                files: [attachment],
+            });
+        }
+        else {
+            context.loadingMessage ? context.loadingMessage.edit({
+                files: [attachment],
+                embeds: []
+            }) : context.channel.send({
+                files: [attachment],
+            });
+        }
     }
 };

@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {MessageEmbed, MessageAttachment} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {load} = require('../../utils/emojis.json');
 
 module.exports = class HateCommand extends Command {
     constructor(client) {
@@ -16,40 +16,50 @@ module.exports = class HateCommand extends Command {
         });
     }
 
-    run(message, args) {
-        message.channel
+    async run(message, args) {
+        if (!args[0]) return this.sendHelpMessage(message, 'Hate');
+
+        await message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
-            })
-            .then(async (msg) => {
-                try {
-                    const text = await message.client.utils.replaceMentionsWithNames(
-                        args.join(' '),
-                        message.guild
-                    );
-                    const buffer = await msg.client.utils.generateImgFlipImage(
-                        242461078,
-                        `${text}`,
-                        `${text}`,
-                        '#EBDBD1',
-                        '#2E251E'
-                    );
-
-                    if (buffer) {
-                        const attachment = new MessageAttachment(
-                            buffer,
-                            'allmyhomieshate.png'
-                        );
-
-                        await message.channel.send({files: [attachment]});
-                        await msg.delete();
-                    }
-                }
-                catch (e) {
-                    await msg.edit({
-                        embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-                    });
-                }
+            }).then(async msg => {
+                message.loadingMessage = msg;
+                const text = await message.client.utils.replaceMentionsWithNames(
+                    args.join(' '),
+                    message.guild
+                );
+                this.handle(text, message, false);
             });
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const text = interaction.options.getString('text') || `${this.client.name}  is the best bot!`;
+        this.handle(text, interaction, true);
+    }
+
+    async handle(text, context, isInteraction) {
+        const buffer = await this.client.utils.generateImgFlipImage(
+            242461078,
+            `${text}`,
+            `${text}`,
+            '#EBDBD1',
+            '#2E251E'
+        );
+        const attachment = new MessageAttachment(buffer, 'changemymind.png');
+
+        if (isInteraction) {
+            context.editReply({
+                files: [attachment],
+            });
+        }
+        else {
+            context.loadingMessage ? context.loadingMessage.edit({
+                files: [attachment],
+                embeds: []
+            }) : context.channel.send({
+                files: [attachment],
+            });
+        }
     }
 };

@@ -1,55 +1,54 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const fetch = require('node-fetch');
-const {load, fail} = require('../../utils/emojis.json');
+const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {fail, load} = require('../../utils/emojis.json');
 
-module.exports = class biryaniCommand extends Command {
+module.exports = class gayCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'biryani',
-            usage: 'biryani',
-            description: 'Finds a random biryani for your viewing pleasure.',
+            name: 'gay',
+            aliases: ['rainbow'],
+            usage: 'gay <user mention/id>',
+            description: 'Applies a rainbow filter to an avatar image',
             type: client.types.FUN,
+            examples: ['gay @split'],
         });
     }
 
-    async run(message) {
+    async run(message, args) {
+        const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
         await message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
-                this.handle(message, false);
+                this.handle(member, message, false);
             });
     }
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        const member = interaction.options.getUser('user') || interaction.author;
+        this.handle(member, interaction, true);
     }
 
-    async handle(context, isInteraction) {
+    async handle(targetUser, context, isInteraction) {
         try {
-            const res = await fetch('https://biriyani.anoram.com/get');
-            const img = (await res.json()).image;
-            const embed = new MessageEmbed()
-                .setTitle('🤤  Biryani!  🍽')
-                .setImage(img)
-                .setFooter({
-                    text: this.getUserIdentifier(context.author),
-                    iconURL: this.getAvatarURL(context.author),
-                });
+            const buffer = await context.client.ameApi.generate('rainbow', {
+                url: this.getAvatarURL(targetUser, 'png'),
+            });
+            const attachment = new MessageAttachment(buffer, 'rainbow.png');
 
             if (isInteraction) {
                 context.editReply({
-                    embeds: [embed],
+                    files: [attachment],
                 });
             }
             else {
                 context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed],
+                    files: [attachment],
+                    embeds: []
                 }) : context.channel.send({
-                    embeds: [embed],
+                    files: [attachment],
                 });
             }
         }
@@ -71,5 +70,6 @@ module.exports = class biryaniCommand extends Command {
                 });
             }
         }
+
     }
 };

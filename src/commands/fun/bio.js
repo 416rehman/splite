@@ -15,6 +15,7 @@ module.exports = class BioCommand extends Command {
                 `bio @${client.name}`,
                 'bio clear',
             ],
+
         });
     }
 

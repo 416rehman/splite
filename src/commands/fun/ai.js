@@ -14,12 +14,7 @@ module.exports = class AiCommand extends Command {
                 'Uses artificial intelligence to generate a response to your message',
             type: client.types.FUN,
             examples: ['ai how old is the sun'],
-            slashCommand: new SlashCommandBuilder()
-                .addStringOption((o) =>
-                    o.setName('text')
-                        .setRequired(true)
-                        .setDescription('The question you want to ask')
-                ),
+            slashCommand: new SlashCommandBuilder().addStringOption((o) => o.setName('question').setRequired(true).setDescription('The question you want to ask')),
             disabled: !client.config.apiKeys.openAI.apiKey
         });
     }
@@ -28,15 +23,18 @@ module.exports = class AiCommand extends Command {
         const text = args.join(' ');
         if (!text) return message.reply(`${fail} Please provide a question to ask`);
 
-        this.handle(text, message, message.author, false);
+        this.handle(text, message, false);
     }
 
-    interact(interaction, args, author) {
-        interaction.deferReply();
-        this.handle(interaction.options.getString('text'), interaction, author, true);
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, null, true);
     }
 
-    async handle(question, context, author, isInteraction) {
+    async handle(context, args, isInteraction) {
+        let question = isInteraction ? context.options.getString('question') : args.join(' ');
+        //if question does not end with a question mark or a period, add one
+        if (!question.endsWith('?') && !question.endsWith('.')) question += '?';
         const response = await this.client.openai.createCompletion('text-davinci-002', {
             prompt: question,
             temperature: 0,
@@ -46,13 +44,14 @@ module.exports = class AiCommand extends Command {
         if (response.data.choices) {
             const embed = new MessageEmbed()
                 .setDescription(response.data.choices.map(c => c.text).join('\n'))
+                .setTitle(question)
                 .setAuthor({
                     name: 'AI',
-                    icon_url: this.getAvatarURL(author)
+                    icon_url: this.getAvatarURL(context.author)
                 })
                 .setFooter({
-                    text: this.getUserIdentifier(author),
-                    icon_url: this.getAvatarURL(author)
+                    text: this.getUserIdentifier(context.author),
+                    icon_url: this.getAvatarURL(context.author)
                 })
                 .setTimestamp();
 

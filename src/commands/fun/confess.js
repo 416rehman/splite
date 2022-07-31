@@ -21,7 +21,7 @@ module.exports = class confessCommand extends Command {
         });
     }
 
-    interact(interaction, args) {
+    interact(interaction) {
         const client = interaction.client;
         const prefix = client.db.settings.selectPrefix
             .pluck()
@@ -35,7 +35,7 @@ module.exports = class confessCommand extends Command {
                 ephemeral: true,
             });
 
-        const confession = args[0].value;
+        const confession = interaction.options.getString('confession');
 
         const confessionsChannel =
             client.channels.cache.get(confessionsChannelID);

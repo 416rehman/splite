@@ -24,32 +24,33 @@ module.exports = class AvatarCommand extends Command {
         const member =
             await this.getGuildMember(message.guild, args[0]) || message.member;
 
-        displayAvatar.call(this, member, message);
+        this.handle(member, message);
     }
 
     interact(interaction) {
         const user = interaction.options.getUser('user') || interaction.member;
-        displayAvatar.call(this, user, interaction, true);
+        this.handle(user, interaction, true);
     }
+
+    handle(targetUser, context, isInteraction) {
+        const embed = new MessageEmbed()
+            .setAuthor({
+                name: this.getUserIdentifier(targetUser),
+                iconURL: this.getAvatarURL(targetUser),
+            })
+            .setDescription(`[Avatar URL](${this.getAvatarURL(targetUser)})`)
+            .setTitle(`${this.getUserIdentifier(targetUser)}'s Avatar`)
+            .setImage(this.getAvatarURL(targetUser))
+            .setFooter({
+                text: context.member.displayName,
+                iconURL: this.getAvatarURL(context.member),
+            })
+            .setTimestamp()
+            .setColor(targetUser.displayHexColor);
+
+        if (isInteraction) return context.reply({embeds: [embed]});
+
+        context.channel.send({embeds: [embed]});
+    }
+
 };
-
-function displayAvatar(user, context, isInteraction = false) {
-    const embed = new MessageEmbed()
-        .setAuthor({
-            name: this.getUserIdentifier(user),
-            iconURL: this.getAvatarURL(user),
-        })
-        .setDescription(`[Avatar URL](${this.getAvatarURL(user)})`)
-        .setTitle(`${this.getUserIdentifier(user)}'s Avatar`)
-        .setImage(this.getAvatarURL(user))
-        .setFooter({
-            text: context.member.displayName,
-            iconURL: this.getAvatarURL(context.member),
-        })
-        .setTimestamp()
-        .setColor(user.displayHexColor);
-
-    if (isInteraction) return context.reply({embeds: [embed]});
-
-    context.channel.send({embeds: [embed]});
-}

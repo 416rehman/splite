@@ -112,8 +112,8 @@ class Command {
         if (options.slashCommand) {
             this.slashCommand = options.slashCommand;
             this.slashCommand.setName(this.name);
-            this.slashCommand.setDescription(
-                (this.type === this.client.types.OWNER ? 'RESTRICTED COMMAND: ' : '') + this.description
+            this.slashCommand.setDescription( //max length of description is 100
+                ((this.type === this.client.types.OWNER ? 'RESTRICTED COMMAND: ' : '') + this.description).substring(0, 100)
             );
         }
 

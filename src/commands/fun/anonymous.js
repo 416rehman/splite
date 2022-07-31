@@ -21,7 +21,7 @@ module.exports = class anonymous extends Command {
         });
     }
 
-    interact(interaction, args) {
+    interact(interaction) {
         const cost = 1;
         const client = interaction.client;
         const prefix = client.db.settings.selectPrefix
@@ -30,7 +30,7 @@ module.exports = class anonymous extends Command {
         const anonymousAllowed = client.db.settings.selectAnonymous
             .pluck()
             .get(interaction.guild.id);
-        const anonMsg = args[0].value;
+        const anonMsg = interaction.options.getString('message');
 
         if (!anonymousAllowed)
             return interaction.reply({

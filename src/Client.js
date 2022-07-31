@@ -198,11 +198,14 @@ class Client extends Discord.Client {
         const data = this.commands.filter(c => c.slashCommand && c.disabled !== true);
         const promises = [];
         this.guilds.cache.forEach(g => {
+            // g.commands.set([]).then(() => {
             promises.push(this.registerSlashCommands(g, data, id));
+            // });
         });
         Promise.all(promises).then(() => {
             this.logger.info('Finished refreshing application (/) commands.');
         }).catch((error) => {
+            console.error(error);
             const guild = error.url.toString().match(/(guilds\/)(\S*)(\/commands)/)[2];
             if (error.code === 50001) return this.logger.error(`Failed to setup slash commands for guild: ${guild}. Missing perms.`);
         });
@@ -217,7 +220,6 @@ class Client extends Discord.Client {
      */
     registerSlashCommands(guild, commands, id) {
         return new Promise(((resolve, reject) => {
-
             const rest = new REST({version: '9'}).setToken(this.config.token);
             try {
                 const slashCommands = commands.map(c => {
@@ -226,30 +228,32 @@ class Client extends Discord.Client {
                     return c.slashCommand.toJSON();
                 });
 
-                rest.put(Routes.applicationGuildCommands(id, guild.id), {body: slashCommands},);
+                rest.put(Routes.applicationGuildCommands(id, guild.id), {body: slashCommands},).then(() => {
+                    guild.commands.fetch().then((registeredCommands) => {
 
-                guild.commands.fetch().then((registeredCommands) => {
-                    let fullPermissions = registeredCommands.filter(c => c.applicationId === this.application.id).map(c => {
-                        // if the command is removed, remove it from the guild
-                        if (!slashCommands.find(sc => sc.name === c.name)) {
-                            return rest.delete(Routes.applicationGuildCommand(id, guild.id, c.id));
-                        }
+                        let fullPermissions = registeredCommands.filter(c => c.applicationId === this.application.id).map(c => {
+                            // if the command is removed, remove it from the guild
+                            if (!slashCommands.find(sc => sc.name === c.name)) {
+                                return rest.delete(Routes.applicationGuildCommand(id, guild.id, c.id));
+                            }
 
-                        // Create permissions for the commands
-                        return this.constructFullPermissions(commands, c, guild);
+                            // Create permissions for the commands
+                            return this.constructFullPermissions(commands, c, guild);
+                        });
+
+                        Promise.all(fullPermissions).then((permissions) => {
+                            permissions = permissions.filter(p => p !== undefined && p !== null); // filter out undefined and null values
+
+                            if (permissions.length) {
+                                guild.commands?.permissions.set({fullPermissions: permissions});
+                                console.log(`Updated command permissions for ${guild.name}`);
+                            }
+                        });
                     });
 
-                    Promise.all(fullPermissions).then((permissions) => {
-                        permissions = permissions.filter(p => p !== undefined && p !== null); // filter out undefined and null values
-
-                        if (permissions.length) {
-                            guild.commands?.permissions.set({fullPermissions: permissions});
-                            console.log(`Updated command permissions for ${guild.name}`);
-                        }
-                    });
+                    resolve('Registered slash commands for ' + guild.name);
                 });
 
-                resolve('Registered slash commands for ' + guild.name);
 
             }
             catch (error) {

@@ -15,28 +15,61 @@ module.exports = class glitchCommand extends Command {
     }
 
     async run(message, args) {
-        const member =
-            (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
-
-        message.channel
+        const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
+        await message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
-            })
-            .then(async (msg) => {
-                try {
-                    const buffer = await msg.client.ameApi.generate('glitch', {
-                        url: this.getAvatarURL(member, 'png'),
-                    });
-                    const attachment = new MessageAttachment(buffer, 'glitch.png');
-
-                    await message.channel.send({files: [attachment]});
-                    await msg.delete();
-                }
-                catch (e) {
-                    await msg.edit({
-                        embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
-                    });
-                }
+            }).then(msg => {
+                message.loadingMessage = msg;
+                this.handle(member, message, false);
             });
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getUser('user') || interaction.author;
+        this.handle(member, interaction, true);
+    }
+
+    async handle(targetUser, context, isInteraction) {
+        try {
+            const buffer = await context.client.ameApi.generate('glitch', {
+                url: this.getAvatarURL(targetUser, 'png'),
+            });
+            const attachment = new MessageAttachment(buffer, 'glitch.png');
+
+            if (isInteraction) {
+                context.editReply({
+                    files: [attachment],
+                });
+            }
+            else {
+                context.loadingMessage ? context.loadingMessage.edit({
+                    files: [attachment],
+                    embeds: []
+                }) : context.channel.send({
+                    files: [attachment],
+                });
+            }
+        }
+        catch (err) {
+            const embed = new MessageEmbed()
+                .setTitle('Error')
+                .setDescription(fail + ' ' + err.message)
+                .setColor('RED');
+            if (isInteraction) {
+                context.editReply({
+                    embeds: [embed],
+                });
+            }
+            else {
+                context.loadingMessage ? context.loadingMessage.edit({
+                    embeds: [embed]
+                }) : context.channel.send({
+                    embeds: [embed]
+                });
+            }
+        }
+
     }
 };
