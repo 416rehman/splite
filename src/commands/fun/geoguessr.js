@@ -37,120 +37,132 @@ module.exports = class geoGuessrCommand extends Command {
     }
 
     handle(context, isInteraction) {
-        if (!this.client.topics?.geoguessr?.length) {
-            if (isInteraction) {
-                return context.editReply({
-                    content: `${fail} No GeoGuessr questions available.`,
-                });
+        try {
+            if (!this.client.topics?.geoguessr?.length) {
+                const payload = `${fail} No GeoGuessr questions available.`;
+                if (isInteraction) return context.editReply(payload);
+                else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
             }
-            else {
-                return context.loadingMessage ? context.loadingMessage.edit({
-                    content: `${fail} No GeoGuessr questions available.`,
-                }) : context.channel.send({
-                    content: `${fail} No GeoGuessr questions available.`,
-                });
+
+            const topic =
+                this.client.topics.geoguessr[
+                    Math.floor(Math.random() * this.client.topics.geoguessr.length)
+                ];
+
+            const path = __basedir + '/data/geoguessr/' + topic + '.yaml';
+            const questions = YAML.parse(fs.readFileSync(path, 'utf-8'));
+
+            // get random question
+            const n = Math.floor(Math.random() * Object.keys(questions).length);
+            const question = Object.keys(questions)[n];
+            const answers = questions[question];
+            const origAnswers = [...answers].map(a => `\`${a}\``);
+
+            // Clean answers
+            for (let i = 0; i < answers.length; i++) {
+                answers[i] = answers[i]
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\.|'|-|\s/g, '');
             }
-        }
-        const topic =
-            this.client.topics.geoguessr[
-                Math.floor(Math.random() * this.client.topics.geoguessr.length)
-            ];
 
-        const path = __basedir + '/data/geoguessr/' + topic + '.yaml';
-        const questions = YAML.parse(fs.readFileSync(path, 'utf-8'));
-
-        // get random question
-        const n = Math.floor(Math.random() * Object.keys(questions).length);
-        const question = Object.keys(questions)[n];
-        const answers = questions[question];
-        const origAnswers = [...answers].map(a => `\`${a}\``);
-
-        // Clean answers
-        for (let i = 0; i < answers.length; i++) {
-            answers[i] = answers[i]
-                .trim()
-                .toLowerCase()
-                .replace(/\.|'|-|\s/g, '');
-        }
-
-        // Get user answer
-        const questionEmbed = new MessageEmbed()
-            .setTitle('geoGuessr')
-            .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
-            .addField('Question', `${question}`)
-            .setFooter({
-                text: `Expires in ${timeout / 1000} seconds`,
-                iconURL: this.getAvatarURL(context.author),
-            })
-            .setTimestamp();
-        const url = question.match(/\bhttps?:\/\/\S+/gi);
-        if (url) questionEmbed.setImage(url[0]);
-        if (isInteraction) {
-            context.editReply({
-                embeds: [questionEmbed]
-            }).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.2));
-        }
-        else {
-            context.loadingMessage ? context.loadingMessage.edit({
-                embeds: [questionEmbed]
-            }) : context.channel.send({
-                embeds: [questionEmbed]
-            }).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.2));
-
-
-            setTimeout(() => context.loadingMessage.delete(), timeout + timeout * 0.2);
-        }
-        let winner;
-
-        const collector = context.channel.createMessageCollector({
-            filter: (m) => !m.author.bot,
-            time: timeout
-        }); // Wait 30 seconds
-
-        collector.on('collect', (msg) => {
-            if (
-                answers.includes(
-                    msg.content
-                        .trim()
-                        .toLowerCase()
-                        .replace(/\.|'|-|\s/g, '')
-                )
-            ) {
-                winner = msg.author;
-                collector.stop();
-            }
-        });
-        collector.on('end', () => {
-            const answerEmbed = new MessageEmbed()
+            // Get user answer
+            const questionEmbed = new MessageEmbed()
                 .setTitle('geoGuessr')
+                .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
+                .addField('Question', `${question}`)
                 .setFooter({
-                    text: this.getUserIdentifier(winner || context.author),
-                    iconURL: this.getAvatarURL(winner || context.author),
+                    text: `Expires in ${timeout / 1000} seconds`,
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp();
-
-            if (winner) {
-                this.client.db.users.updatePoints.run(
-                    {points: reward},
-                    winner.id,
-                    context.guild.id
-                );
-                context.channel.send({
-                    embeds: [
-                        answerEmbed.setDescription(
-                            `Congratulations ${winner}, you gave the correct answer!`
-                        ).addField('Points Earned', `**+${reward}** ${emojis.point}`),
-                    ],
-                }).then(m => setTimeout(() => m.delete(), 10000));
+            const url = question.match(/\bhttps?:\/\/\S+/gi);
+            if (url) questionEmbed.setImage(url[0]);
+            if (isInteraction) {
+                context.editReply({
+                    embeds: [questionEmbed]
+                }).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.2));
             }
-            else
-                context.channel.send({
-                    embeds: [
-                        answerEmbed
-                            .setDescription('Sorry, time\'s up! Better luck next time.')
-                            .addField('Correct Answers', origAnswers.join('\n')),
-                    ],
-                }).then(m => setTimeout(() => m.delete(), 10000));
-        });
+            else {
+                if (context.loadingMessage) {
+                    context.loadingMessage.edit({
+                        embeds: [questionEmbed]
+                    });
+                    setTimeout(() => context.loadingMessage.delete(), timeout + timeout * 0.2);
+                }
+                else {
+                    context.channel.send({
+                        embeds: [questionEmbed]
+                    }).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.2));
+                }
+
+
+            }
+            let winner;
+
+            const collector = context.channel.createMessageCollector({
+                filter: (m) => !m.author.bot,
+                time: timeout
+            }); // Wait 30 seconds
+
+            collector.on('collect', (msg) => {
+                if (
+                    answers.includes(
+                        msg.content
+                            .trim()
+                            .toLowerCase()
+                            .replace(/\.|'|-|\s/g, '')
+                    )
+                ) {
+                    winner = msg.author;
+                    collector.stop();
+                }
+            });
+            collector.on('end', () => {
+                const answerEmbed = new MessageEmbed()
+                    .setTitle('geoGuessr')
+                    .setFooter({
+                        text: this.getUserIdentifier(winner || context.author),
+                        iconURL: this.getAvatarURL(winner || context.author),
+                    })
+                    .setTimestamp();
+
+                if (winner) {
+                    this.client.db.users.updatePoints.run(
+                        {points: reward},
+                        winner.id,
+                        context.guild.id
+                    );
+                    context.channel.send({
+                        embeds: [
+                            answerEmbed.setDescription(
+                                `Congratulations ${winner}, you gave the correct answer!`
+                            ).addField('Points Earned', `**+${reward}** ${emojis.point}`),
+                        ],
+                    }).then(m => setTimeout(() => m.delete(), 10000));
+                }
+                else
+                    context.channel.send({
+                        embeds: [
+                            answerEmbed
+                                .setDescription('Sorry, time\'s up! Better luck next time.')
+                                .addField('Correct Answers', origAnswers.join('\n')),
+                        ],
+                    }).then(m => setTimeout(() => m.delete(), 10000));
+            });
+        }
+        catch (err) {
+            const payload = {
+                embeds: [
+                    new MessageEmbed()
+                        .setTitle('Error')
+                        .setDescription(fail + ' ' + err.message)
+                        .setColor('RED')
+                ]
+            };
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+
+        }
     }
 };
