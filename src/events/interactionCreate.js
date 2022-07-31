@@ -3,6 +3,7 @@ const wait = require('node:timers/promises').setTimeout;
 const {fail} = require('../utils/emojis.json');
 
 module.exports = async (client, interaction) => {
+
     if (interaction.isCommand()) {
         let command = client.commands.get(interaction.commandName);
         if (command.slashCommand) {
@@ -22,6 +23,9 @@ module.exports = async (client, interaction) => {
                         await interaction.deleteReply();
                     });
             }
+
+            // Remove AFK
+            client.removeAFK(interaction.member, interaction.guild, interaction.channel);
 
             // check cooldown
             const cooldown = await command.isOnCooldown(interaction.user.id);
@@ -46,6 +50,7 @@ module.exports = async (client, interaction) => {
             if (channel) {
                 interaction.channel = channel;
             }
+
 
             // Get points
             const {

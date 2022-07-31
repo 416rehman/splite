@@ -4,13 +4,14 @@ const {Routes} = require('discord-api-types/v9');
 const {readdir, readdirSync} = require('fs');
 const {join, resolve} = require('path');
 const AsciiTable = require('ascii-table');
-const {fail} = require('./utils/emojis.json');
+const {fail, online} = require('./utils/emojis.json');
 const amethyste = require('amethyste-api');
 const {Collection} = require('discord.js');
 const {NekoBot} = require('nekobot-api');
 const {Player} = require('discord-player');
 const {enabledIntents, allIntents} = require('../intents.js');
 const {Configuration, OpenAIApi} = require('openai');
+const moment = require('moment');
 
 class Client extends Discord.Client {
     constructor(config, options) {
@@ -143,6 +144,29 @@ class Client extends Discord.Client {
             .setTimestamp()
             .setColor('RANDOM');
         systemChannel.send({embeds: [embed]});
+    }
+
+    removeAFK(member, guild, channel) {
+        let afkStatus = this.db.users.selectAfk.get(guild.id, member.id);
+
+        if (afkStatus?.afk != null) {
+            const d = new Date(afkStatus.afk_time);
+            this.db.users.updateAfk.run(null, 0, member.id, guild.id);
+
+            console.log('NICKNAME: ' + member.nickname);
+            console.log(member);
+            if (member.nickname) {
+                member.setNickname(`${member.nickname.replace('[AFK]', '')}`)
+                    .catch(() => {
+                        console.log('There was an error while trying to remove the AFK tag from the nickname: ' + member.tag);
+                    });
+            }
+            channel
+                .send(`${online} Welcome back ${member}, you went afk **${moment(d).fromNow()}**!`)
+                .then((msg) => {
+                    setTimeout(() => msg.delete(), 5000);
+                });
+        }
     }
 
 

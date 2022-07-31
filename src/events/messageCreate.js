@@ -1,5 +1,5 @@
 const {MessageEmbed} = require('discord.js');
-const {online, dnd} = require('../utils/emojis.json');
+const {dnd} = require('../utils/emojis.json');
 const moment = require('moment');
 const {oneLine} = require('common-tags');
 const {nsfw, fail} = require('../utils/emojis.json');
@@ -12,35 +12,15 @@ module.exports = async (client, message) => {
         userId: message.author.id, guildId: message.guild.id,
     });
 
-    let afkStatus = message.client.db.users.selectAfk.get(message.guild.id, message.author.id);
+    client.removeAFK(message.member, message.guild, message.channel);
 
-    if (afkStatus?.afk != null) {
-        const d = new Date(afkStatus.afk_time);
-        message.client.db.users.updateAfk.run(null, 0, message.author.id, message.guild.id);
-
-        if (message.member.nickname) message.member
-            .setNickname(`${message.member.nickname.replace('[AFK]', '')}`)
-            .catch(() => {
-                console.log('There was an error while trying to remove the AFK tag from the nickname: ' + message.author.tag);
-            });
-        message.channel
-            .send(`${online} Welcome back ${message.author}, you went afk **${moment(d).fromNow()}**!`)
-            .then((msg) => {
-                setTimeout(() => msg.delete(), 5000);
-            });
-    }
-
-    if (message.mentions.users.size > 0) {
-        const afkCheckLimit = 5;
-        message.mentions.users.forEach((user, idx) => {
-            if (idx >= afkCheckLimit) return;
-
-            const afkStatus = message.client.db.users.selectAfk.get(message.guild.id, user.id);
-            if (afkStatus != null) {
-                const d = new Date(afkStatus.afk_time);
-                message.channel.send(`${dnd} ${user.username} is afk${afkStatus.afk ? `: ${afkStatus.afk} -` : '!'} **${moment(d).fromNow()}**`);
-            }
-        });
+    const mentionedUser = message.mentions.users.first();
+    if (mentionedUser) {
+        const afkStatus = message.client.db.users.selectAfk.get(message.guild.id, mentionedUser.id);
+        if (afkStatus != null) {
+            const d = new Date(afkStatus.afk_time);
+            message.reply(`${dnd} ${mentionedUser.username} is afk${afkStatus.afk ? `: ${afkStatus.afk} -` : '!'} **${moment(d).fromNow()}**`);
+        }
     }
 
     // Get disabled commands
