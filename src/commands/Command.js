@@ -111,7 +111,7 @@ class Command {
          */
         if (options.slashCommand) {
             this.slashCommand = options.slashCommand;
-            this.slashCommand.setName(this.name);
+            if (!this.slashCommand.name) this.slashCommand.setName(this.name);
             this.slashCommand.setDescription( //max length of description is 100
                 ((this.type === this.client.types.OWNER ? 'RESTRICTED COMMAND: ' : '') + this.description).substring(0, 100)
             );
@@ -688,7 +688,7 @@ class Command {
      */
     sendErrorMessage(message, errorType, reason, errorMessage) {
         errorType = this.errorTypes[errorType];
-        const prefix = message.client.db.settings.selectPrefix
+        const prefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);
         const embed = new MessageEmbed()
@@ -717,7 +717,7 @@ class Command {
      * @param title
      */
     sendHelpMessage(message, title = this.name + ' Help') {
-        const prefix = message.client.db.settings.selectPrefix
+        const prefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);
         const embed = new MessageEmbed()
@@ -746,11 +746,11 @@ class Command {
      * @param {Object} fields
      */
     async sendModLogMessage(message, reason, fields = {}) {
-        message.client.db.activities.updateModerations.run({
+        this.client.db.activities.updateModerations.run({
             userId: message.author.id,
             guildId: message.guild.id,
         });
-        const modLogId = message.client.db.settings.selectModLogId
+        const modLogId = this.client.db.settings.selectModLogId
             .pluck()
             .get(message.guild.id);
         const modLog = message.guild.channels.cache.get(modLogId);
@@ -761,14 +761,14 @@ class Command {
                 .permissionsFor(message.guild.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
-            const caseNumber = await message.client.utils.getCaseNumber(
-                message.client,
+            const caseNumber = await this.client.utils.getCaseNumber(
+                this.client,
                 message.guild,
                 modLog
             );
             const embed = new MessageEmbed()
                 .setTitle(
-                    `Action: \`${message.client.utils.capitalize(this.name)}\``
+                    `Action: \`${this.client.utils.capitalize(this.name)}\``
                 )
                 .addField('Moderator', message.member.toString(), true)
                 .setFooter({text: `Case #${caseNumber}`})
@@ -780,7 +780,7 @@ class Command {
             embed.addField('Reason', reason);
             modLog
                 .send({embeds: [embed]})
-                .catch((err) => message.client.logger.error(err.stack));
+                .catch((err) => this.client.logger.error(err.stack));
         }
     }
 

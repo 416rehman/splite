@@ -18,19 +18,29 @@ module.exports = class clearCrownRoleCommand extends Command {
         });
     }
 
-    run(message) {
+    run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const prefix = interaction.options.getRole('role');
+        this.handle(prefix, interaction, true);
+    }
+
+    handle(role, context, isInteraction) {
         let {
             crown_role_id: crownRoleId,
             crown_channel_id: crownChannelId,
             crown_message: crownMessage,
             crown_schedule: crownSchedule,
-        } = message.client.db.settings.selectCrown.get(message.guild.id);
+        } = this.client.db.settings.selectCrown.get(context.guild.id);
         const oldCrownRole =
-            message.guild.roles.cache.get(crownRoleId) || '`None`';
-        const crownChannel = message.guild.channels.cache.get(crownChannelId);
+            context.guild.roles.cache.get(crownRoleId) || '`None`';
+        const crownChannel = context.guild.channels.cache.get(crownChannelId);
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             crownRoleId,
             crownSchedule
         );
@@ -41,11 +51,11 @@ module.exports = class clearCrownRoleCommand extends Command {
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Crown`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`crown role\` was successfully cleared. ${success}`
             )
-            .addField('Channel', crownChannel || '`None`', true)
+            .addField('Channel', `${crownChannel}` || '`None`', true)
             .addField(
                 'Schedule',
                 `\`${crownSchedule ? crownSchedule : 'None'}\``,
@@ -53,20 +63,20 @@ module.exports = class clearCrownRoleCommand extends Command {
             )
             .addField(
                 'Message',
-                message.client.utils.replaceCrownKeywords(crownMessage) || '`None`'
+                this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.member),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear role
-        message.client.db.settings.updateCrownRoleId.run(null, message.guild.id);
-        if (message.guild.job) message.guild.job.cancel(); // Cancel old job
+        this.client.db.settings.updateCrownRoleId.run(null, context.guild.id);
+        if (context.guild.job) context.guild.job.cancel(); // Cancel old job
 
-        message.client.logger.info(`${message.guild.name}: Cancelled job`);
+        this.client.logger.info(`${context.guild.name}: Cancelled job`);
 
         // Update status
         const status = 'disabled';
@@ -75,7 +85,7 @@ module.exports = class clearCrownRoleCommand extends Command {
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        return message.channel.send({
+        const payload = {
             embeds: [
                 embed
                     .spliceFields(0, 0, {
@@ -85,6 +95,10 @@ module.exports = class clearCrownRoleCommand extends Command {
                     })
                     .spliceFields(3, 0, {name: 'Status', value: statusUpdate}),
             ],
-        });
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
+
 };
