@@ -42,10 +42,12 @@ module.exports = class reportCommand extends Command {
         sendBugReport.call(this, report, message);
     }
 
-    interact(interaction, args) {
+    interact(interaction) {
+        const id = interaction.options.getInteger('id');
+        const reason = interaction.options.getString('reason');
         if (interaction.options.getSubcommand() === 'confession') {
             const reportsChannel = interaction.client.channels.cache.get(interaction.client.config.confessionReportsID);
-            if (reportsChannel) reportsChannel.send(`${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) has reported Confession ID ${args[0].value}\n**Reason**\n||*${args[1]?.value || 'None'}*||`);
+            if (reportsChannel) reportsChannel.send(`${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) has reported Confession ID ${id}\n**Reason**\n||*${reason || 'None'}*||`);
             return interaction.reply({
                 content: 'Your report has been received! Thank you', ephemeral: true,
             });
