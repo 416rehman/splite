@@ -16,7 +16,7 @@ module.exports = class FilterCommandGroup extends Command {
                 .addSubcommand((o) => o.setName('deepfry').setDescription('Deepfry an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to deepfry')))
                 .addSubcommand((o) => o.setName('distort').setDescription('Distort an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to distort')))
                 .addSubcommand((o) => o.setName('emboss').setDescription('Emboss an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to emboss')))
-                .addSubcommand((o) => o.setName('rainbow').setDescription('Add a rainbow effect to an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply rainbow filter to')))
+                .addSubcommand((o) => o.setName('gay').setDescription('Add a rainbow effect to an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply rainbow filter to')))
                 .addSubcommand((o) => o.setName('glitch').setDescription('Glitch an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to glitch')))
                 .addSubcommand((o) => o.setName('greyple').setDescription('Greyple an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply greyple filter to')))
                 .addSubcommand((o) => o.setName('greyscale').setDescription('Greyscale an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply greyscale filter to')))
