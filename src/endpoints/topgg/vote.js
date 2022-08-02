@@ -13,8 +13,16 @@ module.exports = class TopGGVoteEndpoint extends Endpoint {
     // eslint-disable-next-line no-unused-vars
     post(req, res) {
         if (req.body?.user) {
-            console.log(`[TopGG] Received vote from ${req.body.user}`);
             this.webserver.db.integrations.setTopGG.run(req.body.user, Date.now());
         }
+
+        console.log(req.body.user ? `[TopGG] Received vote from ${req.body.user}` : '[TopGG] Vote Webhook triggered without user');
+
+        return {
+            status: 200,
+            body: {
+                message: req.body?.user ? 'Vote received from ' + req.body.user : 'No vote received',
+            },
+        };
     }
 };
