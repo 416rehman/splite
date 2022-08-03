@@ -23,7 +23,7 @@
     "koa-body": "^5.0.0",
     "koa-json": "^2.0.2",
     "minimist": ">=1.2.2",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "ms": "^2.1.2",
     "nekobot-api": "^2.1.0",
     "node-fetch": "^2.6.1",
