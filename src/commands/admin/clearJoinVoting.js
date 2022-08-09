@@ -18,30 +18,39 @@ module.exports = class clearJoinVoting extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         let {
             joinvoting_message_id: joinvotingMessageId,
             joinvoting_emoji: joinvotingEmoji,
             voting_channel_id: votingChannelID,
-        } = message.client.db.settings.selectJoinVotingMessage.get(
-            message.guild.id
+        } = this.client.db.settings.selectJoinVotingMessage.get(
+            context.guild.id
         );
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             joinvotingMessageId && joinvotingEmoji && votingChannelID
         );
 
-        message.client.db.settings.updateJoinVotingEmoji.run(
+        this.client.db.settings.updateJoinVotingEmoji.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        message.client.db.settings.updateJoinVotingMessageId.run(
+        this.client.db.settings.updateJoinVotingMessageId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        message.client.db.settings.updateVotingChannelID.run(
+        this.client.db.settings.updateVotingChannelID.run(
             null,
-            message.guild.id
+            context.guild.id
         );
 
         // Update status
@@ -53,23 +62,23 @@ module.exports = class clearJoinVoting extends Command {
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Join Voting`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`join voting system\` has been cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        return message.channel.send({
-            embeds: [
-                embed
-                    .addField('Status', statusUpdate, true)
-                    .addField('Message', '`None`'),
-            ],
-        });
+        const payload = {
+            embeds: [embed
+                .addField('Status', statusUpdate, true)
+                .addField('Message', '`None`'),],
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

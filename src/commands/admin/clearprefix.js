@@ -6,9 +6,9 @@ module.exports = class clearPrefixCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'clearprefix',
-            aliases: ['clearp', 'cp'],
+            aliases: ['clearp', 'cp', 'resetprefix'],
             usage: 'clearprefix',
-            description: 'Resets the `prefix` for your server.',
+            description: 'Resets the `prefix` for your server to the default ' + client.config.defaultPrefix,
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['clearprefix'],
@@ -16,31 +16,43 @@ module.exports = class clearPrefixCommand extends Command {
     }
 
     run(message) {
-        const oldPrefix = message.client.db.settings.selectPrefix
-            .pluck()
-            .get(message.guild.id);
-        const defaultPrefix = message.client.config.defaultPrefix;
+        this.handle(message, false);
+    }
 
-        message.client.db.settings.updatePrefix.run(
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const oldPrefix = this.client.db.settings.selectPrefix
+            .pluck()
+            .get(context.guild.id);
+        const defaultPrefix = this.client.config.defaultPrefix;
+
+        this.client.db.settings.updatePrefix.run(
             defaultPrefix,
-            message.guild.id
+            context.guild.id
         );
-        message.guild.me.setNickname(
-            `[${message.client.db.settings.selectPrefix
+        context.guild.me.setNickname(
+            `[${this.client.db.settings.selectPrefix
                 .pluck()
-                .get(message.guild.id)}] ${message.client.name}`
+                .get(context.guild.id)}] ${this.client.name}`
         );
-        const embed = new MessageEmbed()
-            .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
-            .setDescription(`The \`prefix\` was successfully reset. ${success}`)
-            .addField('Prefix', `\`${oldPrefix}\` ➔ \`${defaultPrefix}\``)
-            .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
-            })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
+        const payload = {
+            embeds: [new MessageEmbed()
+                .setTitle('Settings: `System`')
+                .setThumbnail(context.guild.iconURL({dynamic: true}))
+                .setDescription(`The \`prefix\` was successfully reset. ${success}`)
+                .addField('Prefix', `\`${oldPrefix}\` ➔ \`${defaultPrefix}\``)
+                .setFooter({
+                    text: this.getUserIdentifier(context.author),
+                    iconURL: this.getAvatarURL(context.author),
+                })
+                .setTimestamp()]
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

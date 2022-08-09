@@ -1,5 +1,7 @@
 const Command = require('../Command.js');
-const { oneLine, stripIndent } = require('common-tags');
+const {oneLine} = require('common-tags');
+const {SlashCommandBuilder} = require('@discordjs/builders');
+const {fail} = require('../../utils/emojis.json');
 
 module.exports = class SayCommand extends Command {
     constructor(client) {
@@ -13,43 +15,19 @@ module.exports = class SayCommand extends Command {
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['say #general hello world'],
+            slashCommand: new SlashCommandBuilder()
+                .addStringOption(m => m.setRequired(true).setName('message').setDescription('The message to send'))
+                .addChannelOption(c => c.setRequired(false).setName('channel').setDescription('The channel to send the message to'))
         });
     }
 
     run(message, args) {
-        let channel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (channel) {
-            args.shift();
+        let channel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
+        if (channel) args.shift();
+
+        if (!channel) {
+            channel = message.channel;
         }
-        else channel = message.channel;
-
-        // Check type and viewable
-        if (channel.type != 'GUILD_TEXT' || !channel.viewable)
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-      Please mention an accessible text channel or provide a valid text channel ID
-    `
-            );
-
-        // Get mod channels
-        let modChannelIds =
-         message.client.db.settings.selectModChannelIds
-             .pluck()
-             .get(message.guild.id) || [];
-        if (typeof modChannelIds === 'string')
-            modChannelIds = modChannelIds.split(' ');
-        if (modChannelIds.includes(channel.id))
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-      Provided channel is moderator only, please mention an accessible text channel or provide a valid text channel ID
-    `
-            );
 
         if (!args[0])
             return this.sendErrorMessage(
@@ -58,25 +36,61 @@ module.exports = class SayCommand extends Command {
                 'Please provide a message for me to say'
             );
 
+        this.handle(args.join(' '), channel, message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel') || interaction.channel;
+        const text = interaction.options.getString('message');
+        this.handle(text, channel, interaction, true);
+    }
+
+    handle(text, channel, context, isInteraction) {
+        // Check type and viewable
+        if (channel.type !== 'GUILD_TEXT' || !channel.viewable) {
+            const payload = fail + ' The provided channel is not a text channel or is not viewable.';
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        // Get mod channels
+        let modChannelIds = this.client.db.settings.selectModChannelIds.pluck().get(context.guild.id) || [];
+
+        if (typeof modChannelIds === 'string') modChannelIds = modChannelIds.split(' ');
+
+        if (modChannelIds.includes(channel.id)) {
+            const payload = fail + ' Provided channel is moderator only, please mention an accessible text channel or provide a valid text channel ID.';
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
         // Check channel permissions
-        if (!channel.permissionsFor(message.guild.me).has(['SEND_MESSAGES']))
-            return this.sendErrorMessage(
-                message,
-                0,
-                'I do not have permission to send messages in the provided channel'
-            );
+        if (!channel.permissionsFor(context.guild.me).has(['SEND_MESSAGES'])) {
+            const payload = fail + ' I do not have permission to send messages in this channel.';
 
-        if (!channel.permissionsFor(message.member).has(['SEND_MESSAGES']))
-            return this.sendErrorMessage(
-                message,
-                0,
-                'You do not have permission to send messages in the provided channel'
-            );
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
 
-        const msg = message.content.slice(
-            message.content.indexOf(args[0]),
-            message.content.length
-        );
-        channel.send(msg);
+
+        if (!channel.permissionsFor(context.member).has(['SEND_MESSAGES'])) {
+            const payload = fail + ' You do not have permission to send messages in this channel.';
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        // const msg = context.content.slice(context.content.indexOf(args[0]), context.content.length);
+        channel.send(text);
+
+        if (isInteraction) context.editReply({content: 'Message sent.', ephemeral: true});
+        else context.loadingMessage ? context.loadingMessage.edit('Message sent.') : context.reply('Message sent.');
     }
 };

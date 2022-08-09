@@ -1,13 +1,13 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success, fail } = require('../../utils/emojis.json');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class ToggleTypeCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'toggletype',
-            aliases: ['togglet', 'togt', 'tt'],
+            aliases: ['togglet', 'togt', 'tt', 'togglecategory'],
             usage: 'toggletype <command type>',
             description: oneLine`
         Enables or disables the provided command type.
@@ -25,39 +25,46 @@ module.exports = class ToggleTypeCommand extends Command {
     }
 
     run(message, args) {
-        const { ADMIN, OWNER } = message.client.types;
+        this.handle(args[0], message, false);
+    }
 
-        if (args.length === 0 || args[0].toLowerCase() === OWNER)
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please provide a valid command type'
-            );
+    async interact(interaction) {
+        await interaction.deferReply();
+        const categoryName = interaction.options.getString('command');
+        this.handle(categoryName, interaction, true);
+    }
 
-        const type = args[0].toLowerCase();
+    handle(categoryName, context, isInteraction) {
+        const {ADMIN, OWNER} = this.client.types;
 
-        if (type === ADMIN)
-            return this.sendErrorMessage(
-                message,
-                0,
-                `${capitalize(ADMIN)} commands cannot be disabled`
-            );
+        if (!categoryName || categoryName.toLowerCase() === OWNER.toLowerCase()) {
+            const payload = new MessageEmbed().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
 
-        let disabledCommands =
-         message.client.db.settings.selectDisabledCommands
-             .pluck()
-             .get(message.guild.id) || [];
-        if (typeof disabledCommands === 'string')
-            disabledCommands = disabledCommands.split(' ');
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        }
+
+        const type = categoryName.toLowerCase();
+
+        if (type === ADMIN) {
+            const payload = new MessageEmbed().setTitle('Invalid command type').setDescription(`${fail} \`${ADMIN}\` commands cannot be disabled.`);
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        let disabledCommands = this.client.db.settings.selectDisabledCommands.pluck().get(context.guild.id) || [];
+        if (typeof disabledCommands === 'string') disabledCommands = disabledCommands.split(' ');
 
         let description;
 
         // Map types
-        const types = Object.values(message.client.types);
-        const commands = [...message.client.commands.values()].filter(
+        const types = Object.values(this.client.types);
+        const commands = [...this.client.commands.values()].filter(
             (c) => c.type === type
         );
-        const { capitalize } = message.client.utils;
+        const {capitalize} = this.client.utils;
 
         // Disable type
         if (types.includes(type)) {
@@ -65,7 +72,7 @@ module.exports = class ToggleTypeCommand extends Command {
             if (commands.every((c) => disabledCommands.includes(c.name))) {
                 for (const cmd of commands) {
                     if (disabledCommands.includes(cmd.name))
-                        message.client.utils.removeElement(
+                        this.client.utils.removeElement(
                             disabledCommands,
                             cmd.name
                         );
@@ -74,7 +81,7 @@ module.exports = class ToggleTypeCommand extends Command {
                     type
                 )}\` type commands have been successfully **enabled**. ${success}`;
 
-            // Disable type
+                // Disable type
             }
             else {
                 for (const cmd of commands) {
@@ -86,31 +93,32 @@ module.exports = class ToggleTypeCommand extends Command {
                 )}\` type commands have been successfully **disabled**. ${fail}`;
             }
         }
-        else
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please provide a valid command type'
-            );
+        else {
+            const payload = new MessageEmbed().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
 
-        message.client.db.settings.updateDisabledCommands.run(
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        this.client.db.settings.updateDisabledCommands.run(
             disabledCommands.join(' '),
-            message.guild.id
+            context.guild.id
         );
 
-        disabledCommands =
-         disabledCommands.map((c) => `\`${c}\``).join(' ') || '`None`';
-        const embed = new MessageEmbed()
+        disabledCommands = disabledCommands.map((c) => `\`${c}\``).join(' ') || '`None`';
+        const payload = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
-            .setDescription(description)
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
+            .setDescription('For a reference of all commands, use the `help` command.\n\n' + description)
             .addField('Disabled Commands', disabledCommands, true)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+            .setTimestamp();
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

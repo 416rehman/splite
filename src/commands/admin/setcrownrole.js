@@ -78,8 +78,6 @@ module.exports = class SetCrownRoleCommand extends Command {
         }
 
         // Update role
-        embed.setDescription(`The \`crown role\` was successfully updated. ${success}\nUse \`clearcrownrole\` to clear the current \`crown role\`.`);
-
         const crownRole = isInteraction ? role : await this.getGuildRole(context.guild, role);
         if (!crownRole) {
             const payload = emojis.fail + ' Please mention a role or provide a valid role ID.';
@@ -97,7 +95,8 @@ module.exports = class SetCrownRoleCommand extends Command {
             embeds: [
                 embed.spliceFields(0, 0, {
                     name: 'Role', value: `${oldCrownRole} ➔ ${crownRole}`, inline: true,
-                }).spliceFields(3, 0, {name: 'Status', value: statusUpdate}),
+                }).spliceFields(3, 0, {name: 'Status', value: statusUpdate})
+                    .setDescription(`The \`crown role\` was successfully updated. ${success}\nUse \`clearcrownrole\` to clear the current \`crown role\`.`),
             ]
         };
 

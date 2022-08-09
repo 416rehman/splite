@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
+const emojis = require('../../utils/emojis.json');
 
 module.exports = class SetAdminRoleCommand extends Command {
     constructor(client) {
@@ -16,56 +17,69 @@ module.exports = class SetAdminRoleCommand extends Command {
         });
     }
 
-    async run(message, args) {
-        const adminRoleId = message.client.db.settings.selectAdminRoleId
+    run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const role = interaction.options.getRole('role');
+        this.handle(role, interaction, true);
+    }
+
+    async handle(role, context, isInteraction) {
+        const adminRoleId = this.client.db.settings.selectAdminRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldAdminRole =
-            message.guild.roles.cache.find((r) => r.id === adminRoleId) ||
+            context.guild.roles.cache.find((r) => r.id === adminRoleId) ||
             '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
 
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        if (!role) {
+            const payload = {
                 embeds: [
                     embed
                         .addField('Current Admin Role', `${oldAdminRole}`)
                         .setDescription(this.description),
-                ],
-            });
+                ]
+            };
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
 
         // Update role
-        embed.setDescription(
-            `The \`admin role\` was successfully updated. ${success}\nTo clear the \`admin role\`, type \`clearadminrole\``
-        );
-        const adminRole = await this.getGuildRole(message.guild, args[0]);
-        if (!adminRole)
-            return this.sendErrorMessage(
-                message,
-                0,
-                `Failed to find that role (${args[0]}), try using a role ID`
-            );
+        const adminRole = isInteraction ? role : await this.getGuildRole(context.guild, role);
+        if (!adminRole) {
+            const payload = emojis.fail + ' Please mention a role or provide a valid role ID.';
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
 
-        message.client.db.settings.updateAdminRoleId.run(
+        this.client.db.settings.updateAdminRoleId.run(
             adminRole.id,
-            message.guild.id
+            context.guild.id
         );
-        message.channel.send({
-            embeds: [
-                embed.addField('Admin Role', `${oldAdminRole} ➔ ${adminRole}`),
-            ],
-        });
+
+        const payload = {
+            embeds: [embed.addField('Admin Role', `${oldAdminRole} ➔ ${adminRole}`).setDescription(
+                `The \`admin role\` was successfully updated. ${success}\nTo clear the \`admin role\`, type \`clearadminrole\``
+            ),]
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

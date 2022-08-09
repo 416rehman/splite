@@ -26,33 +26,42 @@ module.exports = class clearViewConfessionsRoleCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         const view_confessions_role =
-            message.client.db.settings.selectViewConfessionsRole
+            this.client.db.settings.selectViewConfessionsRole
                 .pluck()
-                .get(message.guild.id);
+                .get(context.guild.id);
         const oldViewConfessionsRole =
-            message.guild.roles.cache.get(view_confessions_role) || '`None`';
+            context.guild.roles.cache.get(view_confessions_role) || '`None`';
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(oldViewConfessionsRole);
+        const oldStatus = this.client.utils.getStatus(oldViewConfessionsRole);
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Confessions`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`view confessions role\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear role
-        message.client.db.settings.updateViewConfessionsRole.run(
+        this.client.db.settings.updateViewConfessionsRole.run(
             null,
-            message.guild.id
+            context.guild.id
         );
 
         // Update status
@@ -62,20 +71,21 @@ module.exports = class clearViewConfessionsRoleCommand extends Command {
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        return message.channel.send({
-            embeds: [
-                embed
-                    .spliceFields(0, 0, {
-                        name: 'Role',
-                        value: `${oldViewConfessionsRole} ➔ \`None\``,
-                        inline: true,
-                    })
-                    .spliceFields(2, 0, {
-                        name: 'Status',
-                        value: statusUpdate,
-                        inline: true,
-                    }),
-            ],
-        });
+        const payload = {
+            embeds: [embed
+                .spliceFields(0, 0, {
+                    name: 'Role',
+                    value: `${oldViewConfessionsRole} ➔ \`None\``,
+                    inline: true,
+                })
+                .spliceFields(2, 0, {
+                    name: 'Status',
+                    value: statusUpdate,
+                    inline: true,
+                }),],
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

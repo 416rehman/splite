@@ -67,6 +67,9 @@ module.exports = class MockCommand extends Command {
     }
 
     run(message, args) {
+        if (args.length === 0) {
+            return message.reply({embeds: [this.createHelpEmbed(message, this)]});
+        }
         message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
@@ -100,12 +103,12 @@ module.exports = class MockCommand extends Command {
                     .then(async (ref) => {
                         const text1 = ref.member.displayName + ': ';
                         let text2 =
-                            await message.client.utils.replaceMentionsWithNames(
+                            await this.client.utils.replaceMentionsWithNames(
                                 ref.content,
                                 ref.guild
                             );
 
-                        text2 = message.client.utils.spongebobText(text2);
+                        text2 = this.client.utils.spongebobText(text2);
                         resolve({text1, text2});
                     });
             }
@@ -118,14 +121,14 @@ module.exports = class MockCommand extends Command {
                         : ''
                     : '';
 
-                let text2 = message.client.utils.spongebobText(args.join(' '));
+                let text2 = this.client.utils.spongebobText(args.join(' '));
 
                 if (text1.length > 0)
                     text2 = text2.replace(
                         `<@!${message.mentions.users.first().id}>`,
                         ''
                     );
-                message.client.utils.replaceMentionsWithNames(
+                this.client.utils.replaceMentionsWithNames(
                     text2,
                     message.guild
                 ).then((text2) => {

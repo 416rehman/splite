@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetNicknameLogCommand extends Command {
     constructor(client) {
@@ -20,60 +20,63 @@ module.exports = class SetNicknameLogCommand extends Command {
     }
 
     run(message, args) {
-        const nicknameLogId = message.client.db.settings.selectNicknameLogId
-            .pluck()
-            .get(message.guild.id);
-        const oldNicknameLog =
-         message.guild.channels.cache.get(nicknameLogId) || '`None`';
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel');
+        this.handle(channel, interaction, true);
+    }
+
+    handle(channel, context, isInteraction) {
+        const nicknameLogId = this.client.db.settings.selectNicknameLogId.pluck().get(context.guild.id);
+        const oldNicknameLog = context.guild.channels.cache.get(nicknameLogId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `Logging`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        if (!channel) {
+            const payload = ({
                 embeds: [
                     embed
                         .addField('Current Nickname Log', `${oldNicknameLog}`)
                         .setDescription(this.description),
                 ],
             });
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
-        embed.setDescription(
-            `The \`nickname log\` was successfully updated. ${success}\nUse \`clearnicknamelog\` to clear the current \`nickname log\`.`
-        );
-        const nicknameLog =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (
-            !nicknameLog ||
-         nicknameLog.type != 'GUILD_TEXT' ||
-         !nicknameLog.viewable
-        )
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        Please mention an accessible text channel or provide a valid text channel ID
-      `
-            );
-        message.client.db.settings.updateNicknameLogId.run(
-            nicknameLog.id,
-            message.guild.id
-        );
-        message.channel.send({
+
+        channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+            const payload = `${fail} Please provide a valid text channel.`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+        this.client.db.settings.updateNicknameLogId.run(channel.id, context.guild.id);
+        const payload = ({
             embeds: [
                 embed.addField(
                     'Nickname Log',
-                    `${oldNicknameLog} ➔ ${nicknameLog}`
+                    `${oldNicknameLog} ➔ ${channel}`
+                ).setDescription(
+                    `The \`nickname log\` was successfully updated. ${success}\nUse \`clearnicknamelog\` to clear the current \`nickname log\`.`
                 ),
             ],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

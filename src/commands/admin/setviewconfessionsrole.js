@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
-const {success} = require('../../utils/emojis.json');
+const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
 module.exports = class SetViewConfessionsRoleCommand extends Command {
@@ -29,62 +29,76 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
         });
     }
 
-    async run(message, args) {
+    run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const role = interaction.options.getRole('role');
+        this.handle(role, interaction, true);
+    }
+
+    async handle(role, context, isInteraction) {
         const view_confessions_role =
-            message.client.db.settings.selectViewConfessionsRole
+            this.client.db.settings.selectViewConfessionsRole
                 .pluck()
-                .get(message.guild.id);
-        const oldViewConfessionsRole =
-            message.guild.roles.cache.get(view_confessions_role) || '`None`';
+                .get(context.guild.id);
+        const oldViewConfessionsRole = context.guild.roles.cache.get(view_confessions_role) || '`None`';
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(view_confessions_role);
+        const oldStatus = this.client.utils.getStatus(view_confessions_role);
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Confessions`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
-
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        // Clear role
-        if (args.length === 0) {
-            return this.sendHelpMessage(message);
+        // Display current settings
+        if (!role) {
+            const payload = {
+                embeds: [embed
+                    .addField('Role', oldViewConfessionsRole, true)
+                    .setDescription(this.description)
+                ]
+            };
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
 
         // Update role
         embed.setDescription(
             `The \`view confessions role\` was successfully updated. ${success}\nUse \`clearviewconfessionsrole\` to clear the current \`view-confessions role\``
         );
-        const confessionsRole = await this.getGuildRole(message.guild, args[0]);
-        if (!confessionsRole)
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please mention a role or provide a valid role ID'
-            );
-        message.client.db.settings.updateViewConfessionsRole.run(
-            confessionsRole.id,
-            message.guild.id
-        );
+        role = isInteraction ? role : await this.getGuildRole(context.guild, role);
+        if (!role) {
+            const payload = `${fail} The role you provided was not found. Please try again.`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        }
+
+        this.client.db.settings.updateViewConfessionsRole.run(role.id, context.guild.id);
 
         // Update status
-        const status = message.client.utils.getStatus(confessionsRole);
+        const status = this.client.utils.getStatus(role);
         const statusUpdate =
             oldStatus !== status
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        message.channel.send({
+        const payload = ({
             embeds: [
                 embed
                     .spliceFields(0, 0, {
                         name: 'Role',
-                        value: `${oldViewConfessionsRole} ➔ ${confessionsRole}`,
+                        value: `${oldViewConfessionsRole} ➔ ${role}`,
                         inline: true,
                     })
                     .spliceFields(2, 0, {
@@ -94,5 +108,8 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
                     }),
             ],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

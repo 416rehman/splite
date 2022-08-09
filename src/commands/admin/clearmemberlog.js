@@ -19,28 +19,38 @@ module.exports = class clearMemberLogCommand extends Command {
     }
 
     run(message) {
-        const memberLogId = message.client.db.settings.selectMemberLogId
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const memberLogId = this.client.db.settings.selectMemberLogId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldMemberLog =
-            message.guild.channels.cache.get(memberLogId) || '`None`';
+            context.guild.channels.cache.get(memberLogId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `Logging`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`member log\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        message.client.db.settings.updateMemberLogId.run(null, message.guild.id);
-        return message.channel.send({
-            embeds: [embed.addField('Member Log', `${oldMemberLog} ➔ \`None\``)],
-        });
+        this.client.db.settings.updateMemberLogId.run(null, context.guild.id);
+
+        const payload = {embeds: [embed.addField('Member Log', `${oldMemberLog} ➔ \`None\``)],};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

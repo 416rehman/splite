@@ -17,14 +17,14 @@ module.exports = class HateCommand extends Command {
     }
 
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message, 'Hate');
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Hate', this)]});
 
         await message.channel
             .send({
                 embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
             }).then(async msg => {
                 message.loadingMessage = msg;
-                const text = await message.client.utils.replaceMentionsWithNames(
+                const text = await this.client.utils.replaceMentionsWithNames(
                     args.join(' '),
                     message.guild
                 );

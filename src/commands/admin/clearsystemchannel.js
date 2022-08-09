@@ -19,33 +19,42 @@ module.exports = class clearSystemChannelCommand extends Command {
     }
 
     run(message) {
-        const systemChannelId = message.client.db.settings.selectSystemChannelId
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const systemChannelId = this.client.db.settings.selectSystemChannelId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldSystemChannel =
-            message.guild.channels.cache.get(systemChannelId) || '`None`';
+            context.guild.channels.cache.get(systemChannelId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`system channel\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear if no args provided
-        message.client.db.settings.updateSystemChannelId.run(
+        this.client.db.settings.updateSystemChannelId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        return message.channel.send({
-            embeds: [
-                embed.addField('System Channel', `${oldSystemChannel} ➔ \`None\``),
-            ],
-        });
+
+        const payload = {embeds: [embed.addField('System Channel', `${oldSystemChannel} ➔ \`None\``),],};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

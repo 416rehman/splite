@@ -16,29 +16,41 @@ module.exports = class clearModRoleCommand extends Command {
     }
 
     run(message) {
-        const modRoleId = message.client.db.settings.selectModRoleId
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const modRoleId = this.client.db.settings.selectModRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldModRole =
-            message.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
+            context.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`mod role\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        message.client.db.settings.updateModRoleId.run(null, message.guild.id);
-        return message.channel.send({
+        this.client.db.settings.updateModRoleId.run(null, context.guild.id);
+
+        const payload = ({
             embeds: [embed.addField('Mod Role', `${oldModRole} ➔ \`None\``)],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

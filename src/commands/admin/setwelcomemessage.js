@@ -25,46 +25,64 @@ module.exports = class SetWelcomeMessageCommand extends Command {
     }
 
     run(message, args) {
+        let text = args[0] ? message.content.slice(message.content.indexOf(args[0]), message.content.length) : '';
+        this.handle(text, message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const text = interaction.options.getString('text');
+        this.handle(text, interaction, true);
+    }
+
+    handle(text, context, isInteraction) {
         const {
             welcome_channel_id: welcomeChannelId, welcome_message: oldWelcomeMessage,
-        } = message.client.db.settings.selectWelcomes.get(message.guild.id);
-        let welcomeChannel = message.guild.channels.cache.get(welcomeChannelId);
+        } = this.client.db.settings.selectWelcomes.get(context.guild.id);
+        let welcomeChannel = context.guild.channels.cache.get(welcomeChannelId);
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(welcomeChannelId, oldWelcomeMessage);
+        const oldStatus = this.client.utils.getStatus(welcomeChannelId, oldWelcomeMessage);
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Welcomes`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .addField('Channel', welcomeChannel?.toString() || '`None`', true)
             .setFooter({
-                text: message.member.displayName, iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        if (!args[0]) {
-            return message.channel.send({
+        if (!text) {
+            const payload = ({
                 embeds: [embed
                     .addField('Status', oldStatus, true)
                     .addField('Current Welcome Message', `${oldWelcomeMessage}`)
                     .setDescription(this.description),],
             });
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
 
         embed.setDescription(`The \`welcome message\` was successfully updated. ${success}\nUse \`clearwelcomemessage\` to clear the current \`welcome message\`.`);
-        let welcomeMessage = message.content.slice(message.content.indexOf(args[0]), message.content.length);
-        message.client.db.settings.updateWelcomeMessage.run(welcomeMessage, message.guild.id);
-        if (welcomeMessage.length > 1024) welcomeMessage = welcomeMessage.slice(0, 1021) + '...';
+
+        this.client.db.settings.updateWelcomeMessage.run(text, context.guild.id);
+        if (text.length > 1024) text = text.slice(0, 1021) + '...';
 
         // Update status
-        const status = message.client.utils.getStatus(welcomeChannel, welcomeMessage);
+        const status = this.client.utils.getStatus(welcomeChannel, text);
         const statusUpdate = oldStatus !== status ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-        message.channel.send({
+        const payload = ({
             embeds: [embed
                 .addField('Status', statusUpdate, true)
-                .addField('Message', message.client.utils.replaceKeywords(welcomeMessage)),],
+                .addField('Message', this.client.utils.replaceKeywords(text)),],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

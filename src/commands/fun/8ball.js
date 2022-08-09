@@ -53,27 +53,24 @@ module.exports = class EightBallCommand extends Command {
 
     async handle(context, args, isInteraction) {
         const question = isInteraction ? context.options.getString('question') : args.join(' ');
-        const embed = new MessageEmbed()
-            .setTitle('🎱  The Magic 8-Ball  🎱')
-            .addField('Question', question)
-            .addField(
-                'Answer',
-                `${answers[Math.floor(Math.random() * answers.length)]}`
-            )
-            .setFooter({
-                text: this.getUserIdentifier(context.author),
-                iconURL: this.getAvatarURL(context.author),
-            })
-            .setTimestamp();
-        if (isInteraction) {
-            await context.reply({
-                embeds: [embed],
-            });
-        }
-        else {
-            context.reply({
-                embeds: [embed],
-            });
-        }
+        const payload = {
+            embeds: [
+                new MessageEmbed()
+                    .setTitle('🎱  The Magic 8-Ball  🎱')
+                    .addField('Question', question)
+                    .addField(
+                        'Answer',
+                        `${answers[Math.floor(Math.random() * answers.length)]}`
+                    )
+                    .setFooter({
+                        text: this.getUserIdentifier(context.author),
+                        iconURL: this.getAvatarURL(context.author),
+                    })
+                    .setTimestamp()
+            ]
+        };
+
+        if (isInteraction) await context.reply(payload);
+        else context.reply(payload);
     }
 };

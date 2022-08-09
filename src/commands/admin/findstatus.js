@@ -3,6 +3,7 @@ const {oneLine} = require('common-tags');
 const {MessageEmbed} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 const ButtonMenu = require('../ButtonMenu.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class findStatusCommand extends Command {
     constructor(client) {
@@ -17,19 +18,17 @@ module.exports = class findStatusCommand extends Command {
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['findstatus #general cool status'],
-            disabled: !client.enabledIntents.find(n => n === client.intents.GUILD_PRESENCES)
+            disabled: !client.enabledIntents.find(n => n === client.intents.GUILD_PRESENCES),
+            slashCommand: new SlashCommandBuilder().addRoleOption(r => r.setName('role').setRequired(false).setDescription('The role to search for members in.')).addStringOption(t => t.setName('text').setDescription('The text to search for.')),
         });
     }
 
-    async run(message, args) {
+    run(message, args) {
         // role
-        let target = this.getGuildRole(message.guild, args[0]);
-        if (target) {
+        let role = this.getGuildRole(message.guild, args[0]);
+        if (role) {
             args.shift();
-            target = target.members;
         }
-        // all
-        else target = await message.guild.members.fetch();
 
         if (args.length <= 0)
             return message.reply(
@@ -44,10 +43,22 @@ module.exports = class findStatusCommand extends Command {
                 `${emojis.fail} Please provide a text with length of 3 to 50 characters`
             );
 
+        this.handle(role, query, message);
+    }
+
+    interact(interaction) {
+        const role = interaction.options.getRole('role');
+        const query = interaction.options.getString('text');
+        this.handle(role.members, query, interaction);
+    }
+
+    async handle(role, query, context) {
+        const target = role ? role.members : await context.guild.members.fetch();
+
         const embed = new MessageEmbed().setDescription(
             `${emojis.load} **Searching for users with status **\n\`\`\`${query}\`\`\``
         );
-        message.channel.send({embeds: [embed]}).then(async (msg) => {
+        context.channel.send({embeds: [embed]}).then(async (msg) => {
             const max = 5;
 
             let results = [];
@@ -64,9 +75,11 @@ module.exports = class findStatusCommand extends Command {
                     }
                 }
             });
+
             results = results.map((m) => {
                 return `<@${m.userID}>\n\`\`\`${m.status}\`\`\``;
             });
+
             if (results.length <= 0) {
                 embed.setDescription(
                     `${emojis.fail} None of the online members have matching status!`
@@ -88,13 +101,13 @@ module.exports = class findStatusCommand extends Command {
             else {
                 embed.setTitle('Status Search Results').setFooter({
                     text: 'Expires after two minutes. Only displays online users',
-                    iconURL: message.author.displayAvatarURL(),
+                    iconURL: context.author.displayAvatarURL(),
                 });
                 await msg.delete();
                 new ButtonMenu(
-                    message.client,
-                    message.channel,
-                    message.member,
+                    this.client,
+                    context.channel,
+                    context.member,
                     embed,
                     results,
                     max

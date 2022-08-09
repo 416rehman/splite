@@ -19,51 +19,62 @@ module.exports = class SetAutoRoleCommand extends Command {
         });
     }
 
-    async run(message, args) {
-        const autoRoleId = message.client.db.settings.selectAutoRoleId
+    run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const role = interaction.options.getRole('role');
+        this.handle(role, interaction, true);
+    }
+
+    async handle(role, context, isInteraction) {
+        const autoRoleId = this.client.db.settings.selectAutoRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldAutoRole =
-            message.guild.roles.cache.find((r) => r.id === autoRoleId) || '`None`';
+            context.guild.roles.cache.find((r) => r.id === autoRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        if (!role) {
+            const payload = ({
                 embeds: [
                     embed
                         .addField('Current Auto Role', `${oldAutoRole}` || '`None`')
                         .setDescription(this.description),
                 ],
             });
+
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
 
         // Update role
-        embed.setDescription(
-            `The \`auto role\` was successfully updated. ${success}\nUse \`clearautorole\` to clear the current \`auto role\`.`
+        role = isInteraction ? role : await this.getGuildRole(context.guild, role);
+
+        this.client.db.settings.updateAutoRoleId.run(
+            role.id,
+            context.guild.id
         );
-        const autoRole = await this.getGuildRole(message.guild, args[0]);
-        if (!autoRole)
-            return this.sendErrorMessage(
-                message,
-                0,
-                `Failed to find that role (${args[0]}), try using a role ID`
-            );
-        message.client.db.settings.updateAutoRoleId.run(
-            autoRole.id,
-            message.guild.id
-        );
-        message.channel.send({
-            embeds: [embed.addField('Auto Role', `${oldAutoRole} ➔ ${autoRole}`)],
+
+        const payload = ({
+            embeds: [embed.addField('Auto Role', `${oldAutoRole} ➔ ${role}`)
+                .setDescription(`The \`auto role\` was successfully updated. ${success}\nUse \`clearautorole\` to clear the current \`auto role\`.`)],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

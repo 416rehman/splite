@@ -16,29 +16,39 @@ module.exports = class ClearAdminRoleCommand extends Command {
     }
 
     run(message) {
-        const adminRoleId = message.client.db.settings.selectAdminRoleId
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const adminRoleId = this.client.db.settings.selectAdminRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldAdminRole =
-            message.guild.roles.cache.find((r) => r.id === adminRoleId) ||
+            context.guild.roles.cache.find((r) => r.id === adminRoleId) ||
             '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`admin role\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        message.client.db.settings.updateAdminRoleId.run(null, message.guild.id);
-        return message.channel.send({
-            embeds: [embed.addField('Admin Role', `${oldAdminRole} ➔ \`None\``)],
-        });
+        this.client.db.settings.updateAdminRoleId.run(null, context.guild.id);
+
+        const payload = {embeds: [embed.addField('Admin Role', `${oldAdminRole} ➔ \`None\``)],};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class setconfessionchannelCommand extends Command {
     constructor(client) {
@@ -20,25 +20,37 @@ module.exports = class setconfessionchannelCommand extends Command {
     }
 
     run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel');
+        this.handle(channel, interaction, true);
+    }
+
+    handle(channel, context, isInteraction) {
         const confessionsChannelID =
-         message.client.db.settings.selectConfessionsChannelId
-             .pluck()
-             .get(message.guild.id);
+            this.client.db.settings.selectConfessionsChannelId
+                .pluck()
+                .get(context.guild.id);
+
         const oldConfessionsChannel =
-         message.guild.channels.cache.get(confessionsChannelID) || '`None`';
+            context.guild.channels.cache.get(confessionsChannelID) || '`None`';
+
         const embed = new MessageEmbed()
             .setTitle('Settings: `Confessions`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        // Display current confessions channel
+        if (!channel) {
+            const payload = ({
                 embeds: [
                     embed
                         .addField(
@@ -48,38 +60,40 @@ module.exports = class setconfessionchannelCommand extends Command {
                         .setDescription(this.description),
                 ],
             });
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
 
-        embed.setDescription(
-            `The \`confessions channel\` was successfully updated. ${success}\nUse \`clearconfessionschannel\` to clear the current \`confessions channel\`.`
+        channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+
+        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+            const payload = `${fail} The channel must be a text channel. Please try again.`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        this.client.db.settings.updateConfessionsChannelId.run(
+            channel.id,
+            context.guild.id
         );
-        const confessionsChannel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (
-            !confessionsChannel ||
-         (confessionsChannel.type != 'GUILD_TEXT' &&
-            confessionsChannel.type != 'GUILD_NEWS') ||
-         !confessionsChannel.viewable
-        )
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID
-      `
-            );
-        message.client.db.settings.updateConfessionsChannelId.run(
-            confessionsChannel.id,
-            message.guild.id
-        );
-        message.channel.send({
+
+        const payload = ({
             embeds: [
                 embed.addField(
                     'Confessions Channel',
-                    `${oldConfessionsChannel} ➔ ${confessionsChannel}`
+                    `${oldConfessionsChannel} ➔ ${channel}`
+                ).setDescription(
+                    `The \`confessions channel\` was successfully updated. ${success}\nUse \`clearconfessionschannel\` to clear the current \`confessions channel\`.`
                 ),
             ],
         });
+
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

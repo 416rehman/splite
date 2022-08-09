@@ -19,36 +19,48 @@ module.exports = class clearMessageEditLogCommand extends Command {
     }
 
     run(message) {
-        const messageEditLogId = message.client.db.settings.selectMessageEditLogId
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const messageEditLogId = this.client.db.settings.selectMessageEditLogId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldMessageEditLog =
-            message.guild.channels.cache.get(messageEditLogId) || '`None`';
+            context.guild.channels.cache.get(messageEditLogId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `Logging`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`message edit log\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        message.client.db.settings.updateMessageEditLogId.run(
+        this.client.db.settings.updateMessageEditLogId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        return message.channel.send({
+
+        const payload = {
             embeds: [
                 embed.addField(
                     'Message Edit Log',
                     `${oldMessageEditLog} ➔ \`None\``
                 ),
             ],
-        });
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

@@ -24,8 +24,8 @@ module.exports = class clearCrownRoleCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        const prefix = interaction.options.getRole('role');
-        this.handle(prefix, interaction, true);
+        const role = interaction.options.getRole('role');
+        this.handle(role, interaction, true);
     }
 
     handle(role, context, isInteraction) {

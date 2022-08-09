@@ -19,35 +19,47 @@ module.exports = class clearWelcomeMessageCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         const {
             welcome_channel_id: welcomeChannelId, welcome_message: oldWelcomeMessage,
-        } = message.client.db.settings.selectWelcomes.get(message.guild.id);
-        let welcomeChannel = message.guild.channels.cache.get(welcomeChannelId);
+        } = this.client.db.settings.selectWelcomes.get(context.guild.id);
+        let welcomeChannel = context.guild.channels.cache.get(welcomeChannelId);
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(welcomeChannelId, oldWelcomeMessage);
+        const oldStatus = this.client.utils.getStatus(welcomeChannelId, oldWelcomeMessage);
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Welcomes`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`welcome message\` was successfully cleared. ${success}`)
             .addField('Channel', welcomeChannel?.toString() || '`None`', true)
             .setFooter({
-                text: message.member.displayName, iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        message.client.db.settings.updateWelcomeMessage.run(null, message.guild.id);
+        this.client.db.settings.updateWelcomeMessage.run(null, context.guild.id);
 
         // Update status
         const status = 'disabled';
         const statusUpdate = oldStatus !== status ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-        return message.channel.send({
+        const payload = {
             embeds: [embed
                 .addField('Status', statusUpdate, true)
-                .addField('Message', '`None`'),],
-        });
+                .addField('Message', '`None`')],
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

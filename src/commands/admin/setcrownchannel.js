@@ -32,7 +32,7 @@ module.exports = class SetCrownChannelCommand extends Command {
         this.handle(channel, interaction, true);
     }
 
-    handle(target, context, isInteraction) {
+    handle(channel, context, isInteraction) {
         let {
             crown_role_id: crownRoleId,
             crown_channel_id: crownChannelId,
@@ -54,7 +54,6 @@ module.exports = class SetCrownChannelCommand extends Command {
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .addField('Role', crownRole?.toString() || '`None`', true)
             .addField('Schedule', `\`${crownSchedule ? crownSchedule : 'None'}\``, true)
-            .addField('Status', `\`${oldStatus}\``)
             .addField('Message', this.client.utils.replaceCrownKeywords(crownMessage) || '`None`')
             .setFooter({
                 text: this.getUserIdentifier(context.author),
@@ -63,37 +62,46 @@ module.exports = class SetCrownChannelCommand extends Command {
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);
 
-        if (!target) {
-            return context.channel.send({
+        if (!channel) {
+            const payload = ({
                 embeds: [embed
                     .spliceFields(1, 0, {
                         name: 'Current Crown Channel', value: `${oldCrownChannel}` || '`None`', inline: true,
-                    })
-                    .spliceFields(3, 0, {
-                        name: 'Status', value: oldStatus
-                    })
+                    }).spliceFields(3, 0, {name: 'Status', value: `\`${oldStatus}\``})
                     .setDescription(this.description)
                 ],
             });
-        }
-        embed.setDescription(`The \`crown channel\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`);
-        const crownChannel = isInteraction ? target : this.getChannelFromMention(context, target) || context.guild.channels.cache.get(target);
-        if (!crownChannel || (crownChannel.type !== 'GUILD_TEXT' && crownChannel.type !== 'GUILD_NEWS') || !crownChannel.viewable) {
-            const payload = emojis.fail + ' Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID.';
-            if (isInteraction) return context.editReply(payload);
-            else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
 
-        this.client.db.settings.updateCrownChannelId.run(crownChannel.id, context.guild.id);
+        channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+
+        if (!channel || (channel.type !== 'GUILD_TEXT' && channel.type !== 'GUILD_NEWS') || !channel.viewable) {
+            const payload = emojis.fail + ' Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID.';
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        this.client.db.settings.updateCrownChannelId.run(channel.id, context.guild.id);
 
         // Update status
-        const status = this.client.utils.getStatus(crownRole, crownChannelId);
+        const status = this.client.utils.getStatus(crownRole, channel.id);
+
         const statusUpdate = oldStatus !== status ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
         const payload = {
             embeds: [embed.spliceFields(1, 0, {
-                name: 'Channel', value: `${oldCrownChannel} ➔ ${crownChannel}`, inline: true,
-            }).spliceFields(3, 0, {name: 'Status', value: statusUpdate}),],
+                name: 'Channel',
+                value: `${oldCrownChannel} ➔ ${channel}`,
+                inline: true,
+            })
+                .spliceFields(3, 0, {name: 'Status Update', value: statusUpdate})
+                .setDescription(`The \`crown channel\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`),],
         };
 
         if (isInteraction) context.editReply(payload);

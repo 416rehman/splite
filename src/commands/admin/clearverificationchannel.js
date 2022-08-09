@@ -20,19 +20,28 @@ module.exports = class clearVerificationChannelCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         let {
             verification_role_id: verificationRoleId,
             verification_channel_id: verificationChannelId,
             verification_message: verificationMessage,
-        } = message.client.db.settings.selectVerification.get(message.guild.id);
+        } = this.client.db.settings.selectVerification.get(context.guild.id);
 
-        message.guild.roles.cache.get(verificationRoleId);
+        context.guild.roles.cache.get(verificationRoleId);
 
         const oldVerificationChannel =
-            message.guild.channels.cache.get(verificationChannelId) || '`None`';
+            context.guild.channels.cache.get(verificationChannelId) || '`None`';
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             verificationRoleId && verificationChannelId && verificationMessage
         );
 
@@ -45,18 +54,18 @@ module.exports = class clearVerificationChannelCommand extends Command {
             .setDescription(
                 `The \`verification channel\` was successfully cleared. ${success}`
             )
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear if no args provided
-        message.client.db.settings.updateVerificationChannelId.run(
+        this.client.db.settings.updateVerificationChannelId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
         const status = 'disabled';
         const statusUpdate =
@@ -64,15 +73,16 @@ module.exports = class clearVerificationChannelCommand extends Command {
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        message.channel.send({
-            embeds: [
-                embed
-                    .addField(
-                        'Verification Channel',
-                        `${oldVerificationChannel}  ➔ \`None\``
-                    )
-                    .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``),
-            ],
-        });
+        const payload = {
+            embeds: [embed
+                .addField(
+                    'Verification Channel',
+                    `${oldVerificationChannel}  ➔ \`None\``
+                )
+                .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``),],
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetStarboardChannelCommand extends Command {
     constructor(client) {
@@ -20,26 +20,31 @@ module.exports = class SetStarboardChannelCommand extends Command {
     }
 
     run(message, args) {
-        const starboardChannelId =
-         message.client.db.settings.selectStarboardChannelId
-             .pluck()
-             .get(message.guild.id);
-        const oldStarboardChannel =
-         message.guild.channels.cache.get(starboardChannelId) || '`None`';
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel');
+        this.handle(channel, interaction, true);
+    }
+
+    handle(channel, context, isInteraction) {
+        const starboardChannelId = this.client.db.settings.selectStarboardChannelId.pluck().get(context.guild.id);
+        const oldStarboardChannel = context.guild.channels.cache.get(starboardChannelId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `Starboard`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
 
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        // Show current starboard channel
+        if (!channel) {
+            return context.channel.send({
                 embeds: [
                     embed
                         .addField(
@@ -51,37 +56,29 @@ module.exports = class SetStarboardChannelCommand extends Command {
             });
         }
 
-        embed.setDescription(
-            `The \`starboard channel\` was successfully updated. ${success}\nUse \`clearstarboardchannel\` to clear the current \`starboard channel\``
-        );
-        const starboardChannel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (
-            !starboardChannel ||
-         (starboardChannel.type != 'GUILD_TEXT' &&
-            starboardChannel.type != 'GUILD_NEWS') ||
-         !starboardChannel.viewable
-        ) {
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID
-      `
-            );
+        channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+
+        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+            const payload = `${fail} I can't find that channel.`;
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
-        message.client.db.settings.updateStarboardChannelId.run(
-            starboardChannel.id,
-            message.guild.id
-        );
-        message.channel.send({
+
+        this.client.db.settings.updateStarboardChannelId.run(channel.id, context.guild.id);
+
+        const payload = ({
             embeds: [
                 embed.addField(
                     'Starboard Channel',
-                    `${oldStarboardChannel} ➔ ${starboardChannel}`
+                    `${oldStarboardChannel} ➔ ${channel}`
+                ).setDescription(
+                    `The \`starboard channel\` was successfully updated. ${success}\nUse \`clearstarboardchannel\` to clear the current \`starboard channel\``
                 ),
             ],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

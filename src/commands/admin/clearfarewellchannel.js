@@ -19,15 +19,24 @@ module.exports = class clearFarewellChannelCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         let {
             farewell_channel_id: farewellChannelId,
             farewell_message: farewellMessage,
-        } = message.client.db.settings.selectFarewells.get(message.guild.id);
+        } = this.client.db.settings.selectFarewells.get(context.guild.id);
         const oldFarewellChannel =
-            message.guild.channels.cache.get(farewellChannelId) || '`None`';
+            context.guild.channels.cache.get(farewellChannelId) || '`None`';
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             farewellChannelId,
             farewellMessage
         );
@@ -43,20 +52,19 @@ module.exports = class clearFarewellChannelCommand extends Command {
             )
             .addField(
                 'Message',
-                message.client.utils.replaceKeywords(farewellMessage) || '`None`'
+                this.client.utils.replaceKeywords(farewellMessage) || '`None`'
             )
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        message.client.db.settings.updateFarewellChannelId.run(
+        this.client.db.settings.updateFarewellChannelId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
 
         // Update status
@@ -66,7 +74,8 @@ module.exports = class clearFarewellChannelCommand extends Command {
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        return message.channel.send({
+
+        const payload = {
             embeds: [
                 embed
                     .spliceFields(0, 0, {
@@ -80,6 +89,9 @@ module.exports = class clearFarewellChannelCommand extends Command {
                         inline: true,
                     }),
             ],
-        });
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

@@ -19,40 +19,48 @@ module.exports = class clearModChannelsCommand extends Command {
     }
 
     run(message) {
-        const {trimArray} = message.client.utils;
-        const modChannelIds = message.client.db.settings.selectModChannelIds
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const {trimArray} = this.client.utils;
+        const modChannelIds = this.client.db.settings.selectModChannelIds
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         let oldModChannels = [];
         if (modChannelIds) {
             for (const channel of modChannelIds.split(' ')) {
-                oldModChannels.push(message.guild.channels.cache.get(channel));
+                oldModChannels.push(context.guild.channels.cache.get(channel));
             }
             oldModChannels = trimArray(oldModChannels).join(' ');
         }
         if (oldModChannels.length === 0) oldModChannels = '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`mod channels\` were successfully clear. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        message.client.db.settings.updateModChannelIds.run(
+        this.client.db.settings.updateModChannelIds.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        return message.channel.send({
-            embeds: [
-                embed.addField('Mod Channels', `${oldModChannels} ➔ \`None\``),
-            ],
-        });
+
+        const payload = {embeds: [embed.addField('Mod Channels', `${oldModChannels} ➔ \`None\``)]};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

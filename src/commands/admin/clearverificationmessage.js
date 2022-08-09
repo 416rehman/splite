@@ -20,42 +20,51 @@ module.exports = class clearVerificationMessageCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         let {
             verification_role_id: verificationRoleId,
             verification_channel_id: verificationChannelId,
             verification_message: oldVerificationMessage,
             verification_message_id: verificationMessageId,
-        } = message.client.db.settings.selectVerification.get(message.guild.id);
-        message.guild.roles.cache.get(verificationRoleId);
-        message.guild.channels.cache.get(
+        } = this.client.db.settings.selectVerification.get(context.guild.id);
+        context.guild.roles.cache.get(verificationRoleId);
+        context.guild.channels.cache.get(
             verificationChannelId
         );
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             verificationRoleId && verificationChannelId && oldVerificationMessage
         );
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Verification`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`verification message\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL({dynamic: true}),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        message.client.db.settings.updateVerificationMessage.run(
+        this.client.db.settings.updateVerificationMessage.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        message.client.db.settings.updateVerificationMessageId.run(
+        this.client.db.settings.updateVerificationMessageId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
 
         // Clear if no args provided
@@ -65,19 +74,20 @@ module.exports = class clearVerificationMessageCommand extends Command {
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        message.channel.send({
-            embeds: [
-                embed
-                    .addField(
-                        'Verification Message ID',
-                        `${verificationMessageId} ➔ \`None\``
-                    )
-                    .addField(
-                        'Verification Message',
-                        `${oldVerificationMessage} ➔ \`None\``
-                    )
-                    .addField('Status', `\`${statusUpdate}\``),
-            ],
-        });
+        const payload = {
+            embeds: [embed
+                .addField(
+                    'Verification Message ID',
+                    `${verificationMessageId} ➔ \`None\``
+                )
+                .addField(
+                    'Verification Message',
+                    `${oldVerificationMessage} ➔ \`None\``
+                )
+                .addField('Status', `\`${statusUpdate}\``),],
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

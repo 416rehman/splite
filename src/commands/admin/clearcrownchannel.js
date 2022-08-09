@@ -13,7 +13,7 @@ module.exports = class clearCrownChannelCommand extends Command {
     }
 
 
-    run(message, args) {
+    run(message) {
         this.handle(message, false);
     }
 

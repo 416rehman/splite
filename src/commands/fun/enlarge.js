@@ -28,7 +28,7 @@ module.exports = class enlargeCommand extends Command {
     }
 
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message, 'Enlarge Emoji');
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Enlarge Emoji', this)]});
 
         await message.channel
             .send({

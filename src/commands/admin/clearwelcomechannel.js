@@ -19,15 +19,24 @@ module.exports = class clearWelcomeChannelCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         let {
             welcome_channel_id: welcomeChannelId,
             welcome_message: welcomeMessage,
-        } = message.client.db.settings.selectWelcomes.get(message.guild.id);
+        } = this.client.db.settings.selectWelcomes.get(context.guild.id);
         const oldWelcomeChannel =
-            message.guild.channels.cache.get(welcomeChannelId) || '`None`';
+            context.guild.channels.cache.get(welcomeChannelId) || '`None`';
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             welcomeChannelId,
             welcomeMessage
         );
@@ -43,20 +52,20 @@ module.exports = class clearWelcomeChannelCommand extends Command {
             )
             .addField(
                 'Message',
-                message.client.utils.replaceKeywords(welcomeMessage) || '`None`'
+                this.client.utils.replaceKeywords(welcomeMessage) || '`None`'
             )
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear if no args provided
-        message.client.db.settings.updateWelcomeChannelId.run(
+        this.client.db.settings.updateWelcomeChannelId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
 
         // Update status
@@ -66,20 +75,21 @@ module.exports = class clearWelcomeChannelCommand extends Command {
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        return message.channel.send({
-            embeds: [
-                embed
-                    .spliceFields(0, 0, {
-                        name: 'Channel',
-                        value: `${oldWelcomeChannel} ➔ \`None\``,
-                        inline: true,
-                    })
-                    .spliceFields(1, 0, {
-                        name: 'Status',
-                        value: statusUpdate,
-                        inline: true,
-                    }),
-            ],
-        });
+        const payload = {
+            embeds: [embed
+                .spliceFields(0, 0, {
+                    name: 'Channel',
+                    value: `${oldWelcomeChannel} ➔ \`None\``,
+                    inline: true,
+                })
+                .spliceFields(1, 0, {
+                    name: 'Status',
+                    value: statusUpdate,
+                    inline: true,
+                }),],
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

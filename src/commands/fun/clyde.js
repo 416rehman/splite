@@ -15,7 +15,7 @@ module.exports = class clydeCommand extends Command {
     }
 
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message, 'Clyde Bot Message');
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Clyde Bot Message', this)]});
 
         await message.channel
             .send({

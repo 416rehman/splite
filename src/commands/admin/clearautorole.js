@@ -19,28 +19,39 @@ module.exports = class clearAutoRoleCommand extends Command {
     }
 
     run(message) {
-        const autoRoleId = message.client.db.settings.selectAutoRoleId
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const autoRoleId = this.client.db.settings.selectAutoRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldAutoRole =
-            message.guild.roles.cache.find((r) => r.id === autoRoleId) || '`None`';
+            context.guild.roles.cache.find((r) => r.id === autoRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context?.guild?.iconURL({dynamic: true}))
             .setDescription(
                 `The \`auto role\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        message.client.db.settings.updateAutoRoleId.run(null, message.guild.id);
-        message.channel.send({
-            embeds: [embed.addField('Auto Role', `${oldAutoRole}`)],
-        });
+        this.client.db.settings.updateAutoRoleId.run(null, context.guild.id);
+
+        const payload = {embeds: [embed.addField('Auto Role', `${oldAutoRole}`)],};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

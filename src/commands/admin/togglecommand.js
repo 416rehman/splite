@@ -1,13 +1,13 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success, fail } = require('../../utils/emojis.json');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class ToggleCommandCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'togglecommand',
-            aliases: ['togglec', 'togc', 'tc', 'disable', 'enable'],
+            aliases: ['togglec', 'togc', 'tc', 'disable', 'enable', 'toggle'],
             usage: 'togglecommand <command>',
             description: oneLine`
         Enables or disables the provided command. 
@@ -23,33 +23,52 @@ module.exports = class ToggleCommandCommand extends Command {
     }
 
     run(message, args) {
-        const { ADMIN, OWNER } = message.client.types;
+        this.handle(args[0], message, false);
+    }
 
-        const command =
-         message.client.commands.get(args[0]) ||
-         message.client.aliases.get(args[0]);
-        if (!command || (command && command.type == OWNER))
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please provide a valid command'
-            );
+    async interact(interaction) {
+        await interaction.deferReply();
+        const commandName = interaction.options.getString('command');
+        this.handle(commandName, interaction, true);
+    }
 
-        const { capitalize } = message.client.utils;
+    handle(commandName, context, isInteraction) {
+        const {ADMIN, OWNER} = this.client.types;
 
-        if (command.type === ADMIN)
-            return this.sendErrorMessage(
-                message,
-                0,
-                `${capitalize(ADMIN)} commands cannot be disabled`
-            );
+        const command = this.client.commands.get(commandName) || this.client.aliases.get(commandName);
 
-        let disabledCommands =
-         message.client.db.settings.selectDisabledCommands
-             .pluck()
-             .get(message.guild.id) || [];
-        if (typeof disabledCommands === 'string')
-            disabledCommands = disabledCommands.split(' ');
+        if (!command || (command && command.type == OWNER)) {
+            const validCommands = this.client.commands.filter(c => c.type != OWNER && c.type != ADMIN).map(c => c.name);
+
+            const payload = {
+                embeds: [new MessageEmbed()
+                    .setTitle('Invalid command')
+                    .setDescription(`${fail} Please provide a valid command. Valid commands are: \`${validCommands.join('`, `')}\``)
+                ]
+            };
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        const {capitalize} = this.client.utils;
+
+        if (command.type === ADMIN) {
+            const payload = {
+                embeds: [new MessageEmbed()
+                    .setTitle('Invalid command')
+                    .setDescription(`${fail} ${capitalize(ADMIN)} commands cannot be disabled`)
+                ]
+            };
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        let disabledCommands = this.client.db.settings.selectDisabledCommands.pluck().get(context.guild.id) || [];
+        if (typeof disabledCommands === 'string') disabledCommands = disabledCommands.split(' ');
 
         let description;
 
@@ -57,32 +76,32 @@ module.exports = class ToggleCommandCommand extends Command {
         if (!disabledCommands.includes(command.name)) {
             disabledCommands.push(command.name); // Add to array if not present
             description = `The \`${command.name}\` command has been successfully **disabled**. ${fail}`;
-
-            // Enable command
         }
+        // Enable command
         else {
-            message.client.utils.removeElement(disabledCommands, command.name);
+            this.client.utils.removeElement(disabledCommands, command.name);
             description = `The \`${command.name}\` command has been successfully **enabled**. ${success}`;
         }
 
-        message.client.db.settings.updateDisabledCommands.run(
+        this.client.db.settings.updateDisabledCommands.run(
             disabledCommands.join(' '),
-            message.guild.id
+            context.guild.id
         );
 
-        disabledCommands =
-         disabledCommands.map((c) => `\`${c}\``).join(' ') || '`None`';
-        const embed = new MessageEmbed()
+        disabledCommands = disabledCommands.map((c) => `\`${c}\``).join(' ') || '`None`';
+        const payload = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(description)
             .addField('Disabled Commands', disabledCommands, true)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({ embeds: [embed] });
+            .setColor(context.guild.me.displayHexColor);
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

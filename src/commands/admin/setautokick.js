@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetAutoKickCommand extends Command {
     constructor(client) {
@@ -19,47 +19,65 @@ module.exports = class SetAutoKickCommand extends Command {
     }
 
     run(message, args) {
-        const autoKick =
-         message.client.db.settings.selectAutoKick
-             .pluck()
-             .get(message.guild.id) || 'disabled';
         const amount = args[0];
-        if (amount && (!Number.isInteger(Number(amount)) || amount < 0))
+        if (args[0] && (!Number.isInteger(Number(amount)) || amount < 0))
             return this.sendErrorMessage(
                 message,
                 0,
                 'Please enter a positive integer'
             );
 
+        this.handle(amount, message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const amount = interaction.options.getInteger('amount');
+        this.handle(amount, interaction, true);
+    }
+
+    handle(amount, context, isInteraction) {
+        const autoKick =
+            this.client.db.settings.selectAutoKick
+                .pluck()
+                .get(context.guild.id) || 'disabled';
+
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
 
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear if no args provided
-        if (args.length === 0 || amount == 0) {
-            return message.channel.send({
+        if (!amount) {
+            const payload = ({
                 embeds: [
                     embed
                         .addField('Current Auto Kick', `\`${autoKick}\``)
                         .setDescription(this.description),
                 ],
             });
+
+            if (isInteraction) return context.editReply(payload);
+            else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
-        embed.setDescription(
-            `\`Auto kick\` was successfully updated. ${success}\nUse \`clearautokick\` to disable \`auto kick\``
-        );
-        message.client.db.settings.updateAutoKick.run(amount, message.guild.id);
-        message.channel.send({
+
+        this.client.db.settings.updateAutoKick.run(amount, context.guild.id);
+        const payload = ({
             embeds: [
-                embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`${amount}\``),
+                embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`${amount}\``)
+                    .setDescription(
+                        `\`Auto kick\` was successfully updated. ${success}\nUse \`clearautokick\` to disable \`auto kick\``
+                    )
             ],
         });
+
+        if (isInteraction) return context.editReply(payload);
+        else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
-const {success} = require('../../utils/emojis.json');
+const {success, fail} = require('../../utils/emojis.json');
 
 module.exports = class SetModRoleCommand extends Command {
     constructor(client) {
@@ -16,27 +16,37 @@ module.exports = class SetModRoleCommand extends Command {
         });
     }
 
-    async run(message, args) {
-        const modRoleId = message.client.db.settings.selectModRoleId
+    run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const role = interaction.options.getRole('role');
+        this.handle(role, interaction, true);
+    }
+
+    async handle(role, context, isInteraction) {
+        const modRoleId = this.client.db.settings.selectModRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldModRole =
-            message.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
+            context.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
 
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        if (!role) {
+            return context.channel.send({
                 embeds: [
                     embed
                         .addField('Current Mod Role', `${oldModRole}` || '`None`')
@@ -46,22 +56,23 @@ module.exports = class SetModRoleCommand extends Command {
         }
 
         // Update role
-        embed.setDescription(
-            `The \`mod role\` was successfully updated. ${success}\nUse \`clearmodrole\` to clear the current \`mod role\`.`
-        );
-        const modRole = await this.getGuildRole(message.guild, args[0]);
-        if (!modRole)
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please mention a role or provide a valid role ID'
-            );
-        message.client.db.settings.updateModRoleId.run(
-            modRole.id,
-            message.guild.id
-        );
-        message.channel.send({
-            embeds: [embed.addField('Mod Role', `${oldModRole} ➔ ${modRole}`)],
+        const modRole = isInteraction ? role : await this.getGuildRole(context.guild, role);
+
+        if (!modRole) {
+            const payload = `${fail} Please mention a role or provide a valid role ID`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+        this.client.db.settings.updateModRoleId.run(modRole.id, context.guild.id);
+
+        const payload = ({
+            embeds: [embed.addField('Mod Role', `${oldModRole} ➔ ${modRole}`)
+                .setDescription(`The \`mod role\` was successfully updated. ${success}\nUse \`clearmodrole\` to clear the current \`mod role\`.`)],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

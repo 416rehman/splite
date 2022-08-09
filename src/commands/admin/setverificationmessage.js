@@ -22,57 +22,75 @@ module.exports = class SetVerificationMessageCommand extends Command {
         });
     }
 
-    async run(message, args) {
+    run(message, args) {
+        let text = args[0] ? message.content.slice(message.content.indexOf(args[0]), message.content.length) : '';
+        this.handle(text, message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const text = interaction.options.getString('text');
+        this.handle(text, interaction, true);
+    }
+
+    async handle(text, context, isInteraction) {
         let {
             verification_role_id: verificationRoleId,
             verification_channel_id: verificationChannelId,
             verification_message: oldVerificationMessage,
             verification_message_id: verificationMessageId,
-        } = message.client.db.settings.selectVerification.get(message.guild.id);
-        const verificationRole = message.guild.roles.cache.get(verificationRoleId);
-        const verificationChannel = message.guild.channels.cache.get(verificationChannelId);
+        } = this.client.db.settings.selectVerification.get(context.guild.id);
+        const verificationRole = context.guild.roles.cache.get(verificationRoleId);
+        const verificationChannel = context.guild.channels.cache.get(verificationChannelId);
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(verificationRoleId && verificationChannelId && oldVerificationMessage);
+        const oldStatus = this.client.utils.getStatus(verificationRoleId && verificationChannelId && oldVerificationMessage);
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Verification`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
 
             .addField('Role', verificationRole?.toString() || '`None`', true)
             .addField('Channel', verificationChannel?.toString() || '`None`', true)
             .setFooter({
-                text: message.member.displayName, iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        if (!args[0]) {
-            return message.channel.send({
+        if (!text) {
+            const payload = ({
                 embeds: [embed
                     .addField('Status', `\`${oldStatus}\``, true)
                     .addField('Current Message ID', `\`${verificationMessageId}\``)
                     .addField('Current Message', `\`${oldVerificationMessage}\``)
                     .setDescription(this.description),],
             });
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
         }
 
-        embed.setDescription(`The \`verification message\` was successfully updated. ${success}\nUse \`clearverificationmessage\` to clear the verification message.`);
-        let verificationMessage = message.content.slice(message.content.indexOf(args[0]), message.content.length);
-        message.client.db.settings.updateVerificationMessage.run(verificationMessage, message.guild.id);
-        if (verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
+        embed.setDescription(`The \`verification message\` was successfully updated. ${success}\nUse \`clearverificationmessage\` to clear the verification context.`);
+
+        this.client.db.settings.updateVerificationMessage.run(text, context.guild.id);
+        if (text.length > 1024) text = text.slice(0, 1021) + '...';
 
         // Update status
-        const status = message.client.utils.getStatus(verificationRole && verificationChannel && verificationMessage);
+        const status = this.client.utils.getStatus(verificationRole && verificationChannel && text);
         const statusUpdate = oldStatus !== status ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-        message.channel.send({
+        const payload = ({
             embeds: [embed
                 .addField('Status', statusUpdate, true)
-                .addField('Message', verificationMessage),],
+                .addField('Message', text),],
         });
 
-        // Update verification
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+
+        // Update verification and send the new message to the verification channel
         if (status === 'enabled') {
             if (verificationChannel.viewable) {
                 try {
@@ -80,20 +98,18 @@ module.exports = class SetVerificationMessageCommand extends Command {
                 }
                 catch (err) {
                     // Message was deleted
-                    message.client.logger.error(err);
+                    this.client.logger.error(err);
                 }
                 const msg = await verificationChannel.send({
                     embeds: [new MessageEmbed()
-                        .setDescription(verificationMessage)
-                        .setColor(message.guild.me.displayHexColor),],
+                        .setDescription(text)
+                        .setColor(context.guild.me.displayHexColor),],
                 });
                 await msg.react(verify.split(':')[2].slice(0, -1));
-                message.client.db.settings.updateVerificationMessageId.run(msg.id, message.guild.id);
+                this.client.db.settings.updateVerificationMessageId.run(msg.id, context.guild.id);
             }
             else {
-                return message.client.sendSystemErrorMessage(message.guild, 'verification', stripIndent`
-          Unable to send verification message, please ensure I have permission to access the verification channel
-        `);
+                return this.client.sendSystemErrorMessage(context.guild, 'verification', stripIndent`Unable to send verification message, please ensure I have permission to access the verification channel`);
             }
         }
     }

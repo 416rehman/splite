@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success, verify } = require('../../utils/emojis.json');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, verify, fail} = require('../../utils/emojis.json');
+const {oneLine, stripIndent} = require('common-tags');
 
 module.exports = class SetVerificationChannelCommand extends Command {
     constructor(client) {
@@ -27,20 +27,30 @@ module.exports = class SetVerificationChannelCommand extends Command {
         });
     }
 
-    async run(message, args) {
+    run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel');
+        this.handle(channel, interaction, true);
+    }
+
+    async handle(channel, context, isInteraction) {
         let {
             verification_role_id: verificationRoleId,
             verification_channel_id: verificationChannelId,
             verification_message: verificationMessage,
             verification_message_id: verificationMessageId,
-        } = message.client.db.settings.selectVerification.get(message.guild.id);
+        } = this.client.db.settings.selectVerification.get(context.guild.id);
         const verificationRole =
-         message.guild.roles.cache.get(verificationRoleId);
+            context.guild.roles.cache.get(verificationRoleId);
         const oldVerificationChannel =
-         message.guild.channels.cache.get(verificationChannelId) || '`None`';
+            context.guild.channels.cache.get(verificationChannelId) || '`None`';
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             verificationRoleId && verificationChannelId && verificationMessage
         );
 
@@ -52,18 +62,18 @@ module.exports = class SetVerificationChannelCommand extends Command {
             .setTitle('Settings: `Verification`')
             .addField('Role', verificationRole.toString() || '`None`', true)
             .addField('Message', verificationMessage || '`None`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        // Clear if no args provided
-        if (args.length === 0) {
+        // Display current verification channel
+        if (!channel) {
             // Update status
-            return message.channel.send({
+            return context.channel.send({
                 embeds: [
                     embed
                         .spliceFields(1, 0, {
@@ -83,36 +93,22 @@ module.exports = class SetVerificationChannelCommand extends Command {
         embed.setDescription(
             `The \`verification channel\` was successfully updated. ${success}\nUse \`clearverificationchannel\` to clear current \`verification channel\`.`
         );
-        const verificationChannel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (
-            !verificationChannel ||
-         verificationChannel.type != 'GUILD_TEXT' ||
-         !verificationChannel.viewable
-        )
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        Please mention an accessible text channel or provide a valid text channel ID
-      `
-            );
+        const verificationChannel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+
+        if (!verificationChannel || verificationChannel.type != 'GUILD_TEXT' || !verificationChannel.viewable) {
+            const payload = `${fail} Please provide a valid \`verification channel\`.`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
 
         // Update status
-        const status = message.client.utils.getStatus(
-            verificationRole && verificationChannel && verificationMessage
-        );
-        const statusUpdate =
-         oldStatus != status
-             ? `\`${oldStatus}\` ➔ \`${status}\``
-             : `\`${oldStatus}\``;
+        const status = this.client.utils.getStatus(verificationRole && verificationChannel && verificationMessage);
+        const statusUpdate = oldStatus != status ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-        message.client.db.settings.updateVerificationChannelId.run(
-            verificationChannel.id,
-            message.guild.id
-        );
-        message.channel.send({
+        this.client.db.settings.updateVerificationChannelId.run(verificationChannel.id, context.guild.id);
+        const payload = ({
             embeds: [
                 embed
                     .spliceFields(1, 0, {
@@ -128,7 +124,10 @@ module.exports = class SetVerificationChannelCommand extends Command {
             ],
         });
 
-        // Update verification
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+
+        // Send verification message to the new verification channel
         if (status === 'enabled') {
             if (verificationChannel.viewable) {
                 try {
@@ -136,24 +135,21 @@ module.exports = class SetVerificationChannelCommand extends Command {
                 }
                 catch (err) {
                     // Message was deleted
-                    message.client.logger.error(err);
+                    this.client.logger.error(err);
                 }
                 const msg = await verificationChannel.send({
                     embeds: [
                         new MessageEmbed()
                             .setDescription(verificationMessage.slice(3, -3))
-                            .setColor(message.guild.me.displayHexColor),
+                            .setColor(context.guild.me.displayHexColor),
                     ],
                 });
                 await msg.react(verify.split(':')[2].slice(0, -1));
-                message.client.db.settings.updateVerificationMessageId.run(
-                    msg.id,
-                    message.guild.id
-                );
+                this.client.db.settings.updateVerificationMessageId.run(msg.id, context.guild.id);
             }
             else {
-                return message.client.sendSystemErrorMessage(
-                    message.guild,
+                return this.client.sendSystemErrorMessage(
+                    context.guild,
                     'verification',
                     stripIndent`
           Unable to send verification message, please ensure I have permission to access the verification channel

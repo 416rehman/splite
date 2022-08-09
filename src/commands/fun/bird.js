@@ -32,44 +32,32 @@ module.exports = class BirdCommand extends Command {
         try {
             const res = await fetch('http://shibe.online/api/birds');
             const img = (await res.json())[0];
-            const embed = new MessageEmbed()
-                .setTitle('🐦  Chirp!  🐦')
-                .setImage(img)
-                .setFooter({
-                    text: this.getUserIdentifier(context.author),
-                    iconURL: this.getAvatarURL(context.author),
-                });
+            const payload = {
+                embeds: [
+                    new MessageEmbed()
+                        .setTitle('🐦  Chirp!  🐦')
+                        .setImage(img)
+                        .setFooter({
+                            text: this.getUserIdentifier(context.author),
+                            iconURL: this.getAvatarURL(context.author),
+                        })
+                ]
+            };
 
-            if (isInteraction) {
-                context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed],
-                }) : context.channel.send({
-                    embeds: [embed],
-                });
-            }
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         catch (err) {
-            const embed = new MessageEmbed()
-                .setTitle('Error')
-                .setDescription(fail + ' ' + err.message)
-                .setColor('RED');
-            if (isInteraction) {
-                context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed]
-                }) : context.channel.send({
-                    embeds: [embed]
-                });
-            }
+            const payload = {
+                embeds: [
+                    new MessageEmbed()
+                        .setTitle('Error')
+                        .setDescription(fail + ' ' + err.message)
+                        .setColor('RED')
+                ]
+            };
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
     }
 };

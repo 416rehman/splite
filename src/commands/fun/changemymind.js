@@ -15,7 +15,7 @@ module.exports = class changemymindCommand extends Command {
     }
 
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message, 'Change My Mind!');
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Change My Mind!', this)]});
 
         await message.channel
             .send({

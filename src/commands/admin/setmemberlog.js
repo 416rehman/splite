@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetMemberLogCommand extends Command {
     constructor(client) {
@@ -20,55 +20,69 @@ module.exports = class SetMemberLogCommand extends Command {
     }
 
     run(message, args) {
-        const memberLogId = message.client.db.settings.selectMemberLogId
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel');
+        this.handle(channel, interaction, true);
+    }
+
+    handle(channel, context, isInteraction) {
+        const memberLogId = this.client.db.settings.selectMemberLogId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldMemberLog =
-         message.guild.channels.cache.get(memberLogId) || '`None`';
+            context.guild.channels.cache.get(memberLogId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `Logging`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
 
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
-        // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        // Display current member log
+        if (!channel) {
+            const payload = ({
                 embeds: [
                     embed
                         .addField('Current Member Log', `${oldMemberLog}` || '`None`')
                         .setDescription(this.description),
                 ],
             });
+
+            if (isInteraction) context.editReply(payload);
+            else context.reply(payload);
+            return;
         }
 
-        embed.setDescription(
-            `The \`member log\` was successfully updated. ${success}\nUse \`clearmemberlog\` to clear the current \`member log\`.`
-        );
-        const memberLog =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (!memberLog || memberLog.type != 'GUILD_TEXT' || !memberLog.viewable)
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        Please mention an accessible text channel or provide a valid text channel ID
-      `
-            );
-        message.client.db.settings.updateMemberLogId.run(
-            memberLog.id,
-            message.guild.id
-        );
-        message.channel.send({
+        channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+
+        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+            const payload = `${fail} Please mention an accessible text channel or provide a valid text channel ID.`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.reply(payload);
+            return;
+        }
+
+        this.client.db.settings.updateMemberLogId.run(channel.id, context.guild.id);
+
+        const payload = ({
             embeds: [
-                embed.addField('Member Log', `${oldMemberLog} ➔ ${memberLog}`),
+                embed.addField('Member Log', `${oldMemberLog} ➔ ${channel}`)
+                    .setDescription(
+                        `The \`member log\` was successfully updated. ${success}\nUse \`clearmemberlog\` to clear the current \`member log\`.`
+                    ),
             ],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.reply(payload);
     }
 };

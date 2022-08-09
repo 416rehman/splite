@@ -19,27 +19,35 @@ module.exports = class clearautokickCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         const autoKick =
-            message.client.db.settings.selectAutoKick
+            this.client.db.settings.selectAutoKick
                 .pluck()
-                .get(message.guild.id) || 'disabled';
+                .get(context.guild.id) || 'disabled';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context?.guild?.iconURL({dynamic: true}))
             .setDescription(`\`Auto kick\` was successfully disabled. ${success}`)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        message.client.db.settings.updateAutoKick.run(null, message.guild.id);
-        message.channel.send({
-            embeds: [
-                embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`disabled\``),
-            ],
-        });
+        this.client.db.settings.updateAutoKick.run(null, context.guild.id);
+
+        const payload = {embeds: [embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`disabled\``),],};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

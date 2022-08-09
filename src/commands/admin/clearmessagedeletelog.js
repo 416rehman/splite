@@ -19,37 +19,49 @@ module.exports = class clearMessageDeleteLogCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         const messageDeleteLogId =
-            message.client.db.settings.selectMessageDeleteLogId
+            this.client.db.settings.selectMessageDeleteLogId
                 .pluck()
-                .get(message.guild.id);
+                .get(context.guild.id);
         const oldMessageDeleteLog =
-            message.guild.channels.cache.get(messageDeleteLogId) || '`None`';
+            context.guild.channels.cache.get(messageDeleteLogId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `Logging`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`message delete log\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        message.client.db.settings.updateMessageDeleteLogId.run(
+        this.client.db.settings.updateMessageDeleteLogId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        return message.channel.send({
+
+        const payload = {
             embeds: [
                 embed.addField(
                     'Message Delete Log',
                     `${oldMessageDeleteLog} ➔ \`None\``
                 ),
             ],
-        });
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

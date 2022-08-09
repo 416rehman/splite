@@ -16,29 +16,41 @@ module.exports = class clearMuteRoleCommand extends Command {
     }
 
     run(message) {
-        const muteRoleId = message.client.db.settings.selectMuteRoleId
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const muteRoleId = this.client.db.settings.selectMuteRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const oldMuteRole =
-            message.guild.roles.cache.find((r) => r.id === muteRoleId) || '`None`';
+            context.guild.roles.cache.find((r) => r.id === muteRoleId) || '`None`';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`mute role\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
-        message.client.db.settings.updateMuteRoleId.run(null, message.guild.id);
-        return message.channel.send({
+        this.client.db.settings.updateMuteRoleId.run(null, context.guild.id);
+
+        const payload = ({
             embeds: [embed.addField('Mute Role', `${oldMuteRole} ➔ \`None\``)],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

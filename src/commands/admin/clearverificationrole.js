@@ -20,43 +20,55 @@ module.exports = class clearVerificationRoleCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         let {
             verification_role_id: verificationRoleId,
             verification_channel_id: verificationChannelId,
             verification_message: verificationMessage,
-        } = message.client.db.settings.selectVerification.get(message.guild.id);
-        const oldVerificationRole = message.guild.roles.cache.get(verificationRoleId) || '`None`';
-        const verificationChannel = message.guild.channels.cache.get(verificationChannelId);
+        } = this.client.db.settings.selectVerification.get(context.guild.id);
+        const oldVerificationRole = context.guild.roles.cache.get(verificationRoleId) || '`None`';
+        const verificationChannel = context.guild.channels.cache.get(verificationChannelId);
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(verificationRoleId && verificationChannelId && verificationMessage);
+        const oldStatus = this.client.utils.getStatus(verificationRoleId && verificationChannelId && verificationMessage);
 
         // Trim message
         if (verificationMessage && verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
 
         const embed = new MessageEmbed()
             .setTitle('Settings: `Verification`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`verification role\` was successfully cleared. ${success}`)
             .addField('Channel', verificationChannel?.toString() || '`None`', true)
             .addField('Message', verificationMessage || '`None`')
             .setFooter({
-                text: message.member.displayName, iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: context.member.displayName, iconURL: context.author.displayAvatarURL({dynamic: true}),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear role
-        message.client.db.settings.updateVerificationRoleId.run(null, message.guild.id);
+        this.client.db.settings.updateVerificationRoleId.run(null, context.guild.id);
 
         // Clear if no args provided
         const status = 'disabled';
         const statusUpdate = oldStatus !== status ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-        message.channel.send({
+        const payload = {
             embeds: [embed
                 .addField('Verification Role', `${oldVerificationRole} ➔ \`None\``)
-                .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``),],
-        });
+                .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``)],
+        };
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

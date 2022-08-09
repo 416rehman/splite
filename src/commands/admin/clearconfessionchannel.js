@@ -23,25 +23,35 @@ module.exports = class clearconfessionchannelCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         const embed = new MessageEmbed()
             .setTitle('Settings: `Confessions`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
                 `The \`confessions channel\` was successfully cleared. ${success}`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        message.client.db.settings.updateConfessionsChannelId.run(
+        this.client.db.settings.updateConfessionsChannelId.run(
             null,
-            message.guild.id
+            context.guild.id
         );
-        return message.channel.send({
-            embeds: [embed.addField('Confessions Channel', '`None`')],
-        });
+
+        const payload = {embeds: [embed.addField('Confessions Channel', '`None`')],};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

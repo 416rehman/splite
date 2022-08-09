@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetSystemChannelCommand extends Command {
     constructor(client) {
@@ -21,24 +21,30 @@ module.exports = class SetSystemChannelCommand extends Command {
     }
 
     run(message, args) {
-        const systemChannelId = message.client.db.settings.selectSystemChannelId
-            .pluck()
-            .get(message.guild.id);
-        const oldSystemChannel =
-         message.guild.channels.cache.get(systemChannelId) || '`None`';
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel');
+        this.handle(channel, interaction, true);
+    }
+
+    handle(channel, context, isInteraction) {
+        const systemChannelId = this.client.db.settings.selectSystemChannelId.pluck().get(context.guild.id);
+        const oldSystemChannel = context.guild.channels.cache.get(systemChannelId) || '`None`';
         const embed = new MessageEmbed()
             .setTitle('Settings: `System`')
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
-        // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        // Display current system channel
+        if (!channel) {
+            return context.channel.send({
                 embeds: [
                     embed
                         .addField('Current System Channel', `${oldSystemChannel}`)
@@ -49,33 +55,26 @@ module.exports = class SetSystemChannelCommand extends Command {
         embed.setDescription(
             `The \`system channel\` was successfully updated. ${success}\n Use \`clearsystemchannel\` to clear the current \`system channel\``
         );
-        const systemChannel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (
-            !systemChannel ||
-         (systemChannel.type != 'GUILD_TEXT' &&
-            systemChannel.type != 'GUILD_NEWS') ||
-         !systemChannel.viewable
-        )
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID
-      `
-            );
-        message.client.db.settings.updateSystemChannelId.run(
-            systemChannel.id,
-            message.guild.id
-        );
-        message.channel.send({
+        channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+            const payload = `${fail} I cannot find the channel you specified. Please try again.`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
+
+        this.client.db.settings.updateSystemChannelId.run(channel.id, context.guild.id);
+        const payload = ({
             embeds: [
                 embed.addField(
                     'System Channel',
-                    `${oldSystemChannel} ➔ ${systemChannel}`
+                    `${oldSystemChannel} ➔ ${channel}`
                 ),
             ],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

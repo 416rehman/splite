@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { MessageEmbed } = require('discord.js');
-const { success } = require('../../utils/emojis.json');
-const { oneLine, stripIndent } = require('common-tags');
+const {MessageEmbed} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetWelcomeChannelCommand extends Command {
     constructor(client) {
@@ -21,15 +21,25 @@ module.exports = class SetWelcomeChannelCommand extends Command {
     }
 
     run(message, args) {
+        this.handle(args.join(' '), message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel');
+        this.handle(channel, interaction, true);
+    }
+
+    handle(channel, context, isInteraction) {
         let {
             welcome_channel_id: welcomeChannelId,
             welcome_message: welcomeMessage,
-        } = message.client.db.settings.selectWelcomes.get(message.guild.id);
+        } = this.client.db.settings.selectWelcomes.get(context.guild.id);
         const oldWelcomeChannel =
-         message.guild.channels.cache.get(welcomeChannelId) || '`None`';
+            context.guild.channels.cache.get(welcomeChannelId) || '`None`';
 
         // Get status
-        const oldStatus = message.client.utils.getStatus(
+        const oldStatus = this.client.utils.getStatus(
             welcomeChannelId,
             welcomeMessage
         );
@@ -42,19 +52,19 @@ module.exports = class SetWelcomeChannelCommand extends Command {
             .setTitle('Settings: `Welcomes`')
             .addField(
                 'Message',
-                message.client.utils.replaceKeywords(welcomeMessage) || '`None`'
+                this.client.utils.replaceKeywords(welcomeMessage) || '`None`'
             )
-            .setThumbnail(message.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: context.author.displayAvatarURL(),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         // Clear if no args provided
-        if (args.length === 0) {
-            return message.channel.send({
+        if (!channel) {
+            return context.channel.send({
                 embeds: [
                     embed
                         .spliceFields(0, 0, {
@@ -75,43 +85,26 @@ module.exports = class SetWelcomeChannelCommand extends Command {
         embed.setDescription(
             `The \`welcome channel\` was successfully updated. ${success}\nUse \`clearwelcomechannel\` to clear the current \`welcome channel\`.`
         );
-        const welcomeChannel =
-         this.getChannelFromMention(message, args[0]) ||
-         message.guild.channels.cache.get(args[0]);
-        if (
-            !welcomeChannel ||
-         (welcomeChannel.type != 'GUILD_TEXT' &&
-            welcomeChannel.type != 'GUILD_NEWS') ||
-         !welcomeChannel.viewable
-        )
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID
-      `
-            );
+        channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
+        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+            const payload = `${fail} Please provide a valid text channel.`;
+
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return;
+        }
 
         // Update status
-        const status = message.client.utils.getStatus(
-            welcomeChannel,
-            welcomeMessage
-        );
-        const statusUpdate =
-         oldStatus != status
-             ? `\`${oldStatus}\` ➔ \`${status}\``
-             : `\`${oldStatus}\``;
+        const status = this.client.utils.getStatus(channel, welcomeMessage);
+        const statusUpdate = oldStatus != status ? `\`${oldStatus}\` ➔ \`${status}\`` : `\`${oldStatus}\``;
 
-        message.client.db.settings.updateWelcomeChannelId.run(
-            welcomeChannel.id,
-            message.guild.id
-        );
-        message.channel.send({
+        this.client.db.settings.updateWelcomeChannelId.run(channel.id, context.guild.id);
+        const payload = ({
             embeds: [
                 embed
                     .spliceFields(0, 0, {
                         name: 'Channel',
-                        value: `${oldWelcomeChannel} ➔ ${welcomeChannel}`,
+                        value: `${oldWelcomeChannel} ➔ ${channel}`,
                         inline: true,
                     })
                     .spliceFields(1, 0, {
@@ -121,5 +114,8 @@ module.exports = class SetWelcomeChannelCommand extends Command {
                     }),
             ],
         });
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

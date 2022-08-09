@@ -20,12 +20,12 @@ module.exports = class BioCommand extends Command {
     }
 
     run(message, args) {
-        const prefix = message.client.db.settings.selectPrefix
+        const prefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(message.guild.id);
         // Show currrent bio of the author
         if (!args[0]) {
-            let {bio: Bio} = message.client.db.bios.selectBio.get(
+            let {bio: Bio} = this.client.db.bios.selectBio.get(
                 message.author.id
             );
             if (!Bio) {
@@ -51,12 +51,12 @@ module.exports = class BioCommand extends Command {
             //Clear the bio
             if (args[0] === 'clear' && args.length === 1) {
                 try {
-                    message.client.db.bios.updateBio.run(null, message.author.id);
+                    this.client.db.bios.updateBio.run(null, message.author.id);
 
                     const embed = new MessageEmbed()
                         .setTitle(`Bio Cleared ${success}`)
                         .setDescription(
-                            `Your bio has been cleared.\nTo set your bio again, type \`@${message.client.name} bio <your bio here>\`.`
+                            `Your bio has been cleared.\nTo set your bio again, type \`@${this.client.name} bio <your bio here>\`.`
                         )
                         .setFooter({
                             text: `Clear your bio by typing, ${prefix}bio clear`,
@@ -76,7 +76,7 @@ module.exports = class BioCommand extends Command {
                     .replace('<@', '')
                     .replace('!', '')
                     .replace('>', '');
-                let {bio: Bio} = message.client.db.bios.selectBio.get(userId);
+                let {bio: Bio} = this.client.db.bios.selectBio.get(userId);
 
                 if (!Bio) {
                     const embed = new MessageEmbed()
@@ -100,7 +100,7 @@ module.exports = class BioCommand extends Command {
             else {
                 const biotext = args.join(' ');
 
-                message.client.db.bios.updateBio.run(biotext, message.author.id);
+                this.client.db.bios.updateBio.run(biotext, message.author.id);
 
                 const embed = new MessageEmbed()
                     .setTitle(`Bio Updated ${success}`)
