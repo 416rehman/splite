@@ -234,7 +234,7 @@ class Client extends Discord.Client {
     }
 
     /**
-     * Registes all slash commands in the provided guild
+     * Registers all slash commands in the provided guild
      * @param guild guild to register commands in
      * @param commands array of commands
      * @param id client id
@@ -245,32 +245,33 @@ class Client extends Discord.Client {
             const rest = new REST({version: '9'}).setToken(this.config.token);
             try {
                 const slashCommands = commands.map(c => {
-                    if (c.userPermissions && c.userPermissions.length > 0) c.slashCommand.setDefaultPermission(false);
+                    if (c.userPermissions && c.userPermissions.length > 0) c.slashCommand.setDefaultPermission(true);
 
                     return c.slashCommand.toJSON();
                 });
 
                 rest.put(Routes.applicationGuildCommands(id, guild.id), {body: slashCommands},).then(() => {
                     guild.commands.fetch().then((registeredCommands) => {
-
                         let fullPermissions = registeredCommands.filter(c => c.applicationId === this.application.id).map(c => {
                             // if the command is removed, remove it from the guild
                             if (!slashCommands.find(sc => sc.name === c.name)) {
                                 return rest.delete(Routes.applicationGuildCommand(id, guild.id, c.id));
                             }
 
-                            // Create permissions for the commands
-                            return this.constructFullPermissions(commands, c, guild);
+                            // // Create permissions for the commands
+                            // return this.constructFullPermissions(commands, c, guild);
                         });
 
-                        Promise.all(fullPermissions).then((permissions) => {
-                            permissions = permissions.filter(p => p !== undefined && p !== null); // filter out undefined and null values
-
-                            if (permissions.length) {
-                                guild.commands?.permissions.set({fullPermissions: permissions});
-                                console.log(`Updated command permissions for ${guild.name}`);
-                            }
-                        });
+                        // Promise.all(fullPermissions).then((ArrayOfSlashCommandPerms) => {
+                        //     ArrayOfSlashCommandPerms = ArrayOfSlashCommandPerms.filter(p => p !== undefined && p !== null); // filter out undefined and null values
+                        //
+                        //     ArrayOfSlashCommandPerms.forEach(cmd => {
+                        //         //update the command permissions
+                        //         cmd.guild = guild.id;
+                        //         console.log(cmd);
+                        //         this.application.commands.permissions.set(cmd).then(() => console.log('Updated command permissions for ' + cmd.name));
+                        //     });
+                        // });
                     });
 
                     resolve('Registered slash commands for ' + guild.name);
@@ -286,26 +287,30 @@ class Client extends Discord.Client {
 
     /**
      * Constructs the full permissions object for a slash command
+     * DEPRECATED SINCE DISCORD INTRODUCED SLASH COMMAND PERMISSIONS 2.0 - https://discord.com/developers/docs/change-log#updated-command-permissions:~:text=Disabled%20the%20batch%20editing%20endpoint
      * @param allCommands
      * @param slashCommand
      * @param guild
      * @return {{permissions: *, id}|null}
      */
-    constructFullPermissions(allCommands, slashCommand, guild) {
-        const perms_required = allCommands.find(command => command.slashCommand.name === slashCommand.name).userPermissions;
-        if (!perms_required || perms_required.length === 0) return;
-
-        let matching_roles = guild.roles.cache.filter(r => r.permissions.has(perms_required));
-        if (!matching_roles || matching_roles.length === 0) return null;
-
-        return {
-            id: slashCommand.id, permissions: matching_roles.last(10).map(r => {
-                return {
-                    id: r.id, type: 'ROLE', permission: true
-                };
-            })
-        };
-    }
+    // constructFullPermissions(allCommands, slashCommand, guild) {
+    //
+    //     const perms_required = allCommands.find(command => command.slashCommand.name === slashCommand.name).userPermissions;
+    //     if (!perms_required || perms_required.length === 0) return;
+    //
+    //     let matching_roles = guild.roles.cache.filter(r => r.permissions.has(perms_required));
+    //     if (!matching_roles || matching_roles.length === 0) return null;
+    //
+    //
+    //     return {
+    //         command: slashCommand.id,
+    //         permissions: matching_roles.last(100).map(r => {
+    //             return {
+    //                 id: r.id, type: 'ROLE', permission: true
+    //             };
+    //         })
+    //     };
+    // }
 
     /**
      * Music Events Handler
