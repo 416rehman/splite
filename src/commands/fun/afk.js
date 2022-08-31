@@ -39,12 +39,10 @@ module.exports = class AfkCommand extends Command {
             );
 
             await (await this.getGuildMember(context.guild, context.author.id))?.setNickname(`[AFK]${context.member.nickname || context.member.displayName}`);
-
-            return this.sendReply(context, messageText ? `${idle} ${context.author} You have gone afk: ${messageText}` : `${idle} ${context.author} You have gone afk!`);
         }
         catch (err) {
             this.client.logger.error(err);
-            return context.reply(`${idle} ${context.author} An error occurred while setting your afk status`);
         }
+        return this.sendReply(context, messageText ? `${idle} ${context.author} You have gone afk: ${messageText}` : `${idle} ${context.author} You have gone afk!`);
     }
 };
