@@ -76,7 +76,6 @@ module.exports = async (client, interaction) => {
 
             // check permissions
             const permissionErrors = command.checkPermissionErrors(author, channel, interaction.guild);
-            console.log({permissionErrors});
             if (!permissionErrors) return interaction.reply({
                 content: '**This command can only be used by the bot creator.**', ephemeral: true,
             });

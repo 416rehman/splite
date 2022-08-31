@@ -559,21 +559,18 @@ class Command {
         if (ownerOverride && this.client.isOwner(member)) {
             return true;
         }
-        console.log('COMMAND TYPE', this.type);
+
         // Owner / Manager commands
         if (this.type === this.client.types.OWNER || this.type === this.client.types.MANAGER) {
             if (this.type === this.client.types.OWNER && this.client.isOwner(member)) {
-                console.log('OWNER COMMAND - The user is an owner so it\'s allowed');
                 return true;
             }
             if (this.type === this.client.types.MANAGER && (this.client.isManager(member) || this.client.isOwner(member))) {
-                console.log('MANAGER COMMAND - The user is a manager so it\'s allowed');
                 return true;
             }
         }
         // User commands
         else {
-            console.log('USER COMMAND - Checking user permissions');
             if (!perms || !perms.length) {
                 return true;
             }

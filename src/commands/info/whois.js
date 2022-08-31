@@ -52,7 +52,7 @@ module.exports = class WhoIsCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        let user = interaction.options.getUser('user') ? await this.getGuildMember(interaction.guild, (interaction.options.getUser('user')).id) : interaction.member;
+        let user = interaction.options.getMember('user') || interaction.member;
         this.handle(user, interaction, true);
     }
 
