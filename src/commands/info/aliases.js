@@ -19,10 +19,11 @@ module.exports = class AliasesCommand extends Command {
         });
     }
 
+
     run(message, args) {
         // Get disabled commands
         let disabledCommands =
-            message.client.db.settings.selectDisabledCommands
+            this.client.db.settings.selectDisabledCommands
                 .pluck()
                 .get(message.guild.id) || [];
         if (typeof disabledCommands === 'string')
@@ -30,12 +31,12 @@ module.exports = class AliasesCommand extends Command {
 
         const aliases = {};
         const embed = new MessageEmbed();
-        for (const type of Object.values(message.client.types)) {
+        for (const type of Object.values(this.client.types)) {
             aliases[type] = [];
         }
 
         const type = args[0] ? args[0].toLowerCase() : '';
-        const types = Object.values(message.client.types);
+        const types = Object.values(this.client.types);
         const {
             INFO,
             FUN,
@@ -48,8 +49,8 @@ module.exports = class AliasesCommand extends Command {
             ADMIN,
             MANAGER,
             OWNER,
-        } = message.client.types;
-        const {capitalize} = message.client.utils;
+        } = this.client.types;
+        const {capitalize} = this.client.utils;
 
         const emojiMap = {
             [INFO]: `${emojis.info} ${capitalize(INFO)}`,
@@ -68,11 +69,11 @@ module.exports = class AliasesCommand extends Command {
         if (
             args[0] &&
             types.includes(type) &&
-            (type !== OWNER || message.client.isOwner(message.member)) &&
-            (type !== MANAGER || message.client.isManager(message.member))
+            (type !== OWNER || this.client.isOwner(message.member)) &&
+            (type !== MANAGER || this.client.isManager(message.member))
         ) {
 
-            message.client.commands.forEach((command) => {
+            this.client.commands.forEach((command) => {
                 if (
                     command.aliases &&
                     command.type === type &&
@@ -88,13 +89,13 @@ module.exports = class AliasesCommand extends Command {
             embed.setTitle(`Alias Type: \`${capitalize(type)}\``)
                 .setThumbnail(
                     `${
-                        message.client.config.botLogoURL ||
+                        this.client.config.botLogoURL ||
                         'https://i.imgur.com/B0XSinY.png'
                     }`
                 )
                 .setFooter({
                     text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    iconURL: this.getAvatarURL(message.author),
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
@@ -112,7 +113,7 @@ module.exports = class AliasesCommand extends Command {
             }
             else
                 new ButtonMenu(
-                    message.client,
+                    this.client,
                     message.channel,
                     message.member,
                     embed,
@@ -128,7 +129,7 @@ module.exports = class AliasesCommand extends Command {
         }
         else {
 
-            message.client.commands.forEach((command) => {
+            this.client.commands.forEach((command) => {
                 if (command.aliases && !disabledCommands.includes(command.name))
                     aliases[command.type].push(
                         `**${command.name}:** ${command.aliases
@@ -137,12 +138,12 @@ module.exports = class AliasesCommand extends Command {
                     );
             });
 
-            const prefix = message.client.db.settings.selectPrefix
+            const prefix = this.client.db.settings.selectPrefix
                 .pluck()
                 .get(message.guild.id);
 
             embed
-                .setTitle(`${message.client.name}'s Alias Types`)
+                .setTitle(`${this.client.name}'s Alias Types`)
                 .setDescription(
                     stripIndent`
           **Prefix:** \`${prefix}\`
@@ -152,15 +153,15 @@ module.exports = class AliasesCommand extends Command {
                 .setImage('https://i.imgur.com/B0XSinY.png')
                 .setFooter({
                     text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    iconURL: this.getAvatarURL(message.author),
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
 
-            for (const type of Object.values(message.client.types)) {
-                if (type === OWNER && !message.client.isOwner(message.member))
+            for (const type of Object.values(this.client.types)) {
+                if (type === OWNER && !this.client.isOwner(message.member))
                     continue;
-                if (type === MANAGER && !message.client.isManager(message.member))
+                if (type === MANAGER && !this.client.isManager(message.member))
                     continue;
                 if (aliases[type][0])
                     embed.addField(
@@ -176,7 +177,7 @@ module.exports = class AliasesCommand extends Command {
 
             embed.addField(
                 '**Links**',
-                `**[Invite Me](${message.client.config.inviteLink})**`
+                `**[Invite Me](${this.client.config.inviteLink})**`
             );
             if (this.client.owners.length) {
                 embed.addField('Developed By', `${this.client.owners[0]}`);

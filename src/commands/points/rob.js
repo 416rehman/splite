@@ -15,14 +15,9 @@ module.exports = class WipePointsCommand extends Command {
             slashCommand: new SlashCommandBuilder().addUserOption((option) =>
                 option
                     .setRequired(true)
-                    .setName('target')
-                    .setDescription('The amount of points you want to drop.'))
+                    .setName('user')
+                    .setDescription('The user to rob points from'))
         });
-    }
-
-    interact(interaction, args, author) {
-        const target = interaction.options.getUser('target');
-        this.handle(target, author, interaction, true);
     }
 
     async run(message, args) {
@@ -33,30 +28,44 @@ module.exports = class WipePointsCommand extends Command {
         if (!target) {
             return message.reply('I couldn\'t find that user.');
         }
-        this.handle(target, message.author, message);
+        this.handle(target, message, false);
     }
 
-    handle(target, author, context, isInteraction = false) {
+    async interact(interaction) {
+        await interaction.deferReply();
+        const target = interaction.options.getUser('user');
+        this.handle(target, interaction, true);
+    }
+
+    handle(target, context, isInteraction) {
+        if (!target) {
+            return this.sendReplyAndDelete(context, 'Please provide a valid user.', isInteraction);
+        }
+
+        if (target.id === context.author.id) {
+            return this.sendReplyAndDelete(context, 'You can\'t rob yourself 🤦‍', isInteraction);
+        }
+
         let target_balance = this.client.db.users.selectPoints
             .pluck()
             .get(target.id, context.guild.id);
         if (!target_balance) {
-            return context.reply('That user has no points.');
+            return this.sendReplyAndDelete(context, `${emojis.nep} That user has no points.`, isInteraction);
         }
 
         let author_balance = this.client.db.users.selectPoints
             .pluck()
-            .get(author.id, context.guild.id);
+            .get(context.author.id, context.guild.id);
         if (!author_balance) {
-            return context.reply('You don\'t have any points.');
+            return this.sendReplyAndDelete(context, `${emojis.nep} You have no points.`, isInteraction);
         }
 
-        context.reply({
+        this.sendReply(context, {
             embeds: [
                 new MessageEmbed()
-                    .setDescription(`${this.getUserIdentifier(author)} is trying to rob ${this.getUserIdentifier(target)}...`)
+                    .setDescription(`${this.getUserIdentifier(context.author)} is trying to rob ${this.getUserIdentifier(target)}...`)
             ]
-        }).then(async (msg) => {
+        }, isInteraction).then(async (msg) => {
             let amount = this.client.utils.getRandomInt(1, Math.min(author_balance, target_balance) / 2);
             if (amount > target_balance) {
                 amount = target_balance;
@@ -66,7 +75,7 @@ module.exports = class WipePointsCommand extends Command {
             }
             const hasVoted = (await this.client.utils.checkTopGGVote(
                 this.client,
-                author.id
+                context.author.id
             ));
 
             const outcome = this.client.utils.weightedRandom({
@@ -77,7 +86,7 @@ module.exports = class WipePointsCommand extends Command {
             if (outcome === 'success') {
                 // take points from target and give them to author
                 this.client.db.users.updatePoints.run({points: -amount}, target.id, context.guild.id);
-                this.client.db.users.updatePoints.run({points: amount}, author.id, context.guild.id);
+                this.client.db.users.updatePoints.run({points: amount}, context.author.id, context.guild.id);
 
                 const verbs = [
                     'stole',
@@ -89,7 +98,7 @@ module.exports = class WipePointsCommand extends Command {
                 ];
 
                 const embed = new MessageEmbed()
-                    .setTitle(`${hasVoted ? emojis.Voted : ''} ${this.getUserIdentifier(author)} robbed ${this.getUserIdentifier(target)}!`)
+                    .setTitle(`${hasVoted ? emojis.Voted : ''} ${this.getUserIdentifier(context.author)} robbed ${this.getUserIdentifier(target)} points!`)
                     .setDescription(`${emojis.success} They ${verbs[this.client.utils.getRandomInt(0, verbs.length - 1)]} **${amount}** ${emojis.point}`)
                     .setFooter({
                         text: 'To check your balance, use the `points` command!',
@@ -99,24 +108,26 @@ module.exports = class WipePointsCommand extends Command {
                     text: 'Use the "vote" command to boost your chances of success!'
                 });
 
-                return isInteraction ? context.editReply({embeds: [embed]}) : msg.edit({embeds: [embed]});
+                return msg.edit({
+                    embeds: [embed]
+                });
             }
             else {
                 // take points from author and give them to target
-                this.client.db.users.updatePoints.run({points: -amount}, author.id, context.guild.id);
+                this.client.db.users.updatePoints.run({points: -amount}, context.author.id, context.guild.id);
                 this.client.db.users.updatePoints.run({points: amount}, target.id, context.guild.id);
 
                 const versions = [
                     `${this.getUserIdentifier(target)} fought back and stole **${amount}** points.`,
-                    `${this.getUserIdentifier(target)} thwarted ${this.getUserIdentifier(author)}'s robbery and stole **${amount}** points.`,
+                    `${this.getUserIdentifier(target)} thwarted ${this.getUserIdentifier(context.author)}'s robbery and stole **${amount}** points.`,
                     `${this.getUserIdentifier(target)} retaliated and stole **${amount}** points.`,
-                    `${this.getUserIdentifier(target)} blocked ${this.getUserIdentifier(author)}'s robbery and stole **${amount}** points.`,
-                    `${this.getUserIdentifier(target)} countered ${this.getUserIdentifier(author)}'s robbery and stole **${amount}** points.`,
-                    `${this.getUserIdentifier(target)} overpowered ${this.getUserIdentifier(author)} and stole **${amount}** points.`,
+                    `${this.getUserIdentifier(target)} blocked ${this.getUserIdentifier(context.author)}'s robbery and stole **${amount}** points.`,
+                    `${this.getUserIdentifier(target)} countered ${this.getUserIdentifier(context.author)}'s robbery and stole **${amount}** points.`,
+                    `${this.getUserIdentifier(target)} overpowered ${this.getUserIdentifier(context.author)} and stole **${amount}** points.`,
                 ];
 
                 const embed = new MessageEmbed()
-                    .setTitle(`${this.getUserIdentifier(author)} tried to rob ${this.getUserIdentifier(target)}!`)
+                    .setTitle(`${this.getUserIdentifier(context.author)} tried to rob ${this.getUserIdentifier(target)}!`)
                     .setDescription(`${emojis.fail} ${versions[this.client.utils.getRandomInt(0, versions.length - 1)]} ${emojis.point}`)
                     .setFooter({
                         text: 'To check your balance, use the `points` command!',
@@ -126,7 +137,9 @@ module.exports = class WipePointsCommand extends Command {
                     text: 'Use the "vote" command to boost your chances of success!'
                 });
 
-                return isInteraction ? context.editReply({embeds: [embed]}) : msg.edit({embeds: [embed]});
+                return msg.edit({
+                    embeds: [embed]
+                });
             }
         });
     }

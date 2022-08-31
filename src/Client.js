@@ -40,7 +40,7 @@ class Client extends Discord.Client {
         this.topics = {};
         this.ameApi = new amethyste(config.apiKeys.amethyste);
         this.nekoApi = new NekoBot();
-        this.serverLogId = config.serverLogId;
+        this.supportServerId = config.supportServerId;
         this.utils = require('./utils/utils.js');
         this.logger.info('Initializing...');
         this.odds = new Map();
@@ -137,7 +137,7 @@ class Client extends Discord.Client {
 
         const embed = new Discord.MessageEmbed()
             .setAuthor({
-                name: `${this.user.tag}`, iconURL: this.user.displayAvatarURL({format: 'png', dynamic: true})
+                name: `${this.user.tag}`, iconURL: this.getAvatarURL(this.user)
             })
             .setTitle(`${fail} System Error: \`${error}\``)
             .setDescription(`\`\`\`diff\n- System Failure\n+ ${errorMessage}\`\`\``)
@@ -217,12 +217,16 @@ class Client extends Discord.Client {
      */
     registerAllSlashCommands(id) {
         this.logger.info('Started refreshing application (/) commands.');
-        const data = this.commands.filter(c => c.slashCommand && c.disabled !== true);
+        const data = this.commands.filter(c => c.slashCommand && !c.disabled && c.type !== this.types.OWNER && c.type !== this.types.MANAGER);
+        const restrictedData = this.commands.filter((c) => c.slashCommand && !c.disabled && c.type === this.types.OWNER && c.type === this.types.MANAGER);
         const promises = [];
         this.guilds.cache.forEach(g => {
-            // g.commands.set([]).then(() => {
+            //Register commands for all guilds
             promises.push(this.registerSlashCommands(g, data, id));
-            // });
+            //Register restricted commands for support guild
+            if (g.id === this.config.supportServerId) {
+                promises.push(this.registerSlashCommands(g, restrictedData, id));
+            }
         });
         Promise.all(promises).then(() => {
             this.logger.info('Finished refreshing application (/) commands.');

@@ -3,6 +3,7 @@ module.exports = class MusicBackCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'back',
+            description: 'Go back to the previous track',
             aliases: ['previous'],
             usage: 'back',
             voiceChannelOnly: true,
@@ -10,21 +11,26 @@ module.exports = class MusicBackCommand extends Command {
         });
     }
 
-    async run(message) {
-        const queue = this.client.player.getQueue(message.guild.id);
+    run(message) {
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    async handle(context) {
+        const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)
-            return message.channel.send(
-                `No music currently playing ${message.author}... try again ? ❌`
-            );
+            return this.sendReply(context, `No music currently playing ${context.author}... try again ? ❌`);
 
         if (!queue.previousTracks[1])
-            return message.channel.send(
-                `There was no music played before ${message.author}... try again ? ❌`
-            );
+            return this.sendReply(context, `There was no music played before ${context.author}... try again ? ❌`);
 
         await queue.back();
 
-        message.channel.send('Playing the **previous** track ✅');
+        this.sendReply(context, 'Playing the **previous** track ✅');
     }
 };

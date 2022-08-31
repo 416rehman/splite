@@ -11,16 +11,25 @@ module.exports = class MusicStopCommand extends Command {
     }
 
     run(message) {
-        const queue = this.client.player.getQueue(message.guild.id);
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    handle(context) {
+        const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)
-            return message.channel.send(
-                `No music currently playing ${message.author}... try again ? ❌`
+            return this.sendReplyAndDelete(context,
+                `No music currently playing ${context.author}... try again ? ❌`
             );
 
         queue.destroy();
 
-        message.channel.send(
+        this.sendReplyAndDelete(context,
             'Music stopped into this server, see you next time ✅'
         );
     }

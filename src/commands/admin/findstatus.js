@@ -101,7 +101,7 @@ module.exports = class findStatusCommand extends Command {
             else {
                 embed.setTitle('Status Search Results').setFooter({
                     text: 'Expires after two minutes. Only displays online users',
-                    iconURL: context.author.displayAvatarURL(),
+                    iconURL: this.getAvatarURL(context.author),
                 });
                 await msg.delete();
                 new ButtonMenu(

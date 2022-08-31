@@ -1,87 +1,111 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const moment = require('moment');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class WarnCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'warn',
             usage: 'warn <user mention/ID> [reason]',
-            description: 'Warns a member in your server.',
+            description: 'Warns a member in your server. Member will be automatically kicked if they reach the autokick limit.',
             type: client.types.MOD,
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'KICK_MEMBERS'],
             userPermissions: ['KICK_MEMBERS'],
             examples: ['warn @split'],
+            slashCommand: new SlashCommandBuilder()
+                .addUserOption(u => u.setName('user').setRequired(true).setDescription('The user to warn'))
+                .addStringOption(t => t.setName('reason').setRequired(false).setDescription('The reason for the warning'))
         });
     }
 
+
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message);
-        const member =
-            await this.getGuildMember(message.guild, args[0]);
-        if (!member)
+        if (!args[0]) {
+            return message.reply({embeds: [this.createHelpEmbed(message, this)]});
+        }
+        const member = await this.getGuildMember(message.guild, args[0]);
+        if (!member) {
             return this.sendErrorMessage(
                 message,
                 0,
                 'Please mention a user or provide a valid user ID'
             );
-        if (member === message.member)
-            return this.sendErrorMessage(message, 0, 'You cannot warn yourself');
+        }
+
+        let reason = args.slice(1).join(' ');
+
+        this.handle(member, reason, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getMember('user');
+        const reason = interaction.options.getString('reason');
+
+        this.handle(member, reason, interaction);
+    }
+
+    async handle(member, reason, context) {
+        if (member === context.member)
+            return this.sendErrorMessage(context, 0, 'You cannot warn yourself');
         if (
-            member.roles.highest.position >= message.member.roles.highest.position
+            member.roles.highest.position >= context.member.roles.highest.position
         )
             return this.sendErrorMessage(
-                message,
+                context,
                 0,
                 'You cannot warn someone with an equal or higher role'
             );
 
-        const autoKick = message.client.db.settings.selectAutoKick
-            .pluck()
-            .get(message.guild.id); // Get warn # for auto kick
+        // Get warn # for auto kick
+        const autoKick = this.client.db.settings.selectAutoKick.pluck().get(context.guild.id);
 
-        let reason = args.slice(1).join(' ');
         if (!reason) reason = '`None`';
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
-        let warns = message.client.db.users.selectWarns
+        let warns = this.client.db.users.selectWarns
             .pluck()
-            .get(member.id, message.guild.id) || {warns: []};
+            .get(member.id, context.guild.id) || {warns: []};
+
         if (typeof warns == 'string') warns = JSON.parse(warns);
+
         const warning = {
-            mod: message.member.id,
+            mod: context.member.id,
             date: moment().format('MMM DD YYYY'),
             reason: reason,
         };
 
         warns.warns.push(warning);
 
-        message.client.db.users.updateWarns.run(
+        this.client.db.users.updateWarns.run(
             JSON.stringify(warns),
             member.id,
-            message.guild.id
+            context.guild.id
         );
 
         const embed = new MessageEmbed()
             .setTitle('Warn Member')
             .setDescription(`${member} has been warned.`)
-            .addField('Moderator', message.member.toString(), true)
+            .addField('Moderator', context.member.toString(), true)
             .addField('Member', member.toString(), true)
             .addField('Warn Count', `\`${warns.warns.length}\``, true)
             .addField('Reason', reason)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: this.getUserIdentifier(context.member),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
-        message.client.logger.info(
-            `${message.guild.name}: ${message.author.tag} warned ${member.user.tag}`
+            .setColor(context.guild.me.displayHexColor);
+
+        this.sendReply(context, {embeds: [embed]});
+
+        this.client.logger.info(
+            `${context.guild.name}: ${context.author.tag} warned ${member.user.tag}`
         );
 
         // Update mod log
-        this.sendModLogMessage(message, reason, {
+        this.sendModLogMessage(context, reason, {
             Member: member,
             'Warn Count': `\`${warns.warns.length}\``,
         });
@@ -89,14 +113,12 @@ module.exports = class WarnCommand extends Command {
         // Check for auto kick
         if (autoKick && warns.warns.length >= autoKick) {
             try {
-                const member =
-                    (await this.getGuildMember(message.guild, args[0]));
-                const reason = `Warn limit reached. Automatically kicked by ${message.guild.me}.`;
+                const reason = `Warn limit reached. Automatically kicked by ${context.guild.me}.`;
                 await member.kick(reason);
-                this.sendModLogMessage(message, reason, {Member: member});
+                this.sendModLogMessage(context, reason, {Member: member});
             }
             catch (e) {
-                this.sendErrorMessage(message, 0, e.message);
+                this.sendErrorMessage(context, 0, e.context);
             }
         }
     }

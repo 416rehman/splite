@@ -15,12 +15,23 @@ module.exports = class ServerInfoCommand extends Command {
         });
     }
 
-    async run(message) {
+    run(message) {
+        const guild = message.guild;
+        this.handle(guild, message, false);
+    }
+
+    async interact(interaction) {
+        const guild = interaction.guild;
+        await interaction.deferReply();
+        this.handle(guild, interaction, true);
+    }
+
+    async handle(guild, context, isInteraction) {
         // Get roles count
-        const roleCount = message.guild.roles.cache.size - 1; // Don't count @everyone
+        const roleCount = guild.roles.cache.size - 1; // Don't count @everyone
 
         // Get member stats
-        const members = [...(await message.guild.members.fetch()).values()];
+        const members = [...(await guild.members.fetch()).values()];
         const memberCount = members.length;
         const online = members.filter((m) => m.presence?.status === 'online').length;
         const offline = members.filter((m) => m.presence?.status === 'offline').length;
@@ -31,7 +42,7 @@ module.exports = class ServerInfoCommand extends Command {
         const intentIsEnabled = this.client.enabledIntents.find(i => i === this.client.intents.GUILD_PRESENCES);
 
         // Get channel stats
-        const channels = [...message.guild.channels.cache.values()];
+        const channels = [...guild.channels.cache.values()];
         const channelCount = channels.length;
 
         const textChannels = channels
@@ -41,9 +52,9 @@ module.exports = class ServerInfoCommand extends Command {
         const newsChannels = channels.filter((c) => c.type === 'GUILD_NEWS').length;
         const categoryChannels = channels.filter((c) => c.type === 'GUILD_CATEGORY').length;
 
-        const systemchannel = message.client.db.settings.selectSystemChannelId
+        const systemchannel = this.client.db.settings.selectSystemChannelId
             .pluck()
-            .get(message.guild.id);
+            .get(guild.id);
         const serverStats = stripIndent`
       Members  :: [ ${memberCount} ]
                :: ${bots} Bots
@@ -62,31 +73,35 @@ module.exports = class ServerInfoCommand extends Command {
     `;
 
         const embed = new MessageEmbed()
-            .setTitle(`${message.guild.name}'s Information`)
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
-            .addField('ID', `\`${message.guild.id}\``, true)
+            .setTitle(`${guild.name}'s Information`)
+            .setThumbnail(guild.iconURL({dynamic: true}))
+            .addField('ID', `\`${guild.id}\``, true)
 
-            .addField(`Owner ${owner}`, (await message.guild.fetchOwner()).toString(), true)
-            .addField('Verification Level', `\`${message.guild.verificationLevel.replace('_', ' ')}\``, true)
-            .addField('Rules Channel', message.guild.rulesChannel ? `${message.guild.rulesChannel}` : '`None`', true)
+            .addField(`Owner ${owner}`, (await guild.fetchOwner()).toString(), true)
+            .addField('Verification Level', `\`${guild.verificationLevel.replace('_', ' ')}\``, true)
+            .addField('Rules Channel', guild.rulesChannel ? `${guild.rulesChannel}` : '`None`', true)
             .addField('System Channel', systemchannel ? `<#${systemchannel}>` : '`None`', true)
-            .addField('AFK Channel', message.guild.afkChannel ? `${voice} ${message.guild.afkChannel.name}` : '`None`', true)
-            .addField('AFK Timeout', message.guild.afkChannel ? `\`${moment
-                .duration(message.guild.afkTimeout * 1000)
+            .addField('AFK Channel', guild.afkChannel ? `${voice} ${guild.afkChannel.name}` : '`None`', true)
+            .addField('AFK Timeout', guild.afkChannel ? `\`${moment
+                .duration(guild.afkTimeout * 1000)
                 .asMinutes()} minutes\`` : '`None`', true)
 
-            .addField('Default Notifications', `\`${message.guild.defaultMessageNotifications.replace('_', ' ')}\``, true)
-            .addField('Partnered', `\`${message.guild.partnered}\``, true)
-            .addField('Verified', `\`${message.guild.verified}\``, true)
-            .addField('Created On', `\`${moment(message.guild.createdAt).format('MMM DD YYYY')}\``, true)
+            .addField('Default Notifications', `\`${guild.defaultMessageNotifications.replace('_', ' ')}\``, true)
+            .addField('Partnered', `\`${guild.partnered}\``, true)
+            .addField('Verified', `\`${guild.verified}\``, true)
+            .addField('Created On', `\`${moment(guild.createdAt).format('MMM DD YYYY')}\``, true)
             .addField('Server Stats', `\`\`\`asciidoc\n${serverStats}\`\`\``)
             .setFooter({
-                text: message.member.displayName, iconURL: message.author.displayAvatarURL({dynamic: true}),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        if (message.guild.description) embed.setDescription(message.guild.description);
-        if (message.guild.bannerURL) embed.setImage(message.guild.bannerURL({dynamic: true}));
-        message.channel.send({embeds: [embed]});
+            .setTimestamp();
+        if (guild.description) embed.setDescription(guild.description);
+        if (guild.bannerURL) embed.setImage(guild.bannerURL({dynamic: true}));
+
+        const payload = {embeds: [embed]};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

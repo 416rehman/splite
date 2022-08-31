@@ -11,19 +11,28 @@ module.exports = class MusicProgressCommand extends Command {
     }
 
     run(message) {
-        const queue = this.client.player.getQueue(message.guild.id);
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    async handle(context) {
+        const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)
-            return message.channel.send(
-                `No music currently playing ${message.author}... try again ? ❌`
+            return this.sendReplyAndDelete(context,
+                `No music currently playing ${context.author}... try again ? ❌`
             );
 
         const progress = queue.createProgressBar();
         const timestamp = queue.getPlayerTimestamp();
 
-        if (timestamp.progress == 'Infinity')
-            return message.channel.send('Playing a live, no data to display 🎧');
+        if (timestamp.progress === 'Infinity')
+            return this.sendReplyAndDelete(context, 'Playing a live, no data to display 🎧');
 
-        message.channel.send(`${progress} (**${timestamp.progress}**%)`);
+        this.sendReplyAndDelete(context, `${progress} (**${timestamp.progress}**%)`);
     }
 };

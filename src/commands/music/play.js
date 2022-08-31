@@ -6,34 +6,57 @@ module.exports = class MusicPlayCommand extends Command {
         super(client, {
             name: 'play',
             aliases: ['p'],
+            description: 'Play or resume a track. Specify a search query to play a track.',
             usage: 'play [song name/URL]',
             voiceChannelOnly: true,
             type: client.types.MUSIC,
         });
     }
 
-    async run(message, args) {
-        if (!args[0]) return message.channel.send(`Please enter a valid search ${message.author}... try again ? ❌`);
+    run(message, args) {
+        this.handle(args.join(' '), message);
+    }
 
-        const res = await this.client.player.search(args.join(' '), {
-            requestedBy: message.member, searchEngine: QueryType.AUTO,
+    async interact(interaction) {
+        await interaction.deferReply();
+        const query = interaction.options.getString('query') || null;
+        this.handle(query, interaction);
+    }
+
+    async handle(query, context) {
+        if (!query) {
+            const queue = this.client.player.getQueue(context.guild.id);
+            if (!queue) {
+                return this.sendReplyAndDelete(context, `Please enter a valid search ${context.author}... try again ? ❌`);
+            }
+            else {
+                const success = queue.setPaused(false);
+
+                return this.sendReplyAndDelete(context, success
+                    ? `Current music ${queue.current.title} resumed ✅`
+                    : `Something went wrong ${context.author}... try again ? ❌`);
+            }
+        }
+
+        const res = await this.client.player.search(query, {
+            requestedBy: context.member, searchEngine: QueryType.AUTO,
         });
 
-        if (!res || !res.tracks.length) return message.channel.send(`No results found ${message.author}... try again ? ❌`);
+        if (!res || !res.tracks.length) return this.sendReplyAndDelete(context, `No results found ${context.author}... try again ? ❌`);
 
-        const queue = await this.client.player.createQueue(message.guild, {
-            metadata: message.channel,
+        const queue = await this.client.player.createQueue(context.guild, {
+            metadata: context.channel,
         });
 
         try {
-            if (!queue.connection) await queue.connect(message.member.voice.channel);
+            if (!queue.connection) await queue.connect(context.member.voice.channel);
         }
         catch {
-            await this.client.player.deleteQueue(message.guild.id);
-            return message.channel.send(`I can't join the voice channel ${message.author}... try again ? ❌`);
+            await this.client.player.deleteQueue(context.guild.id);
+            return this.sendReplyAndDelete(context, `I can't join the voice channel ${context.author}... try again ? ❌`);
         }
 
-        await message.channel.send(`Loading your ${res.playlist ? 'playlist' : 'track'}... 🎧`);
+        await this.sendReply(context, `Loading your ${res.playlist ? 'playlist' : 'track'}... 🎧`);
 
         res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
 

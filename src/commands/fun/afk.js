@@ -17,15 +17,17 @@ module.exports = class AfkCommand extends Command {
     }
 
     run(message, args) {
-        this.handle(message, args, false);
+        const messageText = args.join(' ');
+        this.handle(messageText, message);
     }
 
-    interact(interaction, args,) {
-        this.handle(interaction, args, true);
+    async interact(interaction) {
+        await interaction.deferReply();
+        const messageText = interaction.options.getString('message');
+        this.handle(messageText, interaction);
     }
 
-    async handle(context, args, isInteraction) {
-        const messageText = isInteraction ? context.options.getString('message') : args.join(' ');
+    async handle(messageText, context) {
         try {
             const d = new Date();
 
@@ -36,9 +38,9 @@ module.exports = class AfkCommand extends Command {
                 context.guild.id
             );
 
-            (await this.getGuildMember(context.guild, context.author.id))?.setNickname(`[AFK]${context.member.nickname || context.member.displayName}`);
+            await (await this.getGuildMember(context.guild, context.author.id))?.setNickname(`[AFK]${context.member.nickname || context.member.displayName}`);
 
-            return context.reply(messageText ? `${idle} ${context.author} You have gone afk: ${messageText}` : `${idle} ${context.author} You have gone afk!`);
+            return this.sendReply(context, messageText ? `${idle} ${context.author} You have gone afk: ${messageText}` : `${idle} ${context.author} You have gone afk!`);
         }
         catch (err) {
             this.client.logger.error(err);

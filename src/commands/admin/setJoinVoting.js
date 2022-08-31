@@ -58,7 +58,7 @@ module.exports = class setJoinVoting extends Command {
                 .addField('Usage', `\`${this.usage}\``)
                 .setFooter({
                     text: context.member.displayName,
-                    iconURL: context.author.displayAvatarURL(),
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
                 .setColor(context.guild.me.displayHexColor);
@@ -202,7 +202,7 @@ module.exports = class setJoinVoting extends Command {
                 .addField('Voting Channel', `${channel}`, true)
                 .setFooter({
                     text: context.member.displayName,
-                    iconURL: context.author.displayAvatarURL(),
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp();
 

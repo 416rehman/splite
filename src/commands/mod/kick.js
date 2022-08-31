@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const {MessageButton} = require('discord.js');
 const {MessageActionRow} = require('discord.js');
 const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class KickCommand extends Command {
     constructor(client) {
@@ -14,16 +15,18 @@ module.exports = class KickCommand extends Command {
             userPermissions: ['KICK_MEMBERS'],
             examples: ['kick @split'],
             exclusive: true,
+            slashCommand: new SlashCommandBuilder()
+                .addUserOption(u => u.setName('user').setRequired(true).setDescription('The user to kick'))
+                .addStringOption(s => s.setName('reason').setRequired(false).setDescription('The reason for the kick'))
         });
     }
 
     async run(message, args) {
         if (!args[0]) {
             this.done(message.author.id);
-            return this.sendHelpMessage(message);
+            return message.reply({embeds: [this.createHelpEmbed(message, this)]});
         }
-        const member =
-            await this.getGuildMember(message.guild, args[0]);
+        const member = await this.getGuildMember(message.guild, args[0]);
         if (!member) {
             this.done(message.author.id);
             return this.sendErrorMessage(
@@ -32,20 +35,35 @@ module.exports = class KickCommand extends Command {
                 'Please mention a user or provide a valid user ID'
             );
         }
-        if (member === message.member) {
-            this.done(message.author.id);
-            return this.sendErrorMessage(message, 0, 'You cannot kick yourself');
-        }
-        if (!member.kickable) {
-            this.done(message.author.id);
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Provided member is not kickable'
-            );
-        }
 
         let reason = args.slice(1).join(' ');
+
+        this.handle(member, reason, message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getMember('user');
+        const reason = interaction.options.getString('reason');
+
+        this.handle(member, reason, interaction);
+    }
+
+    handle(member, reason, context) {
+        if (member === context.member) {
+            this.done(context.author.id);
+            return this.sendErrorMessage(context, 0, 'You cannot kick yourself');
+        }
+
+        // if (!member.kickable) {
+        //     this.done(message.author.id);
+        //     return this.sendErrorMessage(
+        //         message,
+        //         0,
+        //         'Provided member is not kickable'
+        //     );
+        // }
+
         if (!reason) reason = '`None`';
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
@@ -62,80 +80,87 @@ module.exports = class KickCommand extends Command {
                 .setLabel('❌ Cancel')
                 .setStyle('DANGER')
         );
-        message.channel
-            .send({
-                embeds: [
-                    new MessageEmbed()
-                        .setTitle('Kick Member')
-                        .setDescription(`Do you want to kick ${member}?`)
-                        .setFooter({
-                            text: 'Expires in 15s',
-                            iconURL: message.author.avatarURL(),
-                        }),
-                ],
-                components: [row],
-            })
-            .then((msg) => {
-                const filter = (button) => button.user.id === message.author.id;
-                const collector = msg.createMessageComponentCollector({
-                    filter,
-                    componentType: 'BUTTON',
-                    time: 15000,
-                    dispose: true,
-                });
 
-                let updated = false;
-                collector.on('collect', async (b) => {
-                    this.done(message.author.id);
-                    if (b.customId === 'proceed') {
+        const payload = {
+            embeds: [
+                new MessageEmbed()
+                    .setTitle('Kick Member')
+                    .setDescription(`Do you want to kick ${member}?`)
+                    .setFooter({
+                        text: 'Expires in 15s',
+                        iconURL: this.getAvatarURL(context.author)
+                    }),
+            ],
+            components: [row],
+        };
+        this.sendReply(context, payload).then((msg) => {
+            const filter = (button) => button.user.id === context.author.id;
+            const collector = msg.createMessageComponentCollector({
+                filter,
+                componentType: 'BUTTON',
+                time: 15000,
+                dispose: true,
+            });
+
+            let updated = false;
+            collector.on('collect', async (b) => {
+                this.done(context.author.id);
+                if (b.customId === 'proceed') {
+                    try {
                         await member.kick(reason);
 
                         const embed = new MessageEmbed()
                             .setTitle('Kick Member')
                             .setDescription(`${member} was successfully kicked.`)
-                            .addField('Moderator', message.member.toString(), true)
+                            .addField('Moderator', context.member.toString(), true)
                             .addField('Member', member.toString(), true)
                             .addField('Reason', reason)
                             .setFooter({
-                                text: message.member.displayName,
-                                iconURL: message.author.displayAvatarURL({
+                                text: context.member.displayName,
+                                iconURL: context.author.displayAvatarURL({
                                     dynamic: true,
                                 }),
                             })
                             .setTimestamp()
-                            .setColor(message.guild.me.displayHexColor);
+                            .setColor(context.guild.me.displayHexColor);
                         msg.edit({embeds: [embed], components: []});
-                        message.client.logger.info(
-                            `${message.guild.name}: ${message.author.tag} kicked ${member.user.tag}`
+                        this.client.logger.info(
+                            `${context.guild.name}: ${context.author.tag} kicked ${member.user.tag}`
                         );
                         updated = true;
                         // Update mod log
-                        this.sendModLogMessage(message, reason, {Member: member});
+                        this.sendModLogMessage(context, reason, {Member: member});
                     }
-                    else {
-                        updated = true;
-                        msg.edit({
-                            components: [],
-                            embeds: [
-                                new MessageEmbed()
-                                    .setTitle('Kick Member')
-                                    .setDescription(`${member} Not Kicked - Cancelled`),
-                            ],
-                        });
+                    catch (e) {
+                        this.sendErrorMessage(context, 0, 'Failed to kick member - Not kickable');
+                        this.client.logger.error(e);
                     }
-                });
-                collector.on('end', () => {
-                    this.done(message.author.id);
-                    if (updated) return;
+
+                }
+                else {
+                    updated = true;
                     msg.edit({
                         components: [],
                         embeds: [
                             new MessageEmbed()
                                 .setTitle('Kick Member')
-                                .setDescription(`${member} Not Kicked - Expired`),
+                                .setDescription(`${member} Not Kicked - Cancelled`),
                         ],
                     });
+                }
+            });
+            collector.on('end', () => {
+                this.done(context.author.id);
+                if (updated) return;
+                msg.edit({
+                    components: [],
+                    embeds: [
+                        new MessageEmbed()
+                            .setTitle('Kick Member')
+                            .setDescription(`${member} Not Kicked - Expired`),
+                    ],
                 });
             });
+        });
     }
 };

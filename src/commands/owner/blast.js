@@ -13,20 +13,28 @@ module.exports = class BlastCommand extends Command {
     }
 
     run(message, args) {
-        if (!args[0])
+        const messageText = args.join(' ');
+        this.handle(messageText, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const messageText = interaction.options.getString('message');
+        this.handle(messageText, interaction);
+    }
+
+    handle(messageText, context) {
+        if (!messageText)
             return this.sendErrorMessage(
-                message,
+                context,
                 0,
-                'Please provide a message to blast'
+                'Please provide a context to blast'
             );
-        const msg = message.content.slice(
-            message.content.indexOf(args[0]),
-            message.content.length
-        );
+
         const guilds = [];
-        message.client.guilds.cache.forEach((guild) => {
+        this.client.guilds.cache.forEach((guild) => {
             const systemChannelId =
-                message.client.db.settings.selectSystemChannelId
+                this.client.db.settings.selectSystemChannelId
                     .pluck()
                     .get(guild.id);
             const systemChannel = guild.channels.cache.get(systemChannelId);
@@ -38,11 +46,11 @@ module.exports = class BlastCommand extends Command {
                     .has(['SEND_MESSAGES', 'EMBED_LINKS'])
             ) {
                 const embed = new MessageEmbed()
-                    .setTitle(`${message.client.name} System Message`)
+                    .setTitle(`${this.client.name} System Message`)
                     .setThumbnail('https://i.imgur.com/B0XSinY.png')
-                    .setDescription(msg)
+                    .setDescription(messageText)
                     .setTimestamp()
-                    .setColor(message.guild.me.displayHexColor)
+                    .setColor('RANDOM')
                     .setFooter({
                         text: 'Don\'t want this message here? Use the "setsystemchannel" command to change it',
                     });
@@ -53,18 +61,30 @@ module.exports = class BlastCommand extends Command {
 
         if (guilds.length > 0) {
             // Trim array
-            const description = message.client.utils.trimStringFromArray(guilds);
+            const description = this.client.utils.trimStringFromArray(guilds);
 
             const embed = new MessageEmbed()
                 .setTitle('Blast Failures')
                 .setDescription(description)
                 .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: context.member.displayName,
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
-            message.channel.send({embeds: [embed]});
+                .setColor(context.guild.me.displayHexColor);
+            this.sendReply(context, {embeds: [embed]});
         }
+
+        const embed = new MessageEmbed()
+            .setTitle('Blast Success')
+            .setDescription('All messages were sent successfully to **' + guilds.length + '** servers.')
+            .setFooter({
+                text: context.member.displayName,
+                iconURL: this.getAvatarURL(context.author),
+            })
+            .setTimestamp()
+            .setColor(context.guild.me.displayHexColor);
+        this.sendReply(context, {embeds: [embed]});
+
     }
 };

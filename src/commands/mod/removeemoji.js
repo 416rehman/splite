@@ -21,16 +21,28 @@ module.exports = class RemoveEmojiCommand extends Command {
     }
 
     run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message, 'Remove Emoji');
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Remove Emoji', this)]});
+        this.handle(args, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const emojis = interaction.options.getString('emojis');
+        const args = emojis.split(' ');
+        this.handle(args, interaction);
+    }
+
+    async handle(emojis, context) {
         try {
-            args.forEach((emoji) => {
-                removeemoji(emoji, message, this);
-            });
+            this.sendReplyAndDelete(context, 'Removing emojis', 1000);
+            for (const emoji of emojis) {
+                await removeemoji(emoji, context, this);
+            }
         }
         catch (err) {
             this.client.logger.error(err);
             this.sendErrorMessage(
-                message,
+                context,
                 1,
                 'An error occured while removing the emoji. Common reasons are:- Deleting an emoji that is not from this server.',
                 err
@@ -39,38 +51,33 @@ module.exports = class RemoveEmojiCommand extends Command {
     }
 };
 
-async function removeemoji(emoji, message, command) {
+async function removeemoji(emoji, context, command) {
     if (!emoji)
-        command.sendErrorMessage(message, 0, 'Please mention a valid emoji.');
+        command.sendErrorMessage(context, 0, 'Please mention a valid emoji.');
     let customemoji = Discord.Util.parseEmoji(emoji); //Check if it's a emoji
-    customemoji = await message.guild.emojis.cache.find(
+
+    customemoji = await context.guild.emojis.cache.find(
         (e) => e.id === customemoji.id
     );
 
-    if (customemoji.id) {
+    if (customemoji?.id) {
         customemoji.delete().then(() => {
-            message.channel.send({
+            context.channel.send({
                 embeds: [
                     new Discord.MessageEmbed()
                         .setDescription(`${_emojis.success} ${emoji} Removed!`)
-                        .setFooter({
-                            text: message.member.displayName,
-                            iconURL: message.author.displayAvatarURL({
-                                dynamic: true,
-                            }),
-                        }),
                 ],
             });
         });
 
-        await command.sendModLogMessage(message, '', {
-            Member: message.member.toString(),
+        await command.sendModLogMessage(context, '', {
+            Member: context.member.toString(),
             'Removed Emoji': `\`${emoji}\``,
         });
     }
     else
         return command.sendErrorMessage(
-            message,
+            context,
             0,
             `Please mention a custom emoji from THIS server. ${emoji} is invalid`
         );

@@ -54,7 +54,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: context.member.displayName,
-                iconURL: context.author.displayAvatarURL(),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
 

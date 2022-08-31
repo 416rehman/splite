@@ -1,5 +1,6 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class ServerIconCommand extends Command {
     constructor(client) {
@@ -9,19 +10,32 @@ module.exports = class ServerIconCommand extends Command {
             usage: 'servericon',
             description: 'Displays the server\'s icon.',
             type: client.types.INFO,
+            slashCommand: new SlashCommandBuilder()
         });
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         const embed = new MessageEmbed()
-            .setTitle(`${message.guild.name}'s Icon`)
-            .setImage(message.guild.iconURL({dynamic: true, size: 512}))
+            .setTitle(`${context.guild.name}'s Icon`)
+            .setImage(context.guild.iconURL({dynamic: true, size: 512}))
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
+            .setColor('RANDOM');
+
+        const payload = {embeds: [embed]};
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

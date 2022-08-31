@@ -17,25 +17,34 @@ module.exports = class testWelcomeCommand extends Command {
     }
 
     run(message) {
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    handle(context) {
         let {
             welcome_channel_id: welcomeChannelId,
             welcome_message: welcomeMessage,
-        } = message.client.db.settings.selectWelcomes.get(message.guild.id);
-        const welcomeChannel = message.guild.channels.cache.get(welcomeChannelId);
+        } = this.client.db.settings.selectWelcomes.get(context.guild.id);
+        const welcomeChannel = context.guild.channels.cache.get(welcomeChannelId);
 
         if (
             welcomeChannel &&
             welcomeChannel.viewable &&
             welcomeChannel
-                .permissionsFor(message.guild.me)
+                .permissionsFor(context.guild.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
             welcomeMessage
         ) {
             welcomeMessage = welcomeMessage
-                .replace(/`?\?member`?/g, message.member) // Member mention substitution
-                .replace(/`?\?username`?/g, message.member.user.username) // Username substitution
-                .replace(/`?\?tag`?/g, message.member.user.tag) // Tag substitution
-                .replace(/`?\?size`?/g, message.guild.memberCount); // Guild size substitution
+                .replace(/`?\?member`?/g, context.member) // Member mention substitution
+                .replace(/`?\?username`?/g, context.member.user.username) // Username substitution
+                .replace(/`?\?tag`?/g, context.member.user.tag) // Tag substitution
+                .replace(/`?\?size`?/g, context.guild.memberCount); // Guild size substitution
             welcomeChannel.send({
                 embeds: [
                     new MessageEmbed()
@@ -45,22 +54,23 @@ module.exports = class testWelcomeCommand extends Command {
             });
         }
         else {
-            message.channel.send({
+            const payload = {
                 embeds: [
                     new MessageEmbed()
                         .setDescription(
-                            `${emojis.fail} There is no welcome message set for this server.\n\n\`setwelcomemessage\` Sets a welcome message\n\`setwelcomechannel\` Sets the channel to post the welcome message to. `
+                            `${emojis.fail} There is no welcome message set for this server.\n\n\`setwelcomemessage\` Sets a welcome context\n\`setwelcomechannel\` Sets the channel to post the welcome message to. `
                         )
                         .setColor('RED')
                         .setFooter({
-                            text: message.member.displayName,
-                            iconURL: message.author.displayAvatarURL({
+                            text: context.member.displayName,
+                            iconURL: context.author.displayAvatarURL({
                                 dynamic: true,
                             }),
                         })
                         .setTimestamp(),
                 ],
-            });
+            };
+            this.sendReply(context, payload);
         }
     }
 };

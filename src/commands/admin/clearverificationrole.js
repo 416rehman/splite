@@ -50,7 +50,7 @@ module.exports = class clearVerificationRoleCommand extends Command {
             .addField('Channel', verificationChannel?.toString() || '`None`', true)
             .addField('Message', verificationMessage || '`None`')
             .setFooter({
-                text: context.member.displayName, iconURL: context.author.displayAvatarURL({dynamic: true}),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

@@ -8,12 +8,12 @@ module.exports = class AvatarCommand extends Command {
             name: 'avatar',
             aliases: ['profilepic', 'pic', 'av'],
             usage: 'avatar [user mention/ID]',
-            description:
-                'Displays a user\'s avatar (or your own, if no user is mentioned).',
+            description: 'Displays a user\'s avatar (or your own, if no user is mentioned).',
             type: client.types.INFO,
             examples: ['avatar @split'],
             slashCommand: new SlashCommandBuilder().addUserOption((option) =>
                 option
+                    .setRequired(false)
                     .setName('user')
                     .setDescription('The user to display the avatar of.')
             ),
@@ -22,17 +22,18 @@ module.exports = class AvatarCommand extends Command {
 
     async run(message, args) {
         const member =
-            await this.getGuildMember(message.guild, args[0]) || message.member;
+            await this.getGuildMember(message.guild, args.join(' ')) || message.member;
 
         this.handle(member, message);
     }
 
-    interact(interaction) {
+    async interact(interaction) {
+        await interaction.deferReply();
         const user = interaction.options.getUser('user') || interaction.member;
-        this.handle(user, interaction, true);
+        this.handle(user, interaction);
     }
 
-    handle(targetUser, context, isInteraction) {
+    handle(targetUser, context) {
         const embed = new MessageEmbed()
             .setAuthor({
                 name: this.getUserIdentifier(targetUser),
@@ -42,15 +43,12 @@ module.exports = class AvatarCommand extends Command {
             .setTitle(`${this.getUserIdentifier(targetUser)}'s Avatar`)
             .setImage(this.getAvatarURL(targetUser))
             .setFooter({
-                text: context.member.displayName,
+                text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.member),
             })
             .setTimestamp()
             .setColor(targetUser.displayHexColor);
 
-        if (isInteraction) return context.reply({embeds: [embed]});
-
-        context.channel.send({embeds: [embed]});
+        this.sendReply(context, {embeds: [embed]});
     }
-
 };

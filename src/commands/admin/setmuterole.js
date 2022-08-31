@@ -36,7 +36,7 @@ module.exports = class SetMuteRoleCommand extends Command {
 
             .setFooter({
                 text: context.member.displayName,
-                iconURL: context.author.displayAvatarURL({dynamic: true}),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
 

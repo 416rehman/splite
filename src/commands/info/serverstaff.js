@@ -1,32 +1,43 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class ServerStaffCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'serverstaff',
-            aliases: ['staff'],
+            aliases: ['staff', 'admins', 'mods'],
             usage: 'serverstaff',
             description:
                 'Displays a list of all current server moderators and admins.',
             type: client.types.INFO,
+            slashCommand: new SlashCommandBuilder().setName('staff')
         });
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         // Get mod role
-        const modRoleId = message.client.db.settings.selectModRoleId
+        const modRoleId = this.client.db.settings.selectModRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         let modRole, mods;
-        if (modRoleId) modRole = message.guild.roles.cache.get(modRoleId);
+        if (modRoleId) modRole = context.guild.roles.cache.get(modRoleId);
 
         // Get admin role
-        const adminRoleId = message.client.db.settings.selectAdminRoleId
+        const adminRoleId = this.client.db.settings.selectAdminRoleId
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         let adminRole, admins;
-        if (adminRoleId) adminRole = message.guild.roles.cache.get(adminRoleId);
+        if (adminRoleId) adminRole = context.guild.roles.cache.get(adminRoleId);
 
         let modList = [],
             adminList = [];
@@ -39,7 +50,8 @@ module.exports = class ServerStaffCommand extends Command {
             ];
 
         if (modList.length > 0)
-            mods = message.client.utils.trimStringFromArray(modList, 1024);
+            mods = this.client.utils.trimStringFromArray(modList, 1024);
+        else if (!modRole) mods = 'No Mod Role is set. Please use /setmodrole';
         else mods = 'No mods found.';
 
         // Get admin list
@@ -50,20 +62,23 @@ module.exports = class ServerStaffCommand extends Command {
             ];
 
         if (adminList.length > 0)
-            admins = message.client.utils.trimStringFromArray(adminList, 1024);
+            admins = this.client.utils.trimStringFromArray(adminList, 1024);
+        else if (!adminRole) admins = 'No Admin Role is set. Please use /adminrole command';
         else admins = 'No admins found.';
 
         const embed = new MessageEmbed()
             .setTitle(`Server Staff List [${modList.length + adminList.length}]`)
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .addField(`Admins [${adminList.length}]`, admins, true)
             .addField(`Mods [${modList.length}]`, mods, true)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
+            .setTimestamp();
+
+        const payload = {embeds: [embed]};
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

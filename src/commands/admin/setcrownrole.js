@@ -54,7 +54,7 @@ module.exports = class SetCrownRoleCommand extends Command {
             .addField('Schedule', `\`${crownSchedule ? crownSchedule : 'None'}\``, true)
             .addField('Message', this.client.utils.replaceCrownKeywords(crownMessage) || '`None`')
             .setFooter({
-                text: context.member.displayName, iconURL: context.author.displayAvatarURL({dynamic: true}),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

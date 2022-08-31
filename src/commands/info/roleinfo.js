@@ -7,7 +7,7 @@ module.exports = class RoleInfoCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'roleinfo',
-            aliases: ['role', 'ri'],
+            aliases: ['ri'],
             usage: 'roleinfo <role mention/ID>',
             description: 'Fetches information about the provided role.',
             type: client.types.INFO,
@@ -24,6 +24,16 @@ module.exports = class RoleInfoCommand extends Command {
                 'Please mention a role or provide a valid role ID'
             );
 
+        this.handle(role, message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const role = interaction.options.getRole('role');
+        this.handle(role, interaction, true);
+    }
+
+    handle(role, context, isInteraction) {
         // Get role permissions
         const rolePermissions = role.permissions.toArray();
         const finalPermissions = [];
@@ -35,12 +45,12 @@ module.exports = class RoleInfoCommand extends Command {
 
         // Reverse role position
         const position = `\`${
-            message.guild.roles.cache.size - role.position
-        }\`/\`${message.guild.roles.cache.size}\``;
+            context.guild.roles.cache.size - role.position
+        }\`/\`${context.guild.roles.cache.size}\``;
 
         const embed = new MessageEmbed()
             .setTitle('Role Information')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
             .addField('Role', role.toString(), true)
             .addField('Role ID', `\`${role.id}\``, true)
             .addField('Position', position, true)
@@ -59,11 +69,13 @@ module.exports = class RoleInfoCommand extends Command {
                 `\`\`\`diff\n${finalPermissions.join('\n')}\`\`\``
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(role.hexColor);
-        message.channel.send({embeds: [embed]});
+            .setTimestamp();
+
+        const payload = {embeds: [embed]};
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

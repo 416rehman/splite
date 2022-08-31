@@ -12,25 +12,35 @@ module.exports = class MusicSeekCommand extends Command {
         });
     }
 
-    async run(message, args) {
-        const queue = this.client.player.getQueue(message.guild.id);
+    run(message, args) {
+        this.handle(args.join(' '), message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const time = interaction.options.getString('time') || null;
+        this.handle(time, interaction);
+    }
+
+    async handle(time, context) {
+        const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)
-            return message.channel.send(
-                `No music currently playing ${message.author}... try again ? ❌`
+            return this.sendReplyAndDelete(context,
+                `No music currently playing ${context.author}... try again ? ❌`
             );
 
-        const timeToMS = ms(args.join(' '));
+        const timeToMS = ms(time);
 
         if (timeToMS >= queue.current.durationMS)
-            return message.channel.send(
-                `The indicated time is higher than the total time of the current song ${message.author}... try again ? ❌\n*Try for example a valid time like **5s, 10s, 20 seconds, 1m**...*`
+            return this.sendReplyAndDelete(context,
+                `The indicated time is higher than the total time of the current song ${context.author}... try again ? ❌\n*Try for example a valid time like **5s, 10s, 20 seconds, 1m**...*`
             );
 
         await queue.seek(timeToMS);
 
-        message.channel.send(
-            `Time set on the current song **${ms(timeToMS, { long: true })}** ✅`
+        this.sendReplyAndDelete(context,
+            `Time set on the current song **${ms(timeToMS, {long: true})}** ✅`
         );
     }
 };

@@ -53,7 +53,7 @@ module.exports = class clearVerificationMessageCommand extends Command {
             )
             .setFooter({
                 text: context.member.displayName,
-                iconURL: context.author.displayAvatarURL({dynamic: true}),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

@@ -44,7 +44,7 @@ module.exports = class clearCrownChannelCommand extends Command {
             .addField('Status', '`disabled`')
             // .addField('Message', this.client.utils.replaceCrownKeywords(crownMessage) || '`None`')
             .setFooter({
-                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

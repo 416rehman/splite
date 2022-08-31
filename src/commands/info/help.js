@@ -4,61 +4,73 @@ const emojis = require('../../utils/emojis.json');
 const {MessageActionRow} = require('discord.js');
 const {MessageButton} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
+const {SlashCommandBuilder} = require('@discordjs/builders');
+
 module.exports = class HelpCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'help', aliases: ['commands', 'h', 'support'], usage: 'help [command | all]', description: oneLine`
+            name: 'help',
+            aliases: ['commands', 'h', 'support'],
+            usage: 'help [command | all]',
+            description: oneLine`
         Displays a list of all current commands, sorted by category. 
         Can be used in conjunction with a command for additional information.
         Will only display commands that you have permission to access unless the \`all\` parameter is given.
-      `, type: client.types.INFO, examples: ['help ping'],
+      `,
+            type: client.types.INFO,
+            examples: ['help ping'],
+            slashCommand: new SlashCommandBuilder().addStringOption((o) => o.setName('command').setDescription('The command to get information about.').setRequired(false))
         });
     }
 
-    async run(message, args) {
+    run(message, args) {
+        const commandString = args[0];
+        this.handle(commandString, message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const commandString = interaction.options.getString('command');
+        await this.handle(commandString, interaction, true);
+    }
+
+    async handle(commandString, context, isInteraction) {
         // Get disabled commands
-        let disabledCommands = message.client.db.settings.selectDisabledCommands
-            .pluck()
-            .get(message.guild.id) || [];
+        let disabledCommands = this.client.db.settings.selectDisabledCommands.pluck().get(context.guild.id) || [];
         if (typeof disabledCommands === 'string') disabledCommands = disabledCommands.split(' ');
 
-        const all = args[0] === 'all' ? args[0] : '';
+        const all = commandString === 'all' ? commandString : '';
         const embed = new MessageEmbed();
-        const prefix = message.client.db.settings.selectPrefix
+        const prefix = this.client.db.settings.selectPrefix
             .pluck()
-            .get(message.guild.id); // Get prefix
+            .get(context.guild.id); // Get prefix
         const {
             INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, MANAGER, OWNER,
-        } = message.client.types;
-        const {capitalize} = message.client.utils;
+        } = this.client.types;
+        const {capitalize} = this.client.utils;
 
-        const command = message.client.commands.get(args[0]) || message.client.aliases.get(args[0]);
+        const command = this.client.commands.get(commandString) || this.client.aliases.get(commandString);
 
         // Build specific command help embed
         if (command
-            && ((command.type !== OWNER || message.client.isOwner(message.member)) || (command.type !== MANAGER || message.client.isManager(message.member)))
+            && ((command.type !== OWNER || this.client.isOwner(context.member)) || (command.type !== MANAGER || this.client.isManager(context.member)))
             && !disabledCommands.includes(command.name)) {
-            embed.setTitle(`Command: \`${command.name}\``)
-                .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
-                .setDescription(command.description)
-                .addField('Usage', `\`${prefix}${command.usage}\``, true)
-                .addField('Type', `\`${capitalize(command.type)}\``, true)
-                .setFooter({
-                    text: message.member.displayName, iconURL: message.author.displayAvatarURL(),
-                })
-                .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
-            if (command.aliases) embed.addField('Aliases', command.aliases.map((c) => `\`${c}\``).join(' '));
-            if (command.examples) embed.addField('Examples', command.examples.map((c) => `\`${prefix}${c}\``).join('\n'));
-            return message.channel.send({embeds: [embed]});
+
+            const embed = this.createHelpEmbed(context, command, prefix);
+
+            const payload = {embeds: [embed]};
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
-        else if (args.length > 0 && !all) {
-            return this.sendErrorMessage(message, 0, 'Unable to find command, please check provided command');
+        else if (commandString && !all) {
+            const payload = `${emojis.fail} **${capitalize(commandString)} is not a valid command.** Please try again.`;
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else {
             // Get commands
             const commands = {};
-            for (const type of Object.values(message.client.types)) {
+            for (const type of Object.values(this.client.types)) {
                 commands[type] = [];
             }
 
@@ -76,18 +88,18 @@ module.exports = class HelpCommand extends Command {
                 [OWNER]: `${emojis.owner} ${capitalize(OWNER)}`,
             };
 
-            message.client.commands.forEach((command) => {
-                if (!disabledCommands.includes(command.name) && !command.name.startsWith('clear') && !command.name.startsWith('texthelp')) {
-                    if (command.type === this.client.types.OWNER && !message.client.isOwner(message.member)) return;
-                    if (command.type === this.client.types.MANAGER && !message.client.isManager(message.member)) return;
+            this.client.commands.forEach((command) => {
+                if (!disabledCommands.includes(command.name) && !command.name.startsWith('clear')) {
+                    if (command.type === this.client.types.OWNER && !this.client.isOwner(context.member)) return;
+                    if (command.type === this.client.types.MANAGER && !this.client.isManager(context.member)) return;
 
-                    if (command.userPermissions && command.userPermissions.every((p) => message.member.permissions.has(p)) && !all) commands[command.type].push(`\`${command.name}\``); else if (!command.userPermissions || all) commands[command.type].push(`\`${command.name}\``);
+                    if (command.userPermissions && command.userPermissions.every((p) => context.member.permissions.has(p)) && !all) commands[command.type].push(`\`${command.name}\``); else if (!command.userPermissions || all) commands[command.type].push(`\`${command.name}\``);
                 }
             });
 
-            commands['Slash Only Commands'] = message.client.slashCommands.map((s) => {
+            commands['Slash Only Commands'] = this.client.slashCommands.map((s) => {
                 if (s.name === 'view') {
-                    if (message.member.permissions.has('MANAGE_GUILD')) return `\`${s.name}\` ${s.description}`;
+                    if (context.member.permissions.has('MANAGE_GUILD')) return `\`${s.name}\` ${s.description}`;
                 }
                 else return `\`${s.name}\` ${s.description}`;
             });
@@ -113,23 +125,22 @@ module.exports = class HelpCommand extends Command {
                 }
             }
             const total = Object.values(commands).reduce((a, b) => a + b.length, 0) - commands[OWNER].length;
-            const size = message.client.commands.size - commands[OWNER].length;
+            const size = this.client.commands.size - commands[OWNER].length;
 
             embed // Build help embed
-                .setTitle(`${message.client.name}'s Commands`)
+                .setTitle(`${this.client.name}'s Commands`)
                 .setDescription(stripIndent`
           **Prefix:** \`${prefix}\`
           **Command Information:** \`${prefix}help [command]\`
           ${!all && size !== total ? `**All Commands:** \`${prefix}help all\`` : ''}\n
         `)
                 .setFooter({
-                    text: `Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: 'Expires in 60 seconds' + context.member.displayName,
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
-                .setColor(message.guild.me.displayHexColor)
-                .addField('**Links**', `[Invite Me](${message.client.config.inviteLink}) | [Support Server](${message.client.config.supportServer})`);
+                .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
+                .addField('**Links**', `[Invite Me](${this.client.config.inviteLink}) | [Support Server](${this.client.config.supportServer})`);
 
             const chunks = 4; //tweak this to add more items per line
             let rows = new Array(Math.ceil(allButtons.length / chunks))
@@ -143,29 +154,31 @@ module.exports = class HelpCommand extends Command {
                     return row;
                 });
 
-            let msg = await message.channel.send({
-                components: rows, embeds: [embed],
-            });
+            let msg;
+            const payload = {components: rows, embeds: [embed],};
 
-            const filter = (button) => button.user.id === message.author.id;
+            if (isInteraction) msg = await context.editReply(payload);
+            else msg = context.loadingMessage ? await context.loadingMessage.edit(payload) : await context.reply(payload);
+
+
+            const filter = (button) => button.user.id === context.author.id;
             const collector = msg.createMessageComponentCollector({
                 filter, componentType: 'BUTTON', time: 60000, dispose: true,
             });
             let tempEmbed = new MessageEmbed()
-                .setTitle(`${message.client.name}'s Commands`)
+                .setTitle(`${this.client.name}'s Commands`)
                 .setDescription(`**Prefix:** \`${prefix}\`\n**Command Information:** \`${prefix}help [command]\`\n${!all && size !== total ? `**All Commands:** \`${prefix}help all\`` : ''}\n`)
-                .setThumbnail(`${message.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`);
+                .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`);
 
             collector.on('collect', (b) => {
                 const type = `${b.customId}`.replace(/_/g, ' ');
                 tempEmbed.fields = [];
                 tempEmbed = tempEmbed
                     .setFooter({
-                        text: `Expires in 60 seconds \nFor text-only help command, type ${prefix}texthelp \n` + message.member.displayName,
-                        iconURL: message.author.displayAvatarURL(),
+                        text: 'Expires in 60 seconds - ' + context.member.displayName,
+                        iconURL: this.getAvatarURL(context.author),
                     })
-                    .setTimestamp()
-                    .setColor('RANDOM');
+                    .setTimestamp();
 
                 if (type === 'Slash Only Commands') tempEmbed.addField(`${emojis.verified_developer} **/${type}**`, '' + commands[type]); else tempEmbed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, `${emojiMap[type].includes('Admin') ? 'Commands can be cleared by replacing "set" with "clear".\ni.e `setmodlog` ➔ `clearmodlog`\n-----------------------------------------------------\n' : ''} ${commands[type].join(', ')}`);
 
@@ -174,8 +187,8 @@ module.exports = class HelpCommand extends Command {
             });
             collector.on('end', () => {
                 embed.setFooter({
-                    text: `Expired! \nFor text-only help command, type ${prefix}texthelp \n` + message?.member?.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: 'Expired! \nFor text-only help command - ' + this.getUserIdentifier(context.member),
+                    iconURL: this.getAvatarURL(context.member),
                 });
                 msg.edit({components: [], embeds: [embed]});
             });

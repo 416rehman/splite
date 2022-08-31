@@ -53,6 +53,10 @@ module.exports = async (client, message) => {
         let command = client.commands.get(cmd) || client.aliases.get(cmd); // If command not found, check aliases
 
         if (command && !disabledCommands.includes(command.name)) {
+
+            // Check if the run method is implemented
+            if (typeof command.run !== 'function') return;
+
             //Blacklisted user
             if (command.checkBlacklist(message.author)) return message
                 .reply({

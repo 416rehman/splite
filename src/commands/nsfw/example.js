@@ -4,11 +4,10 @@ const {MessageEmbed} = require('discord.js');
 module.exports = class nsfwCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'betn',
-            usage: 'bet <user mention/id/name> <point count>',
-            aliases: ['bet'],
-            description:
-                'Bet against someone. Winner receives double the bet amount',
+            name: 'example',
+            usage: 'example',
+            aliases: ['exam'],
+            description: 'This is an example command for the NSFW category (Only available in NSFW channels)',
             type: client.types.NSFW,
             examples: ['betn @split 1000'],
             exclusive: true,

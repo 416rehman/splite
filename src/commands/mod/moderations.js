@@ -4,6 +4,7 @@ const ButtonMenu = require('../ButtonMenu.js');
 const emojis = require('../../utils/emojis.json');
 const {MessageActionRow} = require('discord.js');
 const {MessageButton} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class modActivityCommand extends Command {
     constructor(client) {
@@ -20,121 +21,85 @@ module.exports = class modActivityCommand extends Command {
                 'modactivity @split 7',
             ],
             userPermissions: ['VIEW_AUDIT_LOG'],
+            slashCommand: new SlashCommandBuilder()
+                .addIntegerOption(d => d.setName('days').setDescription('The number of days to filter by.'))
+                .addRoleOption(r => r.setName('role').setDescription('The role to get the mod activity of.'))
+                .addUserOption(u => u.setName('user').setDescription('The user to get the mod activity of.'))
         });
     }
 
-    run(message, args) {
-        const embed = new MessageEmbed()
-            .setDescription(`${emojis.load} Fetching Mod Activity...`)
-            .setColor('RANDOM');
-
-        message.channel.send({embeds: [embed]}).then(async (msg) => {
-            const activityButton = new MessageButton()
-                .setCustomId('activity')
-                .setLabel('Activity Leaderboard')
-                .setStyle('SECONDARY');
-            activityButton.setEmoji(
-                emojis.info.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]
-            );
-            const pointsButton = new MessageButton()
-                .setCustomId('points')
-                .setLabel('Points Leaderboard')
-                .setStyle('SECONDARY');
-            pointsButton.setEmoji(
-                emojis.point.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]
-            );
-
-            const row = new MessageActionRow();
-            row.addComponents(activityButton);
-            row.addComponents(pointsButton);
-
-            if (!args[0])
-                await this.sendMultipleMessageCount(
-                    args,
-                    message,
-                    msg,
-                    embed,
-                    'Server Mod Activity',
-                    1000,
-                    row
-                );
-            else {
-                const target = await this.getGuildMemberOrRole(message.guild, args[0]);
-                let days = parseInt(args[1]) || 1000;
-
-                if (target) {
-                    if (
-                        target.constructor.name === 'GuildMember' ||
-                        target.constructor.name === 'User'
-                    )
-                        return this.sendUserMessageCount(
-                            message,
-                            target,
-                            embed,
-                            msg,
-                            days
-                        );
-                    else if (target.constructor.name === 'Role')
-                        return this.sendMultipleMessageCount(
-                            args,
-                            message,
-                            msg,
-                            embed,
-                            `${target.name}'s ${
-                                days < 1000 && days > 0 ? days + ' Day ' : ''
-                            }Mod Activity`,
-                            days,
-                            row,
-                            target
-                        );
-                }
-                else if (!args[1]) {
-                    days = parseInt(args[0]) || 1000;
-                    await this.sendMultipleMessageCount(
-                        args,
-                        message,
-                        msg,
-                        embed,
-                        `Server ${
-                            days < 1000 && days > 0 ? days + ' Day ' : ''
-                        }Mod Activity`,
-                        days,
-                        row
-                    );
-                }
-                else {
-                    msg.edit({embeds: [this.errorEmbed('Invalid user or role.')]});
-                }
-            }
-        });
+    async run(message, args) {
+        const target = args[0] ? await this.getGuildMemberOrRole(message.guild, args[0]) : null;
+        let days = args[1] ? parseInt(args[1]) : 1000;
+        this.handle(target, days, message);
     }
 
-    async sendMultipleMessageCount(
-        args,
-        message,
-        msg,
-        embed,
-        title,
-        days = 1000,
-        row,
-        role
-    ) {
+    async interact(interaction) {
+        await interaction.deferReply();
+        const role = interaction.options.getRole('role');
+        const user = interaction.options.getMember('user');
+        const days = interaction.options.getInteger('days') || 1000;
+
+        this.handle(role || user, days, interaction);
+    }
+
+    async handle(target, days, context) {
+        const activityButton = new MessageButton()
+            .setCustomId('activity')
+            .setLabel('Activity Leaderboard')
+            .setStyle('SECONDARY')
+            .setEmoji(emojis.info.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
+
+        const pointsButton = new MessageButton()
+            .setCustomId('points')
+            .setLabel('Points Leaderboard')
+            .setStyle('SECONDARY')
+            .setEmoji(emojis.point.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
+
+        const row = new MessageActionRow()
+            .addComponents(activityButton)
+            .addComponents(pointsButton);
+
+        if (!target) {
+            await this.sendMultipleMessageCount(
+                context,
+                `Server ${
+                    days < 1000 && days > 0 ? days + ' Day ' : ''
+                }Mod Activity`,
+                days,
+                row
+            );
+        }
+        else if (target) {
+            //User
+            if (target.constructor.name === 'GuildMember' || target.constructor.name === 'User')
+                return this.sendUserMessageCount(context, target, days);
+            //Role
+            else if (target.constructor.name === 'Role')
+                return this.sendMultipleMessageCount(context, `${target.name}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Mod Activity`, days, row, target);
+        }
+        else {
+            return this.sendErrorMessage(context, 0, '', 'Invalid user or role.');
+        }
+
+    }
+
+    async sendMultipleMessageCount(context, title, days = 1000, row, role) {
+        const embed = new MessageEmbed();
         if (days > 1000 || days < 0) days = 1000;
 
         let moderators;
-        if (role) {
+        if (role) { //Role
             if (role.members.size > 1000)
-                return msg.edit(
-                    `${emojis.fail} This role has too many members, please try again with a role that has less than 1000 members.`
-                );
+                return this.sendErrorMessage(context, 0, '', `${emojis.fail} This role has too many members, please try again with a role that has less than 1000 members.`);
 
             moderators = this.selectById(role.members.map((m) => {
                 return m.id;
-            }), message, days);
+            }), context, days);
         }
-        else {
-            moderators = message.client.db.activities.getGuildModerations.all(
-                message.guild.id,
+        else { // Entire server
+            moderators = this.client.db.activities.getGuildModerations.all(
+                context.guild.id,
                 days
             );
         }
@@ -153,9 +118,8 @@ module.exports = class modActivityCommand extends Command {
         });
 
         if (descriptions.length <= max) {
-            const range =
-                descriptions.length == 1 ? '[1]' : `[1 - ${descriptions.length}]`;
-            await msg.edit({
+            const range = descriptions.length == 1 ? '[1]' : `[1 - ${descriptions.length}]`;
+            await this.sendReply(context, {
                 embeds: [
                     embed
                         .setTitle(`${title} ${range}`)
@@ -164,18 +128,18 @@ module.exports = class modActivityCommand extends Command {
             });
         }
         else {
-            const position = lb.findIndex((p) => p.user.id === message.author.id);
-            embed.setTitle(title).setFooter({
-                text:
-                    'Expires after two minutes.\n' +
-                    `${message.member.displayName}'s position: ${position + 1}`,
-                iconURL: message.author.displayAvatarURL(),
-            });
-            msg.delete();
+            const position = lb.findIndex((p) => p.user.id === context.author.id);
+            embed
+                .setTitle(title)
+                .setFooter({
+                    text: 'Expires after two minutes.\n' + `${context.member.displayName}'s position: ${position + 1}`,
+                    iconURL: this.getAvatarURL(context.author),
+                });
+
             new ButtonMenu(
-                message.client,
-                message.channel,
-                message.member,
+                this.client,
+                context.channel,
+                context.member,
                 embed,
                 descriptions,
                 max,
@@ -183,7 +147,7 @@ module.exports = class modActivityCommand extends Command {
                 120000,
                 [row],
                 (m) => {
-                    const filter = (button) => button.user.id === message.author.id;
+                    const filter = (button) => button.user.id === context.author.id;
                     const collector = m.createMessageComponentCollector({
                         filter,
                         componentType: 'BUTTON',
@@ -192,13 +156,13 @@ module.exports = class modActivityCommand extends Command {
                     });
                     collector.on('collect', (b) => {
                         if (b.customId === 'activity') {
-                            message.client.commands.get('activity').run(message, []);
+                            this.client.commands.get('activity').run(context, []);
                             m.delete();
                         }
                         else if (b.customId === 'points') {
-                            message.client.commands
+                            this.client.commands
                                 .get('leaderboard')
-                                .run(message, []);
+                                .run(context, []);
                             m.delete();
                         }
                     });
@@ -207,31 +171,23 @@ module.exports = class modActivityCommand extends Command {
         }
     }
 
-    selectById(ids, message, days) {
-        const params = '?,'.repeat(ids.length).slice(0, -1);
-        const stmt = message.client.db.db.prepare(
-            `SELECT SUM(moderations) as moderations, user_id FROM activities WHERE guild_id = ${message.guild.id} AND activity_date > date('now', '-${days} day' ) AND user_id IN (${params}) GROUP BY user_id ORDER BY 1 DESC;`
+    selectById(ids, context, days) {
+        const params = ids.map(() => '?').join(',');
+        const stmt = this.client.db.db.prepare(
+            `SELECT SUM(moderations) as moderations, user_id FROM activities WHERE guild_id = ${context.guild.id} AND activity_date > date('now', '-${days} day' ) AND user_id IN (${params}) GROUP BY user_id ORDER BY 1 DESC;`
         );
-        return stmt.all(ids);
+        return stmt.all(...ids);
     }
 
-    sendUserMessageCount(message, target, embed, msg, days = 1000) {
+    sendUserMessageCount(context, target, days = 1000) {
         if (days > 1000 || days < 0) days = 1000;
-        const messages = message.client.db.activities.getModerations
+        const messages = this.client.db.activities.getModerations
             .pluck()
-            .get(target.id, message.guild.id, days || 1000);
+            .get(target.id, context.guild.id, days || 1000);
+        const embed = new MessageEmbed()
+            .setTitle(`${target.displayName}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`)
+            .setDescription(`${target} has performed **${messages || 0} moderations** ${days === 1000 ? 'so far!' : 'in the last ' + days + ' days!'}`);
 
-        embed.setTitle(
-            `${target.displayName}'s ${
-                days < 1000 && days > 0 ? days + ' Day ' : ''
-            }Activity`
-        );
-        embed.setDescription(
-            `${target} has performed **${messages || 0} moderations** ${
-                days === 1000 ? 'so far!' : 'in the last ' + days + ' days!'
-            }`
-        );
-
-        msg.edit({embeds: [embed]});
+        this.sendReply(context, {embeds: [embed]});
     }
 };

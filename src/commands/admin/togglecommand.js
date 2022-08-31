@@ -96,7 +96,7 @@ module.exports = class ToggleCommandCommand extends Command {
             .addField('Disabled Commands', disabledCommands, true)
             .setFooter({
                 text: context.member.displayName,
-                iconURL: context.author.displayAvatarURL(),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

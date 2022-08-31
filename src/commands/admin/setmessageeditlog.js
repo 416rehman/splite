@@ -41,7 +41,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
 
             .setFooter({
                 text: context.member.displayName,
-                iconURL: context.author.displayAvatarURL(),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
 

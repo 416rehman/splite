@@ -13,22 +13,35 @@ module.exports = class PrefixCommand extends Command {
     }
 
     run(message) {
-        const prefix = message.client.db.settings.selectPrefix
-            .pluck()
-            .get(message.guild.id); // Get prefix
-        const embed = new MessageEmbed()
-            .setTitle(`${message.client.name}'s Prefix`)
-            .setThumbnail(
-                `${
-                    message.client.config.botLogoURL ||
-                    'https://i.imgur.com/B0XSinY.png'
-                }`
-            )
-            .addField('Prefix', `\`${prefix}\``, true)
-            .addField('Example', `\`${prefix}ping\``, true)
-            .setFooter({text: `To change the prefix, type ${prefix}setprefix`})
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    async handle(context, isInteraction) {
+        const prefix = this.client.db.settings.selectPrefix.pluck().get(context.guild.id);
+
+        const payload = {
+            embeds: [
+                new MessageEmbed()
+                    .setTitle(`${this.client.name}'s Prefix`)
+                    .setThumbnail(
+                        `${
+                            this.client.config.botLogoURL ||
+                            'https://i.imgur.com/B0XSinY.png'
+                        }`
+                    )
+                    .addField('Prefix', `\`${prefix}\``, true)
+                    .addField('Example', `\`${prefix}ping\``, true)
+                    .setFooter({text: `To change the prefix, type ${prefix}setprefix`})
+                    .setTimestamp()
+            ]
+        };
+
+        if (isInteraction) await context.editReply(payload);
+        else context.reply(payload);
     }
 };

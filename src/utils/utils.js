@@ -10,7 +10,7 @@ const config = require('../../config.json');
  * @param {string} string
  */
 function capitalize(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+    return string ? string.charAt(0).toUpperCase() + string.slice(1) : '';
 }
 
 /**
@@ -119,7 +119,6 @@ async function getCaseNumber(client, guild, modLog) {
  * @param {...*} args
  */
 function getStatus(...args) {
-    console.log({args});
     for (const arg of args) {
         if (!arg) return 'disabled';
     }

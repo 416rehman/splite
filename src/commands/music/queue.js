@@ -15,25 +15,34 @@ module.exports = class MusicQueueCommand extends Command {
     }
 
     run(message) {
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    handle(context) {
         const max = 10;
         const methods = ['', '🔂', '🔁'];
 
-        if (!message.member.voice.channel)
-            return message.channel.send(
+        if (!context.member.voice.channel)
+            return this.sendReplyAndDelete(context,
                 `${fail} - You're not in a voice channel !`
             );
         if (
-            message.guild.me.voice.channel &&
-            message.member.voice.channel.id !== message.guild.me.voice.channel.id
+            context.guild.me.voice.channel &&
+            context.member.voice.channel.id !== context.guild.me.voice.channel.id
         )
-            return message.channel.send(
+            return this.sendReplyAndDelete(context,
                 `${fail} - You are not in the same voice channel !`
             );
 
-        const queue = this.client.player.getQueue(message.guild.id);
+        const queue = this.client.player.getQueue(context.guild.id);
 
-        if (!this.client.player.getQueue(message.guild.id))
-            return message.channel.send(`${fail} - No songs currently playing !`);
+        if (!this.client.player.getQueue(context.guild.id))
+            return this.sendReplyAndDelete(context, `${fail} - No songs currently playing !`);
 
         const q = [];
         q.push(
@@ -55,7 +64,7 @@ module.exports = class MusicQueueCommand extends Command {
 
         if (q.length <= max + 1) {
             const range = q.length === 1 ? '[1]' : `[1 - ${q.length}]`;
-            message.channel.send({
+            this.sendReplyAndDelete(context, {
                 embeds: [
                     new MessageEmbed()
                         .setTitle(
@@ -66,24 +75,25 @@ module.exports = class MusicQueueCommand extends Command {
             });
         }
         else {
+            this.sendReply(context, 'Queue Loaded!');
             const embed = new MessageEmbed()
                 .setTitle(
                     `Server Queue - ${q.length - 1} | ${
-                        this.client.player.getQueue(message.guild.id).repeatMode
+                        this.client.player.getQueue(context.guild.id).repeatMode
                             ? '(looped)'
                             : ''
                     }`
                 )
-                .setThumbnail(message.guild.iconURL({dynamic: true}))
+                .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setFooter({
                     text: 'Expires after two minutes.',
-                    iconURL: message.author.displayAvatarURL({dynamic: true}),
+                    iconURL: this.getAvatarURL(context.author),
                 });
 
             new ButtonMenu(
                 this.client,
-                message.channel,
-                message.member,
+                context.channel,
+                context.member,
                 embed,
                 q,
                 max

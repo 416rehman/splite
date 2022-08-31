@@ -14,8 +14,18 @@ module.exports = class ServersCommand extends Command {
         });
     }
 
+
     run(message) {
-        const servers = [...message.client.guilds.cache.values()]
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    handle(context) {
+        const servers = [...this.client.guilds.cache.values()]
             .sort((a, b) => a.joinedTimestamp - b.joinedTimestamp)
             .map((guild) => {
                 return `\`${guild.id}\` - \`${guild.memberCount}\` - **${
@@ -26,15 +36,15 @@ module.exports = class ServersCommand extends Command {
         const embed = new MessageEmbed()
             .setTitle('Server List')
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         if (servers.length <= 25) {
             const range = servers.length === 1 ? '[1]' : `[1 - ${servers.length}]`;
-            message.channel.send({
+            this.sendReply(context, {
                 embeds: [
                     embed
                         .setTitle(`Server List ${range}`)
@@ -44,9 +54,9 @@ module.exports = class ServersCommand extends Command {
         }
         else
             new ButtonMenu(
-                message.client,
-                message.channel,
-                message.member,
+                this.client,
+                context.channel,
+                context.member,
                 embed,
                 servers,
                 25

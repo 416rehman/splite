@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class SnipeCommand extends Command {
     constructor(client) {
@@ -10,23 +11,28 @@ module.exports = class SnipeCommand extends Command {
             aliases: ['s', 'sn', 'sniper'],
             description: 'Shows the most recently deleted message in the channel',
             type: client.types.INFO,
+            slashCommand: new SlashCommandBuilder()
         });
     }
 
-    async run(message) {
-        const embed = new MessageEmbed()
-            .setDescription('`Sniping...`')
-            .setColor('RANDOM');
-        const msg = await message.channel.send({embeds: [embed]});
+    run(message) {
+        this.handle(message, false);
+    }
 
-        const snipedMSg = message.guild.snipes.get(message.channel.id);
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    async handle(context, isInteraction) {
+        const snipedMSg = context.guild.snipes.get(context.channel.id);
 
         if (snipedMSg && !this.client.utils.isEmptyMessage(snipedMSg)) {
-            embed
+            const embed = new MessageEmbed()
                 .setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
                 .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: this.getUserIdentifier(context.author),
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setImage(
                     `${
@@ -37,8 +43,8 @@ module.exports = class SnipeCommand extends Command {
                 )
                 .setTimestamp()
                 .setAuthor({
-                    name: `${snipedMSg.author.username}#${snipedMSg.author.discriminator}`,
-                    iconURL: snipedMSg.author.displayAvatarURL(),
+                    name: this.getUserIdentifier(snipedMSg.author),
+                    iconURL: this.getAvatarURL(snipedMSg.author),
                 });
 
             const payload = {
@@ -52,17 +58,24 @@ module.exports = class SnipeCommand extends Command {
                 }) : [],
             };
 
-            msg.edit(payload);
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else {
-            embed
-                .setTitle(`${message.client.name} Sniper`)
+            const embed = new MessageEmbed()
+                .setTitle(`${this.client.name} Sniper`)
                 .setDescription(`${fail} There is nothing to snipe!`)
                 .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: this.getUserIdentifier(context.author),
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp();
+
+            const payload = {embeds: [embed]};
+            let msg;
+            if (isInteraction) msg = await context.editReply(payload);
+            else msg = context.loadingMessage ? await context.loadingMessage.edit(payload) : await context.reply(payload);
+
             msg.edit({embeds: [embed]}).then((m) => {
                 setTimeout(() => m.delete(), 5000);
             });

@@ -42,7 +42,7 @@ module.exports = class clearWelcomeMessageCommand extends Command {
             .setDescription(`The \`welcome message\` was successfully cleared. ${success}`)
             .addField('Channel', welcomeChannel?.toString() || '`None`', true)
             .setFooter({
-                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

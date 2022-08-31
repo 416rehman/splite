@@ -53,7 +53,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
             .addField('Role', verificationRole?.toString() || '`None`', true)
             .addField('Channel', verificationChannel?.toString() || '`None`', true)
             .setFooter({
-                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

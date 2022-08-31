@@ -14,52 +14,63 @@ module.exports = class EmojisCommand extends Command {
     }
 
     run(message) {
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
         const emojis = [];
-        message.guild.emojis.cache.forEach((e) =>
+        context.guild.emojis.cache.forEach((e) =>
             emojis.push(`${e} **-** \`:${e.name}:\``)
         );
 
         const embed = new MessageEmbed()
-            .setTitle(`Emoji List [${message.guild.emojis.cache.size}]`)
+            .setTitle(`Emoji List [${context.guild.emojis.cache.size}]`)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setTimestamp();
 
         const interval = 25;
-        if (emojis.length === 0)
-            message.channel.send({
-                embeds: [embed.setDescription('No emojis found. 😢')],
-            });
+        if (emojis.length === 0) {
+            const payload = {embeds: [embed.setDescription('No emojis found. 😢')]};
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        }
         else if (emojis.length <= interval) {
             const range = emojis.length == 1 ? '[1]' : `[1 - ${emojis.length}]`;
-            message.channel.send({
+
+            const payload = {
                 embeds: [
                     embed
                         .setTitle(`Emoji List ${range}`)
                         .setDescription(emojis.join('\n'))
-                        .setThumbnail(message.guild.iconURL({dynamic: true})),
-                ],
-            });
+                        .setThumbnail(context.guild.iconURL({dynamic: true})),
+                ]
+            };
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
 
-            // Reaction Menu
         }
         else {
             embed
                 .setTitle('Emoji List')
-                .setThumbnail(message.guild.iconURL({dynamic: true}))
+                .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setFooter({
                     text:
-                        'Expires after two minutes.\n' + message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                        'Expires after two minutes.\n' + this.getUserIdentifier(context.author),
+                    iconURL: this.getAvatarURL(context.author),
                 });
 
             new ButtonMenu(
-                message.client,
-                message.channel,
-                message.member,
+                this.client,
+                context.channel,
+                context.member,
                 embed,
                 emojis,
                 interval

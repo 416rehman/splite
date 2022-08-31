@@ -11,23 +11,33 @@ module.exports = class MusicSkipCommand extends Command {
     }
 
     run(message) {
-        const queue = this.client.player.getQueue(message.guild.id);
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    handle(context) {
+
+        const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)
-            return message.channel.send(
-                `No music currently playing ${message.author}... try again ? ❌`
+            return this.sendReplyAndDelete(context,
+                `No music currently playing ${context.author}... try again ? ❌`
             );
 
         const success = queue.skip();
 
         const result =
-            queue.repeatMode == 1
+            queue.repeatMode === 1
                 ? 'This track is on repeat. Use the `repeat` command to stop repeating this track.'
-                : `Skipped ${success.user.username} ✅`;
-        return message.channel.send(
+                : 'Skipped ✅';
+        return this.sendReplyAndDelete(context,
             success
                 ? result
-                : `Something went wrong ${message.author}... try again ? ❌`
+                : `Something went wrong ${context.author}... try again ? ❌`
         );
     }
 };

@@ -2,6 +2,7 @@ const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {permissions} = require('../../utils/constants.json');
 const {oneLine} = require('common-tags');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class PermissionsCommand extends Command {
     constructor(client) {
@@ -15,13 +16,22 @@ module.exports = class PermissionsCommand extends Command {
       `,
             type: client.types.INFO,
             examples: ['permissions @split'],
+            slashCommand: new SlashCommandBuilder().addUserOption(u => u.setRequired(false).setDescription('The user to get permissions for.').setName('user')),
         });
     }
 
     async run(message, args) {
-        const member =
-            await this.getGuildMember(message.guild, args[0]) || message.member;
+        const user = await this.getGuildMember(message.guild, args[0]) || message.member;
+        this.handle(user, message, false);
+    }
 
+    async interact(interaction) {
+        await interaction.deferReply();
+        const user = interaction.options.getUser('user') || interaction.member;
+        this.handle(user, interaction, true);
+    }
+
+    handle(member, context, isInteraction) {
         // Get member permissions
         const memberPermissions = member.permissions.toArray();
         const finalPermissions = [];
@@ -33,14 +43,16 @@ module.exports = class PermissionsCommand extends Command {
 
         const embed = new MessageEmbed()
             .setTitle(`${member.displayName}'s Permissions`)
-            .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
+            .setThumbnail(this.getAvatarURL(member.user))
             .setDescription(`\`\`\`diff\n${finalPermissions.join('\n')}\`\`\``)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.author),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(member.displayHexColor);
-        message.channel.send({embeds: [embed]});
+            .setTimestamp();
+
+        const payload = {embeds: [embed]};
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

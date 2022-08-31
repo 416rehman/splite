@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class CrownCommand extends Command {
     constructor(client) {
@@ -11,20 +12,28 @@ module.exports = class CrownCommand extends Command {
             description:
                 'Displays all crowned guild members, the crown role, and crown schedule.',
             type: client.types.POINTS,
+            slashCommand: new SlashCommandBuilder()
         });
     }
 
     run(message) {
-        const {crown_role_id} = message.client.db.settings.selectCrown.get(
-            message.guild.id
+        this.handle(message, false);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+        const {crown_role_id} = this.client.db.settings.selectCrown.get(
+            context.guild.id
         );
         const crownRole =
-            message.guild.roles.cache.get(crown_role_id);
+            context.guild.roles.cache.get(crown_role_id);
         if (!crownRole) {
-            return this.sendErrorMessage(
-                message,
-                'There is no crown role set up for this server. Use the `setcrownrole` command to set one up.'
-            );
+            const payload = 'There is no crown role set up for this server. Use the `setcrownrole` command to set one up';
+            return this.sendReply(context, payload, isInteraction);
         }
         const crowned = [
             ...crownRole.members.values()
@@ -32,7 +41,7 @@ module.exports = class CrownCommand extends Command {
 
         let description = `${
             emojis.crown
-        } ${message.client.utils.trimStringFromArray(crowned)} ${emojis.crown}`;
+        } ${this.client.utils.trimStringFromArray(crowned)} ${emojis.crown}`;
         if (crowned.length === 0)
             description = `No one has the crown ${emojis.crown}`;
 
@@ -40,9 +49,17 @@ module.exports = class CrownCommand extends Command {
             .setTitle('Crowned Members')
             .setDescription(description)
             .addField('Crown Role', crownRole.toString())
-            .setFooter({text: 'Upcoming Crown Transfer --> '})
-            .setTimestamp(message.guild.job.nextInvocation())
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
+            .setFooter({
+                text: this.getUserIdentifier(context.member),
+                iconURL: this.getAvatarURL(context.author),
+            });
+
+
+        if (context.guild.job.nextInvocation) {
+            embed.setTimestamp(context.guild.job.nextInvocation())
+                .setFooter({text: 'Upcoming Crown Transfer --> '});
+        }
+        const payload = {embeds: [embed]};
+        this.sendReply(context, payload, isInteraction);
     }
 };

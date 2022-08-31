@@ -13,36 +13,49 @@ module.exports = class WipePointsCommand extends Command {
         });
     }
 
-    async run(message, args) {
-        const member =
-            await this.getGuildMember(message.guild, args[0]);
-        if (!member)
+
+    run(message, args) {
+        this.handle(args[0], args[1], message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const userId = interaction.options.getString('userid');
+        const percentage = interaction.options.getInteger('percent');
+        this.handle(userId, percentage, interaction);
+    }
+
+    handle(userId, percent, context) {
+        if (!userId) {
+            return this.sendErrorMessage(context, 0, 'Please mention a user or provide a valid user ID');
+        }
+
+        if (isNaN(percent))
             return this.sendErrorMessage(
-                message,
+                context,
                 0,
-                'Please mention a user or provide a valid user ID'
+                'Please provide the winning percentage to set'
             );
-        if (isNaN(args[1]))
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please provide the amount of points to set'
-            );
-        message.client.odds.set(member.id, {
-            lose: (100 - parseInt(args[1])) / 100,
-            win: parseInt(args[1]) / 100,
+
+        const member = this.client.users.fetch(userId);
+        if (!member) {
+            return this.sendErrorMessage(context, 0, 'Unable to find user, please check the provided ID');
+        }
+
+        this.client.odds.set(member.id, {
+            lose: (100 - parseInt(percent)) / 100,
+            win: parseInt(percent) / 100,
         });
         const embed = new MessageEmbed()
             .setTitle('Set Odds')
             .setDescription(
-                `Successfully set ${member}'s winning odds to \`${args[1]}%\`.`
+                `Successfully set ${member}'s winning odds to \`${percent}%\`.`
             )
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.member),
+                iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
+            .setTimestamp();
+        this.sendReply(context, {embeds: [embed]});
     }
 };

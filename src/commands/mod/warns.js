@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const ButtonMenu = require('../ButtonMenu.js');
 const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class WarnsCommand extends Command {
     constructor(client) {
@@ -13,37 +14,42 @@ module.exports = class WarnsCommand extends Command {
             type: client.types.MOD,
             userPermissions: ['KICK_MEMBERS'],
             examples: ['warns @split'],
+            slashCommand: new SlashCommandBuilder()
+                .addUserOption(u => u.setName('user').setRequired(true).setDescription('The user to view warnings for'))
         });
     }
 
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message);
         const member =
-            await this.getGuildMember(message.guild, args[0]);
-        if (!member)
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please mention a user or provide a valid user ID'
-            );
+            await this.getGuildMember(message.guild, args.join(' ')) || message.member;
 
-        let warns = message.client.db.users.selectWarns
+        this.handle(member, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const user = interaction.options.getUser('user') || interaction.member;
+        this.handle(user, interaction);
+    }
+
+    async handle(member, context) {
+        let warns = this.client.db.users.selectWarns
             .pluck()
-            .get(member.id, message.guild.id) || {warns: []};
+            .get(member.id, context.guild.id) || {warns: []};
         if (typeof warns == 'string') warns = JSON.parse(warns);
         const count = warns.warns.length;
 
         const embed = new MessageEmbed()
             .setAuthor({
-                name: member.user.tag,
-                iconURL: member.user.displayAvatarURL({dynamic: true}),
+                name: this.getUserIdentifier(member),
+                iconURL: this.getAvatarURL(member),
             })
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(context.member),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor(context.guild.me.displayHexColor);
 
         const buildEmbed = async (current, embed) => {
             const max = count > current + 5 ? current + 5 : count;
@@ -54,7 +60,7 @@ module.exports = class WarnsCommand extends Command {
                     .addField('Reason', warns.warns[i].reason)
                     .addField(
                         'Moderator',
-                        (await message.guild.members.fetch(warns.warns[i].mod))
+                        (await context.guild.members.fetch(warns.warns[i].mod))
                             ?.toString() || '`Unable to find moderator`',
                         true
                     )
@@ -72,23 +78,27 @@ module.exports = class WarnsCommand extends Command {
                 );
         };
 
-        if (count == 0)
-            message.channel.send({
+        if (count == 0) {
+            const payload = {
                 embeds: [
                     embed
                         .setTitle('Warn List [0]')
                         .setDescription(`${member} currently has no warns.`),
                 ],
-            });
-        else if (count < 5)
-            message.channel.send({embeds: [buildEmbed(0, embed)]});
+            };
+            this.sendReply(context, payload);
+        }
+        else if (count < 5) {
+            const payload = {embeds: [buildEmbed(0, embed)]};
+            this.sendReply(context, payload);
+        }
         else {
             let n = 0;
             const json = embed
                 .setFooter({
                     text:
-                        'Expires after three minutes.\n' + message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                        'Expires after three minutes.\n' + context.member.displayName,
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .toJSON();
 
@@ -129,15 +139,7 @@ module.exports = class WarnsCommand extends Command {
                 '⏹': null,
             };
 
-            const menu = new ButtonMenu(
-                message.client,
-                message.channel,
-                message.member,
-                buildEmbed(n, new MessageEmbed(json)),
-                null,
-                null,
-                reactions
-            );
+            const menu = new ButtonMenu(this.client, context.channel, context.member, await buildEmbed(n, new MessageEmbed(json)), null, null, reactions);
 
             menu.functions['⏹'] = menu.stop.bind(menu);
         }

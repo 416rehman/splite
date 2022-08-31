@@ -3,6 +3,10 @@
   "defaultPrefix": "..",
   "token": "BOT_TOKEN..",
   "supportServer": "https://discord.gg/8Uk2REYmd3",
+  "supportServerId": "ID of the support Server. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
+  "bugReportChannelId": "ID of the bug report channel. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
+  "feedbackChannelId": "ID of the feedback channel. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
+  "confessionReportsID": "ID of the channel where confession reports are sent. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "inviteLink": "https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=8&scope=bot%20applications.commands",
   "botLogoURL": "https://i.imgur.com/B0XSinY.png",
   "owners": [
@@ -12,10 +16,6 @@
     "123456789012346578",
     "123456789012346578"
   ],
-  "bugReportChannelId": "ID of the bug report channel. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
-  "feedbackChannelId": "ID of the feedback channel. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
-  "serverLogId": "ID of the server log channelID. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
-  "confessionReportsID": "ID of the channel where confession reports are sent. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "webserver": {
     "port": 17170,
     "debug": true,

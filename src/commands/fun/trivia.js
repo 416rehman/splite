@@ -1,8 +1,6 @@
 const Command = require('../Command.js');
 const {
-    MessageEmbed,
-    MessageActionRow,
-    MessageSelectMenu,
+    MessageEmbed, MessageActionRow, MessageSelectMenu,
 } = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
@@ -29,32 +27,26 @@ module.exports = class TriviaCommand extends Command {
             type: client.types.FUN,
             examples: ['trivia sports'],
             slashCommand: new SlashCommandBuilder().addStringOption(topic => topic.setName('topic').setRequired(false).setDescription('The topic to play trivia on')
-                .addChoices(
-                    client.topics.trivia.map(topic => {
-                        return [topic, topic];
-                    })
-                ))
+                .addChoices(client.topics.trivia.map(topic => {
+                    return [topic, topic];
+                })))
         });
     }
 
     run(message) {
         if (!this.client.topics?.trivia?.length) return message.channel.send('There are no trivia questions available.');
-        const row = new MessageActionRow().addComponents(
-            new MessageSelectMenu()
-                .setCustomId('trivia-topic')
-                .setPlaceholder('Select a topic')
-                .addOptions(this.client.topics.trivia.map(topic => {
-                    return {
-                        label: this.client.utils.capitalize(topic.replace('-', ' ')),
-                        // description: topic,
-                        value: topic
-                    };
-                }))
-        );
+        const row = new MessageActionRow().addComponents(new MessageSelectMenu()
+            .setCustomId('trivia-topic')
+            .setPlaceholder('Select a topic')
+            .addOptions(this.client.topics.trivia.map(topic => {
+                return {
+                    label: this.client.utils.capitalize(topic.replace('-', ' ')), // description: topic,
+                    value: topic
+                };
+            })));
 
         message.reply({
-            embeds: [new MessageEmbed().setDescription('**Trivia** - Please select a category.')],
-            components: [row]
+            embeds: [new MessageEmbed().setDescription('**Trivia** - Please select a category.')], components: [row]
         }).then(msg => {
             const filter = (option) => {
                 option.deferUpdate();
@@ -62,10 +54,7 @@ module.exports = class TriviaCommand extends Command {
             };
 
             const selectCollector = msg.createMessageComponentCollector({
-                filter,
-                componentType: 'SELECT_MENU',
-                maxUsers: 1,
-                time: 30000
+                filter, componentType: 'SELECT_MENU', maxUsers: 1, time: 30000
             });
 
             selectCollector.on('collect', (component) => {
@@ -86,7 +75,7 @@ module.exports = class TriviaCommand extends Command {
         this.handle(topic, interaction, true);
     }
 
-    handle(topic, context, isInteraction) {
+    async handle(topic, context, isInteraction) {
         try {
             // Get question and answers
             const path = __basedir + '/data/trivia/' + topic + '.yaml';
@@ -111,35 +100,24 @@ module.exports = class TriviaCommand extends Command {
                     .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
                     .addField('Question', `${question}`)
                     .setFooter({
-                        text: `Expires in ${timeout / 1000} seconds`,
-                        iconURL: this.getAvatarURL(context.author)
+                        text: `Expires in ${timeout / 1000} seconds`, iconURL: this.getAvatarURL(context.author)
                     })
                     .setImage(url ? url[0] : undefined)
                     .setTimestamp()]
             };
 
-            if (isInteraction) context.editReply(payload).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.3));
-            else {
-                if (context.loadingMessage) {
-                    context.loadingMessage.edit(payload);
-                    setTimeout(() => context.loadingMessage.delete(), timeout + timeout * 0.3);
-                }
-                else {
-                    context.channel.send(payload).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.3));
-                }
-            }
+            const msg = await this.sendReply(context, payload);
 
             let winner;
 
             const collector = context.channel.createMessageCollector({
-                filter: (m) => !m.author.bot,
-                time: timeout
+                filter: (m) => !m.author.bot, time: timeout
             }); // Wait 30 seconds
 
-            collector.on('collect', msg => {
-                if (answers.includes(msg.content.trim().toLowerCase().replace(/\.|'|-|\s/g, ''))) {
-                    winner = msg.author;
-                    msg.react('✅');
+            collector.on('collect', m => {
+                if (answers.includes(m.content.trim().toLowerCase().replace(/\.|'|-|\s/g, ''))) {
+                    winner = m.author;
+                    m.react('✅');
                     collector.stop();
                 }
             });
@@ -148,36 +126,35 @@ module.exports = class TriviaCommand extends Command {
                 const answerEmbed = new MessageEmbed()
                     .setTitle('Trivia')
                     .setFooter({
-                        text: this.getUserIdentifier(context.author),
-                        iconURL: this.getAvatarURL(context.author)
+                        text: this.getUserIdentifier(context.author), iconURL: this.getAvatarURL(context.author)
                     })
                     .setTimestamp();
 
                 if (winner) {
-                    this.client.db.users.updatePoints.run(
-                        {points: reward},
-                        winner.id,
-                        context.guild.id
-                    );
+                    this.client.db.users.updatePoints.run({points: reward}, winner.id, context.guild.id);
                     context.channel.send({
-                        embeds: [
-                            answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer!`)
-                                .addField('Points Earned', `**+${reward}** ${emojis.point}`),
-                        ]
+                        embeds: [answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer!`)
+                            .addField('Points Earned', `**+${reward}** ${emojis.point}`),]
                     });
+
+                    const payload = {
+                        embeds: [answerEmbed
+                            .setDescription(`${winner} gave the correct answer!`)
+                            .addField('Question', `${question}`)
+                            .addField('Correct Answers', origAnswers.join('\n'))]
+                    };
+
+                    msg.edit(payload);
                 }
                 else {
                     const payload = {
-                        embeds: [
-                            answerEmbed
-                                .setDescription('Sorry, time\'s up! Better luck next time.')
-                                .addField('Question', `${question}`)
-                                .addField('Correct Answers', origAnswers.join('\n'))
-                        ]
+                        embeds: [answerEmbed
+                            .setDescription('Sorry, time\'s up! Better luck next time.')
+                            .addField('Question', `${question}`)
+                            .addField('Correct Answers', origAnswers.join('\n'))]
                     };
 
-                    if (isInteraction) context.editReply(payload);
-                    else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+                    msg.edit(payload);
                 }
             });
         }
@@ -188,8 +165,7 @@ module.exports = class TriviaCommand extends Command {
                     .setDescription(fail + ' ' + err.message)
                     .setColor('RED')],
             };
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            this.sendReply(context, payload);
         }
     }
 };

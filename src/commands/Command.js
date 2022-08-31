@@ -3,6 +3,7 @@ const {permissions} = require('../utils/constants.json');
 const {Collection} = require('discord.js');
 const {fail} = require('../utils/emojis.json');
 const emojis = require('../utils/emojis.json');
+const {capitalize} = require('../utils/utils');
 
 /**
  * Command class
@@ -111,10 +112,14 @@ class Command {
          */
         if (options.slashCommand) {
             this.slashCommand = options.slashCommand;
-            if (!this.slashCommand.name) this.slashCommand.setName(this.name);
-            this.slashCommand.setDescription( //max length of description is 100
-                ((this.type === this.client.types.OWNER ? 'RESTRICTED COMMAND: ' : '') + this.description).substring(0, 100)
-            );
+            if (!this.slashCommand.name) this.slashCommand.setName(this.name); // Implicitly set the name to the command name if not set
+            if (this.type === this.client.types.OWNER)
+                this.slashCommand.setDescription(('OWNER COMMAND: ' + this.description).substring(0, 100));
+            else if (this.type === this.client.types.MANAGER)
+                this.slashCommand.setDescription(('MANAGER COMMAND: ' + this.description).substring(0, 100));
+            else if (this.type === this.client.types.NSFW || this.nsfwOnly)
+                this.slashCommand.setDescription(('NSFW COMMAND: ' + this.description).substring(0, 100));
+            else this.slashCommand.setDescription(this.description.substring(0, 100));
         }
 
         /**
@@ -240,22 +245,20 @@ class Command {
     }
 
     /**
-     * Runs the command
+     * Runs the command - Call this in your command class
      * @param  message
      * @param args
      */
-    // eslint-disable-next-line no-unused-vars
-    run(message, args) {
-        throw new Error(`The ${this.name} command has no run(message, args) method`);
-    }
+    // run(message, args) {
+    //     throw {name: 'NotImplementedError', message: `${this.name} run method not implemented`};
+    // }
 
     /**
-     * Interacts with the slash command
+     * Interacts with the slash command - Call this in your command class if using the slash command
      */
-    // eslint-disable-next-line no-unused-vars
-    interact(interaction, args, author) {
-        throw new Error(`The ${this.name} command has no interact(interaction, args, author) method`);
-    }
+    // interact(interaction, args, author) {
+    //     throw {name: 'NotImplementedError', message: `${this.name} interact method not implemented`};
+    // }
 
     /**
      * If this.exclusive or this.channelExclusive is true, this method will finish the commands execution and allow any future instance of the command to run
@@ -363,7 +366,7 @@ class Command {
 
     /**
      * Gets member from text or id
-     * @param {Message} message
+     * @param guild
      * @param {string} text
      */
     async getMemberFromText(guild, text) {
@@ -387,19 +390,21 @@ class Command {
      * Gets avatar from author/user/member
      * @param user the user to get avatar from
      * @param type enforces avatar type (i.e 'png' or 'gif')
-     * @param hard enforces hard mode (i.e. no query params)
      */
-    getAvatarURL(user, type, hard = false) {
+    getAvatarURL(user, type) {
         const options = {dynamic: true, size: 2048};
         if (type) options.format = type;
 
-        const url =
-            user.displayAvatarURL(options) || user.user.displayAvatarURL(options);
-        return hard ? url.split('?')[0] : url;
+        if (user?.avatar?.startsWith('a_') || user?.user?.avatar?.startsWith('a_')) {
+            return `https://cdn.discordapp.com/avatars/${user.id || user.user.id}/${user.avatar || user.user.avatar}.gif?size=2048`;
+        }
+        else {
+            return `https://cdn.discordapp.com/avatars/${user.id || user.user.id}/${user.avatar || user.user.avatar}.png?size=2048`;
+        }
     }
 
     getUserIdentifier(user) {
-        return user.tag || user.displayName || user.username + user.discriminator;
+        return user?.tag || user?.displayName || user?.username + user?.discriminator;
     }
 
     /**
@@ -511,7 +516,7 @@ class Command {
             return new MessageEmbed()
                 .setAuthor({
                     name: `${this.getUserIdentifier(member)}`,
-                    iconURL: member.displayAvatarURL({dynamic: true}),
+                    iconURL: this.getAvatarURL(member),
                 })
                 .setTitle(`Missing Client Permissions: \`${this.name}\``)
                 .setDescription(
@@ -539,7 +544,7 @@ class Command {
      * @returns {boolean}
      */
     checkNSFW(channel) {
-        if (!this.nsfwOnly) return true;
+        if (!this.nsfwOnly && this.type != this.client.types.NSFW) return true;
         return channel.nsfw;
     }
 
@@ -587,7 +592,7 @@ class Command {
                     return new MessageEmbed()
                         .setAuthor({
                             name: `${this.getUserIdentifier(member)}`,
-                            iconURL: member.displayAvatarURL({dynamic: true}),
+                            iconURL: this.getAvatarURL(member),
                         })
                         .setTitle(`Missing User Permissions: \`${this.name}\``)
                         .setDescription(
@@ -620,7 +625,7 @@ class Command {
             return new MessageEmbed()
                 .setAuthor({
                     name: `${this.client.user.tag}`,
-                    iconURL: this.client.user.displayAvatarURL({dynamic: true}),
+                    iconURL: this.getAvatarURL(this.client.user),
                 })
                 .setTitle(`Missing Bot Permissions: \`${this.name}\``)
                 .setDescription(
@@ -681,26 +686,26 @@ class Command {
 
     /**
      * Creates and sends command failure embed
-     * @param {Message} message
+     * @param {Message} context
      * @param {int} errorType
      * @param {string} reason
      * @param {string} errorMessage
      */
-    sendErrorMessage(message, errorType, reason, errorMessage) {
+    sendErrorMessage(context, errorType, reason, errorMessage) {
         errorType = this.errorTypes[errorType];
         const prefix = this.client.db.settings.selectPrefix
             .pluck()
-            .get(message.guild.id);
+            .get(context.guild.id);
         const embed = new MessageEmbed()
             .setAuthor({
-                name: `${message.author.tag}`,
-                iconURL: message.author.displayAvatarURL({dynamic: true}),
+                name: `${this.getUserIdentifier(context.author)}`,
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTitle(`${fail} Error: \`${this.name}\``)
             .setDescription(`\`\`\`diff\n- ${errorType}\n+ ${reason}\`\`\``)
             .addField('Usage', `\`${prefix}${this.usage}\``)
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor();
         if (this.examples)
             embed.addField(
                 'Examples',
@@ -708,35 +713,41 @@ class Command {
             );
         if (errorMessage)
             embed.addField('Error Message', `\`\`\`${errorMessage}\`\`\``);
-        message.channel.send({embeds: [embed]});
+        this.sendReplyAndDelete(context, {embeds: [embed]});
     }
 
     /**
      * Creates and sends command help embed
      * @param {Message} message
-     * @param title
+     * @param command
+     * @param prefix
      */
-    sendHelpMessage(message, title = this.name + ' Help') {
-        const prefix = this.client.db.settings.selectPrefix
-            .pluck()
-            .get(message.guild.id);
+    createHelpEmbed(message, command, prefix = null) {
+        if (!prefix) prefix = this.client.db.settings.selectPrefix.pluck().get(message.guild.id);
+        let invocation = '';
+        if (typeof command.run === 'function') {
+            invocation += 'Text Command';
+            if (typeof command.interact === 'function') invocation += ' + Slash Command';
+            else invocation += ' Only';
+        }
+        else if (typeof command.interact === 'function') {
+            invocation += 'Slash Command Only';
+        }
         const embed = new MessageEmbed()
-            .setTitle(
-                `${
-                    title ||
-                    this.name.charAt(0).toUpperCase() + this.name.substring(1)
-                }`
-            )
-            .setDescription(`${this.description}`)
-            .addField('Usage', `\`${prefix}${this.usage}\``)
+            .setTitle(`Command: \`${command.name}\``)
+            .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
+            .setDescription(command.description)
+            .addField('Usage', `\`${prefix}${command.usage}\``, true)
+            .addField('Type', `\`${capitalize(command.type)}\``, true)
+            .addField('Invocation', `\`${invocation}\``, true)
+            .setFooter({
+                text: message.member.displayName, iconURL: this.getAvatarURL(message.author),
+            })
             .setTimestamp()
             .setColor(message.guild.me.displayHexColor);
-        if (this.examples)
-            embed.addField(
-                'Examples',
-                this.examples.map((e) => `\`${prefix}${e}\``).join('\n')
-            );
-        message.channel.send({embeds: [embed]});
+        if (command.aliases) embed.addField('Aliases', command.aliases.map((c) => `\`${c}\``).join(' '));
+        if (command.examples) embed.addField('Examples', command.examples.map((c) => `\`${prefix}${c}\``).join('\n'));
+        return embed;
     }
 
     /**
@@ -784,7 +795,12 @@ class Command {
         }
     }
 
-    errorEmbed(error) {
+    /**
+     * Creates an error embed
+     * @param error
+     * @returns {MessageEmbed}
+     */
+    createErrorEmbed(error) {
         return new MessageEmbed()
             .setTitle(this.name.toUpperCase())
             .setDescription(
@@ -796,6 +812,34 @@ class Command {
                     \`\`\`${this.examples.join('\n')}\`\`\``
             )
             .setColor('RED');
+    }
+
+    /**
+     * Send a payload as a reply to an interaction (reply must be deferred) or a message
+     * @param context - Interaction or message context
+     * @param payload - Payload to send
+     * @returns {Promise<GuildCacheMessage<CacheType>>}
+     */
+    async sendReply(context, payload) {
+        try {
+            if (context.commandId) // If the context is an interaction
+                return (await context.editReply(payload));
+            else // If the context is a message
+                return context.loadingMessage ? await context.loadingMessage.edit(payload) : await context.reply(payload);
+        }
+        catch (err) {
+            this.client.logger.error(err.stack);
+        }
+    }
+
+    /**
+     * Send a payload as a reply to an interaction or a message, then delete the message
+     * @param context - Interaction or message context
+     * @param payload - Payload to send
+     * @param timeout - Timeout in milliseconds to delete the message. Default is 5000
+     */
+    sendReplyAndDelete(context, payload, timeout = 10000) {
+        this.sendReply(context, payload).then(m => setTimeout(() => m?.delete(), timeout));
     }
 }
 

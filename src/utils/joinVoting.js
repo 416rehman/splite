@@ -12,7 +12,7 @@ module.exports = {
                     .catch(() => console.log('Can\'t send DM to your user!'));
 
                 let embed = new MessageEmbed()
-                    .setThumbnail(`${user.displayAvatarURL({dynamic: true})}`)
+                    .setThumbnail(this.getAvatarURL(user))
                     .setColor(0xf25852)
                     .setTitle(`${user.username}#${user.discriminator} Is Attempting To Join Server`)
                     .setDescription(`Vote and decide their fate.\n
@@ -25,7 +25,7 @@ module.exports = {
                     msg.react('👍').then(() => msg.react('👎'));
 
                     embed
-                        .setThumbnail(`${user.displayAvatarURL({dynamic: true})}`)
+                        .setThumbnail(this.getAvatarURL(user))
                         .setColor(0xf25852)
                         .setTitle(`${user.username}#${user.discriminator} Is Attempting To Join Server`)
                         .setDescription(`Vote and decide their fate.\n
@@ -36,7 +36,7 @@ module.exports = {
 
                     let myinterval = setInterval(() => {
                         msg.edit({embeds: [embed]}).then(() => embed
-                            .setThumbnail(`${user.displayAvatarURL({dynamic: true})}`)
+                            .setThumbnail(this.getAvatarURL(user))
                             .setColor(0xf25852)
                             .setTitle(`${user.username}#${user.discriminator} Is Attempting To Join Server`)
                             .setDescription(`Vote and decide their fate.\n

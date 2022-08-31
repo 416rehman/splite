@@ -103,7 +103,7 @@ module.exports = class SettingsCommand extends Command {
         const embed = new MessageEmbed()
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
-                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
 

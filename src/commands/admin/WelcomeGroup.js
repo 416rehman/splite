@@ -9,7 +9,8 @@ const commandMappings = {
     message: {
         set: 'setwelcomemessage',
         clear: 'clearwelcomemessage',
-    }
+    },
+    test: 'testwelcome',
 };
 
 module.exports = class WelcomeSettingsCommandGroup extends Command {
@@ -28,16 +29,18 @@ module.exports = class WelcomeSettingsCommandGroup extends Command {
                         .addStringOption(p => p.setName('text').setRequired(false).setDescription('Variables: ?tag is username of the leaving user | ?size is server\'s member count.')))
                     .addSubcommand((o) => o.setName('clear').setDescription('Disables farewell - No farewell message will be posted'))
                 )
+                .addSubcommand((o) => o.setName('test').setDescription('Test the welcome message'))
         });
     }
 
     interact(interaction) {
-        const command = this.client.commands.get(commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command - Potential mapping error');
-        }
+        let commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
+            commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
+            commandMappings[interaction.options.getSubcommand()];
+
+        const command = this.client.commands.get(commandName);
+
+        if (command) command.interact(interaction);
+        else interaction.reply('Invalid command - Potential mapping error');
     }
 };

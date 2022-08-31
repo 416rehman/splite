@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class PurgeBotCommand extends Command {
     constructor(client) {
@@ -20,118 +21,112 @@ module.exports = class PurgeBotCommand extends Command {
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_MESSAGES'],
             userPermissions: ['MANAGE_MESSAGES'],
             examples: ['purgebot 20'],
+            slashCommand: new SlashCommandBuilder().setName('cleanup').setDescription('purgebot - clears bot spam messages in a channel')
+                .addChannelOption(c => c.setName('channel').setDescription('The channel to purge messages from'))
+                .addIntegerOption(c => c.setName('amount').setDescription('The amount of messages to purge'))
+                .addStringOption(c => c.setName('reason').setDescription('The reason for the purge'))
         });
     }
 
-    async run(message, args) {
-        let channel =
-            this.getChannelFromMention(message, args[0]) ||
-            message.guild.channels.cache.get(args[0]);
+    run(message, args) {
+        let channel = this.getChannelFromMention(message, args[0]) || message.guild.channels.cache.get(args[0]);
         if (channel) args.shift();
         else channel = message.channel;
 
+        let amount = parseInt(args[0]);
+
+        let reason = args.slice(1).join(' ');
+
+        this.handle(channel, amount, reason, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const channel = interaction.options.getChannel('channel') || interaction.channel;
+        const amount = interaction.options.getInteger('amount');
+        const reason = interaction.options.getString('reason');
+
+        this.handle(channel, amount, reason, interaction);
+    }
+
+    async handle(channel, amount, reason, context) {
         // Check type and viewable
         if (channel.type !== 'GUILD_TEXT' || !channel.viewable)
             return this.sendErrorMessage(
-                message,
+                context,
                 0,
-                stripIndent`
-      Please mention an accessible text channel or provide a valid text channel ID
-    `
+                stripIndent`Please mention an accessible text channel or provide a valid text channel ID`
             );
 
-        let amount = parseInt(args[0]);
+
         if (isNaN(amount) === true || !amount || amount < 0 || amount > 100)
             amount = 100;
 
         // Check channel permissions
-        if (!channel.permissionsFor(message.guild.me).has(['MANAGE_MESSAGES']))
+        if (!channel.permissionsFor(context.guild.me).has(['MANAGE_MESSAGES']))
             return this.sendErrorMessage(
-                message,
+                context,
                 0,
                 'I do not have permission to manage messages in the provided channel'
             );
 
-        let reason = args.slice(1).join(' ');
         if (!reason) reason = '`None`';
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
-        const prefix = message.client.db.settings.selectPrefix
+        const prefix = this.client.db.settings.selectPrefix
             .pluck()
-            .get(message.guild.id); // Get prefix
-
-        await message.delete(); // Delete command message
+            .get(context.guild.id); // Get prefix
 
         // Find messages
-        let messages = (
-            await message.channel.messages.fetch({limit: amount})
-        ).filter((msg) => {
+        let messages = (await context.channel.messages.fetch({limit: amount})).filter((msg) => {
+            if (msg.id === context.id) return false; // Don't delete the command message
             // Filter for commands or bot messages
             return this.client.utils.isCommandOrBotMessage(msg, prefix);
         });
 
         if (messages.size === 0) {
             // No messages found
-
-            message.channel
-                .send({
-                    embeds: [
-                        new MessageEmbed()
-                            .setTitle('Purgebot')
-                            .setDescription(
-                                `
-            Unable to find any bot messages or commands. 
-            This message will be deleted after \`10 seconds\`.
-          `
-                            )
-                            .addField('Channel', channel.toString(), true)
-                            .addField('Found Messages', `\`${messages.size}\``, true)
-                            .setFooter({
-                                text: message.member.displayName,
-                                iconURL: message.author.displayAvatarURL(),
-                            })
-                            .setTimestamp()
-                            .setColor(message.guild.me.displayHexColor),
-                    ],
-                })
-                .then((msg) => {
-                    setTimeout(() => msg.delete(), 10000);
-                })
-                .catch((err) => message.client.logger.error(err.stack));
+            const payload = {
+                embeds: [
+                    new MessageEmbed()
+                        .setTitle('Purgebot')
+                        .setDescription(`Unable to find any bot messages or commands. 
+                            This context will be deleted after \`10 seconds\`.`)
+                        .addField('Channel', channel.toString(), true)
+                        .addField('Found Messages', `\`${messages.size}\``, true)
+                        .setFooter({
+                            text: context.member.displayName,
+                            iconURL: this.getAvatarURL(context.author),
+                        })
+                        .setTimestamp()
+                        .setColor(context.guild.me.displayHexColor),
+                ],
+            };
+            this.sendReplyAndDelete(context, payload);
         }
         else {
             // Purge messages
-
             channel.bulkDelete(messages, true).then((msgs) => {
                 const embed = new MessageEmbed()
                     .setTitle('Purgebot')
-                    .setDescription(
-                        `
-            Successfully deleted **${msgs.size}** message(s). 
-            This message will be deleted after \`10 seconds\`.
-          `
-                    )
+                    .setDescription(`Successfully deleted **${msgs.size}** context(s). 
+                    This context will be deleted after \`10 seconds\`.`)
                     .addField('Channel', channel.toString(), true)
                     .addField('Found Messages', `\`${msgs.size}\``, true)
                     .addField('Reason', reason)
                     .setFooter({
-                        text: message.member.displayName,
-                        iconURL: message.author.displayAvatarURL(),
+                        text: context.member.displayName,
+                        iconURL: this.getAvatarURL(context.author),
                     })
                     .setTimestamp()
-                    .setColor(message.guild.me.displayHexColor);
+                    .setColor(context.guild.me.displayHexColor);
 
-                message.channel
-                    .send({embeds: [embed]})
-                    .then((msg) => {
-                        setTimeout(() => msg.delete(), 10000);
-                    })
-                    .catch((err) => message.client.logger.error(err.stack));
+                this.sendReplyAndDelete(context, {embeds: [embed]});
             });
         }
 
         // Update mod log
-        this.sendModLogMessage(message, reason, {
+        this.sendModLogMessage(context, reason, {
             Channel: channel,
             'Found Messages': `\`${messages.size}\``,
         });

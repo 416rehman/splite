@@ -9,7 +9,8 @@ const commandMappings = {
     message: {
         set: 'setfarewellmessage',
         clear: 'clearfarewellmessage',
-    }
+    },
+    test: 'testfarewell',
 };
 
 module.exports = class FarewellSettingsCommandGroup extends Command {
@@ -26,19 +27,21 @@ module.exports = class FarewellSettingsCommandGroup extends Command {
                 )
                 .addSubcommandGroup((o) => o.setName('message').setDescription('The message to be posted to the farewell channel')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the farewell message - To view current message, don\'t provide a message')
-                        .addStringOption(p => p.setName('text').setRequired(false).setDescription('Variables: ?tag is username of the leaving user | ?size is server\'s member count.')))
+                        .addStringOption(p => p.setName('text').setRequired(false).setDescription('Message to display when member leaves server. Variables: ?member, ?tag, ?username ?size')))
                     .addSubcommand((o) => o.setName('clear').setDescription('Clears farewell to default message'))
                 )
+                .addSubcommand((o) => o.setName('test').setDescription('Test the farewell message'))
         });
     }
 
     interact(interaction) {
-        const command = this.client.commands.get(commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command - Potential mapping error');
-        }
+        let commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
+            commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
+            commandMappings[interaction.options.getSubcommand()];
+
+        const command = this.client.commands.get(commandName);
+
+        if (command) command.interact(interaction);
+        else interaction.reply('Invalid command - Potential mapping error');
     }
 };

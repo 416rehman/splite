@@ -18,7 +18,8 @@
 
 # SPLITE - Multi-Purpose Discord v13 Bot
 
-### Now supports Music, Moderation, and more!
+### Now with Slash Commands, Music, Moderation, and more!
+#### New in Splite 4.0: All 200+ commands have been ported to Slash Commands
 
 Splite is a free to use multipurpose Discord bot. It is designed to be a flexible and easy to use. ⭐ Consider starring
 the repo on GitHub to help with development! ⭐
@@ -114,56 +115,51 @@ the `interact(interaction, args, author)` method of the Command class.
 // src/commands/fun/avatar.js
 
 // Avatar Command
+const Command = require('../Command.js');
+const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('@discordjs/builders');
+
 module.exports = class AvatarCommand extends Command {
+    // Command Info and Staging
     constructor(client) {
         super(client, {
             name: 'avatar',
             aliases: ['profilepic', 'pic', 'av'],
             usage: 'avatar [user mention/ID]',
             description: 'Displays a user\'s avatar (or your own, if no user is mentioned).',
-            type: client.types.INFO,    // Default is MISC (See command types below)
+            type: client.types.INFO,
             examples: ['avatar @split'],
             slashCommand: new SlashCommandBuilder()
-                .addUserOption(option => option.setName('user').setDescription('The user to display the avatar of.'))
+                .addUserOption((option) => 
+                    option.setName('user').setDescription('The user to display the avatar of.')),
         });
     }
 
-    // Text based command
+    // Text Based Command Listener
     async run(message, args) {
-        const member = await this.getGuildMember(message.guild, args[0]) || message.member;
+        const member = await this.getGuildMember(message.guild, args.join(' ')) || message.member;
 
-        displayAvatar.call(this, member, message)
+        this.handle(member, message);
     }
 
-    // Slash command
-    async interact(interaction, args, author) {
+    // Slash Command Listener
+    async interact(interaction) {
+        await interaction.deferReply();
         const user = interaction.options.getUser('user') || interaction.member;
-        displayAvatar.call(this, user, interaction, true);
+        this.handle(user, interaction);
+    }
+
+    // Core Logic
+    handle(targetUser, context) {
+        const embed = new MessageEmbed()
+            .setDescription(`[Avatar URL](${this.getAvatarURL(targetUser)})`)
+            .setTitle(`${this.getUserIdentifier(targetUser)}'s Avatar`)
+            .setImage(this.getAvatarURL(targetUser));
+
+        this.sendReply(context, {embeds: [embed]});
     }
 };
 
-// The logic of the command, gets a user's avatar and sends it to the channel
-function displayAvatar(user, context, isInteraction = false) {
-    const embed = new MessageEmbed()
-        .setAuthor({
-            name: this.getUserIdentifier(user),
-            iconURL: this.getAvatarURL(user)
-        })
-        .setDescription(`[Avatar URL](${this.getAvatarURL(user)})`)
-        .setTitle(`${this.getUserIdentifier(user)}'s Avatar`)
-        .setImage(this.getAvatarURL(user))
-        .setFooter({
-            text: context.member.displayName,
-            iconURL: this.getAvatarURL(context.member)
-        })
-        .setTimestamp()
-        .setColor(user.displayHexColor);
-
-    if (isInteraction)
-        return context.reply({embeds: [embed]});
-
-    context.channel.send({embeds: [embed]});
-}
 ```
 
 #### Command Types
@@ -252,6 +248,12 @@ called.,
 In the below example, once the user calls the `prefix` command, they won't be able to call it again, until 30 seconds
 after that command has been run.
 
+##### Channel Exclusive
+Similar to the `exclusive` option, but will act on an entire channel. This option allows for one running command at a 
+time in a channel, i.e. a trivia game command is set to be `channelExclusive: true`, now if a user starts a game of
+trivia, another user won't be able to start another game of trivia in the same channel until the first game is finished
+(done method is called).
+
 ```javascript
 // src/commands/info/prefix.js
 
@@ -277,10 +279,10 @@ module.exports = class prefixCommand extends Command {
             embeds: [new MessageEmbed().setTitle(`${interaction.client.config.name}'s Prefix`)
                 .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
                 .addField(`Current Prefix`, `**\`${prefix}\`**`)
-                .setThumbnail(interaction.client.user.displayAvatarURL())
+                .setThumbnail( this.getAvatarURL(interaction.client.user))
                 .setFooter({
                     text: interaction.author.tag,
-                    iconURL: interaction.author.displayAvatarURL({dynamic: true})
+                    iconURL: this.getAvatarURL( interaction.author)
                 })
                 .setTimestamp()]
         })

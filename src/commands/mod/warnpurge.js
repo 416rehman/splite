@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const moment = require('moment');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class WarnPurgeCommand extends Command {
     constructor(client) {
@@ -9,7 +10,7 @@ module.exports = class WarnPurgeCommand extends Command {
             aliases: ['purgewarn'],
             usage: 'warnpurge <user mention/ID> <message count> [reason]',
             description:
-                'Warns a member in your server and then purges their messages from the message count provided.',
+                'Warns a member and then purges their messages in the current channel.',
             type: client.types.MOD,
             clientPermissions: [
                 'SEND_MESSAGES',
@@ -19,11 +20,15 @@ module.exports = class WarnPurgeCommand extends Command {
             ],
             userPermissions: ['KICK_MEMBERS', 'MANAGE_MESSAGES'],
             examples: ['warnpurge @split 50'],
+            slashCommand: new SlashCommandBuilder()
+                .addUserOption(u => u.setName('user').setRequired(true).setDescription('The user to warn and purge messages from.'))
+                .addIntegerOption(i => i.setName('amount').setRequired(true).setDescription('The amount of messages to purge'))
+                .addStringOption(s => s.setName('reason').setRequired(false).setDescription('The reason for the warnpurge'))
         });
     }
 
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message, 'Warn Purge');
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Warn Purge', this)]});
         const member =
             await this.getGuildMember(message.guild, args[0]);
         if (!member)
@@ -32,74 +37,93 @@ module.exports = class WarnPurgeCommand extends Command {
                 0,
                 'Please mention a user or provide a valid user ID'
             );
-        if (member === message.member)
-            return this.sendErrorMessage(message, 0, 'You cannot warn yourself');
-
-        const autoKick = message.client.db.settings.selectAutoKick
-            .pluck()
-            .get(message.guild.id); // Get warn # for auto kick
 
         let amount = parseInt(args[1]);
+
+        let reason = args.slice(2).join(' ');
+
+        this.handle(member, amount, reason, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getMember('user');
+        const amount = interaction.options.getInteger('amount');
+        const reason = interaction.options.getString('reason');
+
+        this.handle(member, amount, reason, interaction);
+    }
+
+    async handle(member, amount, reason, context) {
+        if (member === context.member)
+            return this.sendErrorMessage(context, 0, 'You cannot warn yourself');
+
+        const autoKick = this.client.db.settings.selectAutoKick
+            .pluck()
+            .get(context.guild.id); // Get warn # for auto kick
+
         if (amount > 100) amount = 100;
         if (isNaN(amount) === true || !amount || amount < 0)
             return this.sendErrorMessage(
-                message,
+                context,
                 0,
-                'Please provide a message count between 1 and 100'
+                'Please provide a context count between 1 and 100'
             );
 
-        let reason = args.slice(2).join(' ');
+
         if (!reason) reason = '`None`';
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
         // Warn
-        let warns = message.client.db.users.selectWarns
+        let warns = this.client.db.users.selectWarns
             .pluck()
-            .get(member.id, message.guild.id) || {warns: []};
+            .get(member.id, context.guild.id) || {warns: []};
         if (typeof warns == 'string') warns = JSON.parse(warns);
         const warning = {
-            mod: message.member.id,
+            mod: context.member.id,
             date: moment().format('MMM DD YYYY'),
             reason: reason,
         };
 
         warns.warns.push(warning);
 
-        message.client.db.users.updateWarns.run(
+        this.client.db.users.updateWarns.run(
             JSON.stringify(warns),
             member.id,
-            message.guild.id
+            context.guild.id
         );
 
         // Purge
         const messages = (
-            await message.channel.messages.fetch({limit: amount})
+            await context.channel.messages.fetch({limit: amount})
         ).filter((m) => m.member.id === member.id);
-        if (messages.size > 0) await message.channel.bulkDelete(messages, true);
+        if (messages.size > 0) await context.channel.bulkDelete(messages, true);
 
         const embed = new MessageEmbed()
             .setTitle('Warnpurge Member')
             .setDescription(
                 `${member} has been warned, with **${messages.size}** messages purged.`
             )
-            .addField('Moderator', message.member.toString(), true)
+            .addField('Moderator', context.member.toString(), true)
             .addField('Member', member.toString(), true)
             .addField('Warn Count', `\`${warns.warns.length}\``, true)
             .addField('Found Messages', `\`${messages.size}\``, true)
             .addField('Reason', reason)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: context.member.displayName,
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
-        message.channel.send({embeds: [embed]});
-        message.client.logger.info(
-            `${message.guild.name}: ${message.author.tag} warnpurged ${member.user.tag}`
+            .setColor(context.guild.me.displayHexColor);
+
+        this.sendReply(context, {embeds: [embed]});
+
+        this.client.logger.info(
+            `${context.guild.name}: ${context.author.tag} warnpurged ${member.user.tag}`
         );
 
         // Update mod log
-        this.sendModLogMessage(message, reason, {
+        this.sendModLogMessage(context, reason, {
             Member: member,
             'Warn Count': `\`${warns.warns.length}\``,
             'Found Messages': `\`${messages.size}\``,
@@ -107,11 +131,11 @@ module.exports = class WarnPurgeCommand extends Command {
 
         // Check for auto kick
         if (autoKick && warns.warns.length === autoKick) {
-            message.client.commands
+            this.client.commands
                 .get('kick')
-                .run(message, [
+                .run(context, [
                     member.id,
-                    `Warn limit reached. Automatically kicked by ${message.guild.me}.`,
+                    `Warn limit reached. Automatically kicked by ${context.guild.me}.`,
                 ]);
         }
     }

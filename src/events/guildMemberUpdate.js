@@ -1,10 +1,10 @@
-const { MessageEmbed } = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = (client, oldMember, newMember) => {
     const embed = new MessageEmbed()
         .setAuthor({
             name: `${newMember.user.tag}`,
-            iconURL: newMember.user.displayAvatarURL(),
+            iconURL: newMember?.user?.displayAvatarURL({format: 'png', dynamic: true}),
         })
         .setTimestamp()
         .setColor(oldMember.guild.me.displayHexColor);
@@ -18,10 +18,10 @@ module.exports = (client, oldMember, newMember) => {
         const nicknameLog = oldMember.guild.channels.cache.get(nicknameLogId);
         if (
             nicknameLog &&
-         nicknameLog.viewable &&
-         nicknameLog
-             .permissionsFor(oldMember.guild.me)
-             .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+            nicknameLog.viewable &&
+            nicknameLog
+                .permissionsFor(oldMember.guild.me)
+                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
             const oldNickname = oldMember.nickname || '`None`';
             const newNickname = newMember.nickname || '`None`';
@@ -29,7 +29,7 @@ module.exports = (client, oldMember, newMember) => {
                 .setTitle('Member Update: `Nickname`')
                 .setDescription(`${newMember}'s **nickname** was changed.`)
                 .addField('Nickname', `${oldNickname} ➔ ${newNickname}`);
-            nicknameLog.send({ embeds: [embed] });
+            nicknameLog.send({embeds: [embed]});
         }
     }
 
@@ -42,10 +42,10 @@ module.exports = (client, oldMember, newMember) => {
         const roleLog = oldMember.guild.channels.cache.get(roleLogId);
         if (
             roleLog &&
-         roleLog.viewable &&
-         roleLog
-             .permissionsFor(oldMember.guild.me)
-             .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+            roleLog.viewable &&
+            roleLog
+                .permissionsFor(oldMember.guild.me)
+                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
             const role = newMember.roles.cache
                 .difference(oldMember.roles.cache)
@@ -53,7 +53,7 @@ module.exports = (client, oldMember, newMember) => {
             embed
                 .setTitle('Member Update: `Role Add`')
                 .setDescription(`${newMember} was **given** the ${role} role.`);
-            roleLog.send({ embeds: [embed] });
+            roleLog.send({embeds: [embed]});
         }
     }
 
@@ -66,10 +66,10 @@ module.exports = (client, oldMember, newMember) => {
         const roleLog = oldMember.guild.channels.cache.get(roleLogId);
         if (
             roleLog &&
-         roleLog.viewable &&
-         roleLog
-             .permissionsFor(oldMember.guild.me)
-             .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+            roleLog.viewable &&
+            roleLog
+                .permissionsFor(oldMember.guild.me)
+                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
             const role = oldMember.roles.cache
                 .difference(newMember.roles.cache)
@@ -77,7 +77,7 @@ module.exports = (client, oldMember, newMember) => {
             embed
                 .setTitle('Member Update: `Role Remove`')
                 .setDescription(`${newMember} was **removed** from ${role} role.`);
-            roleLog.send({ embeds: [embed] });
+            roleLog.send({embeds: [embed]});
         }
     }
 };

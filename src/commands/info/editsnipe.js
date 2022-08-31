@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 module.exports = class SnipeCommand extends Command {
     constructor(client) {
         super(client, {
@@ -9,26 +10,33 @@ module.exports = class SnipeCommand extends Command {
             aliases: ['es', 'esn', 'esniper'],
             description: 'Shows the most recently edited message in the channel',
             type: client.types.INFO,
+            slashCommand: new SlashCommandBuilder()
         });
     }
 
-    async run(message) {
-        const embed = new MessageEmbed()
-            .setDescription('`Sniping...`')
-            .setColor('RANDOM');
-        const msg = await message.channel.send({embeds: [embed]});
+    run(message) {
+        this.handle(message, false);
+    }
 
-        const snipedMSg = message.guild.editSnipes.get(message.channel.id);
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction, true);
+    }
+
+    handle(context, isInteraction) {
+
+        const snipedMSg = context.guild.editSnipes.get(context.channel.id);
+
         if (snipedMSg && snipedMSg.newMessage && snipedMSg.oldMessage.content) {
-            embed
+            const embed = new MessageEmbed()
                 .setDescription(
-                    `${snipedMSg.newMessage.author} edited [message](https://discord.com/channels/${message.guild.id}/${message.channel.id}/${snipedMSg.newMessage.id})`
+                    `${snipedMSg.newMessage.author} edited [message](https://discord.com/channels/${context.guild.id}/${context.channel.id}/${snipedMSg.newMessage.id})`
                 )
                 .addField('Before', snipedMSg.oldMessage.content || '')
                 .addField('After', snipedMSg.newMessage.content || '')
                 .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: this.getUserIdentifier(context.author),
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setImage(
                     `${
@@ -42,20 +50,24 @@ module.exports = class SnipeCommand extends Command {
                     name: `${snipedMSg.newMessage.author.username}#${snipedMSg.newMessage.author.discriminator}`,
                     iconURL: `https://cdn.discordapp.com/avatars/${snipedMSg.newMessage.author.id}/${snipedMSg.newMessage.author.avatar}.png`,
                 });
-            msg.edit({embeds: [embed]});
+
+            const payload = {embeds: [embed]};
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else {
-            embed
-                .setTitle(`${message.client.name} Sniper`)
+            const embed = new MessageEmbed()
+                .setTitle(`${this.client.name} Sniper`)
                 .setDescription(`${fail} There is nothing to snipe!`)
                 .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: this.getUserIdentifier(context.author),
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp();
-            msg.edit({embeds: [embed]}).then((m) => {
-                setTimeout(() => m.delete(), 5000);
-            });
+
+            const payload = {embeds: [embed]};
+            if (isInteraction) context.editReply(payload);
+            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
     }
 };

@@ -5,28 +5,40 @@ const Command = require('../Command');
 module.exports = class MusicSearchCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'search', usage: 'search [song name]', voiceChannelOnly: true, type: client.types.MUSIC,
+            name: 'search',
+            usage: 'search [song name]',
+            voiceChannelOnly: true, type: client.types.MUSIC,
         });
     }
 
-    async run(message, args) {
-        if (!args[0]) return message.channel.send(`Please enter a valid search ${message.author}... try again ? ❌`);
+    run(message, args) {
+        this.handle(args.join(' '), message);
+    }
 
-        const res = await this.client.player.search(args.join(' '), {
-            requestedBy: message.member, searchEngine: QueryType.AUTO,
+    async interact(interaction) {
+        await interaction.deferReply();
+        const query = interaction.options.getString('query') || null;
+        this.handle(query, interaction);
+    }
+
+    async handle(query, context) {
+        if (!query) return this.sendReplyAndDelete(context, `Please enter a valid search ${context.author}... try again ? ❌`);
+
+        const res = await this.client.player.search(query, {
+            requestedBy: context.member, searchEngine: QueryType.AUTO,
         });
 
-        if (!res || !res.tracks.length) return message.channel.send(`No results found ${message.author}... try again ? ❌`);
+        if (!res || !res.tracks.length) return this.sendReplyAndDelete(context, `No results found ${context.author}... try again ? ❌`);
 
-        const queue = await this.client.player.createQueue(message.guild, {
-            metadata: message.channel,
+        const queue = await this.client.player.createQueue(context.guild, {
+            metadata: context.channel,
         });
 
         const embed = new MessageEmbed();
 
         embed.setColor('RED');
         embed.setAuthor({
-            name: `Results for ${args.join(' ')}`, iconURL: this.client.user.displayAvatarURL({
+            name: `Results for ${query}`, iconURL: this.client.user.displayAvatarURL({
                 size: 1024, dynamic: true,
             }),
         });
@@ -39,33 +51,33 @@ module.exports = class MusicSearchCommand extends Command {
 
         embed.setTimestamp();
         embed.setFooter({
-            text: 'Music comes first - Made with heart by Zerio ❤️', iconURL: message.author.avatarURL({dynamic: true}),
+            text: 'Music comes first - Made with heart by Zerio ❤️', iconURL: context.author.avatarURL({dynamic: true}),
         });
 
-        message.channel.send({embeds: [embed]});
+        this.sendReplyAndDelete(context, {embeds: [embed]});
 
-        const collector = message.channel.createMessageCollector({
-            time: 15000, errors: ['time'], filter: (m) => m.author.id === message.author.id,
+        const collector = context.channel.createMessageCollector({
+            time: 15000, errors: ['time'], filter: (m) => m.author.id === context.author.id,
         });
 
         collector.on('collect', async (query) => {
-            if (query.content.toLowerCase() === 'cancel') return (message.channel.send('Search cancelled ✅') && collector.stop());
+            if (query.content.toLowerCase() === 'cancel') return (this.sendReplyAndDelete(context, 'Search cancelled ✅') && collector.stop());
 
             const value = parseInt(query.content);
 
-            if (!value || value <= 0 || value > maxTracks.length) return message.channel.send(`Invalid response, try a value between **1** and **${maxTracks.length}** or **cancel**... try again ? ❌`);
+            if (!value || value <= 0 || value > maxTracks.length) return this.sendReplyAndDelete(context, `Invalid response, try a value between **1** and **${maxTracks.length}** or **cancel**... try again ? ❌`);
 
             collector.stop();
 
             try {
-                if (!queue.connection) await queue.connect(message.member.voice.channel);
+                if (!queue.connection) await queue.connect(context.member.voice.channel);
             }
             catch {
-                await this.client.player.deleteQueue(message.guild.id);
-                return message.channel.send(`I can't join the voice channel ${message.author}... try again ? ❌`);
+                await this.client.player.deleteQueue(context.guild.id);
+                return this.sendReplyAndDelete(context, `I can't join the voice channel ${context.author}... try again ? ❌`);
             }
 
-            await message.channel.send('Loading your search... 🎧');
+            await this.sendReplyAndDelete(context, 'Loading your search... 🎧');
 
             queue.addTrack(res.tracks[query.content - 1]);
 
@@ -73,7 +85,7 @@ module.exports = class MusicSearchCommand extends Command {
         });
 
         collector.on('end', (msg, reason) => {
-            if (reason === 'time') return message.channel.send(`Search timed out ${message.author}... try again ? ❌`);
+            if (reason === 'time') return this.sendReplyAndDelete(context, `Search timed out ${context.author}... try again ? ❌`);
         });
     }
 };

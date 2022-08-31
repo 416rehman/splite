@@ -42,7 +42,7 @@ module.exports = class clearStarboardChannelCommand extends Command {
             )
             .setFooter({
                 text: context.member.displayName,
-                iconURL: context.author.displayAvatarURL(),
+                iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
             .setColor(context.guild.me.displayHexColor);

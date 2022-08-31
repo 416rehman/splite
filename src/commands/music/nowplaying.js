@@ -13,11 +13,20 @@ module.exports = class MusicNowPlayingCommand extends Command {
     }
 
     run(message) {
-        const queue = this.client.player.getQueue(message.guild.id);
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    async handle(context) {
+        const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)
-            return message.channel.send(
-                `No music currently playing ${message.author}... try again ? ❌`
+            return this.sendReplyAndDelete(context,
+                `No music currently playing ${context.author}... try again ? ❌`
             );
 
         const track = queue.current;
@@ -38,7 +47,7 @@ module.exports = class MusicNowPlayingCommand extends Command {
 
         const timestamp = queue.getPlayerTimestamp();
         const trackDuration =
-            timestamp.progress == 'Infinity' ? 'infinity (live)' : track.duration;
+            timestamp.progress === 'Infinity' ? 'infinity (live)' : track.duration;
 
         embed.setDescription(
             `Volume **${
@@ -51,7 +60,7 @@ module.exports = class MusicNowPlayingCommand extends Command {
         embed.setTimestamp();
         embed.setFooter({
             text: 'Music comes first - Made with heart by Zerio ❤️',
-            iconURL: message.author.avatarURL({dynamic: true}),
+            iconURL: context.author.avatarURL({dynamic: true}),
         });
 
         const saveButton = new MessageButton();
@@ -62,6 +71,6 @@ module.exports = class MusicNowPlayingCommand extends Command {
 
         const row = new MessageActionRow().addComponents(saveButton);
 
-        message.channel.send({embeds: [embed], components: [row]});
+        this.sendReply(context, {embeds: [embed], components: [row]});
     }
 };

@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class SetNicknameCommand extends Command {
     constructor(client) {
@@ -23,30 +24,20 @@ module.exports = class SetNicknameCommand extends Command {
                 'setnickname @split Noodles',
                 'setnickname @split "Val Kilmer"',
             ],
+            slashCommand: new SlashCommandBuilder()
+                .addUserOption(u => u.setName('user').setDescription('The user to change the nickname of').setRequired(true))
+                .addStringOption(s => s.setName('nickname').setDescription('The new nickname').setRequired(true))
         });
     }
 
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message, 'Set Nickname');
-        const member =
-            await this.getGuildMember(message.guild, args[0]);
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Set Nickname', this)]});
+        const member = await this.getGuildMember(message.guild, args[0]);
         if (!member)
             return this.sendErrorMessage(
                 message,
                 0,
                 'Please mention a user or provide a valid user ID'
-            );
-        if (
-            member.roles.highest.position >=
-            message.member.roles.highest.position &&
-            member != message.member
-        )
-            return this.sendErrorMessage(
-                message,
-                0,
-                stripIndent`
-        You cannot change the nickname of someone with an equal or higher role
-      `
             );
 
         if (!args[1])
@@ -54,12 +45,33 @@ module.exports = class SetNicknameCommand extends Command {
         args.shift();
         // Multi-word nickname
         let nickname = args.join(' ');
-        if (!nickname.length)
-            return this.sendErrorMessage(message, 0, 'Please provide a nickname');
+
+        this.handle(member, nickname, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getUser('user') || interaction.member;
+        const nickname = interaction.options.getString('nickname');
+        this.handle(member, nickname, interaction);
+    }
+
+    async handle(member, nickname, context) {
+        if (member.roles.highest.position >= context.member.roles.highest.position && member != context.member) {
+            return this.sendErrorMessage(
+                context,
+                0,
+                stripIndent`
+        You cannot change the nickname of someone with an equal or higher role
+      `
+            );
+        }
+
+        if (!nickname.length) return this.sendErrorMessage(context, 0, 'Please provide a nickname');
 
         if (nickname.length > 32) {
             return this.sendErrorMessage(
-                message,
+                context,
                 0,
                 'Please ensure the nickname is not longer than 32 characters'
             );
@@ -73,30 +85,30 @@ module.exports = class SetNicknameCommand extends Command {
                 const embed = new MessageEmbed()
                     .setTitle('Set Nickname')
                     .setDescription(`${member}'s nickname was successfully updated.`)
-                    .addField('Moderator', message.member.toString(), true)
+                    .addField('Moderator', context.member.toString(), true)
                     .addField('Member', member.toString(), true)
                     .addField('Nickname', nicknameStatus, true)
                     .setFooter({
-                        text: message.member.displayName,
-                        iconURL: message.author.displayAvatarURL(),
+                        text: context.member.displayName,
+                        iconURL: this.getAvatarURL(context.author),
                     })
                     .setTimestamp()
-                    .setColor(message.guild.me.displayHexColor);
-                message.channel.send({embeds: [embed]});
+                    .setColor(context.guild.me.displayHexColor);
+                this.sendReply(context, {embeds: [embed]});
 
                 // Update mod log
-                this.sendModLogMessage(message, '', {
+                this.sendModLogMessage(context, '', {
                     Member: member,
                     Nickname: nicknameStatus,
                 });
             }
             catch (err) {
-                message.client.logger.error(err.stack);
+                this.client.logger.error(err.stack);
                 this.sendErrorMessage(
-                    message,
+                    context,
                     1,
                     'Please check the role hierarchy',
-                    err.message
+                    err.context
                 );
             }
         }

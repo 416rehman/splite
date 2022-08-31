@@ -14,43 +14,54 @@ module.exports = class BlacklistCommand extends Command {
         });
     }
 
-    async run(message, args) {
-        const member =
-            await this.getGuildMember(message.guild, args[0]);
-        if (!member)
-            return this.sendErrorMessage(
-                message,
-                0,
-                'Please mention a user or provide a valid user ID'
-            );
+    run(message, args) {
+        this.handle(args.join(' '), message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const userId = interaction.options.getString('userid');
+        this.handle(userId, interaction);
+    }
+
+    handle(userId, context) {
+        if (!userId) {
+            return this.sendErrorMessage(context, 0, 'Please mention a user or provide a valid user ID');
+        }
+
+        const member = this.client.users.fetch(userId);
+        if (!member) {
+            return this.sendErrorMessage(context, 0, 'Unable to find user, please check the provided ID');
+        }
+
         try {
-            if (!message.client.isOwner(message.author)) {
-                if (message.client.isManager(member))
+            if (!this.client.isOwner(context.author)) {
+                if (this.client.isManager(member))
                     return this.sendErrorMessage(
-                        message,
+                        context,
                         0,
                         'You cannot blacklist a bot manager or owner'
                     );
             }
 
-            message.client.db.blacklist.add.run(member.id);
+            this.client.db.blacklist.add.run(member.id);
             const embed = new MessageEmbed()
                 .setTitle('Blacklist')
                 .setDescription(`Successfully blacklisted ${member}.`)
                 .setFooter({
-                    text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL(),
+                    text: this.getUserIdentifier(context.member),
+                    iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
-            message.channel.send({embeds: [embed]});
+                .setColor(context.guild.me.displayHexColor);
+            this.sendReply(context, {embeds: [embed]});
         }
         catch (e) {
             this.sendErrorMessage(
-                message,
+                context,
                 0,
                 'An error occured while blacklisting the user.',
-                e.message
+                e.context
             );
         }
     }

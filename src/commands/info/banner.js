@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
+const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = class BannerCommand extends Command {
     constructor(client) {
@@ -12,34 +13,48 @@ module.exports = class BannerCommand extends Command {
                 'Displays a user\'s banner (or your own, if no user is mentioned).',
             type: client.types.INFO,
             examples: ['banner @split'],
+            slashCommand: new SlashCommandBuilder().addUserOption((option) =>
+                option
+                    .setRequired(false)
+                    .setName('user')
+                    .setDescription('The user to display the banner of.')
+            ),
         });
     }
 
     async run(message, args) {
-        const member = await message.client.api
-            .users((await this.getGuildMember(message.guild, args[0]))?.id || message.member.id)
-            .get();
+        const member = await this.client.api.users((await this.getGuildMember(message.guild, args[0]))?.id || message.member.id).get();
+        this.handle(member, message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+
+        const user = await this.client.api.users((interaction.options.getUser('user') || interaction.member)?.id).get();
+        this.handle(user, interaction, true);
+    }
+
+    handle(targetUser, context, isInteraction) {
         const banner =
-            member.banner &&
-            `https://cdn.discordapp.com/banners/${member.id}/${member.banner}${
-                member.banner.startsWith('a_') ? '.gif' : '.png'
+            targetUser.banner &&
+            `https://cdn.discordapp.com/banners/${targetUser.id}/${targetUser.banner}${
+                targetUser.banner.startsWith('a_') ? '.gif' : '.png'
             }?size=512`;
 
         const embed = new MessageEmbed()
-            .setTitle(`${member.username}'s Banner`)
+            .setTitle(`${this.getUserIdentifier(targetUser)}'s Banner`)
             .setFooter({
-                text: message.member.displayName,
-                iconURL: message.author.displayAvatarURL(),
+                text: this.getUserIdentifier(targetUser),
+                iconURL: this.getAvatarURL(targetUser)
             })
-            .setTimestamp()
-            .setColor(member.displayHexColor);
+            .setTimestamp();
 
         if (banner) embed.setImage(banner);
-        else
-            embed.setDescription(
-                `${fail} **${member.username}** has not setup their banner.`
-            );
+        else embed.setDescription(`${fail} **${targetUser.username}** has not setup their banner.`);
 
-        message.channel.send({embeds: [embed]});
+        const payload = {embeds: [embed]};
+
+        if (isInteraction) context.editReply(payload);
+        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

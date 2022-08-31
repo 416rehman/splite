@@ -54,7 +54,7 @@ module.exports = (client, member) => {
         farewellMessage
     ) {
         farewellMessage = farewellMessage
-            .replace(/`?\?member`?/g, member) // Member mention substitution
+            .replace(/`?\?member`?/g, member.toString()) // Member mention substitution
             .replace(/`?\?username`?/g, member.user.username) // Username substitution
             .replace(/`?\?tag`?/g, member.user.tag) // Tag substitution
             .replace(/`?\?size`?/g, member.guild.memberCount); // Guild size substitution
@@ -62,6 +62,10 @@ module.exports = (client, member) => {
             embeds: [
                 new MessageEmbed()
                     .setDescription(farewellMessage)
+                    .setAuthor({
+                        name: member.user.tag,
+                        iconURL: member.user.displayAvatarURL({dynamic: true})
+                    })
                     .setColor(member.guild.me.displayHexColor),
             ],
         });

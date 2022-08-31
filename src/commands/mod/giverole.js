@@ -1,11 +1,12 @@
 const Command = require('../Command.js');
 const {MessageEmbed} = require('discord.js');
+const emojis = require('../../utils/emojis.json');
 
 module.exports = class RoleCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'role',
-            aliases: ['giverole'],
+            name: 'giverole',
+            aliases: ['role', 'rolegive'],
             usage: 'role <user mention/ID> <role mention/ID>',
             description:
                 'Adds/Removes the specified role from the provided user.\nSeperate multiple roles with a comma ","\nUsing + at the beginning of the role adds the role but does not remove it\nUsing - at the beginning of the role removes the role but does not add it',
@@ -19,8 +20,22 @@ module.exports = class RoleCommand extends Command {
         });
     }
 
+    async interact(interaction) {
+        await interaction.deferReply();
+        const member = interaction.options.getMember('user');
+        const role = interaction.options.getRole('role');
+
+        try {
+            await this.addRole(member, role, interaction);
+            await this.sendReply(interaction, `${emojis.success} Gave ${role.toString()} role to ${member.toString()}`);
+        }
+        catch (err) {
+            this.sendErrorMessage(interaction, 0, 'Failed to give role', err.message);
+        }
+    }
+
     async run(message, args) {
-        if (!args[0]) return this.sendHelpMessage(message);
+        if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, this)]});
         const memberArg = args.shift();
         const member = await this.getGuildMember(message.guild, memberArg);
         if (!member)
@@ -104,7 +119,7 @@ module.exports = class RoleCommand extends Command {
                 .addField('Roles', changes.join('\n') || 'None', true)
                 .setFooter({
                     text: message.member.displayName,
-                    iconURL: message.author.displayAvatarURL({dynamic: true}),
+                    iconURL: this.getAvatarURL(message.author),
                 })
                 .setTimestamp()
                 .setColor(message.guild.me.displayHexColor);
@@ -125,7 +140,7 @@ module.exports = class RoleCommand extends Command {
                 return `-${role}`;
             }
             catch (err) {
-                message.client.logger.error(err.stack);
+                this.client.logger.error(err.stack);
                 return this.sendErrorMessage(
                     message,
                     1,
@@ -144,7 +159,7 @@ module.exports = class RoleCommand extends Command {
                 return `+${role}`;
             }
             catch (err) {
-                message.client.logger.error(err.stack);
+                this.client.logger.error(err.stack);
                 return this.sendErrorMessage(
                     message,
                     1,

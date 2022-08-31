@@ -11,21 +11,30 @@ module.exports = class MusicShuffleCommand extends Command {
     }
 
     run(message) {
-        const queue = this.client.player.getQueue(message.guild.id);
+        this.handle(message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        this.handle(interaction);
+    }
+
+    handle(context) {
+        const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)
-            return message.channel.send(
-                `No music currently playing ${message.author}... try again ? ❌`
+            return this.sendReplyAndDelete(context,
+                `No music currently playing ${context.author}... try again ? ❌`
             );
 
         if (!queue.tracks[0])
-            return message.channel.send(
-                `No music in the queue after the current one ${message.author}... try again ? ❌`
+            return this.sendReplyAndDelete(context,
+                `No music in the queue after the current one ${context.author}... try again ? ❌`
             );
 
         queue.shuffle();
 
-        return message.channel.send(
+        return this.sendReplyAndDelete(context,
             `Queue shuffled **${queue.tracks.length}** song(s) ! ✅`
         );
     }

@@ -11,7 +11,7 @@ module.exports = class SetCrownScheduleCommand extends Command {
         super(client, {
             name: 'setcrownschedule',
             aliases: ['setcs', 'scs', 'crownscedule'],
-            usage: 'setcrownschedule <cron>',
+            usage: 'setcrownschedule <guildid> <cron>',
             description: stripIndent`
         Sets the schedule for the crown role rotation. 
         The format is cron-style:
@@ -37,14 +37,39 @@ module.exports = class SetCrownScheduleCommand extends Command {
     }
 
     run(message, args) {
+        const guildId = args.shift();
+        const cron = args.join(' ');
+
+        this.handle(guildId, cron, args[1] === 'reset', message);
+    }
+
+    async interact(interaction) {
+        await interaction.deferReply();
+        const guildId = interaction.options.getString('guildid');
+        const cron = interaction.options.getString('cron');
+        const bReset = interaction.options.getString('reset');
+
+        this.handle(guildId, cron, bReset, interaction);
+    }
+
+    handle(guildId, cron, bReset, context) {
+        if (!guildId) {
+            return this.sendErrorMessage(context, 0, 'Please provide a valid server ID');
+        }
+
+        const guild = this.client.guilds.cache.get(guildId);
+        if (!guild) {
+            return this.sendErrorMessage(context, 0, 'Unable to find server, please check the provided ID');
+        }
+
         let {
             crown_role_id: crownRoleId,
             crown_channel_id: crownChannelId,
             crown_message: crownMessage,
             crown_schedule: oldCrownSchedule
-        } = message.client.db.settings.selectCrown.get(message.guild.id);
-        const crownRole = message.guild.roles.cache.get(crownRoleId);
-        const crownChannel = message.guild.channels.cache.get(crownChannelId);
+        } = this.client.db.settings.selectCrown.get(guild.id);
+        const crownRole = guild.roles.cache.get(crownRoleId);
+        const crownChannel = guild.channels.cache.get(crownChannelId);
 
         // Trim message
         if (crownMessage && crownMessage.length > 1024) crownMessage = crownMessage.slice(0, 1021) + '...';
@@ -52,88 +77,85 @@ module.exports = class SetCrownScheduleCommand extends Command {
         let description = `The \`crown schedule\` was successfully updated. ${success}`;
         const embed = new MessageEmbed()
             .setTitle('Settings: `Crown`')
-            .setThumbnail(message.guild.iconURL({dynamic: true}))
+            .setThumbnail(guild.iconURL({dynamic: true}))
             .setDescription(description)
             .addField('Role', `${crownRole}` || '`None`', true)
             .addField('Channel', `${crownChannel}` || '`None`', true)
-            .addField('Message', message.client.utils.replaceCrownKeywords(crownMessage) || '`None`')
+            .addField('Message', this.client.utils.replaceCrownKeywords(crownMessage) || '`None`')
             .setTimestamp()
-            .setColor(message.guild.me.displayHexColor);
+            .setColor('RANDOM');
 
         // Display current schedule
-        if (!args.length) {
-            const crown = message.client.db.settings.selectCrown.get(message.guild.id);
+        if (!cron) {
+            const crown = this.client.db.settings.selectCrown.get(guild.id);
             if (!crown.crown_schedule) {
                 embed.setDescription('The `crown schedule` is currently `disabled`.');
-                return message.channel.send({
+                return this.sendReply(context, {
                     embeds: embed
                 });
             }
 
             embed.setDescription(`The \`crown schedule\` is currently set to: \`${crown.crown_schedule}\``);
-            return message.channel.send({
+            return this.sendReply(context, {
                 embeds: [embed]
             });
         }
         // Clear schedule
-        else if (args[0] === 'reset') {
-            message.client.db.settings.updateCrownSchedule.run('0 */24 * * *', message.guild.id);
+        else if (bReset) {
+            this.client.db.settings.updateCrownSchedule.run('0 */24 * * *', guild.id);
 
-            if (message.guild.job) message.guild.job.cancel(); // Cancel old job
-            message.client.logger.info(`${message.guild.name}: Cancelled job`);
+            if (guild.job) guild.job.cancel(); // Cancel old job
+            this.client.logger.info(`${guild.name}: Cancelled job`);
 
             // Schedule crown role rotation
-            message.client.utils.scheduleCrown(message.client, message.guild);
-            message.client.logger.info(`${message.guild.name}: Scheduled job`);
+            this.client.utils.scheduleCrown(this.client, guild);
+            this.client.logger.info(`${guild.name}: Scheduled job`);
 
-            return message.channel.send({
+            return this.sendReply(context, {
                 embeds: [embed
                     .spliceFields(2, 0, {
                         name: 'Schedule',
                         value: '`0 */24 * * *`',
                         inline: true
                     })]
-            }
-            );
+            });
         }
 
-        let crownSchedule = message.content.slice(message.content.indexOf(args[0]), message.content.length);
         try {
-            parser.parseExpression(crownSchedule);
+            parser.parseExpression(cron);
         }
         catch (err) {
-            return this.sendErrorMessage(message, 0, 'Please try again with a valid cron expression');
+            return this.sendErrorMessage(context, 0, 'Please try again with a valid cron expression');
         }
 
         // Set minutes and seconds to 0
-        const cron = crownSchedule.split(' ');
-        if (!allowNonZeroMinutes && cron[0] !== '0') {
-            description = description + `\n**Note:** Minutes were changed from \`${cron[0]}\` to \`0\`.`;
-            cron[0] = '0';
+        const cronElements = cron.split(' ');
+        if (!allowNonZeroMinutes && cronElements[0] !== '0') {
+            description = description + `\n**Note:** Minutes were changed from \`${cronElements[0]}\` to \`0\`.`;
+            cronElements[0] = '0';
         }
-        if (cron.length === 6 && cron[5] !== '0') {
+        if (cronElements.length === 6 && cronElements[5] !== '0') {
             if (description.includes('\n'))
-                description = description.slice(0, -1) + `, and seconds were changed from \`${cron[5]}\` to \`0\`.`;
-            else description = description + `\n**Note:** Seconds were changed from \`${cron[5]}\` to \`0\`.`;
-            cron[5] = '0';
+                description = description.slice(0, -1) + `, and seconds were changed from \`${cronElements[5]}\` to \`0\`.`;
+            else description = description + `\n**Note:** Seconds were changed from \`${cronElements[5]}\` to \`0\`.`;
+            cronElements[5] = '0';
         }
-        crownSchedule = cron.join(' ');
+        cron = cronElements.join(' ');
         embed.setDescription(description);
 
-        message.client.db.settings.updateCrownSchedule.run(crownSchedule, message.guild.id);
-        if (message.guild.job) message.guild.job.cancel(); // Cancel old job
+        this.client.db.settings.updateCrownSchedule.run(cron, guild.id);
+        if (guild.job) guild.job.cancel(); // Cancel old job
 
         // Schedule crown role rotation
-        message.client.utils.scheduleCrown(message.client, message.guild);
+        this.client.utils.scheduleCrown(this.client, guild);
 
-        message.channel.send({
+        this.sendReply(context, {
             embeds: [embed
                 .spliceFields(2, 0, {
                     name: 'Schedule',
-                    value: `\`${oldCrownSchedule || 'None'}\` ➔ \`${crownSchedule}\``,
+                    value: `\`${oldCrownSchedule || 'None'}\` ➔ \`${cron}\``,
                     inline: true
                 })]
-        }
-        );
+        });
     }
 };

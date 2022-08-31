@@ -55,7 +55,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
             .addField('Channel', verificationChannel?.toString() || '`None`', true)
             .addField('Message', verificationMessage || '`None`')
             .setFooter({
-                text: context.member.displayName, iconURL: context.author.displayAvatarURL(),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
 
