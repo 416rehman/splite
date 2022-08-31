@@ -76,7 +76,7 @@ module.exports = async (client) => {
         client.logger.info(`${client.name} has left ${guild.guild_name}`);
     }
 
-    await client.registerAllSlashCommands(client.application.id);
+    // await client.registerAllSlashCommands();
 
     client.logger.info(`${client.name} is now online`);
     client.logger.info(`${client.name} is running on ${client.guilds.cache.size} server(s)`);

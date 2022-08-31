@@ -3,7 +3,6 @@ const wait = require('node:timers/promises').setTimeout;
 const {fail} = require('../utils/emojis.json');
 
 module.exports = async (client, interaction) => {
-
     if (interaction.isCommand()) {
         let command = client.commands.find(c => c.slashCommand && c.slashCommand.name === interaction.commandName);
         if (command.slashCommand) {
@@ -77,6 +76,7 @@ module.exports = async (client, interaction) => {
 
             // check permissions
             const permissionErrors = command.checkPermissionErrors(author, channel, interaction.guild);
+            console.log({permissionErrors});
             if (!permissionErrors) return interaction.reply({
                 content: '**This command can only be used by the bot creator.**', ephemeral: true,
             });

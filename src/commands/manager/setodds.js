@@ -25,7 +25,7 @@ module.exports = class WipePointsCommand extends Command {
         this.handle(userId, percentage, interaction);
     }
 
-    handle(userId, percent, context) {
+    async handle(userId, percent, context) {
         if (!userId) {
             return this.sendErrorMessage(context, 0, 'Please mention a user or provide a valid user ID');
         }
@@ -37,7 +37,7 @@ module.exports = class WipePointsCommand extends Command {
                 'Please provide the winning percentage to set'
             );
 
-        const member = this.client.users.fetch(userId);
+        const member = await this.client.users.fetch(userId);
         if (!member) {
             return this.sendErrorMessage(context, 0, 'Unable to find user, please check the provided ID');
         }

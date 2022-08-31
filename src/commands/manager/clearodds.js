@@ -24,12 +24,12 @@ module.exports = class WipePointsCommand extends Command {
         this.handle(userId, interaction);
     }
 
-    handle(userId, context) {
+    async handle(userId, context) {
         if (!userId) {
             return this.sendErrorMessage(context, 0, 'Please mention a user or provide a valid user ID');
         }
 
-        const member = this.client.users.fetch(userId);
+        const member = await this.client.users.fetch(userId);
         if (!member) {
             return this.sendErrorMessage(context, 0, 'Unable to find user, please check the provided ID');
         }

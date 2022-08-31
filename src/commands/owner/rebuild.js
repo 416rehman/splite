@@ -24,9 +24,9 @@ module.exports = class rebuildCommand extends Command {
         this.handle(id, interaction);
     }
 
-    handle(id, context) {
+    async handle(id, context) {
         const guild = this.client.guilds.cache.get(id);
-        const member = this.client.users.fetch(id);
+        const member = await this.client.users.fetch(id);
         if (!member && !guild)
             return this.sendErrorMessage(
                 context,

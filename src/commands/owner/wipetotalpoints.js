@@ -27,7 +27,7 @@ module.exports = class WipeTotalPointsCommand extends Command {
         this.handle(userId, guildId, interaction);
     }
 
-    handle(userId, guildId, context) {
+    async handle(userId, guildId, context) {
         if (!userId) {
             return this.sendErrorMessage(context, 0, 'Please mention a user or provide a valid user ID');
         }
@@ -35,7 +35,7 @@ module.exports = class WipeTotalPointsCommand extends Command {
             return this.sendErrorMessage(context, 0, 'Please provide a valid server ID');
         }
 
-        const member = this.client.users.fetch(userId);
+        const member = await this.client.users.fetch(userId);
         if (!member) {
             return this.sendErrorMessage(context, 0, 'Unable to find user, please check the provided ID');
         }

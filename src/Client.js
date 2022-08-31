@@ -212,10 +212,10 @@ class Client extends Discord.Client {
 
     /**
      * Registers all slash commands across all the guilds
-     * @param id client id
      * @returns {Promise<void>}
      */
-    registerAllSlashCommands(id) {
+    registerAllSlashCommands() {
+        const id = this.application.id;
         this.logger.info('Started refreshing application (/) commands.');
         const data = this.commands.filter(c => c.slashCommand && !c.disabled && c.type !== this.types.OWNER && c.type !== this.types.MANAGER);
         const restrictedData = this.commands.filter((c) => c.slashCommand && !c.disabled && c.type === this.types.OWNER && c.type === this.types.MANAGER);
@@ -231,7 +231,6 @@ class Client extends Discord.Client {
         Promise.all(promises).then(() => {
             this.logger.info('Finished refreshing application (/) commands.');
         }).catch((error) => {
-            console.error(error);
             const guild = error.url.toString().match(/(guilds\/)(\S*)(\/commands)/)[2];
             if (error.code === 50001) return this.logger.error(`Failed to setup slash commands for guild: ${guild}. Missing perms.`);
         });

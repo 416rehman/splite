@@ -25,7 +25,7 @@ module.exports = class MusicCommandGroup extends Command {
         super(client, {
             name: 'music',
             description: 'Music / DJ commands',
-            type: client.types.INFO,
+            type: client.types.MUSIC,
             slashCommand: new SlashCommandBuilder()
                 .addSubcommand((o) => o.setName('play').setDescription('Play / Resume the music')
                     .addStringOption((o) => o.setName('query').setDescription('Query or URL to play'))

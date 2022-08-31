@@ -510,9 +510,7 @@ class Command {
      * @returns {*|boolean|MessageEmbed}
      */
     checkPermissionErrors(member, channel, guild, ownerOverride = true) {
-        if (
-            !channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])
-        )
+        if (!channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS']))
             return new MessageEmbed()
                 .setAuthor({
                     name: `${this.getUserIdentifier(member)}`,
@@ -556,28 +554,26 @@ class Command {
      * @param perms
      * @returns {boolean|MessageEmbed}
      */
-    checkUserPermissions(
-        member,
-        channel,
-        ownerOverride = true,
-        perms = this.userPermissions
-    ) {
+    checkUserPermissions(member, channel, ownerOverride = true, perms = this.userPermissions) {
         // Override all permissions if owner and ownerOverride is true
         if (ownerOverride && this.client.isOwner(member)) {
             return true;
         }
-
+        console.log('COMMAND TYPE', this.type);
         // Owner / Manager commands
         if (this.type === this.client.types.OWNER || this.type === this.client.types.MANAGER) {
             if (this.type === this.client.types.OWNER && this.client.isOwner(member)) {
+                console.log('OWNER COMMAND - The user is an owner so it\'s allowed');
                 return true;
             }
             if (this.type === this.client.types.MANAGER && (this.client.isManager(member) || this.client.isOwner(member))) {
+                console.log('MANAGER COMMAND - The user is a manager so it\'s allowed');
                 return true;
             }
         }
         // User commands
         else {
+            console.log('USER COMMAND - Checking user permissions');
             if (!perms || !perms.length) {
                 return true;
             }

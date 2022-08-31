@@ -50,7 +50,8 @@
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "fmt": "eslint . --fix"
+    "fmt": "eslint . --fix",
+    "register": "node registerCommandsScript.js"
   },
   "repository": {
     "type": "git",

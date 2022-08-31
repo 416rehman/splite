@@ -12,7 +12,7 @@ module.exports = class EmojiCommandGroup extends Command {
         super(client, {
             name: 'emoji',
             description: 'Emoji management commands - Add, remove, list',
-            type: client.types.INFO,
+            type: client.types.MOD,
             slashCommand: new SlashCommandBuilder()
                 .addSubcommand((o) => o.setName('add').setDescription('Add an emoji to the server.')
                     .addStringOption(emoji => emoji.setName('emojis').setDescription('The emojis to add').setRequired(true))
