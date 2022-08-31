@@ -72,7 +72,7 @@ the repo on GitHub to help with development! ⭐
 3. Update src/utils/emoji.json to use emojis from your server
 4. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
 5. Run `npm i` in the repo directory to install dependencies
-6. Run `node app.js` command to run the bot (To register the slash commands, you need to run `npm run registerCommands`)
+6. Run `node app.js` command to run the bot (To register the slash commands, you need to run `npm run register`)
 
 *If you wish to run the bot over pm2, use the command `pm2 start`*
 <hr/>
