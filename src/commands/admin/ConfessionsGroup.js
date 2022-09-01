@@ -18,6 +18,7 @@ module.exports = class ConfessionsSettingsCommandGroup extends Command {
             name: 'confession-settings',
             description: 'Confessions Management - Lets server members post confessions in the confessions channel',
             type: client.types.ADMIN,
+            userPermissions: ['MANAGE_GUILD'],
             slashCommand: new SlashCommandBuilder().setName('confessions')
                 .addSubcommandGroup((o) => o.setName('channel').setDescription('The confessions channel is where confessions will be posted')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the confessions channel - To view current channel, don\'t provide a role').addChannelOption(p => p.setName('channel').setRequired(false).setDescription('The channel to set as the confessions channel. To view current channel, don\'t provide this option')))

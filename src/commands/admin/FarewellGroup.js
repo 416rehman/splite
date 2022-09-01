@@ -19,6 +19,7 @@ module.exports = class FarewellSettingsCommandGroup extends Command {
             name: 'farewell-settings',
             description: 'Farewell Management - Farewell posts a message to the farewell channel when a member leaves the server',
             type: client.types.ADMIN,
+            userPermissions: ['MANAGE_GUILD'],
             slashCommand: new SlashCommandBuilder().setName('farewell')
                 .addSubcommandGroup((o) => o.setName('channel').setDescription('The farewell channel is where the farewell message will be posted')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the farewell channel - To view current channel, don\'t provide a role')

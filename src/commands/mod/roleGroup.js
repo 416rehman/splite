@@ -13,6 +13,7 @@ module.exports = class RoleCommandGroup extends Command {
             name: 'role',
             description: 'Role management commands - Create, Give, Info',
             type: client.types.MOD,
+            userPermissions: ['MANAGE_ROLES'],
             slashCommand: new SlashCommandBuilder()
                 .addSubcommand((o) => o.setName('create').setDescription('Create a role')
                     .addStringOption(name => name.setName('name').setDescription('The name of the role').setRequired(true))

@@ -34,6 +34,7 @@ module.exports = class LoggingSettingsCommandGroup extends Command {
             name: 'logging-settings',
             description: 'Logs Management - Logs provide a way to view the logs of the server',
             type: client.types.ADMIN,
+            userPermissions: ['MANAGE_GUILD'],
             slashCommand: new SlashCommandBuilder().setName('logs')
                 .addSubcommandGroup((o) => o.setName('member').setDescription('The member logs provide a way to view the logs of the server')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the member logs channel - To view current channel, don\'t provide a channel').addChannelOption(p => p.setName('channel').setRequired(false).setDescription('To view current channel, don\'t provide this option')))

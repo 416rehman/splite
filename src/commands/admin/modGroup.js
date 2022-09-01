@@ -18,6 +18,7 @@ module.exports = class CrownSettingsCommandGroup extends Command {
             name: 'mod-settings',
             description: 'Mod Management - Set the role and channel for moderators',
             type: client.types.ADMIN,
+            userPermissions: ['MANAGE_GUILD'],
             slashCommand: new SlashCommandBuilder().setName('mod')
                 .addSubcommandGroup((o) => o.setName('role').setDescription('The mod role is given to moderators, allowing them to perform moderator actions')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the mod role - To view current role, don\'t provide a role').addRoleOption(p => p.setName('role').setRequired(false).setDescription('The role to set as the mod role. To view current role, don\'t provide this option')))
