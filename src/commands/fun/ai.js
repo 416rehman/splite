@@ -9,7 +9,7 @@ module.exports = class AiCommand extends Command {
             name: 'ai',
             aliases: ['ask'],
             usage: 'mock <text>',
-            cooldown: 120,
+            cooldown: 60,
             description:
                 'Uses artificial intelligence to generate a response to your message',
             type: client.types.FUN,
