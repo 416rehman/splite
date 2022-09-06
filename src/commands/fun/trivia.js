@@ -153,7 +153,8 @@ module.exports = class TriviaCommand extends Command {
                     winner = interaction.user;
                     collector.stop();
                     interaction.reply({
-                        content: `${emojis.success} Correct answer! You have won ${reward} points.`, ephemeral: false
+                        content: `${emojis.success} ${interaction.user} answered ${origAnswers[0]} correctly! **+${reward}** ${emojis.point} points.`,
+                        ephemeral: false
                     });
                 }
                 else {

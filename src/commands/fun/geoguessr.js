@@ -111,7 +111,10 @@ module.exports = class geoGuessrCommand extends Command {
                 if (interaction.customId === correctAnswerIndex) {
                     winner = interaction.user;
                     collector.stop();
-                    interaction.reply({content: `${emojis.success} Correct answer!`, ephemeral: false});
+                    interaction.reply({
+                        content: `${emojis.success} ${interaction.user} answered ${origAnswers[0]} correctly! **+${reward}** ${emojis.point} points.`,
+                        ephemeral: true
+                    });
                 }
                 else {
                     interaction.reply({content: `${emojis.fail} Incorrect answer!`, ephemeral: true});
