@@ -183,7 +183,9 @@ module.exports = class TriviaCommand extends Command {
                         embeds: [questionEmbed
                             .setDescription('Sorry, time\'s up! Better luck next time.')
                             .addField('Question', `${question}`)
-                            .addField('Correct Answer', origAnswers[0])],
+                            .addField('Correct Answer', origAnswers[0])
+                            .setFooter({text: 'No one answered correctly', iconURL: this.getAvatarURL(context.author)})
+                        ],
                         components: []
                     };
 
