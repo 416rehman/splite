@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
 const {oneLine} = require('common-tags');
@@ -13,17 +13,11 @@ const timeout = 30000;
 module.exports = class geoGuessrCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'geoguessr',
-            aliases: ['geo', 'gg', 'geoguesser'],
-            usage: 'geoguessr',
-            description: oneLine`
+            name: 'geoguessr', aliases: ['geo', 'gg', 'geoguesser'], usage: 'geoguessr', description: oneLine`
         Compete against your friends in a game of geoGuessr (anyone can answer).
         Correct answer rewards ${reward} points.
         The question will expire after ${timeout / 1000} seconds.
-      `,
-            type: client.types.FUN,
-            examples: ['geoguessr'],
-            slashCommand: new SlashCommandBuilder()
+      `, type: client.types.FUN, examples: ['geoguessr'], slashCommand: new SlashCommandBuilder()
         });
     }
 
@@ -36,18 +30,14 @@ module.exports = class geoGuessrCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    async handle(context, isInteraction) {
         try {
             if (!this.client.topics?.geoguessr?.length) {
                 const payload = `${fail} No GeoGuessr questions available.`;
-                if (isInteraction) return context.editReply(payload);
-                else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+                if (isInteraction) return context.editReply(payload); else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
             }
 
-            const topic =
-                this.client.topics.geoguessr[
-                    Math.floor(Math.random() * this.client.topics.geoguessr.length)
-                ];
+            const topic = this.client.topics.geoguessr[Math.floor(Math.random() * this.client.topics.geoguessr.length)];
 
             const path = __basedir + '/data/geoguessr/' + topic + '.yaml';
             const questions = YAML.parse(fs.readFileSync(path, 'utf-8'));
@@ -58,13 +48,34 @@ module.exports = class geoGuessrCommand extends Command {
             const answers = questions[question];
             const origAnswers = [...answers].map(a => `\`${a}\``);
 
-            // Clean answers
-            for (let i = 0; i < answers.length; i++) {
-                answers[i] = answers[i]
-                    .trim()
-                    .toLowerCase()
-                    .replace(/\.|'|-|\s/g, '');
+            // Choices to display
+            const choices = [];
+
+            // Wrong choices
+            for (let i = 0; i < 3; i++) {
+                let x = Math.floor(Math.random() * Object.keys(questions).length);
+                if (x === n) x = (x + 1) % Object.keys(questions).length;
+                const question = Object.keys(questions)[x];
+                const answer = questions[question][0];
+                choices.push(answer);
             }
+
+            choices.push(answers[0]); // correct answer
+            choices.sort(() => Math.random() - 0.5); // Shuffle choices
+
+            const row = new MessageActionRow();
+            const choiceEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣'];
+
+            let correctAnswerIndex = '0';
+
+            choices.forEach((choice, i) => {
+                if (choice === answers[0]) correctAnswerIndex = `${i}`;
+                row.addComponents(new MessageButton()
+                    .setCustomId(`${i}`)
+                    .setLabel(`${choice}`)
+                    .setEmoji(choiceEmojis[i])
+                    .setStyle('SECONDARY'));
+            });
 
             // Get user answer
             const questionEmbed = new MessageEmbed()
@@ -72,97 +83,75 @@ module.exports = class geoGuessrCommand extends Command {
                 .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
                 .addField('Question', `${question}`)
                 .setFooter({
-                    text: `Expires in ${timeout / 1000} seconds`,
-                    iconURL: this.getAvatarURL(context.author),
+                    text: `Expires in ${timeout / 1000} seconds`, iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp();
             const url = question.match(/\bhttps?:\/\/\S+/gi);
             if (url) questionEmbed.setImage(url[0]);
-            if (isInteraction) {
-                context.editReply({
-                    embeds: [questionEmbed]
-                }).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.2));
-            }
-            else {
-                if (context.loadingMessage) {
-                    context.loadingMessage.edit({
-                        embeds: [questionEmbed]
-                    });
-                    setTimeout(() => context.loadingMessage.delete(), timeout + timeout * 0.2);
+
+            const payload = {
+                embeds: [questionEmbed], components: [row]
+            };
+
+            const msg = await this.sendReply(context, payload);
+
+            // Get user answer
+            let winner;
+            const answeredUsers = new Set();
+            const collector = msg.createMessageComponentCollector({
+                componentType: 'BUTTON', time: timeout, dispose: true
+            });
+
+            collector.on('collect', (interaction) => {
+                if (answeredUsers.has(interaction.user.id)) {
+                    interaction.reply({content: `${emojis.fail} You have already answered!`, ephemeral: true});
+                    return;
+                }
+                answeredUsers.add(interaction.user.id);
+                if (interaction.customId === correctAnswerIndex) {
+                    winner = interaction.user;
+                    collector.stop();
+                    interaction.reply({content: `${emojis.success} Correct answer!`, ephemeral: false});
                 }
                 else {
-                    context.channel.send({
-                        embeds: [questionEmbed]
-                    }).then(m => setTimeout(() => m.delete(), timeout + timeout * 0.2));
-                }
-
-
-            }
-            let winner;
-
-            const collector = context.channel.createMessageCollector({
-                filter: (m) => !m.author.bot,
-                time: timeout
-            }); // Wait 30 seconds
-
-            collector.on('collect', (msg) => {
-                if (
-                    answers.includes(
-                        msg.content
-                            .trim()
-                            .toLowerCase()
-                            .replace(/\.|'|-|\s/g, '')
-                    )
-                ) {
-                    winner = msg.author;
-                    collector.stop();
+                    interaction.reply({content: `${emojis.fail} Incorrect answer!`, ephemeral: true});
                 }
             });
             collector.on('end', () => {
-                const answerEmbed = new MessageEmbed()
-                    .setTitle('geoGuessr')
-                    .setFooter({
-                        text: this.getUserIdentifier(winner || context.author),
-                        iconURL: this.getAvatarURL(winner || context.author),
-                    })
-                    .setTimestamp();
-
+                answeredUsers.length = 0;
                 if (winner) {
-                    this.client.db.users.updatePoints.run(
-                        {points: reward},
-                        winner.id,
-                        context.guild.id
-                    );
-                    context.channel.send({
-                        embeds: [
-                            answerEmbed.setDescription(
-                                `Congratulations ${winner}, you gave the correct answer!`
-                            ).addField('Points Earned', `**+${reward}** ${emojis.point}`),
+                    this.client.db.users.updatePoints.run({points: reward}, winner.id, context.guild.id);
+
+                    const payload = {
+                        embeds: [questionEmbed
+                            .setFooter({text: `Answered by ${winner.tag}`, iconURL: this.getAvatarURL(winner)})
+                            .addField('Winner', winner.toString())
                         ],
-                    }).then(m => setTimeout(() => m.delete(), 10000));
+                        components: []
+                    };
+
+                    msg.edit(payload);
                 }
-                else
-                    context.channel.send({
-                        embeds: [
-                            answerEmbed
-                                .setDescription('Sorry, time\'s up! Better luck next time.')
-                                .addField('Correct Answers', origAnswers.join('\n')),
-                        ],
-                    }).then(m => setTimeout(() => m.delete(), 10000));
+                else {
+                    const payload = {
+                        embeds: [questionEmbed
+                            .setDescription('Sorry, time\'s up! Better luck next time.')
+                            .addField('Question', `${question}`)
+                            .addField('Correct Answer', origAnswers[0])]
+                    };
+
+                    msg.edit(payload);
+                }
             });
         }
         catch (err) {
             const payload = {
-                embeds: [
-                    new MessageEmbed()
-                        .setTitle('Error')
-                        .setDescription(fail + ' ' + err.message)
-                        .setColor('RED')
-                ]
+                embeds: [new MessageEmbed()
+                    .setTitle('Error')
+                    .setDescription(fail + ' ' + err.message)
+                    .setColor('RED')]
             };
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
-
+            this.sendReply(context, payload);
         }
     }
 };

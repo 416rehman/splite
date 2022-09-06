@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {
-    MessageEmbed, MessageActionRow, MessageSelectMenu,
+    MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton,
 } = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
@@ -75,7 +75,7 @@ module.exports = class TriviaCommand extends Command {
         this.handle(topic, interaction, true);
     }
 
-    async handle(topic, context, isInteraction) {
+    async handle(topic, context) {
         try {
             // Get question and answers
             const path = __basedir + '/data/trivia/' + topic + '.yaml';
@@ -86,72 +86,104 @@ module.exports = class TriviaCommand extends Command {
             const answers = questions[question];
             const origAnswers = [...answers].map(a => `\`${a}\``);
 
-            // Clean answers
-            for (let i = 0; i < answers.length; i++) {
-                answers[i] = answers[i]?.trim().toLowerCase().replace(/\.|'|-|\s/g, '');
-            }
-
             const url = question.match(/\bhttps?:\/\/\S+/gi);
 
-            // Get user answer
+            // 3 wrong and 1 correct choices
+            const choices = [];
+
+            for (let i = 0; i < 3; i++) {
+                let x = Math.floor(Math.random() * Object.keys(questions).length);
+                if (x === n) x = (x + 1) % Object.keys(questions).length;
+                const question = Object.keys(questions)[x];
+                const answer = questions[question][0];
+                choices.push(answer);
+            }
+
+            choices.push(answers[0]);
+            // Shuffle choices
+            choices.sort(() => Math.random() - 0.5);
+
+
+            const row = new MessageActionRow();
+            const choiceEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣'];
+
+            let correctAnswerIndex = '0';
+
+            choices.forEach((choice, i) => {
+                if (choice === answers[0]) correctAnswerIndex = `${i}`;
+                row.addComponents(new MessageButton()
+                    .setCustomId(`${i}`)
+                    .setLabel(`${choice}`)
+                    .setEmoji(choiceEmojis[i])
+                    .setStyle('PRIMARY'));
+            });
+
+            const questionEmbed = new MessageEmbed()
+                .setTitle('Trivia')
+                .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
+                .addField('Question', `${question}`)
+                .setFooter({
+                    text: `Expires in ${timeout / 1000} seconds`, iconURL: this.getAvatarURL(context.author)
+                })
+                .setImage(url ? url[0] : undefined)
+                .setTimestamp();
+
             const payload = {
-                embeds: [new MessageEmbed()
-                    .setTitle('Trivia')
-                    .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
-                    .addField('Question', `${question}`)
-                    .setFooter({
-                        text: `Expires in ${timeout / 1000} seconds`, iconURL: this.getAvatarURL(context.author)
-                    })
-                    .setImage(url ? url[0] : undefined)
-                    .setTimestamp()]
+                embeds: [questionEmbed], components: [row]
             };
 
             const msg = await this.sendReply(context, payload);
 
+            // Get user answer
             let winner;
+            const answeredUsers = new Set();
+            const collector = msg.createMessageComponentCollector({
+                componentType: 'BUTTON', time: timeout, dispose: true
+            });
 
-            const collector = context.channel.createMessageCollector({
-                filter: (m) => !m.author.bot, time: timeout
-            }); // Wait 30 seconds
-
-            collector.on('collect', m => {
-                if (answers.includes(m.content.trim().toLowerCase().replace(/\.|'|-|\s/g, ''))) {
-                    winner = m.author;
-                    m.react('✅');
+            collector.on('collect', interaction => {
+                if (answeredUsers.has(interaction.user.id)) {
+                    interaction.reply({
+                        content: `${emojis.fail} You have already answered this question.`, ephemeral: true
+                    });
+                    return;
+                }
+                answeredUsers.add(interaction.user.id);
+                if (interaction.customId === correctAnswerIndex) {
+                    winner = interaction.user;
                     collector.stop();
+                    interaction.reply({
+                        content: `${emojis.success} Correct answer! You have won ${reward} points.`, ephemeral: false
+                    });
+                }
+                else {
+                    interaction.reply({
+                        content: `${emojis.fail} Incorrect answer.`, ephemeral: true
+                    });
                 }
             });
 
             collector.on('end', () => {
-                const answerEmbed = new MessageEmbed()
-                    .setTitle('Trivia')
-                    .setFooter({
-                        text: this.getUserIdentifier(context.author), iconURL: this.getAvatarURL(context.author)
-                    })
-                    .setTimestamp();
-
+                answeredUsers.length = 0;
                 if (winner) {
                     this.client.db.users.updatePoints.run({points: reward}, winner.id, context.guild.id);
-                    context.channel.send({
-                        embeds: [answerEmbed.setDescription(`Congratulations ${winner}, you gave the correct answer!`)
-                            .addField('Points Earned', `**+${reward}** ${emojis.point}`),]
-                    });
 
                     const payload = {
-                        embeds: [answerEmbed
-                            .setDescription(`${winner} gave the correct answer!`)
-                            .addField('Question', `${question}`)
-                            .addField('Correct Answers', origAnswers.join('\n'))]
+                        embeds: [questionEmbed
+                            .setFooter({text: `Answered by ${winner.tag}`, iconURL: this.getAvatarURL(winner)})
+                            .addField('Winner', winner.toString())
+                        ],
+                        components: []
                     };
 
                     msg.edit(payload);
                 }
                 else {
                     const payload = {
-                        embeds: [answerEmbed
+                        embeds: [questionEmbed
                             .setDescription('Sorry, time\'s up! Better luck next time.')
                             .addField('Question', `${question}`)
-                            .addField('Correct Answers', origAnswers.join('\n'))]
+                            .addField('Correct Answer', origAnswers[0])]
                     };
 
                     msg.edit(payload);
