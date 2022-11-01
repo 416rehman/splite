@@ -36,26 +36,7 @@ module.exports = class thighsCommand extends Command {
             examples: ['nsfw boobs', 'nsfw thigh'],
             slashCommand: new SlashCommandBuilder()
                 .addStringOption(s =>
-                    s.setName('category').setRequired(false).setDescription('The category or genre').addChoices([
-                        ['hass', 'hass'],
-                        ['pgif', 'pgif'],
-                        ['4k', '4k'],
-                        ['hentai', 'hentai'],
-                        ['hneko', 'hneko'],
-                        ['hkitsune', 'hkitsune'],
-                        ['kemonomimi', 'kemonomimi'],
-                        ['anal', 'anal'],
-                        ['hanal', 'hanal'],
-                        ['gonewild', 'gonewild'],
-                        ['ass', 'ass'],
-                        ['pussy', 'pussy'],
-                        ['thigh', 'thigh'],
-                        ['hthigh', 'hthigh'],
-                        ['paizuri', 'paizuri'],
-                        ['tentacle', 'tentacle'],
-                        ['boobs', 'boobs'],
-                        ['hboobs', 'hboobs'],
-                    ]))
+                    s.setName('category').setRequired(false).setDescription('The category or genre'))
         });
     }
 
