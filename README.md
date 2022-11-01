@@ -71,8 +71,9 @@ the repo on GitHub to help with development! ⭐
 2. Add the emojis from emojis.zip to your server
 3. Update src/utils/emoji.json to use emojis from your server
 4. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
-5. Run `npm i` in the repo directory to install dependencies
-6. Run `node app.js` command to run the bot (To register the slash commands, you need to run `npm run register`)
+5. Run `npm install` in the repo directory to install dependencies
+6. Run `npm run register` to register all slash commands
+6. Run `node app.js` command to start the bot
 
 *If you wish to run the bot over pm2, use the command `pm2 start`*
 <hr/>
@@ -215,7 +216,7 @@ Make sure to add the bot owners' ID(s) to the `owners` array in the config.json 
 ```
 
 ##### Restrict commands to Splite Bot Managers
-To restrict a command to only be used by Splite Bot Managers, set the type to `MANAGER`.
+To restrict a command to only be used by Splite Bot Managers, set the type in the Command file to `MANAGER`.
 
 Example:
 ```js
@@ -301,7 +302,7 @@ was run to prevent unwanted lockouts from running the command***
 
 #### Command Options
 
-The following options are available for commands:
+The following options are available for commands (default values are shown):
 
 ```javascript
 name: "The name of the command - Must be unique",
@@ -312,11 +313,11 @@ type: "Should be the same as the folder name of the command. Valid choices: INFO
 clientPermissions: ["The permissions the client needs to run the command. Valid values in src/utils/permissions.json"],
 userPermissions: ["The permissions the user needs to run the command. Valid values in src/utils/permissions.json"],
 examples: ["An example of how to use the command"],
-cooldown: 2 // The cooldown of the command in seconds - Default: 2,
-nsfwOnly: true // If the command can only be used in NSFW channels - Default: false,
-voiceChannelOnly: true // If the command can only be used in voice channels - Default: false,
-disabled: true // If the command is disabled, won't show up in help menu and won't work - Default: false,
-exclusive: true // If the command is exclusive, the user will not be able to call the command again until the done() method is called - Default: false,
+cooldown: 2 // The cooldown of the command in seconds
+nsfwOnly: false // If the command can only be used in NSFW channels
+voiceChannelOnly: false // If the command can only be used in voice channels
+disabled: false // If true, the command will not be registered and will not be able to be used. Config.json also provides a `disabledCommands` option to disable commands globally. Config.json has priority over this option.
+exclusive: false // If the command is exclusive, the user will not be able to call the command again until the done() method is called
 slashCommand: new SlashCommandBuilder() // Builds a slash command using the name and description. Use the `interact` method to handle logic.
 ```
 
