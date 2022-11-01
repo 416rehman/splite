@@ -1,6 +1,6 @@
 {
   "name": "splite",
-  "version": "4.0",
+  "version": "4.0.0",
   "description": "A fully customizable bot built with discord.js",
   "main": "app.js",
   "dependencies": {
