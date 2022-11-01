@@ -82,10 +82,12 @@ class Command {
         this.nsfwOnly = options.nsfwOnly || this.type === 'NSFW 18+';
 
         /**
-         * If command is enabled
+         * If command is enabled. Config.json has higher precedence.
+         * if the command is disabled in config.json, it will be disabled regardless of this value.
          * @type {boolean}
          */
         this.disabled = options.disabled || false;
+        if (this.client?.config?.disabledCommands?.includes(this.name)) this.disabled = true;
 
         /**
          * Array of error types

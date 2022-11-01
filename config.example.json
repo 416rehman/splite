@@ -9,6 +9,7 @@
   "confessionReportsID": "ID of the channel where confession reports are sent. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL",
   "inviteLink": "https://discord.com/api/oauth2/authorize?client_id=842244538248593439&permissions=8&scope=bot%20applications.commands",
   "botLogoURL": "https://i.imgur.com/B0XSinY.png",
+  "disabledCommands": ["command1", "command2"],
   "owners": [
     "123456789012346578"
   ],
