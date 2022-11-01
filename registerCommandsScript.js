@@ -10,6 +10,7 @@ const config = require('./config.json');
 const logger = require('./src/utils/logger');
 const {enabledIntents} = require('./intents.js');
 const {allIntents} = require('./intents');
+const fs = require('fs');
 
 class CommandRegistrar extends Discord.Client {
     constructor() {
@@ -113,9 +114,11 @@ class CommandRegistrar extends Discord.Client {
         // Register Application Commands
         await (async () => {
             try {
-                await rest.put(Routes.applicationCommands(this.application.id), {
+                // returns a list of application commands
+                const res = await rest.put(Routes.applicationCommands(this.application.id), {
                     body: data.map(c => c.slashCommand.toJSON()),
                 });
+                this.logger.info(`Successfully registered ${res.length}/${data.size} application commands.`);
             }
             catch (error) {
                 console.error(error);
@@ -123,10 +126,14 @@ class CommandRegistrar extends Discord.Client {
 
             // Remove Non-Existent Application Commands
             this.application.commands.fetch().then((registeredCommands) => {
-                registeredCommands.filter(c => c.applicationId === this.application.id).forEach(async c => {
+                registeredCommands.filter(c => c.applicationId === this.application.id).forEach(c => {
                     if (!data.find(d => d.slashCommand.name === c.name)) {
-                        await rest.delete(Routes.applicationCommand(this.application.id, c.id));
-                        console.log(`Deleted ${c.name} from application as it no longer exists.`);
+                        // if it returns 204, it means it was successful
+                        rest.delete(Routes.applicationCommand(this.application.id, c.id)).then((res) => {
+                            if (res.status === 204) {
+                                this.logger.info(`Deleted ${c.name} from application as it no longer exists.`);
+                            }
+                        });
                     }
                 });
             });
@@ -165,5 +172,8 @@ instance.loadTopics('./data/trivia', 'trivia');
 instance.loadCommands('./src/commands');
 
 instance.login(instance.config.token).then(() => {
-    instance.registerAllSlashCommands();
+    instance.registerAllSlashCommands().then(() => {
+        console.log('Completed');
+        process.exit(0);
+    });
 });
