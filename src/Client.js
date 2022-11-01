@@ -56,9 +56,11 @@ class Client extends Discord.Client {
             }
         });
 
-        this.openai = new OpenAIApi(new Configuration({
-            apiKey: config.apiKeys.openAI.apiKey,
-        }));
+        if (config.apiKeys?.openAI?.apiKey) {
+            this.openai = new OpenAIApi(new Configuration({
+                apiKey: config.apiKeys.openAI.apiKey,
+            }));
+        }
     }
 
     /**
@@ -208,112 +210,6 @@ class Client extends Discord.Client {
         this.logger.info(`\n${table.toString()}`);
         return this;
     }
-
-
-    /**
-     * Registers all slash commands across all the guilds
-     * @returns {Promise<void>}
-     */
-    registerAllSlashCommands() {
-        const id = this.application.id;
-        this.logger.info('Started refreshing application (/) commands.');
-        const data = this.commands.filter(c => c.slashCommand && !c.disabled && c.type !== this.types.OWNER && c.type !== this.types.MANAGER);
-        const restrictedData = this.commands.filter((c) => c.slashCommand && !c.disabled && c.type === this.types.OWNER && c.type === this.types.MANAGER);
-        const promises = [];
-        this.guilds.cache.forEach(g => {
-            //Register commands for all guilds
-            promises.push(this.registerSlashCommands(g, data, id));
-            //Register restricted commands for support guild
-            if (g.id === this.config.supportServerId) {
-                promises.push(this.registerSlashCommands(g, restrictedData, id));
-            }
-        });
-        Promise.all(promises).then(() => {
-            this.logger.info('Finished refreshing application (/) commands.');
-        }).catch((error) => {
-            const guild = error.url.toString().match(/(guilds\/)(\S*)(\/commands)/)[2];
-            if (error.code === 50001) return this.logger.error(`Failed to setup slash commands for guild: ${guild}. Missing perms.`);
-        });
-    }
-
-    /**
-     * Registers all slash commands in the provided guild
-     * @param guild guild to register commands in
-     * @param commands array of commands
-     * @param id client id
-     * @returns {Promise<unknown>}
-     */
-    registerSlashCommands(guild, commands, id) {
-        return new Promise(((resolve, reject) => {
-            const rest = new REST({version: '9'}).setToken(this.config.token);
-            try {
-                const slashCommands = commands.map(c => {
-                    if (c.userPermissions && c.userPermissions.length > 0) c.slashCommand.setDefaultPermission(true);
-
-                    return c.slashCommand.toJSON();
-                });
-
-                rest.put(Routes.applicationGuildCommands(id, guild.id), {body: slashCommands},).then(() => {
-                    guild.commands.fetch().then((registeredCommands) => {
-                        let fullPermissions = registeredCommands.filter(c => c.applicationId === this.application.id).map(c => {
-                            // if the command is removed, remove it from the guild
-                            if (!slashCommands.find(sc => sc.name === c.name)) {
-                                return rest.delete(Routes.applicationGuildCommand(id, guild.id, c.id));
-                            }
-
-                            // // Create permissions for the commands
-                            // return this.constructFullPermissions(commands, c, guild);
-                        });
-
-                        // Promise.all(fullPermissions).then((ArrayOfSlashCommandPerms) => {
-                        //     ArrayOfSlashCommandPerms = ArrayOfSlashCommandPerms.filter(p => p !== undefined && p !== null); // filter out undefined and null values
-                        //
-                        //     ArrayOfSlashCommandPerms.forEach(cmd => {
-                        //         //update the command permissions
-                        //         cmd.guild = guild.id;
-                        //         console.log(cmd);
-                        //         this.application.commands.permissions.set(cmd).then(() => console.log('Updated command permissions for ' + cmd.name));
-                        //     });
-                        // });
-                    });
-
-                    resolve('Registered slash commands for ' + guild.name);
-                });
-
-
-            }
-            catch (error) {
-                reject(error);
-            }
-        }));
-    }
-
-    /**
-     * Constructs the full permissions object for a slash command
-     * DEPRECATED SINCE DISCORD INTRODUCED SLASH COMMAND PERMISSIONS 2.0 - https://discord.com/developers/docs/change-log#updated-command-permissions:~:text=Disabled%20the%20batch%20editing%20endpoint
-     * @param allCommands
-     * @param slashCommand
-     * @param guild
-     * @return {{permissions: *, id}|null}
-     */
-    // constructFullPermissions(allCommands, slashCommand, guild) {
-    //
-    //     const perms_required = allCommands.find(command => command.slashCommand.name === slashCommand.name).userPermissions;
-    //     if (!perms_required || perms_required.length === 0) return;
-    //
-    //     let matching_roles = guild.roles.cache.filter(r => r.permissions.has(perms_required));
-    //     if (!matching_roles || matching_roles.length === 0) return null;
-    //
-    //
-    //     return {
-    //         command: slashCommand.id,
-    //         permissions: matching_roles.last(100).map(r => {
-    //             return {
-    //                 id: r.id, type: 'ROLE', permission: true
-    //             };
-    //         })
-    //     };
-    // }
 
     /**
      * Music Events Handler
