@@ -15,7 +15,7 @@ module.exports = class AiCommand extends Command {
             type: client.types.FUN,
             examples: ['ai how old is the sun'],
             slashCommand: new SlashCommandBuilder().addStringOption((o) => o.setName('question').setRequired(true).setDescription('The question you want to ask')),
-            disabled: !client.config.apiKeys.openAI.apiKey
+            disabled: !client.config.apiKeys?.openAI?.apiKey
         });
     }
 
