@@ -1,23 +1,22 @@
 global.__basedir = __dirname;
 
-const {REST} = require('@discordjs/rest');
-const {Routes} = require('discord-api-types/v9');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 const AsciiTable = require('ascii-table');
-const {readdir, readdirSync} = require('fs');
-const {resolve, join} = require('path');
+const { readdirSync } = require('fs');
+const { resolve, join } = require('path');
 const Discord = require('discord.js');
 const config = require('./config.json');
 const logger = require('./src/utils/logger');
-const {enabledIntents} = require('./intents.js');
-const {allIntents} = require('./intents');
-const fs = require('fs');
+const { enabledIntents } = require('./intents.js');
+const { allIntents } = require('./intents');
 
 class CommandRegistrar extends Discord.Client {
     constructor() {
         super({
             partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-            allowedMentions: {parse: ['users', 'roles'], repliedUser: true},
-            intents: enabledIntents,
+            allowedMentions: { parse: ['users', 'roles'], repliedUser: true },
+            intents: enabledIntents
         });
         this.utils = require('./src/utils/utils');
         this.enabledIntents = enabledIntents;
@@ -37,26 +36,26 @@ class CommandRegistrar extends Discord.Client {
             MUSIC: 'music',
             ADMIN: 'admin',
             MANAGER: 'manager',
-            OWNER: 'owner',
+            OWNER: 'owner'
         };
         this.topics = {};
     }
 
-
     loadTopics(path, type) {
         this.logger.info(`Loading topics for ${type}...`);
-        const files = readdirSync(path).filter(f => f.split('.').pop() === 'yaml');
+        const files = readdirSync(path).filter(
+            (f) => f.split('.').pop() === 'yaml'
+        );
 
         if (files.length === 0) return this.logger.warn('No topics found');
         this.logger.info(`${files.length} topic(s) found...`);
         this.topics[type] = [];
-        files.forEach(f => {
+        files.forEach((f) => {
             const topic = f.substring(0, f.indexOf('.'));
             this.topics[type].push(topic);
             this.logger.info(`Loading topic: ${topic}`);
         });
     }
-
 
     /**
      * Loads all available commands
@@ -67,34 +66,37 @@ class CommandRegistrar extends Discord.Client {
         let table = new AsciiTable('Commands');
         table.setHeading('File', 'Aliases', 'Type', 'Status');
 
-        readdirSync(path).filter(f => !f.endsWith('.js')).forEach(dir => {
-            const commands = readdirSync(resolve(__basedir, join(path, dir))).filter(file => file.endsWith('js'));
+        readdirSync(path)
+            .filter((f) => !f.endsWith('.js'))
+            .forEach((dir) => {
+                const commands = readdirSync(
+                    resolve(__basedir, join(path, dir))
+                ).filter((file) => file.endsWith('js'));
 
-            commands.forEach(f => {
-                const Command = require(resolve(__basedir, join(path, dir, f)));
-                const command = new Command(this); // Instantiate the specific command
-                if (command.name && !command.disabled) {
-                    // Map command
-                    this.commands.set(command.name, command);
+                commands.forEach((f) => {
+                    const Command = require(resolve(__basedir, join(path, dir, f)));
+                    const command = new Command(this); // Instantiate the specific command
+                    if (command.name && !command.disabled) {
+                        // Map command
+                        this.commands.set(command.name, command);
 
-                    // Map command aliases
-                    let aliases = '';
-                    if (command.aliases) {
-                        command.aliases.forEach(alias => {
-                            this.aliases.set(alias, command);
-                        });
-                        aliases = command.aliases.join(', ');
+                        // Map command aliases
+                        let aliases = '';
+                        if (command.aliases) {
+                            command.aliases.forEach((alias) => {
+                                this.aliases.set(alias, command);
+                            });
+                            aliases = command.aliases.join(', ');
+                        }
+
+                        table.addRow(f, aliases, command.type, 'pass');
                     }
-
-
-                    table.addRow(f, aliases, command.type, 'pass');
-                }
-                else {
-                    this.logger.warn(`${f} failed to load`);
-                    table.addRow(f, '', '', 'fail');
-                }
+                    else {
+                        this.logger.warn(`${f} failed to load`);
+                        table.addRow(f, '', '', 'fail');
+                    }
+                });
             });
-        });
         this.logger.info(`\n${table.toString()}`);
         return this;
     }
@@ -104,63 +106,78 @@ class CommandRegistrar extends Discord.Client {
      * @returns {Promise<void>}
      */
     async registerAllSlashCommands() {
+        const previous_commands = await this.application.commands.fetch();
         this.logger.info('Started refreshing application (/) commands.');
-        const data = this.commands.filter(c => c.slashCommand && !c.disabled && c.type !== this.types.OWNER && c.type !== this.types.MANAGER);
-        console.log({data: data.size});
-        const restrictedData = this.commands.filter((c) => c.slashCommand && !c.disabled && (c.type === this.types.OWNER || c.type === this.types.MANAGER));
+        const commandsToRegister = this.commands.filter(
+            (c) =>
+                c.slashCommand &&               // Must have a slashCommand property
+                !c.disabled &&                  // Must NOT be disabled
+                c.type !== this.types.OWNER &&  // Must not be an OWNER command
+                c.type !== this.types.MANAGER   // Must not be a MANAGER command
+        );
+        console.log(`Registering ${commandsToRegister.size} commands...`);
 
-        const rest = new REST({version: '9'}).setToken(this.config.token);
+        const rest = new REST({ version: '9' }).setToken(this.config.token);
 
-        // Register Application Commands
+        // BULK OVERWRITE GLOBAL APP COMMANDS
+        // If the command was already registered, and a new command with matching name is provided, it will be UPDATED.
+        // If the command was already registered, and NO new command with matching name is provided, it will be DELETED.
+        // If the command was NOT already registered, it will be registed and will count towards daily command creation LIMIT.
+        // More: https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
         await (async () => {
             try {
-                // returns a list of application commands
-                const res = await rest.put(Routes.applicationCommands(this.application.id), {
-                    body: data.map(c => c.slashCommand.toJSON()),
+                const registeredCommands = await rest.put(
+                    Routes.applicationCommands(this.application.id),
+                    {
+                        body: commandsToRegister.map((c) => c.slashCommand.toJSON())
+                    }
+                );
+                this.logger.info(`Successfully registered ${registeredCommands.length}/${commandsToRegister.size} application commands.`);
+
+                const removedCommands = previous_commands.filter(pc => !registeredCommands.find(c => c.name === pc.name)).map(c => c.name);
+                const newCommands = registeredCommands.filter(c => !previous_commands.find(pc => pc.name === c.name)).map(c => c.name);
+
+                const allCommands = new Set([...this.commands.filter(c => c.slashCommand).map(c => c.slashCommand.name), ...previous_commands.map(c => c.name)]);
+
+                console.log({
+                    'Commands': [...allCommands].map(c => {
+                        if (removedCommands.length && removedCommands.includes(c)) return '- ' + c;
+                        if (newCommands.length && newCommands.includes(c)) return '+ ' + c;
+                        return '= ' + c;
+                    })
                 });
-                this.logger.info(`Successfully registered ${res.length}/${data.size} application commands.`);
+                this.logger.info(`= App Commands Overwritten: ${(registeredCommands.length - newCommands.length)}`);
+                this.logger.info(`+ New App Commands Registered: ${newCommands.length || 0}`);
+                this.logger.info(`- Old App Commands Removed: ${removedCommands.length || 0}`);
             }
             catch (error) {
-                console.error(error);
+                this.logger.error(error);
             }
-
-            // Remove Non-Existent Application Commands
-            this.application.commands.fetch().then((registeredCommands) => {
-                registeredCommands.filter(c => c.applicationId === this.application.id).forEach(c => {
-                    if (!data.find(d => d.slashCommand.name === c.name)) {
-                        // if it returns 204, it means it was successful
-                        rest.delete(Routes.applicationCommand(this.application.id, c.id)).then((res) => {
-                            if (res.status === 204) {
-                                this.logger.info(`Deleted ${c.name} from application as it no longer exists.`);
-                            }
-                        });
-                    }
-                });
-            });
         })();
 
         // Register SUDO Commands
+        const restrictedCommandsToRegister = this.commands.filter(
+            (c) =>
+                c.slashCommand &&   // Must have a slashCommand component
+                !c.disabled &&      // Must not be disabled
+                (c.type === this.types.OWNER || c.type === this.types.MANAGER)  // Must be either an OWNER or MANAGER command
+        );
         const guild = this.guilds.cache.get(this.config.supportServerId);
-        if (guild) {
-            console.log(`Registering ${restrictedData.size} SUDO Commands in ` + guild.name);
-            try {
-                await rest.put(Routes.applicationGuildCommands(this.application.id, guild.id), {
-                    body: restrictedData.map(c => c.slashCommand.toJSON())
-                });
-                // Remove Non-Existent SUDO Commands
-                guild.commands.fetch().then((registeredCommands) => {
-                    registeredCommands.filter(c => c.applicationId === this.application.id).forEach(async c => {
-                        if (!restrictedData.find(sc => sc.slashCommand.name === c.name)) {
-                            await rest.delete(Routes.applicationGuildCommand(this.application.id, guild.id, c.id));
-                            console.log(`Deleted ${c.name} from application as it no longer exists.`);
-                        }
-                    });
 
-                    this.logger.info('Registered SUDO slash commands for ' + guild.name + ' ' + guild.id);
-                });
+        if (guild) {
+            console.log('\n');
+            this.logger.info(`Registering ${restrictedCommandsToRegister.size} SUDO Commands in guild ${guild.id}(${guild.name}) `);
+            try {
+                const res = await rest.put(
+                    Routes.applicationGuildCommands(this.application.id, guild.id),
+                    {
+                        body: restrictedCommandsToRegister.map((c) => c.slashCommand.toJSON())
+                    }
+                );
+                this.logger.info(`Successfully registered ${res.length}/${restrictedCommandsToRegister.size} SUDO commands in guild ${guild.id}(${guild.name}).`);
             }
             catch (error) {
-                console.error(error);
+                this.logger.error(error);
             }
         }
     }
