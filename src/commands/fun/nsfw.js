@@ -29,14 +29,33 @@ module.exports = class thighsCommand extends Command {
         super(client, {
             name: 'nsfw',
             aliases: ['18+'],
-            usage: 'thighs <user mention/id>',
+            usage: 'nsfw <user mention/id>',
             description: 'Random nsfw image/gif',
             type: client.types.FUN,
             nsfwOnly: true,
             examples: ['nsfw boobs', 'nsfw thigh'],
             slashCommand: new SlashCommandBuilder()
                 .addStringOption(s =>
-                    s.setName('category').setRequired(false).setDescription('The category or genre'))
+                    s.setName('category').setRequired(false).setDescription('The category or genre').addChoices([
+                        ['hass', 'hass'],
+                        ['pgif', 'pgif'],
+                        ['4k', '4k'],
+                        ['hentai', 'hentai'],
+                        ['hneko', 'hneko'],
+                        ['hkitsune', 'hkitsune'],
+                        ['kemonomimi', 'kemonomimi'],
+                        ['anal', 'anal'],
+                        ['hanal', 'hanal'],
+                        ['gonewild', 'gonewild'],
+                        ['ass', 'ass'],
+                        ['pussy', 'pussy'],
+                        ['thigh', 'thigh'],
+                        ['hthigh', 'hthigh'],
+                        ['paizuri', 'paizuri'],
+                        ['tentacle', 'tentacle'],
+                        ['boobs', 'boobs'],
+                        ['hboobs', 'hboobs'],
+                    ])),
         });
     }
 
