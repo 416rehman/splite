@@ -7,12 +7,12 @@ const {load, fail} = require('../../utils/emojis.json');
 module.exports = class insultCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'insult',
-            aliases: ['roast'],
-            usage: 'insult',
-            description: 'Insult/roast someone',
+            name: 'roast',
+            aliases: ['insult'],
+            usage: 'roast',
+            description: 'Roast someone',
             type: client.types.FUN,
-            examples: ['insult @split'],
+            examples: ['roast @split'],
             slashCommand: new SlashCommandBuilder().addUserOption((u) => u.setName('user').setRequired(false).setDescription('The user to insult/roast')),
         });
     }
