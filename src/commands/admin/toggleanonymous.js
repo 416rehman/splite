@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -26,15 +26,15 @@ module.exports = class ToggleAnonymous extends Command {
     }
 
     run(message,) {
-        this.handle(message, false);
+        this.handle(message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        this.handle(interaction);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const anonymousState = this.client.db.settings.selectAnonymous.pluck().get(context.guild.id);
         let description;
 
@@ -48,7 +48,7 @@ module.exports = class ToggleAnonymous extends Command {
             description = `Anonymous messages have been disabled! ${fail}`;
         }
 
-        const payload = new MessageEmbed()
+        const payload = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(description)
@@ -57,9 +57,8 @@ module.exports = class ToggleAnonymous extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, {embeds: [payload]});
     }
 };

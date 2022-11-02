@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -32,7 +32,7 @@ module.exports = class clearconfessionchannelCommand extends Command {
     }
 
     handle(context, isInteraction) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Confessions`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
@@ -49,7 +49,7 @@ module.exports = class clearconfessionchannelCommand extends Command {
             context.guild.id
         );
 
-        const payload = {embeds: [embed.addField('Confessions Channel', '`None`')],};
+        const payload = {embeds: [embed.addFields([{name: 'Confessions Channel', value:  '`None`'}])],};
 
         if (isInteraction) context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);

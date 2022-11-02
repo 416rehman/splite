@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class SetNicknameCommand extends Command {
     constructor(client) {
@@ -46,14 +46,14 @@ module.exports = class SetNicknameCommand extends Command {
         // Multi-word nickname
         let nickname = args.join(' ');
 
-        this.handle(member, nickname, message);
+        await this.handle(member, nickname, message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || interaction.member;
         const nickname = interaction.options.getString('nickname');
-        this.handle(member, nickname, interaction);
+        await this.handle(member, nickname, interaction);
     }
 
     async handle(member, nickname, context) {
@@ -82,22 +82,22 @@ module.exports = class SetNicknameCommand extends Command {
                 const oldNickname = member.nickname || '`None`';
                 const nicknameStatus = `${oldNickname} ➔ ${nickname}`;
                 await member.setNickname(nickname);
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle('Set Nickname')
                     .setDescription(`${member}'s nickname was successfully updated.`)
-                    .addField('Moderator', context.member.toString(), true)
-                    .addField('Member', member.toString(), true)
-                    .addField('Nickname', nicknameStatus, true)
+                    .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+                    .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+                    .addFields([{name: 'Nickname', value:  nicknameStatus, inline:  true}])
                     .setFooter({
                         text: context.member.displayName,
                         iconURL: this.getAvatarURL(context.author),
                     })
                     .setTimestamp()
-                    .setColor(context.guild.me.displayHexColor);
-                this.sendReply(context, {embeds: [embed]});
+                    .setColor(context.guild.members.me.displayHexColor);
+                await this.sendReply(context, {embeds: [embed]});
 
                 // Update mod log
-                this.sendModLogMessage(context, '', {
+                await this.sendModLogMessage(context, '', {
                     Member: member,
                     Nickname: nicknameStatus,
                 });

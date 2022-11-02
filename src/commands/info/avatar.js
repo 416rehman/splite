@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class AvatarCommand extends Command {
     constructor(client) {
@@ -34,7 +34,7 @@ module.exports = class AvatarCommand extends Command {
     }
 
     handle(targetUser, context) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setAuthor({
                 name: this.getUserIdentifier(targetUser),
                 iconURL: this.getAvatarURL(targetUser),

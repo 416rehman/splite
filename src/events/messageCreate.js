@@ -1,11 +1,11 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {dnd} = require('../utils/emojis.json');
 const moment = require('moment');
 const {oneLine} = require('common-tags');
 const {nsfw, fail} = require('../utils/emojis.json');
 
 module.exports = async (client, message) => {
-    if (message.channel.type === 'DM' || !message.channel.viewable || message.author.bot) return;
+    if (message.channel.type === ChannelType.DM || !message.channel.viewable || message.author.bot) return;
 
     //Update MessageCount
     client.db.activities.updateMessages.run({
@@ -60,7 +60,7 @@ module.exports = async (client, message) => {
             //Blacklisted user
             if (command.checkBlacklist(message.author)) return message
                 .reply({
-                    embeds: [new MessageEmbed().setDescription(`${fail} You are blacklisted.  ${client.owners[0] && `For appeals, contact ${client.owners[0]}`}`),],
+                    embeds: [new EmbedBuilder().setDescription(`${fail} You are blacklisted.  ${client.owners[0] && `For appeals, contact ${client.owners[0]}`}`),],
                 })
                 .then((msg) => {
                     setTimeout(() => msg.delete(), 15000);
@@ -70,7 +70,7 @@ module.exports = async (client, message) => {
             const cooldown = await command.isOnCooldown(message.author.id);
             if (cooldown) return message
                 .reply({
-                    embeds: [new MessageEmbed().setDescription(`${fail} You are on a cooldown. Try again in **${cooldown}** seconds.`),],
+                    embeds: [new EmbedBuilder().setDescription(`${fail} You are on a cooldown. Try again in **${cooldown}** seconds.`),],
                 })
                 .then((msg) => {
                     setTimeout(() => msg.delete(), 3000);
@@ -80,7 +80,7 @@ module.exports = async (client, message) => {
             const instanceExists = command.isInstanceRunning(message.author.id, message.channel.id);
             if (instanceExists) return message
                 .reply({
-                    embeds: [new MessageEmbed().setDescription(`${fail} Command already in progress, please wait for it.`),],
+                    embeds: [new EmbedBuilder().setDescription(`${fail} Command already in progress, please wait for it.`),],
                 })
                 .then((msg) => {
                     setTimeout(() => msg.delete(), 3000);
@@ -102,12 +102,12 @@ module.exports = async (client, message) => {
             const permissionErrors = command.checkPermissionErrors(message.member, message.channel, message.guild);
             console.log(permissionErrors);
             if (!permissionErrors) return;
-            if (permissionErrors instanceof MessageEmbed) return message.reply({embeds: [permissionErrors]});
+            if (permissionErrors instanceof EmbedBuilder) return message.reply({embeds: [permissionErrors]});
 
 
             // check nsfw channel
             if (!command.checkNSFW(message.channel)) return message.reply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setAuthor({
                         name: `${message.author.username}#${message.author.discriminator}`,
                         iconURL: message.author.displayAvatarURL(),
@@ -118,22 +118,14 @@ module.exports = async (client, message) => {
             });
 
             // Check if command is voice channel only
-            if (!command.checkVoiceChannel(message)) return message.reply({
-                embeds: [new MessageEmbed()
-                    .setAuthor({
-                        name: `${message.author.username}#${message.author.discriminator}`,
-                        iconURL: message.author.displayAvatarURL(),
-                    })
-                    .setDescription(`${fail} This command can only be run if you are in a voice channel.`)
-                    .setTimestamp()
-                    .setColor('RED'),],
-            });
+            if (!command.checkVoiceChannel(message)) return command.sendReplyAndDelete(message, 'You must be in a voice channel to use this command.');
+
 
             // Update points with commandPoints value
             if (pointTracking) client.db.users.updatePoints.run({points: commandPoints}, message.author.id, message.guild.id);
 
             message.command = true; // Add flag for messageUpdate event
-            message.channel.sendTyping();
+            await message.channel.sendTyping();
 
             if (command.exclusive) command.setInstance(message.author.id); // Track user instance
             if (command.channelExclusive) command.setInstance(null, message.channel.id); // Track channel instance
@@ -142,21 +134,21 @@ module.exports = async (client, message) => {
             return command.run(message, args); // Run command
         }
         else if ((message.content === `<@${client.user.id}>` || message.content === `<@!${client.user.id}>`) && message.channel
-            .permissionsFor(message.guild.me)
+            .permissionsFor(message.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS']) && !modChannelIds.includes(message.channel.id)) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(`Hi, I'm ${client.name}. Need help?`)
                 .setThumbnail('https://i.imgur.com/B0XSinY.png')
                 .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
                 .addField('Invite Me', oneLine`
           You can add me to your server by clicking 
-          [here](${client.config.inviteLink})!
+          [here](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands)!
         `)
                 .addField('Support', oneLine`
           If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`)
-                .setColor(message.guild.me.displayHexColor);
+                .setColor(message.guild.members.me.displayHexColor);
             if (client.owners.length) {
-                embed.setFooter({
+                await embed.setFooter({
                     text: `To speak directly with the developer, DM ${client.owners[0]}`,
                 });
             }

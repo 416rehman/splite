@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class WipePointsCommand extends Command {
     constructor(client) {
@@ -62,7 +62,7 @@ module.exports = class WipePointsCommand extends Command {
 
         this.sendReply(context, {
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setDescription(`${this.getUserIdentifier(context.author)} is trying to rob ${this.getUserIdentifier(target)}...`)
             ]
         }, isInteraction).then(async (msg) => {
@@ -97,7 +97,7 @@ module.exports = class WipePointsCommand extends Command {
                     'ran away with',
                 ];
 
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`${hasVoted ? emojis.Voted : ''} ${this.getUserIdentifier(context.author)} robbed ${this.getUserIdentifier(target)} points!`)
                     .setDescription(`${emojis.success} They ${verbs[this.client.utils.getRandomInt(0, verbs.length - 1)]} **${amount}** ${emojis.point}`)
                     .setFooter({
@@ -126,7 +126,7 @@ module.exports = class WipePointsCommand extends Command {
                     `${this.getUserIdentifier(target)} overpowered ${this.getUserIdentifier(context.author)} and stole **${amount}** points.`,
                 ];
 
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`${this.getUserIdentifier(context.author)} tried to rob ${this.getUserIdentifier(target)}!`)
                     .setDescription(`${emojis.fail} ${versions[this.client.utils.getRandomInt(0, versions.length - 1)]} ${emojis.point}`)
                     .setFooter({

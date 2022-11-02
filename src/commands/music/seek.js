@@ -19,7 +19,7 @@ module.exports = class MusicSeekCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const time = interaction.options.getString('time') || null;
-        this.handle(time, interaction);
+        await this.handle(time, interaction);
     }
 
     async handle(time, context) {

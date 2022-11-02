@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -38,7 +38,7 @@ module.exports = class ToggleTypeCommand extends Command {
         const {ADMIN, OWNER} = this.client.types;
 
         if (!categoryName || categoryName.toLowerCase() === OWNER.toLowerCase()) {
-            const payload = new MessageEmbed().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
+            const payload = new EmbedBuilder().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
 
             if (isInteraction) context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
@@ -47,7 +47,7 @@ module.exports = class ToggleTypeCommand extends Command {
         const type = categoryName.toLowerCase();
 
         if (type === ADMIN) {
-            const payload = new MessageEmbed().setTitle('Invalid command type').setDescription(`${fail} \`${ADMIN}\` commands cannot be disabled.`);
+            const payload = new EmbedBuilder().setTitle('Invalid command type').setDescription(`${fail} \`${ADMIN}\` commands cannot be disabled.`);
 
             if (isInteraction) context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
@@ -94,7 +94,7 @@ module.exports = class ToggleTypeCommand extends Command {
             }
         }
         else {
-            const payload = new MessageEmbed().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
+            const payload = new EmbedBuilder().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
 
             if (isInteraction) context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
@@ -107,11 +107,11 @@ module.exports = class ToggleTypeCommand extends Command {
         );
 
         disabledCommands = disabledCommands.map((c) => `\`${c}\``).join(' ') || '`None`';
-        const payload = new MessageEmbed()
+        const payload = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription('For a reference of all commands, use the `help` command.\n\n' + description)
-            .addField('Disabled Commands', disabledCommands, true)
+            .addFields([{name: 'Disabled Commands', value:  disabledCommands, inline:  true}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),

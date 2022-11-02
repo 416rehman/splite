@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {load} = require('../../utils/emojis.json');
 
 module.exports = class beautifulCommand extends Command {
@@ -18,7 +18,7 @@ module.exports = class beautifulCommand extends Command {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(member, message, false);
@@ -28,17 +28,17 @@ module.exports = class beautifulCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || interaction.author;
-        this.handle(member, interaction, true);
+        await this.handle(member, interaction, true);
     }
 
     async handle(targetUser, context, isInteraction) {
         const buffer = await context.client.ameApi.generate('beautiful', {
             url: this.getAvatarURL(targetUser, 'png'),
         });
-        const attachment = new MessageAttachment(buffer, 'beautiful.png');
+        const attachment = new AttachmentBuilder(buffer, { name:  'beautiful.png' });
 
         if (isInteraction) {
-            context.editReply({
+            await context.editReply({
                 files: [attachment],
             });
         }

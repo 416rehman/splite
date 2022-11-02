@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const {load, fail} = require('../../utils/emojis.json');
 
@@ -16,7 +16,7 @@ module.exports = class FoxCommand extends Command {
     async run(message) {
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(message, false);
@@ -25,14 +25,14 @@ module.exports = class FoxCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        await this.handle(interaction, true);
     }
 
     async handle(context, isInteraction) {
         try {
             const res = await fetch('https://randomfox.ca/floof/');
             const img = (await res.json()).image;
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('🦊  What does the fox say?  🦊')
                 .setImage(img)
                 .setFooter({
@@ -41,7 +41,7 @@ module.exports = class FoxCommand extends Command {
                 });
 
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }
@@ -54,12 +54,12 @@ module.exports = class FoxCommand extends Command {
             }
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }

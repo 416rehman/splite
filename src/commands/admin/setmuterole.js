@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 
 module.exports = class SetMuteRoleCommand extends Command {
@@ -23,14 +23,14 @@ module.exports = class SetMuteRoleCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const role = interaction.options.getRole('role');
-        this.handle(role, interaction, true);
+        await this.handle(role, interaction, true);
     }
 
     async handle(role, context, isInteraction) {
         const muteRoleId = this.client.db.settings.selectMuteRoleId.pluck().get(context.guild.id);
         const oldMuteRole = context.guild.roles.cache.find((r) => r.id === muteRoleId) || '`None`';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -45,12 +45,12 @@ module.exports = class SetMuteRoleCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addField('Current Mute Role', `${oldMuteRole}` || '`None`')
+                        .addFields([{name: 'Current Mute Role', value:  `${oldMuteRole}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -59,7 +59,7 @@ module.exports = class SetMuteRoleCommand extends Command {
         role = isInteraction ? role : await this.getGuildRole(context.guild, role);
         if (!role) {
             const payload = `${fail} I couldn't find that role.`;
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -67,11 +67,11 @@ module.exports = class SetMuteRoleCommand extends Command {
         this.client.db.settings.updateMuteRoleId.run(role.id, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addField('Mute Role', `${oldMuteRole} ➔ ${role}`)
+            embeds: [embed.addFields([{name: 'Mute Role', value:  `${oldMuteRole} ➔ ${role}`}])
                 .setDescription(`The \`mute role\` was successfully updated. ${success}\nUse \`clearmuterole\` to clear the current \`mute role\``)],
         });
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

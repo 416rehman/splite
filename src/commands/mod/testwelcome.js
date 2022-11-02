@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 
 module.exports = class testWelcomeCommand extends Command {
@@ -36,7 +36,7 @@ module.exports = class testWelcomeCommand extends Command {
             welcomeChannel &&
             welcomeChannel.viewable &&
             welcomeChannel
-                .permissionsFor(context.guild.me)
+                .permissionsFor(context.guild.members.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
             welcomeMessage
         ) {
@@ -47,7 +47,7 @@ module.exports = class testWelcomeCommand extends Command {
                 .replace(/`?\?size`?/g, context.guild.memberCount); // Guild size substitution
             welcomeChannel.send({
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setDescription(welcomeMessage)
                         .setColor('RANDOM'),
                 ],
@@ -56,7 +56,7 @@ module.exports = class testWelcomeCommand extends Command {
         else {
             const payload = {
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setDescription(
                             `${emojis.fail} There is no welcome message set for this server.\n\n\`setwelcomemessage\` Sets a welcome context\n\`setwelcomechannel\` Sets the channel to post the welcome message to. `
                         )

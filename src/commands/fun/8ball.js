@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 const answers = [
     'It is certain.',
     'It is decidedly so.',
@@ -55,9 +55,9 @@ module.exports = class EightBallCommand extends Command {
         const question = isInteraction ? context.options.getString('question') : args.join(' ');
         const payload = {
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setTitle('🎱  The Magic 8-Ball  🎱')
-                    .addField('Question', question)
+                    .addFields([{name: 'Question', value:  question}])
                     .addField(
                         'Answer',
                         `${answers[Math.floor(Math.random() * answers.length)]}`

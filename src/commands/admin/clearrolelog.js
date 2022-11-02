@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine,} = require('common-tags');
 
@@ -33,7 +33,7 @@ module.exports = class clearRoleLogCommand extends Command {
             .get(context.guild.id);
         const oldRoleLog =
             context.guild.channels.cache.get(roleLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
@@ -49,7 +49,7 @@ module.exports = class clearRoleLogCommand extends Command {
         this.client.db.settings.updateRoleLogId.run(null, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addField('Role Log', `${oldRoleLog} ➔ \`None\``)],
+            embeds: [embed.addFields([{name: 'Role Log', value:  `${oldRoleLog} ➔ \`None\``}])],
         });
 
         if (isInteraction) context.editReply(payload);

@@ -1,7 +1,8 @@
 const Koa = require('koa');
 const json = require('koa-json');
 const KoaBody = require('koa-body');
-const config = require('../config.json');
+const {readYAML} = require('./utils/utils');
+const config = readYAML(__basedir + '/config.yaml');
 const AsciiTable = require('ascii-table');
 const {readdirSync} = require('fs');
 const {resolve, join} = require('path');
@@ -34,7 +35,7 @@ module.exports = class Webserver {
                         bot: client?.ws?.ping ? 'online' : 'offline',
                         webserver: 'online'
                     },
-                    inviteLink: this.config.inviteLink,
+                    inviteLink: `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`,
                     supportServer: this.config.supportServer,
                     uptime: client?.ws?.uptime,
                     endpoints: Object.keys(this.endpoints).map(key => {

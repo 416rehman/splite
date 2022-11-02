@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {oneLine} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 
 module.exports = class FeedbackCommand extends Command {
@@ -46,38 +46,38 @@ module.exports = class FeedbackCommand extends Command {
         }
 
         // Send report
-        const feedbackEmbed = new MessageEmbed()
+        const feedbackEmbed = new EmbedBuilder()
             .setTitle('Suggestion')
             .setThumbnail(feedbackChannel.guild.iconURL({dynamic: true}))
             .setDescription(feedback)
-            .addField('User', context.member.toString(), true)
-            .addField('Server', context.guild.name, true)
+            .addFields([{name: 'User', value:  context.member.toString(), inline:  true}])
+            .addFields([{name: 'Server', value:  context.guild.name, inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         feedbackChannel.send({embeds: [feedbackEmbed]});
 
         // Send response
         if (feedback.length > 1024) feedback = feedback.slice(0, 1021) + '...';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Suggestion')
             .setThumbnail('https://i.imgur.com/B0XSinY.png')
             .setDescription(
                 oneLine`
         Successfully sent feedback!
         ${this.client.owners[0] && `To further discuss your feedback, contact ${this.client.owners[0]}`}`)
-            .addField('Member', context.member.toString(), true)
-            .addField('Message', feedback)
+            .addFields([{name: 'Member', value:  context.member.toString(), inline:  true}])
+            .addFields([{name: 'Message', value:  feedback}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         this.sendReply(context, {embeds: [embed]}, isInteraction);
     }

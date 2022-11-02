@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -32,7 +32,7 @@ module.exports = class SetRoleLogCommand extends Command {
     handle(channel, context, isInteraction) {
         const roleLogId = this.client.db.settings.selectRoleLogId.pluck().get(context.guild.id);
         const oldRoleLog = context.guild.channels.cache.get(roleLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
@@ -40,14 +40,14 @@ module.exports = class SetRoleLogCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Show current role log
         if (!channel) {
             return context.channel.send({
                 embeds: [
                     embed
-                        .addField('Current Role Log', `${oldRoleLog}`)
+                        .addFields([{name: 'Current Role Log', value:  `${oldRoleLog}`}])
                         .setDescription(this.description),
                 ],
             });
@@ -55,7 +55,7 @@ module.exports = class SetRoleLogCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+        if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} I can't find that channel.`;
             if (isInteraction) context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
@@ -65,7 +65,7 @@ module.exports = class SetRoleLogCommand extends Command {
         this.client.db.settings.updateRoleLogId.run(channel.id, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addField('Role Log', `${oldRoleLog} ➔ ${channel}`).setDescription(
+            embeds: [embed.addFields([{name: 'Role Log', value:  `${oldRoleLog} ➔ ${channel}`}]).setDescription(
                 `The \`role log\` was successfully updated. ${success}\nUse \`clearrolelog\` to clear the current \`role log\`.`
             )],
         });

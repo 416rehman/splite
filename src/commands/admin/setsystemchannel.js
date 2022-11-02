@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -33,7 +33,7 @@ module.exports = class SetSystemChannelCommand extends Command {
     handle(channel, context, isInteraction) {
         const systemChannelId = this.client.db.settings.selectSystemChannelId.pluck().get(context.guild.id);
         const oldSystemChannel = context.guild.channels.cache.get(systemChannelId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
@@ -47,7 +47,7 @@ module.exports = class SetSystemChannelCommand extends Command {
             return context.channel.send({
                 embeds: [
                     embed
-                        .addField('Current System Channel', `${oldSystemChannel}`)
+                        .addFields([{name: 'Current System Channel', value:  `${oldSystemChannel}`}])
                         .setDescription(this.description),
                 ],
             });
@@ -56,7 +56,7 @@ module.exports = class SetSystemChannelCommand extends Command {
             `The \`system channel\` was successfully updated. ${success}\n Use \`clearsystemchannel\` to clear the current \`system channel\``
         );
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
-        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+        if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
             const payload = `${fail} I cannot find the channel you specified. Please try again.`;
 
             if (isInteraction) context.editReply(payload);

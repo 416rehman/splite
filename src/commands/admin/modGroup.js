@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 const commandMappings = {
     role: {

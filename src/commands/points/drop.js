@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
+const {EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class WipePointsCommand extends Command {
     constructor(client) {
@@ -54,30 +54,30 @@ module.exports = class WipePointsCommand extends Command {
         const guess2 = this.client.utils.getRandomInt(amount / 2, amount * 2, [amount, guess1]);
 
         const randomizedGuesses = [
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId(`${amount}`)
                 .setLabel(`${amount} points`)
                 .setEmoji(emojis.point)
-                .setStyle('SECONDARY'),
-            new MessageButton()
+                .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
                 .setCustomId('false1')
                 .setLabel(`${guess1} points`)
                 .setEmoji(emojis.point)
-                .setStyle('SECONDARY'),
-            new MessageButton()
+                .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
                 .setCustomId('false2')
                 .setLabel(`${guess2} points`)
                 .setEmoji(emojis.point)
-                .setStyle('SECONDARY'),
+                .setStyle(ButtonStyle.Secondary),
         ];
 
         // shuffle the buttons
         randomizedGuesses.sort(() => Math.random() - 0.5);
 
-        const buttonRow = new MessageActionRow();
+        const buttonRow = new ActionRowBuilder();
         randomizedGuesses.forEach(button => buttonRow.addComponents(button));
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${emojis.point} Points Dropped!`)
             .setDescription('Guess the correct amount of points to pick them up.')
             .setFooter({
@@ -91,7 +91,7 @@ module.exports = class WipePointsCommand extends Command {
         }).then(msg => {
             const collector = msg.createMessageComponentCollector({
                 // filter: btn => btn.user.id !== user.id,
-                componentType: 'BUTTON',
+                componentType: ComponentType.Button,
                 time: 30000,
                 dispose: true,
             });

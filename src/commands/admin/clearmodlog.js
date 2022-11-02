@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -32,7 +32,7 @@ module.exports = class clearModLogCommand extends Command {
             .pluck()
             .get(context.guild.id);
         const oldModLog = context.guild.channels.cache.get(modLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`mod log\` was successfully cleared. ${success}`)
@@ -41,12 +41,12 @@ module.exports = class clearModLogCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear if no args provided
         this.client.db.settings.updateModLogId.run(null, context.guild.id);
         const payload = ({
-            embeds: [embed.addField('Mod Log', `${oldModLog} ➔ \`None\``)],
+            embeds: [embed.addFields([{name: 'Mod Log', value:  `${oldModLog} ➔ \`None\``}])],
         });
 
         if (isInteraction) context.editReply(payload);

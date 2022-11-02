@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, GatewayIntentBits} = require('discord.js');
 const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 const statuses = {
     online: `${emojis.online} \`Online\``,
@@ -47,13 +47,13 @@ module.exports = class WhoIsCommand extends Command {
         const member =
             await this.getGuildMember(message.guild, args[0]) || message.member;
 
-        this.handle(member, message);
+        await this.handle(member, message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         let user = interaction.options.getMember('user') || interaction.member;
-        this.handle(user, interaction, true);
+        await this.handle(user, interaction, true);
     }
 
     async handle(targetUser, context, isInteraction) {
@@ -95,38 +95,38 @@ module.exports = class WhoIsCommand extends Command {
             .removeElement(roles, targetUser.guild.roles.everyone)
             .sort((a, b) => b.position - a.position)
             .join(' ');
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${targetUser.displayName}'s Information`)
             .setThumbnail(this.getAvatarURL(targetUser.user))
-            .addField('User', targetUser.toString(), true)
-            .addField('Discriminator', `\`#${targetUser.user.discriminator}\``, true)
-            .addField('ID', `\`${targetUser.id}\``, true)
-            .addField('Bot', `\`${targetUser.user.bot}\``, true)
+            .addFields([{name: 'User', value:  targetUser.toString(), inline:  true}])
+            .addFields([{name: 'Discriminator', value:  `\`#${targetUser.user.discriminator}\``, inline:  true}])
+            .addFields([{name: 'ID', value:  `\`${targetUser.id}\``, inline:  true}])
+            .addFields([{name: 'Bot', value:  `\`${targetUser.user.bot}\``, inline:  true}])
             .addField('Voted on Top.gg', (await this.client.utils.checkTopGGVote(
                 this.client,
                 targetUser.id
             )) ? 'Yes' : 'No', true)
-            .addField('Highest Role', targetUser.roles.highest.toString(), true)
-            .addField('Joined server on', `\`${moment(targetUser.joinedAt).format('MMM DD YYYY')}\``, true)
-            .addField('Joined Discord on', `\`${moment(targetUser.user.createdAt).format('MMM DD YYYY')}\``, true)
+            .addFields([{name: 'Highest Role', value:  targetUser.roles.highest.toString(), inline:  true}])
+            .addFields([{name: 'Joined server on', value:  `\`${moment(targetUser.joinedAt).format('MMM DD YYYY')}\``, inline:  true}])
+            .addFields([{name: 'Joined Discord on', value:  `\`${moment(targetUser.user.createdAt).format('MMM DD YYYY')}\``, inline:  true}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
 
-        if (this.client.enabledIntents.find(i => i === this.client.intents.GUILD_PRESENCES)) await embed.addField('Status', statuses[targetUser.presence?.status || 'offline'], true);
+        if (this.client.intents.find(i => i === GatewayIntentBits.GuildPresences)) await embed.addFields([{name: 'Status', value:  statuses[targetUser.presence?.status || 'offline'], inline:  true}]);
         if (activities.length > 0) embed.setDescription(activities.join('\n'));
         if (customStatus) await embed.spliceFields(0, 0, {
             name: 'Custom Status', value: customStatus,
         });
-        if (userFlags.length > 0) await embed.addField('Badges', userFlags.map((flag) => flags[flag]).join('\n'), true);
-        await embed.addField('Roles', roles || '`None`');
+        if (userFlags.length > 0) await embed.addFields([{name: 'Badges', value:  userFlags.map((flag) => flags[flag]).join('\n'), inline:  true}]);
+        await embed.addFields([{name: 'Roles', value:  roles || '`None`'}]);
         if (KeyPerms.length > 0) await embed.addField(
             'Key Permissions',
             `${context.guild.ownerId === targetUser.id ? emojis.owner + ' **`SERVER OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``);
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

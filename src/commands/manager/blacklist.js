@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class BlacklistCommand extends Command {
     constructor(client) {
@@ -21,7 +21,7 @@ module.exports = class BlacklistCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const userId = interaction.options.getString('userid');
-        this.handle(userId, interaction);
+        await this.handle(userId, interaction);
     }
 
     async handle(userId, context) {
@@ -45,7 +45,7 @@ module.exports = class BlacklistCommand extends Command {
             }
 
             this.client.db.blacklist.add.run(member.id);
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Blacklist')
                 .setDescription(`Successfully blacklisted ${member}.`)
                 .setFooter({
@@ -53,8 +53,8 @@ module.exports = class BlacklistCommand extends Command {
                     iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(context.guild.me.displayHexColor);
-            this.sendReply(context, {embeds: [embed]});
+                .setColor(context.guild.members.me.displayHexColor);
+            await this.sendReply(context, {embeds: [embed]});
         }
         catch (e) {
             this.sendErrorMessage(

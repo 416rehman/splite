@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const moment = require('moment');
 const {permissions} = require('../../utils/constants.json');
 
@@ -48,17 +48,17 @@ module.exports = class RoleInfoCommand extends Command {
             context.guild.roles.cache.size - role.position
         }\`/\`${context.guild.roles.cache.size}\``;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Role Information')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addField('Role', role.toString(), true)
-            .addField('Role ID', `\`${role.id}\``, true)
-            .addField('Position', position, true)
-            .addField('Mentionable', `\`${role.mentionable}\``, true)
-            .addField('Bot Role', `\`${role.managed}\``, true)
-            .addField('Color', `\`${role.hexColor.toUpperCase()}\``, true)
-            .addField('Members', `\`${role.members.size}\``, true)
-            .addField('Hoisted', `\`${role.hoist}\``, true)
+            .addFields([{name: 'Role', value:  role.toString(), inline:  true}])
+            .addFields([{name: 'Role ID', value:  `\`${role.id}\``, inline:  true}])
+            .addFields([{name: 'Position', value:  position, inline:  true}])
+            .addFields([{name: 'Mentionable', value:  `\`${role.mentionable}\``, inline:  true}])
+            .addFields([{name: 'Bot Role', value:  `\`${role.managed}\``, inline:  true}])
+            .addFields([{name: 'Color', value:  `\`${role.hexColor.toUpperCase()}\``, inline:  true}])
+            .addFields([{name: 'Members', value:  `\`${role.members.size}\``, inline:  true}])
+            .addFields([{name: 'Hoisted', value:  `\`${role.hoist}\``, inline:  true}])
             .addField(
                 'Created On',
                 `\`${moment(role.createdAt).format('MMM DD YYYY')}\``,

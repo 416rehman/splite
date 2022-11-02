@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -33,7 +33,7 @@ module.exports = class clearautokickCommand extends Command {
                 .pluck()
                 .get(context.guild.id) || 'disabled';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context?.guild?.iconURL({dynamic: true}))
             .setDescription(`\`Auto kick\` was successfully disabled. ${success}`)
@@ -45,7 +45,7 @@ module.exports = class clearautokickCommand extends Command {
 
         this.client.db.settings.updateAutoKick.run(null, context.guild.id);
 
-        const payload = {embeds: [embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`disabled\``),],};
+        const payload = {embeds: [embed.addFields([{name: 'Auto Kick', value:  `\`${autoKick}\` ➔ \`disabled\``}]),],};
 
         if (isInteraction) context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);

@@ -6,21 +6,21 @@ const AsciiTable = require('ascii-table');
 const { readdirSync } = require('fs');
 const { resolve, join } = require('path');
 const Discord = require('discord.js');
-const config = require('./config.json');
+const {readYAML} = require('./src/utils/utils');
 const logger = require('./src/utils/logger');
-const { enabledIntents } = require('./intents.js');
-const { allIntents } = require('./intents');
+const intents = require('./intents.js');
+
+const config = readYAML(__basedir + '/config.yaml');
 
 class CommandRegistrar extends Discord.Client {
     constructor() {
         super({
             partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
             allowedMentions: { parse: ['users', 'roles'], repliedUser: true },
-            intents: enabledIntents
+            intents: intents
         });
         this.utils = require('./src/utils/utils');
-        this.enabledIntents = enabledIntents;
-        this.intents = allIntents;
+        this.intents = intents;
         this.config = config;
         this.logger = logger;
         this.commands = new Discord.Collection();

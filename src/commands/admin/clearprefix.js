@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 
 module.exports = class clearPrefixCommand extends Command {
@@ -34,17 +34,17 @@ module.exports = class clearPrefixCommand extends Command {
             defaultPrefix,
             context.guild.id
         );
-        context.guild.me.setNickname(
+        context.guild.members.me.setNickname(
             `[${this.client.db.settings.selectPrefix
                 .pluck()
                 .get(context.guild.id)}] ${this.client.name}`
         );
         const payload = {
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setTitle('Settings: `System`')
                 .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setDescription(`The \`prefix\` was successfully reset. ${success}`)
-                .addField('Prefix', `\`${oldPrefix}\` ➔ \`${defaultPrefix}\``)
+                .addFields([{name: 'Prefix', value:  `\`${oldPrefix}\` ➔ \`${defaultPrefix}\``}])
                 .setFooter({
                     text: this.getUserIdentifier(context.author),
                     iconURL: this.getAvatarURL(context.author),

@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
 const Discord = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {load, fail} = require('../../utils/emojis.json');
 
 module.exports = class enlargeCommand extends Command {
@@ -32,7 +32,7 @@ module.exports = class enlargeCommand extends Command {
 
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(args[0], message, false);
@@ -54,14 +54,14 @@ module.exports = class enlargeCommand extends Command {
                 }`;
                 if (isInteraction) {
                     context.editReply({
-                        files: [new Discord.MessageAttachment(Link)],
+                        files: [new Discord.AttachmentBuilder(Link)],
                     });
                 }
                 else {
                     context.loadingMessage ? context.loadingMessage.edit({
-                        files: [new Discord.MessageAttachment(Link)],
+                        files: [new Discord.AttachmentBuilder(Link)],
                     }) : context.channel.send({
-                        files: [new Discord.MessageAttachment(Link)],
+                        files: [new Discord.AttachmentBuilder(Link)],
                     });
                 }
             }
@@ -74,7 +74,7 @@ module.exports = class enlargeCommand extends Command {
             }
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');

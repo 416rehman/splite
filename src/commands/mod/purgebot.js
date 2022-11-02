@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class PurgeBotCommand extends Command {
     constructor(client) {
@@ -46,12 +46,12 @@ module.exports = class PurgeBotCommand extends Command {
         const amount = interaction.options.getInteger('amount');
         const reason = interaction.options.getString('reason');
 
-        this.handle(channel, amount, reason, interaction);
+        await this.handle(channel, amount, reason, interaction);
     }
 
     async handle(channel, amount, reason, context) {
         // Check type and viewable
-        if (channel.type !== 'GUILD_TEXT' || !channel.viewable)
+        if (channel.type !== ChannelType.GuildText || !channel.viewable)
             return this.sendErrorMessage(
                 context,
                 0,
@@ -63,7 +63,7 @@ module.exports = class PurgeBotCommand extends Command {
             amount = 100;
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.me).has(['MANAGE_MESSAGES']))
+        if (!channel.permissionsFor(context.guild.members.me).has(['MANAGE_MESSAGES']))
             return this.sendErrorMessage(
                 context,
                 0,
@@ -88,18 +88,18 @@ module.exports = class PurgeBotCommand extends Command {
             // No messages found
             const payload = {
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setTitle('Purgebot')
                         .setDescription(`Unable to find any bot messages or commands. 
                             This context will be deleted after \`10 seconds\`.`)
-                        .addField('Channel', channel.toString(), true)
-                        .addField('Found Messages', `\`${messages.size}\``, true)
+                        .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
+                        .addFields([{name: 'Found Messages', value:  `\`${messages.size}\``, inline:  true}])
                         .setFooter({
                             text: context.member.displayName,
                             iconURL: this.getAvatarURL(context.author),
                         })
                         .setTimestamp()
-                        .setColor(context.guild.me.displayHexColor),
+                        .setColor(context.guild.members.me.displayHexColor),
                 ],
             };
             this.sendReplyAndDelete(context, payload);
@@ -107,26 +107,26 @@ module.exports = class PurgeBotCommand extends Command {
         else {
             // Purge messages
             channel.bulkDelete(messages, true).then((msgs) => {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle('Purgebot')
                     .setDescription(`Successfully deleted **${msgs.size}** context(s). 
                     This context will be deleted after \`10 seconds\`.`)
-                    .addField('Channel', channel.toString(), true)
-                    .addField('Found Messages', `\`${msgs.size}\``, true)
-                    .addField('Reason', reason)
+                    .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
+                    .addFields([{name: 'Found Messages', value:  `\`${msgs.size}\``, inline:  true}])
+                    .addFields([{name: 'Reason', value:  reason}])
                     .setFooter({
                         text: context.member.displayName,
                         iconURL: this.getAvatarURL(context.author),
                     })
                     .setTimestamp()
-                    .setColor(context.guild.me.displayHexColor);
+                    .setColor(context.guild.members.me.displayHexColor);
 
                 this.sendReplyAndDelete(context, {embeds: [embed]});
             });
         }
 
         // Update mod log
-        this.sendModLogMessage(context, reason, {
+        await this.sendModLogMessage(context, reason, {
             Channel: channel,
             'Found Messages': `\`${messages.size}\``,
         });

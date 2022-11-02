@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
 const ButtonMenu = require('../ButtonMenu.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class WarnsCommand extends Command {
     constructor(client) {
@@ -23,13 +23,13 @@ module.exports = class WarnsCommand extends Command {
         const member =
             await this.getGuildMember(message.guild, args.join(' ')) || message.member;
 
-        this.handle(member, message);
+        await this.handle(member, message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const user = interaction.options.getUser('user') || interaction.member;
-        this.handle(user, interaction);
+        await this.handle(user, interaction);
     }
 
     async handle(member, context) {
@@ -39,7 +39,7 @@ module.exports = class WarnsCommand extends Command {
         if (typeof warns == 'string') warns = JSON.parse(warns);
         const count = warns.warns.length;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setAuthor({
                 name: this.getUserIdentifier(member),
                 iconURL: this.getAvatarURL(member),
@@ -49,22 +49,22 @@ module.exports = class WarnsCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         const buildEmbed = async (current, embed) => {
             const max = count > current + 5 ? current + 5 : count;
             let amount = 0;
             for (let i = current; i < max; i++) {
                 embed // Build warning list
-                    .addField('\u200b', `**Warn \`#${i + 1}\`**`)
-                    .addField('Reason', warns.warns[i].reason)
+                    .addFields([{name: '\u200b', value:  `**Warn \`#${i + 1}\`**`}])
+                    .addFields([{name: 'Reason', value:  warns.warns[i].reason}])
                     .addField(
                         'Moderator',
                         (await context.guild.members.fetch(warns.warns[i].mod))
                             ?.toString() || '`Unable to find moderator`',
                         true
                     )
-                    .addField('Date Issued', warns.warns[i].date, true);
+                    .addFields([{name: 'Date Issued', value:  warns.warns[i].date, inline:  true}]);
                 amount += 1;
             }
 
@@ -86,11 +86,11 @@ module.exports = class WarnsCommand extends Command {
                         .setDescription(`${member} currently has no warns.`),
                 ],
             };
-            this.sendReply(context, payload);
+            await this.sendReply(context, payload);
         }
         else if (count < 5) {
-            const payload = {embeds: [buildEmbed(0, embed)]};
-            this.sendReply(context, payload);
+            const payload = {embeds: [await buildEmbed(0, embed)]};
+            await this.sendReply(context, payload);
         }
         else {
             let n = 0;
@@ -105,14 +105,14 @@ module.exports = class WarnsCommand extends Command {
             const first = () => {
                 if (n === 0) return;
                 n = 0;
-                return buildEmbed(n, new MessageEmbed(json));
+                return buildEmbed(n, new EmbedBuilder(json));
             };
 
             const previous = () => {
                 if (n === 0) return;
                 n -= 5;
                 if (n < 0) n = 0;
-                return buildEmbed(n, new MessageEmbed(json));
+                return buildEmbed(n, new EmbedBuilder(json));
             };
 
             const next = () => {
@@ -120,7 +120,7 @@ module.exports = class WarnsCommand extends Command {
                 if (n === cap || n + 5 === count) return;
                 n += 5;
                 if (n >= count) n = cap;
-                return buildEmbed(n, new MessageEmbed(json));
+                return buildEmbed(n, new EmbedBuilder(json));
             };
 
             const last = () => {
@@ -128,7 +128,7 @@ module.exports = class WarnsCommand extends Command {
                 if (n === cap || n + 5 === count) return;
                 n = cap;
                 if (n === count) n -= 5;
-                return buildEmbed(n, new MessageEmbed(json));
+                return buildEmbed(n, new EmbedBuilder(json));
             };
 
             const reactions = {
@@ -139,7 +139,7 @@ module.exports = class WarnsCommand extends Command {
                 '⏹': null,
             };
 
-            const menu = new ButtonMenu(this.client, context.channel, context.member, await buildEmbed(n, new MessageEmbed(json)), null, null, reactions);
+            const menu = new ButtonMenu(this.client, context.channel, context.member, await buildEmbed(n, new EmbedBuilder(json)), null, null, reactions);
 
             menu.functions['⏹'] = menu.stop.bind(menu);
         }

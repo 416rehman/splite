@@ -1,6 +1,6 @@
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {oneLine} = require('common-tags');
 
 module.exports = class reportCommand extends Command {
@@ -66,37 +66,37 @@ function sendBugReport(report, context, isInteraction) {
     });
 
     // Send report
-    const reportEmbed = new MessageEmbed()
+    const reportEmbed = new EmbedBuilder()
         .setTitle('Bug Report')
         .setThumbnail(reportChannel.guild.iconURL({dynamic: true}))
         .setDescription(report)
-        .addField('User', context.member.toString(), true)
-        .addField('Server', context.guild.name, true)
+        .addFields([{name: 'User', value:  context.member.toString(), inline:  true}])
+        .addFields([{name: 'Server', value:  context.guild.name, inline:  true}])
         .setFooter({
             text: this.getUserIdentifier(context.member), iconURL: this.getAvatarURL(context.member),
         })
         .setTimestamp()
-        .setColor(context.guild.me.displayHexColor);
+        .setColor(context.guild.members.me.displayHexColor);
 
     reportChannel.send({embeds: [reportEmbed]});
 
     // Send response
     if (report.length > 1024) report = report.slice(0, 1021) + '...';
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setTitle('Bug Report')
         .setThumbnail('https://i.imgur.com/B0XSinY.png')
         .setDescription(oneLine`
         Successfully sent bug report!
          ${this.client.owners[0] && `To further discuss your issue, contact ${this.client.owners[0]}`}
       `)
-        .addField('Member', context.member.toString(), true)
-        .addField('Message', report)
+        .addFields([{name: 'Member', value:  context.member.toString(), inline:  true}])
+        .addFields([{name: 'Message', value:  report}])
         .setFooter({
             text: this.getUserIdentifier(context.member), iconURL: this.getAvatarURL(context.member),
         })
         .setTimestamp()
-        .setColor(context.guild.me.displayHexColor);
+        .setColor(context.guild.members.me.displayHexColor);
 
     if (isInteraction) return context.reply({
         embeds: [embed],

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {load} = require('../../utils/emojis.json');
 const fetch = require('node-fetch');
 module.exports = class trapCommand extends Command {
@@ -22,7 +22,7 @@ module.exports = class trapCommand extends Command {
 
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(member, message, false);
@@ -32,7 +32,7 @@ module.exports = class trapCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || await this.getGuildMember(interaction.guild, this.client.db.users.getRandom.get(interaction.guild.id).user_id);
-        this.handle(member, interaction, true);
+        await this.handle(member, interaction, true);
     }
 
     async handle(member, context, isInteraction) {
@@ -50,13 +50,13 @@ module.exports = class trapCommand extends Command {
             url
         );
         const json = await res.json();
-        const attachment = new MessageAttachment(
+        const attachment = new AttachmentBuilder(
             json.message,
             'trap.png'
         );
 
         if (isInteraction) {
-            context.editReply({
+            await context.editReply({
                 files: [attachment],
             });
         }

@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const {oneLine} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const {load, fail} = require('../../utils/emojis.json');
 
 module.exports = class ThouArtCommand extends Command {
@@ -25,7 +25,7 @@ module.exports = class ThouArtCommand extends Command {
         const member = await this.getGuildMember(message.guild, args[0]) || message.member;
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(member, message, false);
@@ -35,7 +35,7 @@ module.exports = class ThouArtCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || interaction.author;
-        this.handle(member, interaction, true);
+        await this.handle(member, interaction, true);
     }
 
     async handle(targetUser, context, isInteraction) {
@@ -45,7 +45,7 @@ module.exports = class ThouArtCommand extends Command {
             insult = insult.charAt(0).toLowerCase() + insult.slice(1);
 
             const payload = {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle('🎭  Thou Art  🎭')
                     .setDescription(`${targetUser}, ${insult}`)
                     .setFooter({
@@ -54,17 +54,17 @@ module.exports = class ThouArtCommand extends Command {
                     })]
             };
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
         }
         catch (err) {
             const payload = {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
                     .setColor('RED')],
             };
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
         }
     }

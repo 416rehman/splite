@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class SnipeCommand extends Command {
     constructor(client) {
@@ -21,14 +21,14 @@ module.exports = class SnipeCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        await this.handle(interaction, true);
     }
 
     async handle(context, isInteraction) {
         const snipedMSg = context.guild.snipes.get(context.channel.id);
 
         if (snipedMSg && !this.client.utils.isEmptyMessage(snipedMSg)) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setDescription(`${snipedMSg.content ? snipedMSg.content : ''}`)
                 .setFooter({
                     text: this.getUserIdentifier(context.author),
@@ -58,11 +58,11 @@ module.exports = class SnipeCommand extends Command {
                 }) : [],
             };
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(`${this.client.name} Sniper`)
                 .setDescription(`${fail} There is nothing to snipe!`)
                 .setFooter({

@@ -19,7 +19,7 @@ module.exports = class MusicProgressCommand extends Command {
         this.handle(interaction);
     }
 
-    async handle(context) {
+    handle(context) {
         const queue = this.client.player.getQueue(context.guild.id);
 
         if (!queue || !queue.playing)

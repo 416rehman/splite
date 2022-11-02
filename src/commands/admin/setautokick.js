@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -42,7 +42,7 @@ module.exports = class SetAutoKickCommand extends Command {
                 .pluck()
                 .get(context.guild.id) || 'disabled';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -51,14 +51,14 @@ module.exports = class SetAutoKickCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear if no args provided
         if (!amount) {
             const payload = ({
                 embeds: [
                     embed
-                        .addField('Current Auto Kick', `\`${autoKick}\``)
+                        .addFields([{name: 'Current Auto Kick', value:  `\`${autoKick}\``}])
                         .setDescription(this.description),
                 ],
             });
@@ -70,7 +70,7 @@ module.exports = class SetAutoKickCommand extends Command {
         this.client.db.settings.updateAutoKick.run(amount, context.guild.id);
         const payload = ({
             embeds: [
-                embed.addField('Auto Kick', `\`${autoKick}\` ➔ \`${amount}\``)
+                embed.addFields([{name: 'Auto Kick', value:  `\`${autoKick}\` ➔ \`${amount}\``}])
                     .setDescription(
                         `\`Auto kick\` was successfully updated. ${success}\nUse \`clearautokick\` to disable \`auto kick\``
                     )

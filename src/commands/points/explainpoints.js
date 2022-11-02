@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {stripIndent} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class ExplainPointsCommand extends Command {
     constructor(client) {
@@ -93,20 +93,20 @@ module.exports = class ExplainPointsCommand extends Command {
         if (!disabledCommands.includes('crown'))
             crown += `\nUse the \`${prefix}crown\` command for server specific information.`;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${emojis.point} Points and Crown ${emojis.crown}`)
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addField(`Earning Points ${emojis.point}`, earningPoints)
+            .addFields([{name: `Earning Points ${emojis.point}`, value:  earningPoints}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
         if (checkingPoints)
-            embed.addField(`Checking Points ${emojis.point}`, checkingPoints);
-        if (leaderboard) embed.addField('The Leaderboard', leaderboard);
-        embed.addField(`The Crown ${emojis.crown}`, crown);
+            embed.addFields([{name: `Checking Points ${emojis.point}`, value:  checkingPoints}]);
+        if (leaderboard) embed.addFields([{name: 'The Leaderboard', value:  leaderboard}]);
+        embed.addFields([{name: `The Crown ${emojis.crown}`, value:  crown}]);
 
 
         const payload = {embeds: [embed]};

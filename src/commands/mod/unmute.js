@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class UnmuteCommand extends Command {
     constructor(client) {
@@ -37,7 +37,7 @@ module.exports = class UnmuteCommand extends Command {
         const reason = args[1] || '`None`';
 
 
-        this.handle(member, reason, message);
+        await this.handle(member, reason, message);
     }
 
     async interact(interaction) {
@@ -45,7 +45,7 @@ module.exports = class UnmuteCommand extends Command {
         const member = interaction.options.getMember('user');
         const reason = interaction.options.getString('reason');
 
-        this.handle(member, reason, interaction);
+        await this.handle(member, reason, interaction);
     }
 
     async handle(member, reason, context) {
@@ -81,17 +81,17 @@ module.exports = class UnmuteCommand extends Command {
         clearTimeout(member.timeout);
         try {
             await member.roles.remove(muteRole);
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Unmute Member')
                 .setDescription(`${member} has been unmuted.`)
-                .addField('Reason', reason)
+                .addFields([{name: 'Reason', value:  reason}])
                 .setFooter({
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(context.guild.me.displayHexColor);
-            this.sendReply(context, {embeds: [embed]});
+                .setColor(context.guild.members.me.displayHexColor);
+            await this.sendReply(context, {embeds: [embed]});
         }
         catch (err) {
             this.client.logger.error(err.stack);
@@ -104,6 +104,6 @@ module.exports = class UnmuteCommand extends Command {
         }
 
         // Update mod log
-        this.sendModLogMessage(context, reason, {Member: member});
+        await this.sendModLogMessage(context, reason, {Member: member});
     }
 };

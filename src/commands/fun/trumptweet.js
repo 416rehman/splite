@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const {load, fail} = require('../../utils/emojis.json');
 
@@ -30,7 +30,7 @@ module.exports = class TrumpTweetCommand extends Command {
 
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(text, message, false);
@@ -40,7 +40,7 @@ module.exports = class TrumpTweetCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const text = interaction.options.getString('text') || `${this.client.name}  is the best bot!`;
-        this.handle(text, interaction, true);
+        await this.handle(text, interaction, true);
     }
 
     async handle(text, context, isInteraction) {
@@ -51,7 +51,7 @@ module.exports = class TrumpTweetCommand extends Command {
                 'https://nekobot.xyz/api/imagegen?type=trumptweet&text=' + text
             );
             const img = (await res.json()).message;
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(':flag_us:  Trump Tweet  :flag_us: ')
                 .setImage(img)
                 .setFooter({
@@ -60,7 +60,7 @@ module.exports = class TrumpTweetCommand extends Command {
                 });
 
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }
@@ -74,12 +74,12 @@ module.exports = class TrumpTweetCommand extends Command {
 
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }

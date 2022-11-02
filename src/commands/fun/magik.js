@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {fail, load} = require('../../utils/emojis.json');
 
 module.exports = class magikCommand extends Command {
@@ -18,7 +18,7 @@ module.exports = class magikCommand extends Command {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(member, message, false);
@@ -28,7 +28,7 @@ module.exports = class magikCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || interaction.author;
-        this.handle(member, interaction, true);
+        await this.handle(member, interaction, true);
     }
 
     async handle(targetUser, context, isInteraction) {
@@ -36,10 +36,10 @@ module.exports = class magikCommand extends Command {
             const buffer = await context.client.ameApi.generate('magik', {
                 url: this.getAvatarURL(targetUser, 'png'),
             });
-            const attachment = new MessageAttachment(buffer, 'magik.png');
+            const attachment = new AttachmentBuilder(buffer, { name:  'magik.png' });
 
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     files: [attachment],
                 });
             }
@@ -53,12 +53,12 @@ module.exports = class magikCommand extends Command {
             }
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }

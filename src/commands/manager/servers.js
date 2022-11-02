@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const ButtonMenu = require('../ButtonMenu.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const moment = require('moment');
 
 module.exports = class ServersCommand extends Command {
@@ -30,17 +30,17 @@ module.exports = class ServersCommand extends Command {
             .map((guild) => {
                 return `\`${guild.id}\` - \`${guild.memberCount}\` - **${
                     guild.name
-                }** - ${moment(guild.me.joinedAt).fromNow()}`;
+                }** - ${moment(guild.members.me.joinedAt).fromNow()}`;
             });
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Server List')
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         if (servers.length <= 25) {
             const range = servers.length === 1 ? '[1]' : `[1 - ${servers.length}]`;

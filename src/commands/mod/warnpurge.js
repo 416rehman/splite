@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const moment = require('moment');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class WarnPurgeCommand extends Command {
     constructor(client) {
@@ -42,7 +42,7 @@ module.exports = class WarnPurgeCommand extends Command {
 
         let reason = args.slice(2).join(' ');
 
-        this.handle(member, amount, reason, message);
+        await this.handle(member, amount, reason, message);
     }
 
     async interact(interaction) {
@@ -51,7 +51,7 @@ module.exports = class WarnPurgeCommand extends Command {
         const amount = interaction.options.getInteger('amount');
         const reason = interaction.options.getString('reason');
 
-        this.handle(member, amount, reason, interaction);
+        await this.handle(member, amount, reason, interaction);
     }
 
     async handle(member, amount, reason, context) {
@@ -99,31 +99,31 @@ module.exports = class WarnPurgeCommand extends Command {
         ).filter((m) => m.member.id === member.id);
         if (messages.size > 0) await context.channel.bulkDelete(messages, true);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Warnpurge Member')
             .setDescription(
                 `${member} has been warned, with **${messages.size}** messages purged.`
             )
-            .addField('Moderator', context.member.toString(), true)
-            .addField('Member', member.toString(), true)
-            .addField('Warn Count', `\`${warns.warns.length}\``, true)
-            .addField('Found Messages', `\`${messages.size}\``, true)
-            .addField('Reason', reason)
+            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+            .addFields([{name: 'Warn Count', value:  `\`${warns.warns.length}\``, inline:  true}])
+            .addFields([{name: 'Found Messages', value:  `\`${messages.size}\``, inline:  true}])
+            .addFields([{name: 'Reason', value:  reason}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
-        this.sendReply(context, {embeds: [embed]});
+        await this.sendReply(context, {embeds: [embed]});
 
         this.client.logger.info(
             `${context.guild.name}: ${context.author.tag} warnpurged ${member.user.tag}`
         );
 
         // Update mod log
-        this.sendModLogMessage(context, reason, {
+        await this.sendModLogMessage(context, reason, {
             Member: member,
             'Warn Count': `\`${warns.warns.length}\``,
             'Found Messages': `\`${messages.size}\``,
@@ -135,7 +135,7 @@ module.exports = class WarnPurgeCommand extends Command {
                 .get('kick')
                 .run(context, [
                     member.id,
-                    `Warn limit reached. Automatically kicked by ${context.guild.me}.`,
+                    `Warn limit reached. Automatically kicked by ${context.guild.members.me}.`,
                 ]);
         }
     }

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
 
@@ -32,7 +32,7 @@ module.exports = class SetModChannelsCommand extends Command {
         let channels = [];
         for (const arg of args) {
             const channel = this.getChannelFromMention(message, arg) || message.guild.channels.cache.get(arg);
-            if (channel && channel.type === 'GUILD_TEXT' && channel.viewable) channels.push(channel);
+            if (channel && channel.type === ChannelType.GuildText && channel.viewable) channels.push(channel);
             else if (channel) return this.sendErrorMessage(
                 message,
                 0,
@@ -68,7 +68,7 @@ module.exports = class SetModChannelsCommand extends Command {
             oldModChannels = this.client.utils.trimArray(oldModChannels).join(' ');
         }
         if (oldModChannels.length === 0) oldModChannels = '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
@@ -76,7 +76,7 @@ module.exports = class SetModChannelsCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Show current mod channels
         if (!channels) {

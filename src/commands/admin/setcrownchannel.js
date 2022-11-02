@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
@@ -49,18 +49,18 @@ module.exports = class SetCrownChannelCommand extends Command {
         // Trim message
         if (crownMessage && crownMessage.length > 1024) crownMessage = crownMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Crown`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addField('Role', crownRole?.toString() || '`None`', true)
-            .addField('Schedule', `\`${crownSchedule ? crownSchedule : 'None'}\``, true)
-            .addField('Message', this.client.utils.replaceCrownKeywords(crownMessage) || '`None`')
+            .addFields([{name: 'Role', value:  crownRole?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Schedule', value:  `\`${crownSchedule ? crownSchedule : 'None'}\``, inline:  true}])
+            .addFields([{name: 'Message', value:  this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author)
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         if (!channel) {
             const payload = ({
@@ -79,7 +79,7 @@ module.exports = class SetCrownChannelCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || (channel.type !== 'GUILD_TEXT' && channel.type !== 'GUILD_NEWS') || !channel.viewable) {
+        if (!channel || (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.GuildNews) || !channel.viewable) {
             const payload = emojis.fail + ' Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID.';
 
             if (isInteraction) context.editReply(payload);

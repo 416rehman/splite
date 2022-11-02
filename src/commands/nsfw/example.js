@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class nsfwCommand extends Command {
     constructor(client) {
@@ -17,7 +17,7 @@ module.exports = class nsfwCommand extends Command {
 
     // Commands of type NSFW will only be available in NSFW channels
     run(message) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Example Command')
             .setDescription('This is an example command.');
         message.reply({

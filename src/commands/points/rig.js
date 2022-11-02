@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const cost = 100;
 module.exports = class WipePointsCommand extends Command {
     constructor(client) {
@@ -40,18 +40,18 @@ module.exports = class WipePointsCommand extends Command {
                 new Date().getTime()
             );
             context.guild.ships.delete(context.author.id);
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Rig Ship')
                 .setDescription(
                     `Successfully rigged ${context.author}'s shipping odds for 30 mins.`
                 )
-                .addField('Points Remaining', `${bal - cost} ${emojis.point}`)
+                .addFields([{name: 'Points Remaining', value:  `${bal - cost} ${emojis.point}`}])
                 .setFooter({
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(context.guild.me.displayHexColor);
+                .setColor(context.guild.members.me.displayHexColor);
             this.sendReply(context, {embeds: [embed]}, isInteraction);
         }
         else {

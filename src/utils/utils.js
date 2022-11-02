@@ -1,9 +1,19 @@
-const {MessageEmbed, Collection} = require('discord.js');
+const {EmbedBuilder, Collection} = require('discord.js');
 const schedule = require('node-schedule');
 const {stripIndent} = require('common-tags');
 const emojis = require('./emojis.json');
 const request = require('request');
-const config = require('../../config.json');
+const YAML = require('yaml');
+const fs = require('fs');
+
+/**
+ * Reads config.yaml and validates it, then returns it
+ * @param path
+ * @returns {any}
+ */
+function readYAML(path) {
+    return YAML.parse(fs.readFileSync(path, 'utf8'));
+}
 
 /**
  * Capitalizes a string
@@ -97,7 +107,7 @@ async function getCaseNumber(client, guild, modLog) {
     const message = (await modLog.messages.fetch({limit: 100}))
         .filter(
             (m) =>
-                m.member === guild.me &&
+                m.member === guild.members.me &&
                 m.embeds[0] &&
                 m.embeds[0].footer &&
                 m.embeds[0].footer.text &&
@@ -244,7 +254,7 @@ async function transferCrown(client, guild, crownRoleId) {
         crownChannel &&
         crownChannel.viewable &&
         crownChannel
-            .permissionsFor(guild.me)
+            .permissionsFor(guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
         crownMessage
     ) {
@@ -256,11 +266,11 @@ async function transferCrown(client, guild, crownRoleId) {
             .replace(/`?\?points`?/g, points); // Points substitution
         crownChannel.send({
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setDescription(crownMessage)
                     .setFooter({text: 'Upcoming Crown Transfer --> '})
                     .setTimestamp(guild.job.nextInvocation())
-                    .setColor(guild.me.displayHexColor),
+                    .setColor(guild.members.me.displayHexColor),
             ],
         });
     }
@@ -387,6 +397,7 @@ function weightedRandom(input) {
 
 /**
  * Returns a generated meme url from imgflip
+ * @param client
  * @param {Number} templateID
  * @param {String} text0
  * @param {String} text1
@@ -394,6 +405,7 @@ function weightedRandom(input) {
  * @param {string} [outlineColor = ''] outlineColor
  */
 function generateImgFlipImage(
+    client,
     templateID,
     text0,
     text1,
@@ -410,8 +422,8 @@ function generateImgFlipImage(
             },
             formData: {
                 template_id: `${templateID}`,
-                username: config.apiKeys.imgflip.username,
-                password: config.apiKeys.imgflip.password,
+                username: client.config.apiKeys.imgflip.username,
+                password: client.config.apiKeys.imgflip.password,
                 'boxes[0][text]': text0,
                 'boxes[1][text]': text1,
                 'boxes[0][color]': color,
@@ -432,7 +444,7 @@ function generateImgFlipImage(
 }
 
 function checkTopGGVote(client, userId) {
-    if (client.config.apiKeys.topGG.useMode === 'api_mode') {
+    if (client.config?.apiKeys?.topGG?.useMode === 'api_mode') {
         //If cache has 5 minute old version, send that
         if (client.votes.has(userId)) {
             let diff =
@@ -446,7 +458,7 @@ function checkTopGGVote(client, userId) {
         return getTopGGVoteFromAPI(client, userId);
     }
     // If using webhook mode, check database for vote
-    else if (client.config.apiKeys.topGG.useMode === 'webhook_mode') {
+    else if (client?.config?.apiKeys?.topGG?.useMode === 'webhook_mode') {
         return new Promise((resolve) => {
             const votes = client.db.integrations.selectRow.get(userId);
             if (votes && votes.topgg) {
@@ -463,11 +475,11 @@ function getTopGGVoteFromAPI(client, userId) {
     return new Promise((resolve) => {
         let options = {
             method: 'GET',
-            url: `https://top.gg/api/bots/${config.apiKeys.topGG.manual.id}/check?userId=${userId}`,
+            url: `https://top.gg/api/bots/${client.user.id}/check?userId=${userId}`,
             headers: {
                 'User-Agent':
                     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
-                Authorization: config.apiKeys.topGG.manual.token,
+                Authorization: client.config?.apiKeys?.topGG?.api_mode?.token,
             },
         };
         request(options, function(error, response) {
@@ -537,6 +549,7 @@ function isCommandOrBotMessage(msg, prefix) {
 }
 
 module.exports = {
+    readYAML,
     capitalize,
     removeElement,
     trimArray,

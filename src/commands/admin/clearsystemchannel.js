@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -33,7 +33,7 @@ module.exports = class clearSystemChannelCommand extends Command {
             .get(context.guild.id);
         const oldSystemChannel =
             context.guild.channels.cache.get(systemChannelId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
@@ -44,7 +44,7 @@ module.exports = class clearSystemChannelCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear if no args provided
         this.client.db.settings.updateSystemChannelId.run(
@@ -52,7 +52,7 @@ module.exports = class clearSystemChannelCommand extends Command {
             context.guild.id
         );
 
-        const payload = {embeds: [embed.addField('System Channel', `${oldSystemChannel} ➔ \`None\``),],};
+        const payload = {embeds: [embed.addFields([{name: 'System Channel', value:  `${oldSystemChannel} ➔ \`None\``}]),],};
 
         if (isInteraction) context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);

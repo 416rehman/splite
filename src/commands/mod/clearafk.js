@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class clearafkCommand extends Command {
     constructor(client) {
@@ -46,17 +46,17 @@ module.exports = class clearafkCommand extends Command {
         if (member.nickname) member.setNickname(`${member.nickname.replace('[AFK]', '')}`);
 
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Clear AFK')
             .setDescription(`${member}'s AFK status was successfully cleared.`)
-            .addField('Moderator', context.member.toString(), true)
-            .addField('Member', member.toString(), true)
+            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         this.sendReply(context, {embeds: [embed]});
         this.sendModLogMessage(context, null, {Member: member.toString()});

@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class PurgeCommand extends Command {
     constructor(client) {
@@ -44,7 +44,7 @@ module.exports = class PurgeCommand extends Command {
 
         let reason = args.slice(1).join(' ');
 
-        this.handle(member, channel, amount, reason, message);
+        await this.handle(member, channel, amount, reason, message);
     }
 
     async interact(interaction) {
@@ -54,12 +54,12 @@ module.exports = class PurgeCommand extends Command {
         const amount = interaction.options.getInteger('amount');
         const reason = interaction.options.getString('reason');
 
-        this.handle(member, channel, amount, reason, interaction);
+        await this.handle(member, channel, amount, reason, interaction);
     }
 
     async handle(member, channel, amount, reason, context) {
         // Check type and viewable
-        if (channel.type !== 'GUILD_TEXT' || !channel.viewable)
+        if (channel.type !== ChannelType.GuildText || !channel.viewable)
             return this.sendErrorMessage(
                 context,
                 0,
@@ -77,7 +77,7 @@ module.exports = class PurgeCommand extends Command {
             );
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.me).has(['MANAGE_MESSAGES']))
+        if (!channel.permissionsFor(context.guild.members.me).has(['MANAGE_MESSAGES']))
             return this.sendErrorMessage(
                 context,
                 0,
@@ -102,7 +102,7 @@ module.exports = class PurgeCommand extends Command {
             context.channel
                 .send({
                     embeds: [
-                        new MessageEmbed()
+                        new EmbedBuilder()
                             .setTitle('Purge')
                             .setDescription(
                                 `
@@ -110,15 +110,15 @@ module.exports = class PurgeCommand extends Command {
             This message will be deleted after \`10 seconds\`.
           `
                             )
-                            .addField('Channel', channel.toString(), true)
-                            .addField('Member', member.toString())
-                            .addField('Found Messages', `\`${messages.size}\``, true)
+                            .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
+                            .addFields([{name: 'Member', value:  member.toString()}])
+                            .addFields([{name: 'Found Messages', value:  `\`${messages.size}\``, inline:  true}])
                             .setFooter({
                                 text: context.member.displayName,
                                 iconURL: this.getAvatarURL(context.author),
                             })
                             .setTimestamp()
-                            .setColor(context.guild.me.displayHexColor),
+                            .setColor(context.guild.members.me.displayHexColor),
                     ],
                 })
                 .then((msg) => {
@@ -130,7 +130,7 @@ module.exports = class PurgeCommand extends Command {
             // Purge contexts
 
             channel.bulkDelete(messages, true).then((contexts) => {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle('Purge')
                     .setDescription(
                         `
@@ -138,15 +138,15 @@ module.exports = class PurgeCommand extends Command {
             This context will be deleted after \`10 seconds\`.
           `
                     )
-                    .addField('Channel', channel.toString(), true)
-                    .addField('Message Count', `\`${contexts.size}\``, true)
-                    .addField('Reason', reason)
+                    .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
+                    .addFields([{name: 'Message Count', value:  `\`${contexts.size}\``, inline:  true}])
+                    .addFields([{name: 'Reason', value:  reason}])
                     .setFooter({
                         text: context.member.displayName,
                         iconURL: this.getAvatarURL(context.author),
                     })
                     .setTimestamp()
-                    .setColor(context.guild.me.displayHexColor);
+                    .setColor(context.guild.members.me.displayHexColor);
 
                 if (member) {
                     embed
@@ -182,6 +182,6 @@ module.exports = class PurgeCommand extends Command {
         }
         else fields['Message Count'] = `\`${amount}\``;
 
-        this.sendModLogMessage(context, reason, fields);
+        await this.sendModLogMessage(context, reason, fields);
     }
 };

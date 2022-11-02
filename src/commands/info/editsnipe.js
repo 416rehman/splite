@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 module.exports = class SnipeCommand extends Command {
     constructor(client) {
         super(client, {
@@ -28,12 +28,12 @@ module.exports = class SnipeCommand extends Command {
         const snipedMSg = context.guild.editSnipes.get(context.channel.id);
 
         if (snipedMSg && snipedMSg.newMessage && snipedMSg.oldMessage.content) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setDescription(
                     `${snipedMSg.newMessage.author} edited [message](https://discord.com/channels/${context.guild.id}/${context.channel.id}/${snipedMSg.newMessage.id})`
                 )
-                .addField('Before', snipedMSg.oldMessage.content || '')
-                .addField('After', snipedMSg.newMessage.content || '')
+                .addFields([{name: 'Before', value:  snipedMSg.oldMessage.content || ''}])
+                .addFields([{name: 'After', value:  snipedMSg.newMessage.content || ''}])
                 .setFooter({
                     text: this.getUserIdentifier(context.author),
                     iconURL: this.getAvatarURL(context.author),
@@ -56,7 +56,7 @@ module.exports = class SnipeCommand extends Command {
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(`${this.client.name} Sniper`)
                 .setDescription(`${fail} There is nothing to snipe!`)
                 .setFooter({

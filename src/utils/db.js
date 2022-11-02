@@ -1,6 +1,6 @@
 /* eslint-disable */
-
-const config = require('../../config.json');
+const {readYAML} = require('./utils');
+const config = readYAML(__basedir + '/config.yaml');
 const Database = require('better-sqlite3');
 const db = new Database(__basedir + '/data/db.sqlite');
 
@@ -445,7 +445,7 @@ const users = {
             afk_time,
             optOutSmashOrPass
         ) VALUES ` +
-            rows.map((row) => '(?, ?, ?, ?,?, ?, ?, ?,?,?)').join(', ');
+            rows.map(() => '(?, ?, ?, ?,?, ?, ?, ?,?,?)').join(', ');
 
         // console.log(query);
         // process.exit()

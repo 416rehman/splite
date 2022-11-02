@@ -1,21 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const moment = require('moment');
 const {voice} = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
-const channelTypes = {
-    DM: 'DM',
-    GUILD_TEXT: 'Text',
-    GUILD_VOICE: 'Voice',
-    GUILD_CATEGORY: 'Category',
-    GUILD_NEWS: 'News',
-    GUILD_STORE: 'Store',
-    GUILD_STAGE_VOICE: 'Stage',
-    GUILD_PUBLIC_THREAD: 'Public Thread',
-    GUILD_NEWS_THREAD: 'News Thread',
-    GUILD_PRIVATE_THREAD: 'Private Thread',
-    UNKNOWN: 'Unknown',
-};
 
 module.exports = class ChannelInfoCommand extends Command {
     constructor(client) {
@@ -50,13 +37,13 @@ module.exports = class ChannelInfoCommand extends Command {
     }
 
     handle(channel, context, isInteraction) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Channel Information')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addField('Channel', channel.toString(), true)
-            .addField('ID', `\`${channel.id}\``, true)
-            .addField('Type', `\`${channelTypes[channel.type]}\``, true)
-            .addField('Members', `\`${channel.members.size}\``, true)
+            .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
+            .addFields([{name: 'ID', value:  `\`${channel.id}\``, inline:  true}])
+            .addFields([{name: 'Type', value:  `\`${channel.type}\``, inline:  true}])
+            .addFields([{name: 'Members', value:  `\`${channel.members.size}\``, inline:  true}])
             .addField(
                 'Bots',
                 `\`${
@@ -75,7 +62,7 @@ module.exports = class ChannelInfoCommand extends Command {
             })
             .setTimestamp();
 
-        if (channel.type === 'GUILD_TEXT') {
+        if (channel.type === ChannelType.GuildText) {
             embed // Text embed
                 .spliceFields(3, 0, {
                     name: 'Slowmode',
@@ -88,7 +75,7 @@ module.exports = class ChannelInfoCommand extends Command {
                     inline: true,
                 });
         }
-        else if (channel.type === 'GUILD_NEWS') {
+        else if (channel.type === ChannelType.GuildNews) {
             embed // News embed
                 .spliceFields(6, 0, {
                     name: 'NSFW',
@@ -96,7 +83,7 @@ module.exports = class ChannelInfoCommand extends Command {
                     inline: true,
                 });
         }
-        else if (channel.type === 'GUILD_VOICE') {
+        else if (channel.type === ChannelType.GuildVoice) {
             embed // Voice embed
                 .spliceFields(0, 1, {
                     name: 'Channel',
@@ -130,7 +117,7 @@ module.exports = class ChannelInfoCommand extends Command {
             if (isInteraction) context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
-        if (channel.topic) embed.addField('Topic', channel.topic);
+        if (channel.topic) embed.addFields([{name: 'Topic', value:  channel.topic}]);
 
         const payload = {embeds: [embed]};
         this.sendReply(context, payload, isInteraction);

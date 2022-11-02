@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 const commandMappings = {
     previous: 'back',
@@ -10,10 +10,10 @@ const commandMappings = {
     progress: 'progress',
     queue: {
         view: 'queue',
-        loop: 'loop',
         shuffle: 'shuffle',
         clear: 'clear',
     },
+    loop: 'loop',
     search: 'search',
     seek: 'seek',
     skip: 'skip',
@@ -26,6 +26,7 @@ module.exports = class MusicCommandGroup extends Command {
             name: 'music',
             description: 'Music / DJ commands',
             type: client.types.MUSIC,
+            voiceChannelOnly: true,
             slashCommand: new SlashCommandBuilder()
                 .addSubcommand((o) => o.setName('play').setDescription('Play / Resume the music')
                     .addStringOption((o) => o.setName('query').setDescription('Query or URL to play'))
@@ -59,7 +60,6 @@ module.exports = class MusicCommandGroup extends Command {
             commandMappings[interaction.options.getSubcommand()];
 
         const command = this.client.commands.get(commandName);
-        console.log(command);
 
         if (command) command.interact(interaction);
         else interaction.reply('Invalid command - Potential mapping error');

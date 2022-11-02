@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = (client, oldMessage, newMessage) => {
     if (newMessage.webhookId) return; // Check for webhook
@@ -15,13 +15,13 @@ module.exports = (client, oldMessage, newMessage) => {
         client.emit('message', newMessage);
     }
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setAuthor({
             name: `${newMessage?.author?.username}#${newMessage?.author?.discriminator}`,
             iconURL: newMessage?.author?.displayAvatarURL({format: 'png', dynamic: true}),
         })
         .setTimestamp()
-        .setColor(newMessage.guild.me.displayHexColor);
+        .setColor(newMessage.guild.members.me.displayHexColor);
 
     // Content change
     if (oldMessage.content !== newMessage.content) {
@@ -38,7 +38,7 @@ module.exports = (client, oldMessage, newMessage) => {
             .get(newMessage.guild.id);
         const messageEditLog = newMessage.guild.channels.cache.get(messageEditLogId);
         if (messageEditLog && messageEditLog.viewable && messageEditLog
-            .permissionsFor(newMessage.guild.me)
+            .permissionsFor(newMessage.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS'])) {
             try {
                 if (newMessage.content?.length > 1024) newMessage.content = newMessage.content.slice(0, 1021) + '...';
@@ -52,8 +52,8 @@ module.exports = (client, oldMessage, newMessage) => {
                 embed
                     .setTitle('Message Update: `Edit`')
                     .setDescription(`${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})`)
-                    .addField('Before', oldMessage ? oldMessage?.content : '**')
-                    .addField('After', newMessage?.content || 'None');
+                    .addFields([{name: 'Before', value:  oldMessage ? oldMessage?.content : '**'}])
+                    .addFields([{name: 'After', value:  newMessage?.content || 'None'}]);
                 messageEditLog.send({embeds: [embed]});
             }
             catch (e) {
@@ -70,7 +70,7 @@ module.exports = (client, oldMessage, newMessage) => {
 
         const messageDeleteLog = newMessage.guild.channels.cache.get(messageDeleteLogId);
         if (messageDeleteLog && messageDeleteLog.viewable && messageDeleteLog
-            .permissionsFor(newMessage.guild.me)
+            .permissionsFor(newMessage.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS'])) {
 
             embed.setTitle('Message Update: `Delete`');

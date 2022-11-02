@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 
 module.exports = class SetModRoleCommand extends Command {
@@ -23,7 +23,7 @@ module.exports = class SetModRoleCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const role = interaction.options.getRole('role');
-        this.handle(role, interaction, true);
+        await this.handle(role, interaction, true);
     }
 
     async handle(role, context, isInteraction) {
@@ -33,7 +33,7 @@ module.exports = class SetModRoleCommand extends Command {
         const oldModRole =
             context.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -42,14 +42,14 @@ module.exports = class SetModRoleCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear if no args provided
         if (!role) {
             return context.channel.send({
                 embeds: [
                     embed
-                        .addField('Current Mod Role', `${oldModRole}` || '`None`')
+                        .addFields([{name: 'Current Mod Role', value:  `${oldModRole}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
@@ -61,18 +61,18 @@ module.exports = class SetModRoleCommand extends Command {
         if (!modRole) {
             const payload = `${fail} Please mention a role or provide a valid role ID`;
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
         this.client.db.settings.updateModRoleId.run(modRole.id, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addField('Mod Role', `${oldModRole} ➔ ${modRole}`)
+            embeds: [embed.addFields([{name: 'Mod Role', value:  `${oldModRole} ➔ ${modRole}`}])
                 .setDescription(`The \`mod role\` was successfully updated. ${success}\nUse \`clearmodrole\` to clear the current \`mod role\`.`)],
         });
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

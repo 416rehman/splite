@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class CrownCommand extends Command {
     constructor(client) {
@@ -22,7 +22,7 @@ module.exports = class CrownCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        await this.handle(interaction, true);
     }
 
     handle(context, isInteraction) {
@@ -45,10 +45,10 @@ module.exports = class CrownCommand extends Command {
         if (crowned.length === 0)
             description = `No one has the crown ${emojis.crown}`;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Crowned Members')
             .setDescription(description)
-            .addField('Crown Role', crownRole.toString())
+            .addFields([{name: 'Crown Role', value:  crownRole.toString()}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),

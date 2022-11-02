@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail} = require('../utils/emojis.json');
 
 module.exports = (client, guild) => {
@@ -7,7 +7,7 @@ module.exports = (client, guild) => {
     if (serverLog)
         serverLog.send({
             embeds: [
-                new MessageEmbed().setDescription(
+                new EmbedBuilder().setDescription(
                     `${client.user} has left **${guild.name}** ${fail}`
                 ),
             ],

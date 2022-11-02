@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -44,21 +44,21 @@ module.exports = class SetWelcomeMessageCommand extends Command {
         // Get status
         const oldStatus = this.client.utils.getStatus(welcomeChannelId, oldWelcomeMessage);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Welcomes`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addField('Channel', welcomeChannel?.toString() || '`None`', true)
+            .addFields([{name: 'Channel', value:  welcomeChannel?.toString() || '`None`', inline:  true}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         if (!text) {
             const payload = ({
                 embeds: [embed
-                    .addField('Status', oldStatus, true)
-                    .addField('Current Welcome Message', `${oldWelcomeMessage}`)
+                    .addFields([{name: 'Status', value:  oldStatus, inline:  true}])
+                    .addFields([{name: 'Current Welcome Message', value:  `${oldWelcomeMessage}`}])
                     .setDescription(this.description),],
             });
 
@@ -78,8 +78,8 @@ module.exports = class SetWelcomeMessageCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addField('Status', statusUpdate, true)
-                .addField('Message', this.client.utils.replaceKeywords(text)),],
+                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
+                .addFields([{name: 'Message', value:  this.client.utils.replaceKeywords(text)}]),],
         });
 
         if (isInteraction) context.editReply(payload);

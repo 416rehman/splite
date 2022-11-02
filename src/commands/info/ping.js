@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {pong} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class PingCommand extends Command {
     constructor(client) {
@@ -20,11 +20,11 @@ module.exports = class PingCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction);
+        await this.handle(interaction);
     }
 
     async handle(context) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setDescription('`Pinging...`')
             .setColor('RANDOM');
 
@@ -44,8 +44,8 @@ module.exports = class PingCommand extends Command {
         embed
             .setTitle(`Pong!  ${pong}`)
             .setDescription('')
-            .addField('Latency', latency, true)
-            .addField('API Latency', apiLatency, true)
+            .addFields([{name: 'Latency', value:  latency, inline:  true}])
+            .addFields([{name: 'API Latency', value:  apiLatency, inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),

@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail, load} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 const types = Array(
     'hass',
@@ -36,33 +36,33 @@ module.exports = class thighsCommand extends Command {
             examples: ['nsfw boobs', 'nsfw thigh'],
             slashCommand: new SlashCommandBuilder()
                 .addStringOption(s =>
-                    s.setName('category').setRequired(false).setDescription('The category or genre').addChoices([
-                        ['hass', 'hass'],
-                        ['pgif', 'pgif'],
-                        ['4k', '4k'],
-                        ['hentai', 'hentai'],
-                        ['hneko', 'hneko'],
-                        ['hkitsune', 'hkitsune'],
-                        ['kemonomimi', 'kemonomimi'],
-                        ['anal', 'anal'],
-                        ['hanal', 'hanal'],
-                        ['gonewild', 'gonewild'],
-                        ['ass', 'ass'],
-                        ['pussy', 'pussy'],
-                        ['thigh', 'thigh'],
-                        ['hthigh', 'hthigh'],
-                        ['paizuri', 'paizuri'],
-                        ['tentacle', 'tentacle'],
-                        ['boobs', 'boobs'],
-                        ['hboobs', 'hboobs'],
-                    ])),
+                    s.setName('category').setRequired(false).setDescription('The category or genre').addChoices(
+                        {name: 'hass', value:'hass'},
+                        {name: 'pgif', value:'pgif'},
+                        {name: '4k', value:'4k'},
+                        {name: 'hentai', value:'hentai'},
+                        {name: 'hneko', value:'hneko'},
+                        {name: 'hkitsune', value:'hkitsune'},
+                        {name: 'kemonomimi', value:'kemonomimi'},
+                        {name: 'anal', value:'anal'},
+                        {name: 'hanal', value:'hanal'},
+                        {name: 'gonewild', value:'gonewild'},
+                        {name: 'ass', value:'ass'},
+                        {name: 'pussy', value:'pussy'},
+                        {name: 'thigh', value:'thigh'},
+                        {name: 'hthigh', value:'hthigh'},
+                        {name: 'paizuri', value:'paizuri'},
+                        {name: 'tentacle', value:'tentacle'},
+                        {name: 'boobs', value:'boobs'},
+                        {name: 'hboobs', value:'hboobs'},
+                    )),
         });
     }
 
     async run(message, args) {
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(args.shift(), message, false);
@@ -72,7 +72,7 @@ module.exports = class thighsCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const category = interaction.options.getString('category');
-        this.handle(category, interaction, true);
+        await this.handle(category, interaction, true);
     }
 
     async handle(category, context, isInteraction) {
@@ -83,7 +83,7 @@ module.exports = class thighsCommand extends Command {
                     chosen = types.find((e) => e === category);
                 else {
                     const description = types.join('\n');
-                    const embed = new MessageEmbed().setDescription(
+                    const embed = new EmbedBuilder().setDescription(
                         `${fail} Category **${category}** Invalid!\n\n**Supported Categories:**\n${description}`
                     );
                     if (isInteraction) {
@@ -105,7 +105,7 @@ module.exports = class thighsCommand extends Command {
                 .pluck()
                 .get(context.guild.id); // Get prefix
             const buffer = await this.client.nekoApi.get(chosen);
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setDescription(`Category: **${chosen}**`)
                 .setImage(buffer)
                 .setFooter({
@@ -113,7 +113,7 @@ module.exports = class thighsCommand extends Command {
                 });
 
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }
@@ -126,12 +126,12 @@ module.exports = class thighsCommand extends Command {
             }
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }

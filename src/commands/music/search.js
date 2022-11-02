@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {QueryType} = require('discord-player');
 const Command = require('../Command');
 
@@ -18,7 +18,7 @@ module.exports = class MusicSearchCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const query = interaction.options.getString('query') || null;
-        this.handle(query, interaction);
+        await this.handle(query, interaction);
     }
 
     async handle(query, context) {
@@ -34,7 +34,7 @@ module.exports = class MusicSearchCommand extends Command {
             metadata: context.channel,
         });
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
 
         embed.setColor('RED');
         embed.setAuthor({

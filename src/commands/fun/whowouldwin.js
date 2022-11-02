@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {load} = require('../../utils/emojis.json');
 const fetch = require('node-fetch');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 module.exports = class whowouldwinCommand extends Command {
     constructor(client) {
         super(client, {
@@ -26,7 +26,7 @@ module.exports = class whowouldwinCommand extends Command {
 
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(member, member2, message, false);
@@ -37,7 +37,7 @@ module.exports = class whowouldwinCommand extends Command {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || await this.getGuildMember(interaction.guild, this.client.db.users.getRandom.get(interaction.guild.id).user_id);
         const member2 = interaction.options.getUser('user2') || interaction.author;
-        this.handle(member, member2, interaction, true);
+        await this.handle(member, member2, interaction, true);
     }
 
     async handle(member, member2, context, isInteraction) {
@@ -49,7 +49,7 @@ module.exports = class whowouldwinCommand extends Command {
             )
         );
         const json = await res.json();
-        const attachment = new MessageAttachment(
+        const attachment = new AttachmentBuilder(
             json.message,
             'whowouldwin.png'
         );
@@ -59,7 +59,7 @@ module.exports = class whowouldwinCommand extends Command {
                 content: `<@${member.id}> **VS** <@${member2.id}>`,
                 files: [attachment],
             }).then(m => {
-                if (m.channel.permissionsFor(m.guild.me).has('ADD_REACTIONS'))
+                if (m.channel.permissionsFor(m.guild.members.me).has('ADD_REACTIONS'))
                     m.react('👈').then(() => m.react('👉'));
             });
         }
@@ -77,7 +77,7 @@ module.exports = class whowouldwinCommand extends Command {
                     content: `<@${member.id}> **VS** <@${member2.id}>`,
                     files: [attachment],
                 }).then(m => {
-                    if (m.channel.permissionsFor(m.guild.me).has('ADD_REACTIONS'))
+                    if (m.channel.permissionsFor(m.guild.members.me).has('ADD_REACTIONS'))
                         m.react('👈').then(() => m.react('👉'));
                 });
             }

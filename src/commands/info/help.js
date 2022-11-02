@@ -1,10 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ComponentType, ActionRowBuilder, ButtonBuilder, ButtonStyle} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {MessageActionRow} = require('discord.js');
-const {MessageButton} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class HelpCommand extends Command {
     constructor(client) {
@@ -40,7 +38,7 @@ module.exports = class HelpCommand extends Command {
         if (typeof disabledCommands === 'string') disabledCommands = disabledCommands.split(' ');
 
         const all = commandString === 'all' ? commandString : '';
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         const prefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(context.guild.id); // Get prefix
@@ -59,12 +57,12 @@ module.exports = class HelpCommand extends Command {
             const embed = this.createHelpEmbed(context, command, prefix);
 
             const payload = {embeds: [embed]};
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else if (commandString && !all) {
             const payload = `${emojis.fail} **${capitalize(commandString)} is not a valid command.** Please try again.`;
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else {
@@ -93,7 +91,14 @@ module.exports = class HelpCommand extends Command {
                     if (command.type === this.client.types.OWNER && !this.client.isOwner(context.member)) return;
                     if (command.type === this.client.types.MANAGER && !this.client.isManager(context.member)) return;
 
-                    if (command.userPermissions && command.userPermissions.every((p) => context.member.permissions.has(p)) && !all) commands[command.type].push(`\`${command.name}\``); else if (!command.userPermissions || all) commands[command.type].push(`\`${command.name}\``);
+                    if (command.userPermissions && command.userPermissions.every((p) => context.member.permissions.has(p)) && !all) {
+                        if (command?.slashCommand?.name) commands[command.type].push(`\`${command.slashCommand.name}\``);
+                        else commands[command.type].push(`\`${command.name}\``);
+                    }
+                    else if (!command.userPermissions || all) {
+                        if (command?.slashCommand?.name) commands[command.type].push(`\`${command.slashCommand.name}\``);
+                        else commands[command.type].push(`\`${command.name}\``);
+                    }
                 }
             });
 
@@ -108,17 +113,17 @@ module.exports = class HelpCommand extends Command {
             const allButtons = [];
             for (const property in commands) {
                 if (commands[property].length) {
-                    const button = new MessageButton()
+                    const button = new ButtonBuilder()
                         .setCustomId(`${property.replace(/ /g, '_')}`)
                         .setLabel(`${capitalize(property)}`)
-                        .setStyle('PRIMARY');
+                        .setStyle(ButtonStyle.Primary);
                     if (emojiMap[property]) {
                         const animated = emojiMap[property].match(/(?<=<)(.*?)(?=:)/)[1] || '';
                         const name = emojiMap[property].match(/(?<=:)(.*?)(?=:)/)[1];
                         const id = emojiMap[property]
                             .match(/(?<=:)(.*?)(?=>)/)[1]
                             .split(':')[1];
-                        button.emoji = {name: name, id: id, animated: !!animated};
+                        button.setEmoji({name: name, id: id, animated: !!animated});
                     }
 
                     allButtons.push(button);
@@ -140,13 +145,13 @@ module.exports = class HelpCommand extends Command {
                 })
                 .setTimestamp()
                 .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
-                .addField('**Links**', `[Invite Me](${this.client.config.inviteLink}) | [Support Server](${this.client.config.supportServer})`);
+                .addFields([{name: '**Links**', value:  `[Invite Me](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands) | [Support Server](${this.client.config.supportServer})`}]);
 
             const chunks = 4; //tweak this to add more items per line
             let rows = new Array(Math.ceil(allButtons.length / chunks))
                 .fill()
                 .map(() => {
-                    const row = new MessageActionRow();
+                    const row = new ActionRowBuilder();
                     const buttons = allButtons.splice(0, chunks);
                     buttons.forEach((b) => {
                         row.addComponents(b);
@@ -163,9 +168,9 @@ module.exports = class HelpCommand extends Command {
 
             const filter = (button) => button.user.id === context.author.id;
             const collector = msg.createMessageComponentCollector({
-                filter, componentType: 'BUTTON', time: 60000, dispose: true,
+                filter, componentType: ComponentType.Button, time: 60000, dispose: true,
             });
-            let tempEmbed = new MessageEmbed()
+            let tempEmbed = new EmbedBuilder()
                 .setTitle(`${this.client.name}'s Commands`)
                 .setDescription(`**Prefix:** \`${prefix}\`\n**Command Information:** \`${prefix}help [command]\`\n${!all && size !== total ? `**All Commands:** \`${prefix}help all\`` : ''}\n`)
                 .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`);
@@ -180,7 +185,22 @@ module.exports = class HelpCommand extends Command {
                     })
                     .setTimestamp();
 
-                if (type === 'Slash Only Commands') tempEmbed.addField(`${emojis.verified_developer} **/${type}**`, '' + commands[type]); else tempEmbed.addField(`**${emojiMap[type]} [${commands[type].length}]**`, `${emojiMap[type].includes('Admin') ? 'Commands can be cleared by replacing "set" with "clear".\ni.e `setmodlog` ➔ `clearmodlog`\n-----------------------------------------------------\n' : ''} ${commands[type].join(', ')}`);
+                if (type === 'Slash Only Commands') {
+                    // empty fields
+                    tempEmbed.setFields([]);
+                    tempEmbed.addFields([{
+                        name: `${emojis.verified_developer} **/${type}**`, value: '' + commands[type]
+                    }]);
+                }
+
+                else {
+                    // empty fields
+                    tempEmbed.setFields([]);
+                    tempEmbed.addFields([{
+                        name: `**${emojiMap[type]} [${commands[type].length}]**`,
+                        value:  `${emojiMap[type].includes('Admin') ? 'Use "clear" to clear, i.e `setmodlog` ➔ `clearmodlog`\n\n' : ''} ${commands[type].join(', ')}`,
+                    }]);
+                }
 
                 msg.edit({components: rows, embeds: [tempEmbed]});
                 b.deferUpdate();

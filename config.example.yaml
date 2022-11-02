@@ -1,0 +1,109 @@
+# IMPORTANT - Rename this file to config.yaml or create a copy of it named config.yaml and edit that file.
+# This file is used to configure the various parameters used by the bot.
+
+botName: "Splite"
+
+# Message Content Intent is required for this to work.
+defaultPrefix: ".."
+
+# Bot Token (https://discord.com/developers/applications)
+token: ""
+
+# Invite link to your support server
+supportServer: "https://discord.gg/8Uk2REYmd3"
+
+# ID of the support Server. BOT MUST HAVE PERMISSION TO SEND MESSAGES IN THIS CHANNEL
+supportServerId: "812345678901234567"
+
+# ID of the channel (in the support server) where bug reports will be sent
+bugReportChannelId: "812345678901234567"
+
+# ID of the channel (in the support server) where feedback will be sent
+feedbackChannelId: "812345678901234567"
+
+# ID of the channel (in the support server) where confession reports will be sent
+confessionReportsID: "812345678901234567"
+
+# Image link to your bot's icon
+botLogoURL: "https://i.imgur.com/B0XSinY.png"
+
+# List of command names that will be disabled. Each command can also be disabled individually by setting its "disabled" property to true in its command file
+disabledCommands:
+    - "command1"
+    - "command2"
+# List of owners of the bot, they will be able to use owner commands
+owners:
+    - '123456789012346578'
+# List of managers of the bot, they will be able to use manager commands
+managers:
+    - '123456789012346578'
+    - '123456789012346578'
+# Webserver settings, mainly used for top.gg webhooks, can also be used for dashboard (not implemented by default)
+webserver:
+    enabled: false  # If true, will enable the webserver
+    port: 17170     # Port of the webserver
+    debug: true     # If true, will log all requests to the console
+    https: false    # If true, will use https, if false, will use http
+
+# Stats settings
+stats:
+    gambling:
+        winOdds: 0.5        # Odds of winning a gambling game
+        limit: 1000         # Amount of points that can be gambled at once
+    betting:
+        limit: 1000         # Amount of points that can be bet at once
+    robbing:
+        successOdds: 0.5    # Odds of successfully robbing someone
+        limit: 1000         # Max amount of points that can be robbed at once
+    jackpot:
+        limit: 10000000     # Max amount of points that can be used in a jackpot
+        maxEntries: 15      # how many people can enter a jackpot
+
+# Vote perks (awarded when a user votes for the bot)
+votePerks:
+    gamblingWinOdds: 0.6        # Voters gambling win odds will be set to this value
+    robbingSuccessOdds: 0.6     # Voters robbing success odds will be set to this value
+
+# API keys
+apiKeys:
+    catApi: ""          # Cat API (Visit https://thecatapi.com/signup/) used for cat command
+    googleApi: ""       # Youtube API (https://console.cloud.google.com/apis/library/youtube.googleapis.com) used for youtube command
+    amethyste: ""       # Amethyste API (Visit https://api.amethyste.moe/) used for many commands in the "fun" category
+    imgflip:            # Imgflip API (Visit https://imgflip.com/) used for hate and mock commands
+        username: ""
+        password: ""
+
+    # Top.gg API (Visit https://top.gg/bot/:bot_id/webhooks) used for top.gg webhooks
+    topGG:
+        useMode: api_mode   # Valid values: api_mode, webhook_mode
+        api_mode:           # useMode must be api_mode, will constantly check the top.gg api for votes
+            token: ""       # NOT YOUR DISCORD BOT TOKEN. Retrieve from https://top.gg/bot/:bot_id/webhooks
+
+        # Valid only if useMode is set to webhook_mode and webserver is enabled, will use the webserver to receive votes
+        # Make sure to set the webhook url in the top.gg bot page to http://<server_ip:webserver_port>/topgg/vote (e.g. http://213.153.1.0:17170/topgg/vote)
+        webhook_mode:
+            authorization: "" # Retrieve from https://top.gg/bot/:bot_id/webhooks
+    openAI:
+        apiKey: "" # OpenAI API (Visit https://beta.openai.com/account/api-keys) used for the ai command
+
+# Music settings (https://discord-player.js.org/)
+music:
+    DJ:
+        enabled: true   # If true, will require DJ role to use music commands
+        roleName: DJ    # Name of the DJ role
+        commands:       # List of commands that require DJ role
+            - back
+            - clear
+            - filter
+            - loop
+            - pause
+            - resume
+            - seek
+            - shuffle
+            - skip
+            - stop
+            - volume
+    maxVol: 100         # Max volume that can be set
+    discordPlayer:      # Discord Player settings
+        ytdlOptions:    # Ytdl options
+            quality: highestaudio   # Highest audio quality

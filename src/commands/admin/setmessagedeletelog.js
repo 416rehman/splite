@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -34,7 +34,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
             this.client.db.settings.selectMessageDeleteLogId.pluck().get(context.guild.id);
         const oldMessageDeleteLog = context.guild.channels.cache.get(messageDeleteLogId) || '`None`';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
@@ -42,7 +42,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear if no args provided
         if (!channel) {
@@ -63,7 +63,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+        if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} Please mention an accessible text channel or provide a valid text channel ID.`;
 
             if (isInteraction) context.editReply(payload);

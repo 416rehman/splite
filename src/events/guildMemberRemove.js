@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = (client, member) => {
     if (member.user === client.user) return;
@@ -19,10 +19,10 @@ module.exports = (client, member) => {
         memberLog &&
         memberLog.viewable &&
         memberLog
-            .permissionsFor(member.guild.me)
+            .permissionsFor(member.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS'])
     ) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Member Left')
             .setAuthor({
                 name: `${member.guild.name}`,
@@ -31,7 +31,7 @@ module.exports = (client, member) => {
             .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`${member} (**${member.user.tag}**)`)
             .setTimestamp()
-            .setColor(member.guild.me.displayHexColor);
+            .setColor(member.guild.members.me.displayHexColor);
         memberLog.send({embeds: [embed]});
     }
 
@@ -49,7 +49,7 @@ module.exports = (client, member) => {
         farewellChannel &&
         farewellChannel.viewable &&
         farewellChannel
-            .permissionsFor(member.guild.me)
+            .permissionsFor(member.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
         farewellMessage
     ) {
@@ -60,13 +60,13 @@ module.exports = (client, member) => {
             .replace(/`?\?size`?/g, member.guild.memberCount); // Guild size substitution
         farewellChannel.send({
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setDescription(farewellMessage)
                     .setAuthor({
                         name: member.user.tag,
                         iconURL: member.user.displayAvatarURL({dynamic: true})
                     })
-                    .setColor(member.guild.me.displayHexColor),
+                    .setColor(member.guild.members.me.displayHexColor),
             ],
         });
     }

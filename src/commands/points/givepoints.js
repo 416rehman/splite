@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class GivePointsCommand extends Command {
     constructor(client) {
@@ -87,12 +87,12 @@ module.exports = class GivePointsCommand extends Command {
             description = `${emojis.success} Successfully transferred **${amount}** points ${emojis.point} to ${member}!`;
         else
             description = `${emojis.success} Successfully transferred **${amount}** points ${emojis.point} to ${member}!`;
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${this.getUserIdentifier(member)}'s Points ${emojis.point}`)
             .setThumbnail(this.getAvatarURL(member))
             .setDescription(description)
-            .addField('From', context.member.toString(), true)
-            .addField('To', member.toString(), true)
+            .addFields([{name: 'From', value:  context.member.toString(), inline:  true}])
+            .addFields([{name: 'To', value:  member.toString(), inline:  true}])
             .addField(
                 'Points',
                 `\`${oldPoints}\` ➔ \`${amount + oldPoints}\``,

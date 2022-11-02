@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class WipePointsCommand extends Command {
     constructor(client) {
@@ -21,7 +21,7 @@ module.exports = class WipePointsCommand extends Command {
         await interaction.deferReply();
         const userId = interaction.options.getString('userid');
         const amount = interaction.options.getInteger('amount');
-        this.handle(userId, amount, interaction);
+        await this.handle(userId, amount, interaction);
     }
 
     async handle(userId, amount, context) {
@@ -47,7 +47,7 @@ module.exports = class WipePointsCommand extends Command {
             member.id,
             context.guild.id
         );
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Set Points')
             .setDescription(`Successfully set ${member}'s points to ${amount}.`)
             .setFooter({
@@ -56,6 +56,6 @@ module.exports = class WipePointsCommand extends Command {
             })
             .setTimestamp();
 
-        this.sendReply(context, {embeds: [embed]});
+        await this.sendReply(context, {embeds: [embed]});
     }
 };

@@ -1,6 +1,6 @@
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class confessCommand extends Command {
     constructor(client) {
@@ -55,7 +55,7 @@ module.exports = class confessCommand extends Command {
         })
             ? 'Report ToS-breaking or hateful confessions by using /report [confessionID]'
             : 'Type "/confess" in any channel to post a confession here.';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`Confession ID: ${n}`)
             .setDescription(`"${confession}"`)
             .setFooter({

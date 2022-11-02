@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const emojis = require('../../utils/emojis.json');
 
@@ -28,7 +28,7 @@ module.exports = class SetPrefixCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const prefix = interaction.options.getString('prefix');
-        this.handle(prefix, interaction, true);
+        await this.handle(prefix, interaction, true);
     }
 
     async handle(prefix, context, isInteraction) {
@@ -41,15 +41,15 @@ module.exports = class SetPrefixCommand extends Command {
         const oldPrefix = this.client.db.settings.selectPrefix.pluck().get(context.guild.id);
 
         this.client.db.settings.updatePrefix.run(prefix, context.guild.id);
-        await context.guild.me.setNickname(`[${this.client.db.settings.selectPrefix.pluck().get(context.guild.id)}] ${this.client.name}`);
+        await context.guild.members.me.setNickname(`[${this.client.db.settings.selectPrefix.pluck().get(context.guild.id)}] ${this.client.name}`);
 
         const payload = {
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setTitle('Settings: `System`')
                     .setThumbnail(context.guild.iconURL({dynamic: true}))
                     .setDescription(`The \`prefix\` was successfully updated. ${success}`)
-                    .addField('Prefix', `\`${oldPrefix}\` ➔ \`${prefix}\``)
+                    .addFields([{name: 'Prefix', value:  `\`${oldPrefix}\` ➔ \`${prefix}\``}])
                     .setFooter({
                         text: this.getUserIdentifier(context.author),
                         iconURL: this.getAvatarURL(context.author)
@@ -58,7 +58,7 @@ module.exports = class SetPrefixCommand extends Command {
             ]
         };
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

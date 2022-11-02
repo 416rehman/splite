@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -43,17 +43,17 @@ module.exports = class clearVerificationRoleCommand extends Command {
         // Trim message
         if (verificationMessage && verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Verification`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`verification role\` was successfully cleared. ${success}`)
-            .addField('Channel', verificationChannel?.toString() || '`None`', true)
-            .addField('Message', verificationMessage || '`None`')
+            .addFields([{name: 'Channel', value:  verificationChannel?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Message', value:  verificationMessage || '`None`'}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear role
         this.client.db.settings.updateVerificationRoleId.run(null, context.guild.id);
@@ -64,8 +64,8 @@ module.exports = class clearVerificationRoleCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addField('Verification Role', `${oldVerificationRole} ➔ \`None\``)
-                .addField('Status', `${oldStatus} ➔ \`${statusUpdate}\``)],
+                .addFields([{name: 'Verification Role', value:  `${oldVerificationRole} ➔ \`None\``}])
+                .addFields([{name: 'Status', value:  `${oldStatus} ➔ \`${statusUpdate}\``}])],
         };
 
         if (isInteraction) context.editReply(payload);

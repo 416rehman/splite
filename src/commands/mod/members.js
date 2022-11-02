@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {stripIndent} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class MembersCommand extends Command {
     constructor(client) {
@@ -15,7 +15,6 @@ module.exports = class MembersCommand extends Command {
             clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
             userPermissions: ['MANAGE_ROLES'],
             examples: ['members @bots', 'members 711797614697250856', 'members bots',],
-            // disabled: !client.enabledIntents.find(i => i === client.intents.GUILD_PRESENCES),
             slashCommand: new SlashCommandBuilder()
                 .addRoleOption(r => r.setName('role').setDescription('The role to display members for'))
         });
@@ -31,7 +30,7 @@ module.exports = class MembersCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const role = interaction.options.getRole('role');
-        this.handle(role, interaction);
+        await this.handle(role, interaction);
     }
 
     async handle(role, context) {
@@ -41,7 +40,7 @@ module.exports = class MembersCommand extends Command {
             const offline = members.filter((m) => !m.presence || m.presence?.status === 'offline').length;
             const dnd = members.filter((m) => m.presence?.status === 'dnd').length;
             const afk = members.filter((m) => m.presence?.status === 'idle').length;
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(`Member Status [${context.guild.memberCount}]`)
                 .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setDescription(stripIndent`
@@ -55,7 +54,7 @@ module.exports = class MembersCommand extends Command {
                     iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(context.guild.me.displayHexColor);
+                .setColor(context.guild.members.me.displayHexColor);
             return this.sendReply(context, {embeds: [embed]});
         }
 
@@ -70,7 +69,7 @@ module.exports = class MembersCommand extends Command {
             else return true;
         });
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`Members of ${role.name}`)
             .setDescription(description)
             .setFooter({

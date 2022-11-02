@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const parser = require('cron-parser');
 const {success} = require('../../utils/emojis.json');
 const {stripIndent} = require('common-tags');
@@ -75,13 +75,13 @@ module.exports = class SetCrownScheduleCommand extends Command {
         if (crownMessage && crownMessage.length > 1024) crownMessage = crownMessage.slice(0, 1021) + '...';
 
         let description = `The \`crown schedule\` was successfully updated. ${success}`;
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Crown`')
             .setThumbnail(guild.iconURL({dynamic: true}))
             .setDescription(description)
-            .addField('Role', `${crownRole}` || '`None`', true)
-            .addField('Channel', `${crownChannel}` || '`None`', true)
-            .addField('Message', this.client.utils.replaceCrownKeywords(crownMessage) || '`None`')
+            .addFields([{name: 'Role', value:  `${crownRole}` || '`None`', inline:  true}])
+            .addFields([{name: 'Channel', value:  `${crownChannel}` || '`None`', inline:  true}])
+            .addFields([{name: 'Message', value:  this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
             .setTimestamp()
             .setColor('RANDOM');
 

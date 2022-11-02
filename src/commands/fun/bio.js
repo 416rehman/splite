@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail, success} = require('../../utils/emojis.json');
 
 module.exports = class BioCommand extends Command {
@@ -29,7 +29,7 @@ module.exports = class BioCommand extends Command {
                 message.author.id
             );
             if (!Bio) {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`No Bio ${fail}`)
                     .setDescription('You don\'t have a bio set up.')
                     .setFooter({
@@ -38,7 +38,7 @@ module.exports = class BioCommand extends Command {
                 return message.channel.send({embeds: [embed]});
             }
             else {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`${message.author.username}'s Bio`)
                     .setDescription(`${Bio}`)
                     .setFooter({
@@ -53,7 +53,7 @@ module.exports = class BioCommand extends Command {
                 try {
                     this.client.db.bios.updateBio.run(null, message.author.id);
 
-                    const embed = new MessageEmbed()
+                    const embed = new EmbedBuilder()
                         .setTitle(`Bio Cleared ${success}`)
                         .setDescription(
                             `Your bio has been cleared.\nTo set your bio again, type \`@${this.client.name} bio <your bio here>\`.`
@@ -79,7 +79,7 @@ module.exports = class BioCommand extends Command {
                 let {bio: Bio} = this.client.db.bios.selectBio.get(userId);
 
                 if (!Bio) {
-                    const embed = new MessageEmbed()
+                    const embed = new EmbedBuilder()
                         .setTitle(`No Bio ${fail}`)
                         .setDescription('This user does not have a bio.')
                         .setFooter({
@@ -88,7 +88,7 @@ module.exports = class BioCommand extends Command {
                     return message.channel.send({embeds: [embed]});
                 }
                 else {
-                    const embed = new MessageEmbed()
+                    const embed = new EmbedBuilder()
                         .setTitle(`${message.mentions.users.first().username}'s Bio`)
                         .setDescription(`${Bio}`)
                         .setFooter({
@@ -102,7 +102,7 @@ module.exports = class BioCommand extends Command {
 
                 this.client.db.bios.updateBio.run(biotext, message.author.id);
 
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`Bio Updated ${success}`)
                     .setDescription(
                         `Your bio has been updated. Check it out by typing \`${prefix}bio\`.`

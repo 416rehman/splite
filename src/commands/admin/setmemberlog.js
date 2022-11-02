@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -35,7 +35,7 @@ module.exports = class SetMemberLogCommand extends Command {
             .get(context.guild.id);
         const oldMemberLog =
             context.guild.channels.cache.get(memberLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -44,14 +44,14 @@ module.exports = class SetMemberLogCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Display current member log
         if (!channel) {
             const payload = ({
                 embeds: [
                     embed
-                        .addField('Current Member Log', `${oldMemberLog}` || '`None`')
+                        .addFields([{name: 'Current Member Log', value:  `${oldMemberLog}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
@@ -63,7 +63,7 @@ module.exports = class SetMemberLogCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+        if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} Please mention an accessible text channel or provide a valid text channel ID.`;
 
             if (isInteraction) context.editReply(payload);
@@ -75,7 +75,7 @@ module.exports = class SetMemberLogCommand extends Command {
 
         const payload = ({
             embeds: [
-                embed.addField('Member Log', `${oldMemberLog} ➔ ${channel}`)
+                embed.addFields([{name: 'Member Log', value:  `${oldMemberLog} ➔ ${channel}`}])
                     .setDescription(
                         `The \`member log\` was successfully updated. ${success}\nUse \`clearmemberlog\` to clear the current \`member log\`.`
                     ),

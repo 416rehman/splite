@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, verify} = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
 
@@ -30,7 +30,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const text = interaction.options.getString('text');
-        this.handle(text, interaction, true);
+        await this.handle(text, interaction, true);
     }
 
     async handle(text, context, isInteraction) {
@@ -46,28 +46,28 @@ module.exports = class SetVerificationMessageCommand extends Command {
         // Get status
         const oldStatus = this.client.utils.getStatus(verificationRoleId && verificationChannelId && oldVerificationMessage);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Verification`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
-            .addField('Role', verificationRole?.toString() || '`None`', true)
-            .addField('Channel', verificationChannel?.toString() || '`None`', true)
+            .addFields([{name: 'Role', value:  verificationRole?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Channel', value:  verificationChannel?.toString() || '`None`', inline:  true}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         if (!text) {
             const payload = ({
                 embeds: [embed
-                    .addField('Status', `\`${oldStatus}\``, true)
-                    .addField('Current Message ID', `\`${verificationMessageId}\``)
-                    .addField('Current Message', `\`${oldVerificationMessage}\``)
+                    .addFields([{name: 'Status', value:  `\`${oldStatus}\``, inline:  true}])
+                    .addFields([{name: 'Current Message ID', value:  `\`${verificationMessageId}\``}])
+                    .addFields([{name: 'Current Message', value:  `\`${oldVerificationMessage}\``}])
                     .setDescription(this.description),],
             });
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -83,11 +83,11 @@ module.exports = class SetVerificationMessageCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addField('Status', statusUpdate, true)
-                .addField('Message', text),],
+                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
+                .addFields([{name: 'Message', value:  text}]),],
         });
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
 
         // Update verification and send the new message to the verification channel
@@ -101,9 +101,9 @@ module.exports = class SetVerificationMessageCommand extends Command {
                     this.client.logger.error(err);
                 }
                 const msg = await verificationChannel.send({
-                    embeds: [new MessageEmbed()
+                    embeds: [new EmbedBuilder()
                         .setDescription(text)
-                        .setColor(context.guild.me.displayHexColor),],
+                        .setColor(context.guild.members.me.displayHexColor),],
                 });
                 await msg.react(verify.split(':')[2].slice(0, -1));
                 this.client.db.settings.updateVerificationMessageId.run(msg.id, context.guild.id);

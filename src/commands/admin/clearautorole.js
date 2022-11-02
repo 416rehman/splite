@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -34,7 +34,7 @@ module.exports = class clearAutoRoleCommand extends Command {
         const oldAutoRole =
             context.guild.roles.cache.find((r) => r.id === autoRoleId) || '`None`';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context?.guild?.iconURL({dynamic: true}))
             .setDescription(
@@ -45,11 +45,11 @@ module.exports = class clearAutoRoleCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         this.client.db.settings.updateAutoRoleId.run(null, context.guild.id);
 
-        const payload = {embeds: [embed.addField('Auto Role', `${oldAutoRole}`)],};
+        const payload = {embeds: [embed.addFields([{name: 'Auto Role', value:  `${oldAutoRole}`}])],};
 
         if (isInteraction) context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);

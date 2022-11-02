@@ -17,7 +17,7 @@ module.exports = class MusicBackCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction);
+        await this.handle(interaction);
     }
 
     async handle(context) {
@@ -31,6 +31,6 @@ module.exports = class MusicBackCommand extends Command {
 
         await queue.back();
 
-        this.sendReply(context, 'Playing the **previous** track ✅');
+        await this.sendReply(context, 'Playing the **previous** track ✅');
     }
 };

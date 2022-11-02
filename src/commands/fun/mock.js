@@ -1,18 +1,19 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {fail, load} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 async function createImagePayload(text1, text2, requestingUser) {
     const buffer = await this.client.utils.generateImgFlipImage(
+        this.client,
         102918669,
         `${text1}`,
         `${text2}`
     );
 
     if (buffer) {
-        const attachment = new MessageAttachment(buffer, 'mocking.png');
-        const embed = new MessageEmbed()
+        const attachment = new AttachmentBuilder(buffer, { name:  'mocking.png' });
+        const embed = new EmbedBuilder()
             .setTitle(
                 `${this.getUserIdentifier(requestingUser)} is mocking ${text1}`
             )
@@ -72,7 +73,7 @@ module.exports = class MockCommand extends Command {
         }
         message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             })
             .then(async (msg) => {
                 try {
@@ -87,7 +88,7 @@ module.exports = class MockCommand extends Command {
                 }
                 catch (e) {
                     await msg.edit({
-                        embeds: [new MessageEmbed().setDescription(`${fail} ${e}`)],
+                        embeds: [new EmbedBuilder().setDescription(`${fail} ${e}`)],
                     });
                 }
             });

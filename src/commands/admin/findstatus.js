@@ -1,9 +1,10 @@
 const Command = require('../Command.js');
 const {oneLine} = require('common-tags');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 const ButtonMenu = require('../ButtonMenu.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
+const {GatewayIntentBits} = require('discord.js');
 
 module.exports = class findStatusCommand extends Command {
     constructor(client) {
@@ -18,7 +19,7 @@ module.exports = class findStatusCommand extends Command {
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['findstatus #general cool status'],
-            disabled: !client.enabledIntents.find(n => n === client.intents.GUILD_PRESENCES),
+            disabled: !client.intents.find(n => n === GatewayIntentBits.GuildPresences), // if guild presences intent is not enabled, disable this command
             slashCommand: new SlashCommandBuilder().addRoleOption(r => r.setName('role').setRequired(false).setDescription('The role to search for members in.')).addStringOption(t => t.setName('text').setDescription('The text to search for.')),
         });
     }
@@ -55,7 +56,7 @@ module.exports = class findStatusCommand extends Command {
     async handle(role, query, context) {
         const target = role ? role.members : await context.guild.members.fetch();
 
-        const embed = new MessageEmbed().setDescription(
+        const embed = new EmbedBuilder().setDescription(
             `${emojis.load} **Searching for users with status **\n\`\`\`${query}\`\`\``
         );
         context.channel.send({embeds: [embed]}).then(async (msg) => {

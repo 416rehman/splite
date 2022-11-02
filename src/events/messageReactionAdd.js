@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {verify} = require('../utils/emojis.json');
 const {stripIndent} = require('common-tags');
 const {joinvoting} = require('../utils/joinVoting');
@@ -46,7 +46,7 @@ module.exports = async (client, messageReaction, user) => {
             !starboardChannel ||
             !starboardChannel.viewable ||
             !starboardChannel
-                .permissionsFor(message.guild.me)
+                .permissionsFor(message.guild.members.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS']) ||
             message.channel === starboardChannel
         )
@@ -102,13 +102,13 @@ module.exports = async (client, messageReaction, user) => {
 
             if (!message.content && !image) return;
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setAuthor({
                     name: message.author.tag,
                     iconURL: message.author.displayAvatarURL(),
                 })
                 .setDescription(message.content)
-                .addField('Original', `[Jump!](${message.url})`)
+                .addFields([{name: 'Original', value:  `[Jump!](${message.url})`}])
                 .setImage(image)
                 .setTimestamp()
                 .setFooter({

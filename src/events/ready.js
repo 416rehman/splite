@@ -1,4 +1,4 @@
-module.exports = async (client) => {
+module.exports = (client) => {
     // Set status
     const activities = [
         {name: `@${client.name} help`, type: 'LISTENING'},

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -36,16 +36,16 @@ module.exports = class clearWelcomeMessageCommand extends Command {
         // Get status
         const oldStatus = this.client.utils.getStatus(welcomeChannelId, oldWelcomeMessage);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Welcomes`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`welcome message\` was successfully cleared. ${success}`)
-            .addField('Channel', welcomeChannel?.toString() || '`None`', true)
+            .addFields([{name: 'Channel', value:  welcomeChannel?.toString() || '`None`', inline:  true}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         this.client.db.settings.updateWelcomeMessage.run(null, context.guild.id);
 
@@ -55,8 +55,8 @@ module.exports = class clearWelcomeMessageCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addField('Status', statusUpdate, true)
-                .addField('Message', '`None`')],
+                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
+                .addFields([{name: 'Message', value:  '`None`'}])],
         };
 
         if (isInteraction) context.editReply(payload);

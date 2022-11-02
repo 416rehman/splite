@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {oneLine} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class InviteMeCommand extends Command {
     constructor(client) {
@@ -25,7 +25,7 @@ module.exports = class InviteMeCommand extends Command {
     }
 
     handle(context, isInteraction) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Invite Me')
             .setThumbnail(
                 `${
@@ -35,7 +35,7 @@ module.exports = class InviteMeCommand extends Command {
             )
             .setDescription(
                 oneLine`
-        Click [here](${this.client.config.inviteLink})
+        Click [here](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands)
         to invite me to your server!
       `
             )
@@ -46,7 +46,7 @@ module.exports = class InviteMeCommand extends Command {
             .setTimestamp();
 
         if (this.client.owners.length > 0) {
-            embed.addField('Developed By', `${this.client.owners[0]}`, true);
+            embed.addFields([{name: 'Developed By', value:  `${this.client.owners[0]}`, inline:  true}]);
         }
 
         const payload = {embeds: [embed]};

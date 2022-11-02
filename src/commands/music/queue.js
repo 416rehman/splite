@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
 const Command = require('../Command');
 const ButtonMenu = require('../ButtonMenu');
@@ -32,8 +32,8 @@ module.exports = class MusicQueueCommand extends Command {
                 `${fail} - You're not in a voice channel !`
             );
         if (
-            context.guild.me.voice.channel &&
-            context.member.voice.channel.id !== context.guild.me.voice.channel.id
+            context.guild.members.me.voice.channel &&
+            context.member.voice.channel.id !== context.guild.members.me.voice.channel.id
         )
             return this.sendReplyAndDelete(context,
                 `${fail} - You are not in the same voice channel !`
@@ -66,7 +66,7 @@ module.exports = class MusicQueueCommand extends Command {
             const range = q.length === 1 ? '[1]' : `[1 - ${q.length}]`;
             this.sendReplyAndDelete(context, {
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setTitle(
                             `Server Queue ${range} ${methods[queue.repeatMode]}`
                         )
@@ -76,7 +76,7 @@ module.exports = class MusicQueueCommand extends Command {
         }
         else {
             this.sendReply(context, 'Queue Loaded!');
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(
                     `Server Queue - ${q.length - 1} | ${
                         this.client.player.getQueue(context.guild.id).repeatMode

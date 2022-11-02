@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -48,7 +48,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
         if (welcomeMessage && welcomeMessage.length > 1024)
             welcomeMessage = welcomeMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Welcomes`')
             .addField(
                 'Message',
@@ -60,7 +60,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear if no args provided
         if (!channel) {
@@ -86,7 +86,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
             `The \`welcome channel\` was successfully updated. ${success}\nUse \`clearwelcomechannel\` to clear the current \`welcome channel\`.`
         );
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
-        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+        if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
             const payload = `${fail} Please provide a valid text channel.`;
 
             if (isInteraction) context.editReply(payload);

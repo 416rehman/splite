@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class InviteMeCommand extends Command {
     constructor(client) {
@@ -33,16 +33,18 @@ module.exports = class InviteMeCommand extends Command {
             .then((hasVoted) => {
                 const gamblingModifier = Math.ceil((this.client.config.votePerks.gamblingWinOdds - this.client.config.stats.gambling.winOdds) * 100);
                 const robbingModifier = Math.ceil((this.client.config.votePerks.robbingSuccessOdds - this.client.config.stats.robbing.successOdds) * 100);
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle('Vote On Top.gg')
                     .setThumbnail('https://top.gg/images/logoinverted.png')
                     .setDescription(
-                        `Click **[here](https://top.gg/bot/${this.client.config.apiKeys.topGG.api_mode.id}/vote)** to vote. \n
+                        `Click **[here](https://top.gg/bot/${this.client.user.id}/vote)** to vote. \n
                         Use the \`${prefix}odds\` command to check your odds.\n
                         ${hasVoted ? `${emojis.Voted} Your active perks: ` : 'After voting, you will receive the following perks:'}`)
-                    .setURL(`https://top.gg/bot/${this.client.config.apiKeys.topGG.api_mode.id}/vote`)
-                    .addField('Gambling Odds', `${hasVoted ? emojis.Voted : ''} +${gamblingModifier}% Boost`, true)
-                    .addField('Robbing', `${hasVoted ? emojis.Voted : ''} +${robbingModifier}% Boost`, true)
+                    .setURL(`https://top.gg/bot/${this.client.user.id}/vote`)
+                    .addFields(
+                        {name: 'Gambling Odds', value: `${hasVoted ? emojis.Voted : ''} +${gamblingModifier}% Boost`, inline: true},
+                        {name: 'Robbing Odds', value: `${hasVoted ? emojis.Voted : ''} +${robbingModifier}% Boost`, inline: true}
+                    )
                     .setFooter({
                         text: `${hasVoted ? 'You have already voted, thank you <3' : 'Perks will be activated 5 mins after voting'}`,
                         iconURL: this.getAvatarURL(context.author)

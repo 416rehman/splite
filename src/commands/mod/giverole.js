@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 
 module.exports = class RoleCommand extends Command {
@@ -111,20 +111,20 @@ module.exports = class RoleCommand extends Command {
         }
 
         if (changes.length || failed.length) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Role')
                 .setDescription(`Changed roles for ${member}.`)
-                .addField('Moderator', message.member.toString(), true)
-                .addField('Member', member.toString(), true)
-                .addField('Roles', changes.join('\n') || 'None', true)
+                .addFields([{name: 'Moderator', value:  message.member.toString(), inline:  true}])
+                .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+                .addFields([{name: 'Roles', value:  changes.join('\n') || 'None', inline:  true}])
                 .setFooter({
                     text: message.member.displayName,
                     iconURL: this.getAvatarURL(message.author),
                 })
                 .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
+                .setColor(message.guild.members.me.displayHexColor);
 
-            if (failed.length) embed.addField('Failed', failed.join('\n'), true);
+            if (failed.length) embed.addFields([{name: 'Failed', value:  failed.join('\n'), inline:  true}]);
             return message.channel.send({embeds: [embed]});
         }
     }
@@ -133,7 +133,7 @@ module.exports = class RoleCommand extends Command {
         if (role.editable) {
             try {
                 await member.roles.remove(role);
-                this.sendModLogMessage(message, ' ', {
+                await this.sendModLogMessage(message, ' ', {
                     Member: member,
                     Role: role,
                 });
@@ -155,7 +155,7 @@ module.exports = class RoleCommand extends Command {
         if (role.editable) {
             try {
                 await member.roles.add(role);
-                this.sendModLogMessage(message, '', {Member: member, Role: role});
+                await this.sendModLogMessage(message, '', {Member: member, Role: role});
                 return `+${role}`;
             }
             catch (err) {

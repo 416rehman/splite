@@ -1,10 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ButtonStyle, ActionRowBuilder, ButtonBuilder, ComponentType} = require('discord.js');
 const ButtonMenu = require('../ButtonMenu.js');
 const emojis = require('../../utils/emojis.json');
-const {MessageActionRow} = require('discord.js');
-const {MessageButton} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class activityCommand extends Command {
     constructor(client) {
@@ -63,22 +61,22 @@ module.exports = class activityCommand extends Command {
     }
 
     handle(target, days, context) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setDescription(`${emojis.load} Fetching Message Count...`)
             .setColor('RANDOM');
 
         this.sendReply(context, {embeds: [embed]}).then(async (msg) => {
-            const moderationButton = context.member.permissions.has('VIEW_AUDIT_LOG') && new MessageButton()
+            const moderationButton = context.member.permissions.has('VIEW_AUDIT_LOG') && new ButtonBuilder()
                 .setCustomId('moderations')
                 .setLabel('Moderation Leaderboard')
-                .setStyle('SECONDARY');
-            const pointsButton = new MessageButton()
+                .setStyle(ButtonStyle.Secondary);
+            const pointsButton = new ButtonBuilder()
                 .setCustomId('points')
                 .setLabel('Points Leaderboard')
-                .setStyle('SECONDARY');
+                .setStyle(ButtonStyle.Secondary);
             pointsButton.setEmoji(emojis.point.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
 
-            const row = new MessageActionRow();
+            const row = new ActionRowBuilder();
             row.addComponents(pointsButton);
             if (moderationButton) {
                 moderationButton.setEmoji(emojis.mod.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
@@ -143,7 +141,7 @@ module.exports = class activityCommand extends Command {
             new ButtonMenu(this.client, message.channel, message.member, embed, descriptions, max, null, 120000, [row], (m) => {
                 const filter = (button) => button.user.id === message.author.id;
                 const collector = m.createMessageComponentCollector({
-                    filter, componentType: 'BUTTON', time: 120000, dispose: true,
+                    filter, componentType: ComponentType.Button, time: 120000, dispose: true,
                 });
                 collector.on('collect', (b) => {
                     if (b.customId === 'moderations') {

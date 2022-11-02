@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = (client, messages) => {
     const message = messages.first();
@@ -29,10 +29,10 @@ module.exports = (client, messages) => {
         messageDeleteLog &&
         messageDeleteLog.viewable &&
         messageDeleteLog
-            .permissionsFor(message.guild.me)
+            .permissionsFor(message.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS'])
     ) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Message Update: `Bulk Delete`')
             .setAuthor({
                 name: `${message.guild.name}`,

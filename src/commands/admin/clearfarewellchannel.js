@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -45,7 +45,7 @@ module.exports = class clearFarewellChannelCommand extends Command {
         if (farewellMessage && farewellMessage.length > 1024)
             farewellMessage = farewellMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Farewells`')
             .setDescription(
                 `The \`farewell channel\` was successfully cleared. ${success}`

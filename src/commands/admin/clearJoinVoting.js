@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -60,7 +60,7 @@ module.exports = class clearJoinVoting extends Command {
                 ? `\`${oldStatus}\` ➔ \`${status}\``
                 : `\`${oldStatus}\``;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Join Voting`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
@@ -74,8 +74,8 @@ module.exports = class clearJoinVoting extends Command {
 
         const payload = {
             embeds: [embed
-                .addField('Status', statusUpdate, true)
-                .addField('Message', '`None`'),],
+                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
+                .addFields([{name: 'Message', value:  '`None`'}]),],
         };
 
         if (isInteraction) context.editReply(payload);

@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 const jimp = require('jimp');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const {load} = require('../../utils/emojis.json');
 
 module.exports = class shipCommand extends Command {
@@ -26,7 +26,7 @@ module.exports = class shipCommand extends Command {
 
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(member, member2, message, false);
@@ -39,7 +39,7 @@ module.exports = class shipCommand extends Command {
         let user = interaction.options.getUser('with') || interaction.guild.members.cache.random();
         const user2 = interaction.options.getUser('user') || interaction.author;
 
-        this.handle(user, user2, interaction, true);
+        await this.handle(user, user2, interaction, true);
     }
 
     async handle(member, member2, context, isInteraction) {
@@ -99,7 +99,7 @@ module.exports = class shipCommand extends Command {
 
                 const payload = {
                     embeds: [
-                        new MessageEmbed()
+                        new EmbedBuilder()
                             .setColor('LUMINOUS_VIVID_PINK')
                             .setDescription(
                                 `\`${
@@ -138,10 +138,10 @@ module.exports = class shipCommand extends Command {
                                                                             : 'Perfect 🤩😍🥰'
                                 }`
                             )
-                            // .attachFiles(new MessageAttachment(buff, 'ship.png'))
+                            // .attachFiles(new AttachmentBuilder(buff, { name:  'ship.png') })
                             .setImage('attachment://ship.png'),
                     ],
-                    files: [new MessageAttachment(buff, 'ship.png')],
+                    files: [new AttachmentBuilder(buff, { name:  'ship.png' })],
                 };
 
                 if (isInteraction) context.editReply(payload);
@@ -152,10 +152,10 @@ module.exports = class shipCommand extends Command {
             console.error(e);
             const payload = {
                 embeds: [
-                    new MessageEmbed().setDescription(`${emojis.fail} ${e}`),
+                    new EmbedBuilder().setDescription(`${emojis.fail} ${e}`),
                 ],
             };
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
         }
 

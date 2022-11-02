@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = (client, message) => {
     if (!message.author) return;
@@ -20,7 +20,7 @@ module.exports = (client, message) => {
     // Check for webhook and that message is not empty
     if (client.utils.isEmptyMessage(message)) return;
 
-    const embed = new MessageEmbed();
+    const embed = new EmbedBuilder();
     try {
         embed
             .setTitle('Message Update: `Delete`')
@@ -59,7 +59,7 @@ module.exports = (client, message) => {
                 messageDeleteLog &&
                 messageDeleteLog.viewable &&
                 messageDeleteLog
-                    .permissionsFor(message.guild.me)
+                    .permissionsFor(message.guild.members.me)
                     .has(['SEND_MESSAGES', 'EMBED_LINKS'])
             ) {
                 if (message.content.length > 1024)
@@ -69,7 +69,7 @@ module.exports = (client, message) => {
                     .setDescription(
                         `${message.member}'s **message** in ${message.channel} was deleted.`
                     )
-                    .addField('Message', message.content);
+                    .addFields([{name: 'Message', value:  message.content}]);
 
                 messageDeleteLog.send({embeds: [embed]});
             }
@@ -91,7 +91,7 @@ module.exports = (client, message) => {
             messageDeleteLog &&
             messageDeleteLog.viewable &&
             messageDeleteLog
-                .permissionsFor(message.guild.me)
+                .permissionsFor(message.guild.members.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
             embed

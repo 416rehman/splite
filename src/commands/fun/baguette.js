@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {load} = require('../../utils/emojis.json');
 
 module.exports = class baguetteCommand extends Command {
@@ -17,7 +17,7 @@ module.exports = class baguetteCommand extends Command {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(member, message, false);
@@ -27,17 +27,17 @@ module.exports = class baguetteCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || interaction.author;
-        this.handle(member, interaction, true);
+        await this.handle(member, interaction, true);
     }
 
     async handle(targetUser, context, isInteraction) {
         const buffer = await context.client.nekoApi.generate('baguette', {
             url: this.getAvatarURL(targetUser, 'png'),
         });
-        const attachment = new MessageAttachment(buffer, 'baguette.png');
+        const attachment = new AttachmentBuilder(buffer, { name:  'baguette.png' });
 
         if (isInteraction) {
-            context.editReply({
+            await context.editReply({
                 files: [attachment],
             });
         }

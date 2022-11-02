@@ -1,13 +1,13 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = (client, oldMember, newMember) => {
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setAuthor({
             name: `${newMember.user.tag}`,
             iconURL: newMember?.user?.displayAvatarURL({format: 'png', dynamic: true}),
         })
         .setTimestamp()
-        .setColor(oldMember.guild.me.displayHexColor);
+        .setColor(oldMember.guild.members.me.displayHexColor);
 
     // Nickname change
     if (oldMember.nickname != newMember.nickname) {
@@ -20,7 +20,7 @@ module.exports = (client, oldMember, newMember) => {
             nicknameLog &&
             nicknameLog.viewable &&
             nicknameLog
-                .permissionsFor(oldMember.guild.me)
+                .permissionsFor(oldMember.guild.members.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
             const oldNickname = oldMember.nickname || '`None`';
@@ -28,7 +28,7 @@ module.exports = (client, oldMember, newMember) => {
             embed
                 .setTitle('Member Update: `Nickname`')
                 .setDescription(`${newMember}'s **nickname** was changed.`)
-                .addField('Nickname', `${oldNickname} ➔ ${newNickname}`);
+                .addFields([{name: 'Nickname', value:  `${oldNickname} ➔ ${newNickname}`}]);
             nicknameLog.send({embeds: [embed]});
         }
     }
@@ -44,7 +44,7 @@ module.exports = (client, oldMember, newMember) => {
             roleLog &&
             roleLog.viewable &&
             roleLog
-                .permissionsFor(oldMember.guild.me)
+                .permissionsFor(oldMember.guild.members.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
             const role = newMember.roles.cache
@@ -68,7 +68,7 @@ module.exports = (client, oldMember, newMember) => {
             roleLog &&
             roleLog.viewable &&
             roleLog
-                .permissionsFor(oldMember.guild.me)
+                .permissionsFor(oldMember.guild.members.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS'])
         ) {
             const role = oldMember.roles.cache

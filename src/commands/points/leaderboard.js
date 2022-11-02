@@ -1,11 +1,9 @@
 const Command = require('../Command.js');
 const ButtonMenu = require('../ButtonMenu.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ButtonStyle,ActionRowBuilder, ButtonBuilder, ComponentType} = require('discord.js');
 const {oneLine} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
-const {MessageActionRow} = require('discord.js');
-const {MessageButton} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class LeaderboardCommand extends Command {
     constructor(client) {
@@ -49,14 +47,14 @@ module.exports = class LeaderboardCommand extends Command {
             return oneLine`**${idx + 1}.** <@${row.user_id}> - \`${row.points}\` ${emojis.point}`;
         });
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: `${context.member.displayName}'s position: ${position + 1}`,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         if (members.length <= max) {
             const range = members.length === 1 ? '[1]' : `[1 - ${members.length}]`;
@@ -77,17 +75,17 @@ module.exports = class LeaderboardCommand extends Command {
                     iconURL: this.getAvatarURL(context.author),
                 });
 
-            const activityButton = new MessageButton()
+            const activityButton = new ButtonBuilder()
                 .setCustomId('activity')
                 .setLabel('Activity Leaderboard')
-                .setStyle('SECONDARY');
+                .setStyle(ButtonStyle.Secondary);
             activityButton.setEmoji(emojis.info.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
-            const moderationButton = context.member.permissions.has('VIEW_AUDIT_LOG') && new MessageButton()
+            const moderationButton = context.member.permissions.has('VIEW_AUDIT_LOG') && new ButtonBuilder()
                 .setCustomId('moderations')
                 .setLabel('Moderation Leaderboard')
-                .setStyle('SECONDARY');
+                .setStyle(ButtonStyle.Secondary);
 
-            const row = new MessageActionRow();
+            const row = new ActionRowBuilder();
             row.addComponents(activityButton);
             if (moderationButton) {
                 moderationButton.setEmoji(emojis.mod.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
@@ -98,7 +96,7 @@ module.exports = class LeaderboardCommand extends Command {
                 new ButtonMenu(this.client, context.channel, context.member, embed, members, max, null, 120000, [row], (msg) => {
                     const filter = (button) => button.user.id === context.author.id;
                     const collector = msg.createMessageComponentCollector({
-                        filter, componentType: 'BUTTON', time: 120000, dispose: true,
+                        filter, componentType: ComponentType.Button, time: 120000, dispose: true,
                     });
                     collector.on('collect', (b) => {
                         if (b.customId === 'activity') {

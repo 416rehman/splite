@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 
 module.exports = class WarnCommand extends Command {
@@ -37,7 +37,7 @@ module.exports = class WarnCommand extends Command {
             farewellChannel &&
             farewellChannel.viewable &&
             farewellChannel
-                .permissionsFor(context.guild.me)
+                .permissionsFor(context.guild.members.me)
                 .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
             farewellMessage
         ) {
@@ -48,7 +48,7 @@ module.exports = class WarnCommand extends Command {
                 .replace(/`?\?size`?/g, context.guild.memberCount); // Guild size substitution
             farewellChannel.send({
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setDescription(farewellMessage)
                         .setAuthor({
                             name: context.member.user.tag,
@@ -61,7 +61,7 @@ module.exports = class WarnCommand extends Command {
         else {
             const payload = {
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setDescription(
                             `${emojis.fail} **There is no farewell message set for this server.**\n\n\`setfarewellmessage\` Sets a farewell context\n\`setfarewellchannel\` Sets the channel to post the farewell message to. `
                         )

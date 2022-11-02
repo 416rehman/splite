@@ -14,7 +14,7 @@ module.exports = async (client, messageReaction, user) => {
             !starboardChannel ||
          !starboardChannel.viewable ||
          !starboardChannel
-             .permissionsFor(message.guild.me)
+             .permissionsFor(message.guild.members.me)
              .has(['SEND_MESSAGES', 'EMBED_LINKS']) ||
          message.channel === starboardChannel
         )

@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 const {load, fail} = require('../../utils/emojis.json');
 
 module.exports = class CoinFlipCommand extends Command {
@@ -18,7 +18,7 @@ module.exports = class CoinFlipCommand extends Command {
     async run(message) {
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(message, false);
@@ -36,7 +36,7 @@ module.exports = class CoinFlipCommand extends Command {
             let result;
             if (n === 1) result = 'heads';
             else result = 'tails';
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('½  Coinflip  ½')
                 .setDescription(
                     `I flipped a coin for you, <@${context.author.id}>! It was **${result}**!`
@@ -61,7 +61,7 @@ module.exports = class CoinFlipCommand extends Command {
             }
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');

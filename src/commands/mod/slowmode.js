@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {oneLine, stripIndent} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class SlowmodeCommand extends Command {
     constructor(client) {
@@ -46,12 +46,12 @@ module.exports = class SlowmodeCommand extends Command {
         const rate = interaction.options.getInteger('rate');
         const reason = interaction.options.getString('reason');
 
-        this.handle(channel, rate, reason, interaction);
+        await this.handle(channel, rate, reason, interaction);
     }
 
     async handle(channel, rate, reason, context) {
         // Check type and viewable
-        if (channel.type != 'GUILD_TEXT' || !channel.viewable)
+        if (channel.type != ChannelType.GuildText || !channel.viewable)
             return this.sendErrorMessage(
                 context,
                 0,
@@ -71,7 +71,7 @@ module.exports = class SlowmodeCommand extends Command {
             );
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.me).has(['MANAGE_CHANNELS']))
+        if (!channel.permissionsFor(context.guild.members.me).has(['MANAGE_CHANNELS']))
             return this.sendErrorMessage(
                 context,
                 0,
@@ -84,14 +84,14 @@ module.exports = class SlowmodeCommand extends Command {
 
         await channel.setRateLimitPerUser(rate, reason); // set channel rate
         const status = channel.rateLimitPerUser ? 'enabled' : 'disabled';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Slowmode')
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Slowmode disabled
         if (rate === '0') {
@@ -99,13 +99,13 @@ module.exports = class SlowmodeCommand extends Command {
                 embeds: [
                     embed
                         .setDescription(`\`${status}\` ➔ \`disabled\``)
-                        .addField('Moderator', context.member.toString(), true)
-                        .addField('Channel', channel.toString(), true)
-                        .addField('Reason', reason),
+                        .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+                        .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
+                        .addFields([{name: 'Reason', value:  reason}]),
                 ],
             };
 
-            this.sendReply(context, payload);
+            await this.sendReply(context, payload);
 
         }
         else { // Slowmode enabled
@@ -113,17 +113,17 @@ module.exports = class SlowmodeCommand extends Command {
                 embeds: [
                     embed
                         .setDescription(`\`${status}\` ➔ \`enabled\``)
-                        .addField('Moderator', context.member.toString(), true)
-                        .addField('Channel', channel.toString(), true)
-                        .addField('Rate', `\`${rate}\``, true)
-                        .addField('Reason', reason),
+                        .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+                        .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
+                        .addFields([{name: 'Rate', value:  `\`${rate}\``, inline:  true}])
+                        .addFields([{name: 'Reason', value:  reason}]),
                 ],
             };
-            this.sendReply(context, payload);
+            await this.sendReply(context, payload);
         }
 
         // Update mod log
-        this.sendModLogMessage(context, reason, {
+        await this.sendModLogMessage(context, reason, {
             Channel: channel,
             Rate: `\`${rate}\``,
         });

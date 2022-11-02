@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = {
     joinvoting: async function joinvoting(reaction, user, client, timer, duration, messageID, votingChannelID, emoji) {
@@ -11,7 +11,7 @@ module.exports = {
                     .send('Please wait, server members are deciding your fate.')
                     .catch(() => console.log('Can\'t send DM to your user!'));
 
-                let embed = new MessageEmbed()
+                let embed = new EmbedBuilder()
                     .setThumbnail(this.getAvatarURL(user))
                     .setColor(0xf25852)
                     .setTitle(`${user.username}#${user.discriminator} Is Attempting To Join Server`)
@@ -64,7 +64,7 @@ module.exports = {
                                 const target = await msg.guild.members.fetch(user.id);
                                 if (target.bannable) {
                                     await target.ban({
-                                        days: 0, reason: `${client.name} JoinVoting - Voted Off`,
+                                        deleteMessageSeconds: 0, reason: `${client.name} JoinVoting - Voted Off`,
                                     });
                                 }
                                 else {

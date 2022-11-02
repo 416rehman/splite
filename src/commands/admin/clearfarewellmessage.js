@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -36,11 +36,11 @@ module.exports = class clearFarewellMessageCommand extends Command {
         // Get status
         const oldStatus = this.client.utils.getStatus(farewellChannelId, oldFarewellMessage);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Farewells`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`farewell message\` was successfully cleared. ${success}`)
-            .addField('Channel', farewellChannel?.toString() || '`None`', true)
+            .addFields([{name: 'Channel', value:  farewellChannel?.toString() || '`None`', inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
@@ -54,8 +54,8 @@ module.exports = class clearFarewellMessageCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addField('Status', statusUpdate, true)
-                .addField('Message', '`None`'),],
+                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
+                .addFields([{name: 'Message', value:  '`None`'}]),],
         };
 
         if (isInteraction) context.editReply(payload);

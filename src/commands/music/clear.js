@@ -16,7 +16,7 @@ module.exports = class MusicClearCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction);
+        await this.handle(interaction);
     }
 
     async handle(context) {

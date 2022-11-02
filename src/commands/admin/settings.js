@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {oneLine} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
 
 module.exports = class SettingsCommand extends Command {
@@ -17,7 +17,21 @@ module.exports = class SettingsCommand extends Command {
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
             examples: ['settings System'],
-            slashCommand: new SlashCommandBuilder().addStringOption(s => s.setName('setting').setRequired(false).setDescription('The setting to view.').addChoices([['System', 'system'], ['Crown', 'crown'], ['Logging', 'logging'], ['Verification', 'verification'], ['Farewell', 'farewell'], ['Welcome', 'welcome'], ['Points', 'points'], ['JoinVoting', 'joinvoting'],]))
+            slashCommand: new SlashCommandBuilder()
+                .addStringOption(s =>
+                    s.setName('setting')
+                        .setRequired(false)
+                        .setDescription('The setting to view.')
+                        .addChoices(
+                            {name: 'System', value: 'system'},
+                            {name: 'Crown', value: 'crown'},
+                            {name: 'Logging', value: 'logging'},
+                            {name: 'Verification', value: 'verification'},
+                            {name: 'Farewell', value: 'farewell'},
+                            {name: 'Welcome', value: 'welcome'},
+                            {name: 'Points', value: 'points'},
+                            {name: 'JoinVoting', value: 'joinvoting'},
+                        ))
         });
     }
 
@@ -100,7 +114,7 @@ module.exports = class SettingsCommand extends Command {
         if (farewellMessage.length > 1024) farewellMessage = farewellMessage.slice(0, 1021) + '...';
         if (crownMessage.length > 1024) crownMessage = crownMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
@@ -121,19 +135,23 @@ module.exports = class SettingsCommand extends Command {
                 const payload = ({
                     embeds: [embed
                         .setTitle('Settings: `System`')
-                        .addField('Prefix', prefix, true)
-                        .addField('System Channel', systemChannel.toString(), true)
-                        .addField('Starboard Channel', starboardChannel.toString(), true)
-                        .addField('Admin Role', adminRole.toString(), true)
-                        .addField('Mod Role', modRole.toString(), true)
-                        .addField('Mute Role', muteRole.toString(), true)
-                        .addField('Auto Role', autoRole.toString(), true)
-                        .addField('Auto Kick', autoKick.toString(), true)
-                        .addField('Random Color', randomColor, true)
-                        .addField('Anonymous Messages', anonymous, true)
-                        .addField('Confessions Channel', confessionChannel.toString(), true)
-                        .addField('Mod Channels', modChannels)
-                        .addField('Disabled Commands', disabledCommands),],
+                        .addFields([{name: 'Prefix', value: prefix, inline: true}])
+                        .addFields([{name: 'System Channel', value: systemChannel.toString(), inline: true}])
+                        .addFields([{name: 'Starboard Channel', value: starboardChannel.toString(), inline: true}])
+                        .addFields([{name: 'Admin Role', value: adminRole.toString(), inline: true}])
+                        .addFields([{name: 'Mod Role', value: modRole.toString(), inline: true}])
+                        .addFields([{name: 'Mute Role', value: muteRole.toString(), inline: true}])
+                        .addFields([{name: 'Auto Role', value: autoRole.toString(), inline: true}])
+                        .addFields([{name: 'Auto Kick', value: autoKick.toString(), inline: true}])
+                        .addFields([{name: 'Random Color', value: randomColor, inline: true}])
+                        .addFields([{name: 'Anonymous Messages', value: anonymous, inline: true}])
+                        .addFields([{
+                            name: 'Confessions Channel',
+                            value: confessionChannel.toString(),
+                            inline: true
+                        }])
+                        .addFields([{name: 'Mod Channels', value: modChannels}])
+                        .addFields([{name: 'Disabled Commands', value: disabledCommands}]),],
                 });
 
                 if (isInteraction) context.editReply(payload);
@@ -148,12 +166,16 @@ module.exports = class SettingsCommand extends Command {
                 const payload = ({
                     embeds: [embed
                         .setTitle('Settings: `Logging`')
-                        .addField('Mod Log', modLog.toString(), true)
-                        .addField('Member Log', memberLog.toString(), true)
-                        .addField('Nickname Log', nicknameLog.toString(), true)
-                        .addField('Role Log', roleLog.toString(), true)
-                        .addField('Message Edit Log', messageEditLog.toString(), true)
-                        .addField('Message Delete Log', messageDeleteLog.toString(), true),],
+                        .addFields([{name: 'Mod Log', value: modLog.toString(), inline: true}])
+                        .addFields([{name: 'Member Log', value: memberLog.toString(), inline: true}])
+                        .addFields([{name: 'Nickname Log', value: nicknameLog.toString(), inline: true}])
+                        .addFields([{name: 'Role Log', value: roleLog.toString(), inline: true}])
+                        .addFields([{name: 'Message Edit Log', value: messageEditLog.toString(), inline: true}])
+                        .addFields([{
+                            name: 'Message Delete Log',
+                            value: messageDeleteLog.toString(),
+                            inline: true
+                        }]),],
                 });
 
                 if (isInteraction) context.editReply(payload);
@@ -168,10 +190,10 @@ module.exports = class SettingsCommand extends Command {
                 const payload = {
                     embeds: [embed
                         .setTitle('Settings: `Verification`')
-                        .addField('Role', verificationRole.toString(), true)
-                        .addField('Channel', verificationChannel.toString(), true)
-                        .addField('Status', verificationStatus.toString(), true)
-                        .addField('Message', verificationMessage.toString())]
+                        .addFields([{name: 'Role', value: verificationRole.toString(), inline: true}])
+                        .addFields([{name: 'Channel', value: verificationChannel.toString(), inline: true}])
+                        .addFields([{name: 'Status', value: verificationStatus.toString(), inline: true}])
+                        .addFields([{name: 'Message', value: verificationMessage.toString()}])]
                 };
 
                 if (isInteraction) context.editReply(payload);
@@ -184,9 +206,9 @@ module.exports = class SettingsCommand extends Command {
                 const payload = {
                     embeds: [embed
                         .setTitle('Settings: `Welcomes`')
-                        .addField('Channel', welcomeChannel.toString(), true)
-                        .addField('Status', welcomeStatus, true)
-                        .addField('Message', welcomeMessage)]
+                        .addFields([{name: 'Channel', value: welcomeChannel.toString(), inline: true}])
+                        .addFields([{name: 'Status', value: welcomeStatus, inline: true}])
+                        .addFields([{name: 'Message', value: welcomeMessage}])]
                 };
 
                 if (isInteraction) context.editReply(payload);
@@ -199,9 +221,9 @@ module.exports = class SettingsCommand extends Command {
                 const payload = {
                     embeds: [embed
                         .setTitle('Settings: `Farewells`')
-                        .addField('Channel', farewellChannel.toString(), true)
-                        .addField('Status', farewellStatus, true)
-                        .addField('Message', farewellMessage)]
+                        .addFields([{name: 'Channel', value: farewellChannel.toString(), inline: true}])
+                        .addFields([{name: 'Status', value: farewellStatus, inline: true}])
+                        .addFields([{name: 'Message', value: farewellMessage}])]
                 };
 
                 if (isInteraction) context.editReply(payload);
@@ -214,10 +236,10 @@ module.exports = class SettingsCommand extends Command {
                 const payload = {
                     embeds: [embed
                         .setTitle('Settings: `Points`')
-                        .addField('Message Points', messagePoints, true)
-                        .addField('Command Points', commandPoints, true)
-                        .addField('Voice Points', voicePoints, true)
-                        .addField('Status', pointsStatus),]
+                        .addFields([{name: 'Message Points', value: messagePoints, inline: true}])
+                        .addFields([{name: 'Command Points', value: commandPoints, inline: true}])
+                        .addFields([{name: 'Voice Points', value: voicePoints, inline: true}])
+                        .addFields([{name: 'Status', value: pointsStatus}]),]
                 };
                 if (isInteraction) context.editReply(payload);
                 else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
@@ -225,15 +247,18 @@ module.exports = class SettingsCommand extends Command {
             }
             case 'c':
             case 'crown': {
-                if (context.guild.job.nextInvocation()) embed.addField('Next Crown Transfer', `\`${context.guild.job.nextInvocation()}\``);
+                if (context.guild.job.nextInvocation()) embed.addFields([{
+                    name: 'Next Crown Transfer',
+                    value: `\`${context.guild.job.nextInvocation()}\``
+                }]);
 
                 const payload = {
                     embeds: [embed
                         .setTitle('Settings: `Crown`')
-                        .addField('Role', crownRole.toString(), true)
-                        .addField('Channel', crownChannel.toString(), true)
-                        .addField('Status', `${crownStatus}`)
-                        .addField('Message', crownMessage)]
+                        .addFields([{name: 'Role', value: crownRole.toString(), inline: true}])
+                        .addFields([{name: 'Channel', value: crownChannel.toString(), inline: true}])
+                        .addFields([{name: 'Status', value: `${crownStatus}`}])
+                        .addFields([{name: 'Message', value: crownMessage}])]
                 };
 
                 if (isInteraction) context.editReply(payload);
@@ -248,10 +273,14 @@ module.exports = class SettingsCommand extends Command {
                 const payload = {
                     embeds: [embed
                         .setTitle('Settings: `Join Voting`')
-                        .addField('Status', joinVotingStatus)
-                        .addField('Reaction', joinVotingEmoji, true)
-                        .addField('MessageID', joinVotingMessage, true)
-                        .addField('Vote Broadcast Channel', joinVotingChannel.toString(), true),]
+                        .addFields([{name: 'Status', value: joinVotingStatus}])
+                        .addFields([{name: 'Reaction', value: joinVotingEmoji, inline: true}])
+                        .addFields([{name: 'MessageID', value: joinVotingMessage, inline: true}])
+                        .addFields([{
+                            name: 'Vote Broadcast Channel',
+                            value: joinVotingChannel.toString(),
+                            inline: true
+                        }]),]
                 };
                 if (isInteraction) context.editReply(payload);
                 else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
@@ -274,15 +303,19 @@ module.exports = class SettingsCommand extends Command {
 
         const payload = {
             embeds: [embed.setTitle('Settings').setDescription(`**More Information:** \`${row.prefix}settings [category]\``)
-                .addField('System', '`13` settings', true)
-                .addField('Logging', '`6` settings', true)
-                .addField('Verification', '`3` settings', true)
-                .addField('Welcomes', '`2` settings', true)
-                .addField('Farewells', '`2` settings', true)
-                .addField('Points', '`3` settings', true)
-                .addField('Crown', '`4` settings', true)
-                .addField('JoinVoting', '`3` settings', true)
-                .addField('Invite Me', `[Click Here](${this.client.config.inviteLink})`, true)
+                .addFields([{name: 'System', value: '`13` settings', inline: true}])
+                .addFields([{name: 'Logging', value: '`6` settings', inline: true}])
+                .addFields([{name: 'Verification', value: '`3` settings', inline: true}])
+                .addFields([{name: 'Welcomes', value: '`2` settings', inline: true}])
+                .addFields([{name: 'Farewells', value: '`2` settings', inline: true}])
+                .addFields([{name: 'Points', value: '`3` settings', inline: true}])
+                .addFields([{name: 'Crown', value: '`4` settings', inline: true}])
+                .addFields([{name: 'JoinVoting', value: '`3` settings', inline: true}])
+                .addFields([{
+                    name: 'Invite Me',
+                    value: `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands)`,
+                    inline: true
+                }])
             ]
         };
 

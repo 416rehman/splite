@@ -1,10 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-
+const {EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {MessageButton} = require('discord.js');
-const {MessageActionRow} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class betCommand extends Command {
     constructor(client) {
@@ -92,15 +89,15 @@ module.exports = class betCommand extends Command {
             return this.sendReplyAndDelete(context, payload);
         }
 
-        const row = new MessageActionRow();
-        row.addComponents(new MessageButton()
+        const row = new ActionRowBuilder();
+        row.addComponents(new ButtonBuilder()
             .setCustomId('proceed')
             .setLabel('✅ Accept')
-            .setStyle('SUCCESS'));
-        row.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Success));
+        row.addComponents(new ButtonBuilder()
             .setCustomId('cancel')
             .setLabel('❌ Decline')
-            .setStyle('DANGER'));
+            .setStyle(ButtonStyle.Danger));
 
         try {
 
@@ -112,14 +109,14 @@ module.exports = class betCommand extends Command {
 
             const filter = (button) => button.user.id === member.id;
             const collector = msg.createMessageComponentCollector({
-                filter, componentType: 'BUTTON', time: 60000, dispose: true,
+                filter, componentType: ComponentType.Button, time: 60000, dispose: true,
             });
 
             let updated = false;
             collector.on('collect', (b) => {
                 updated = true;
                 if (b.customId === 'proceed') {
-                    const embed = new MessageEmbed()
+                    const embed = new EmbedBuilder()
                         .setTitle(`${this.getUserIdentifier(context.author)} VS ${this.getUserIdentifier(member)}`)
                         .setDescription(`${emojis.point} **Rolling for ${amount} points** ${emojis.point}\n${emojis.dices}${emojis.dices}${emojis.dices}`)
                         .setFooter({
@@ -144,7 +141,7 @@ module.exports = class betCommand extends Command {
 
                             this.done(context.author.id);
                             this.done(member.id);
-                            const embed = new MessageEmbed()
+                            const embed = new EmbedBuilder()
                                 .setTitle(`${this.getUserIdentifier(context.author)} VS ${this.getUserIdentifier(member)}`)
                                 .setDescription(`🎉 ${winner} has won ${amount} points ${emojis.point} from ${loser}!`)
                                 .setFooter({

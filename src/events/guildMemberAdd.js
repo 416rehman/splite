@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const moment = require('moment');
 const {stripIndent} = require('common-tags');
 
@@ -19,10 +19,10 @@ module.exports = async (client, member) => {
         memberLog &&
         memberLog.viewable &&
         memberLog
-            .permissionsFor(member.guild.me)
+            .permissionsFor(member.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS'])
     ) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Member Joined')
             .setAuthor({
                 name: `${member.guild.name}`,
@@ -35,7 +35,7 @@ module.exports = async (client, member) => {
                 moment(member.user.createdAt).format('dddd, MMMM Do YYYY')
             )
             .setTimestamp()
-            .setColor(member.guild.me.displayHexColor);
+            .setColor(member.guild.members.me.displayHexColor);
         memberLog.send({embeds: [embed]});
     }
 
@@ -78,7 +78,7 @@ module.exports = async (client, member) => {
         welcomeChannel &&
         welcomeChannel.viewable &&
         welcomeChannel
-            .permissionsFor(member.guild.me)
+            .permissionsFor(member.guild.members.me)
             .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
         welcomeMessage
     ) {
@@ -89,9 +89,9 @@ module.exports = async (client, member) => {
             .replace(/`?\?size`?/g, member.guild.memberCount); // Guild size substitution
         welcomeChannel.send({
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setDescription(welcomeMessage)
-                    .setColor(member.guild.me.displayHexColor),
+                    .setColor(member.guild.members.me.displayHexColor),
             ],
         });
     }

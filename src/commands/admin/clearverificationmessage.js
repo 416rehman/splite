@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -45,7 +45,7 @@ module.exports = class clearVerificationMessageCommand extends Command {
             verificationRoleId && verificationChannelId && oldVerificationMessage
         );
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Verification`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
@@ -56,7 +56,7 @@ module.exports = class clearVerificationMessageCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         this.client.db.settings.updateVerificationMessage.run(
             null,
@@ -84,7 +84,7 @@ module.exports = class clearVerificationMessageCommand extends Command {
                     'Verification Message',
                     `${oldVerificationMessage} ➔ \`None\``
                 )
-                .addField('Status', `\`${statusUpdate}\``),],
+                .addFields([{name: 'Status', value:  `\`${statusUpdate}\``}]),],
         };
 
         if (isInteraction) context.editReply(payload);

@@ -1,10 +1,10 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emoji = require('../../utils/emojis.json');
 const ud = require('urban-dictionary');
 const ButtonMenu = require('../ButtonMenu.js');
 const {load} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class urbanCommand extends Command {
     constructor(client) {
@@ -30,7 +30,7 @@ module.exports = class urbanCommand extends Command {
     }
 
     handle(text, context, isInteraction) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('🎭  Urban Dictionary  🎭')
             .setDescription(`${load} Loading...`)
             .setFooter({

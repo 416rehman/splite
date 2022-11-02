@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -36,7 +36,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const role = interaction.options.getRole('role');
-        this.handle(role, interaction, true);
+        await this.handle(role, interaction, true);
     }
 
     async handle(role, context, isInteraction) {
@@ -49,7 +49,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
         // Get status
         const oldStatus = this.client.utils.getStatus(view_confessions_role);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Confessions`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
@@ -62,12 +62,12 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
         if (!role) {
             const payload = {
                 embeds: [embed
-                    .addField('Role', oldViewConfessionsRole, true)
+                    .addFields([{name: 'Role', value:  oldViewConfessionsRole, inline:  true}])
                     .setDescription(this.description)
                 ]
             };
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -80,7 +80,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
         if (!role) {
             const payload = `${fail} The role you provided was not found. Please try again.`;
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
 
@@ -109,7 +109,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
             ],
         });
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

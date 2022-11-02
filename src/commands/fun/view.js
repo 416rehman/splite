@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const Command = require('../Command.js');
 
 module.exports = class viewCommand extends Command {

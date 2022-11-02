@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class gambleCommand extends Command {
     constructor(client) {
@@ -26,7 +26,7 @@ module.exports = class gambleCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const amount = interaction.options.getInteger('amount');
-        this.handle(amount, interaction, true);
+        await this.handle(amount, interaction, true);
     }
 
     async handle(amount, context, isInteraction) {
@@ -64,7 +64,7 @@ module.exports = class gambleCommand extends Command {
         const modifier = (await this.client.utils.checkTopGGVote(this.client, context.author.id))
             ? this.client.config.votePerks.gamblingWinOdds - this.client.config.stats.gambling.winOdds
             : 0;
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(
                 `${modifier ? emojis.Voted : ''}${this.getUserIdentifier(context.author)} gambling ${amount} points ${emojis.point}`
             )
@@ -100,7 +100,7 @@ module.exports = class gambleCommand extends Command {
 
             //Loss
             if (outcome === 'lose') {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(
                         `${modifier ? emojis.Voted : ''}${this.getUserIdentifier(context.author)} gambling ${amount} Points ${emojis.point}`
                     )
@@ -121,7 +121,7 @@ module.exports = class gambleCommand extends Command {
             }
             //Win
             else {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`${modifier ? emojis.Voted : ''}${this.getUserIdentifier(context.author)} gambling ${amount} Points ${emojis.point}`)
                     .setDescription(`🎉 You Won! **You now have ${points + amount}** ${emojis.point}`)
                     .setFooter({

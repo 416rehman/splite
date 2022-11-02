@@ -1,6 +1,7 @@
 const Command = require('../Command.js');
 const {oneLine} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {ChannelType} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
 
 module.exports = class SayCommand extends Command {
@@ -48,7 +49,7 @@ module.exports = class SayCommand extends Command {
 
     handle(text, channel, context, isInteraction) {
         // Check type and viewable
-        if (channel.type !== 'GUILD_TEXT' || !channel.viewable) {
+        if (channel.type !== ChannelType.GuildText || !channel.viewable) {
             const payload = fail + ' The provided channel is not a text channel or is not viewable.';
 
             if (isInteraction) context.editReply(payload);
@@ -70,7 +71,7 @@ module.exports = class SayCommand extends Command {
         }
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.me).has(['SEND_MESSAGES'])) {
+        if (!channel.permissionsFor(context.guild.members.me).has(['SEND_MESSAGES'])) {
             const payload = fail + ' I do not have permission to send messages in this channel.';
 
             if (isInteraction) context.editReply(payload);

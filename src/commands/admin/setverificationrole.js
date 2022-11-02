@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, verify} = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
@@ -30,7 +30,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const role = interaction.options.getRole('role');
-        this.handle(role, interaction, true);
+        await this.handle(role, interaction, true);
     }
 
     async handle(role, context, isInteraction) {
@@ -49,11 +49,11 @@ module.exports = class SetVerificationRoleCommand extends Command {
         // Trim message
         if (verificationMessage && verificationMessage.length > 1024) verificationMessage = verificationMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Verification`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addField('Channel', verificationChannel?.toString() || '`None`', true)
-            .addField('Message', verificationMessage || '`None`')
+            .addFields([{name: 'Channel', value:  verificationChannel?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Message', value:  verificationMessage || '`None`'}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
@@ -72,7 +72,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
                     .setDescription(this.description),],
             });
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -82,7 +82,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
         role = isInteraction ? role : await this.getGuildRole(context.guild, role);
         if (!role) {
             const payload = emojis.fail + ' Please mention a role or provide a valid role ID.';
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -103,7 +103,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
                 }),],
         });
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
 
         // Update verification
@@ -117,9 +117,9 @@ module.exports = class SetVerificationRoleCommand extends Command {
                     this.client.logger.error(err);
                 }
                 const msg = await verificationChannel.send({
-                    embeds: [new MessageEmbed()
+                    embeds: [new EmbedBuilder()
                         .setDescription(verificationMessage.slice(3, -3))
-                        .setColor(context.guild.me.displayHexColor),],
+                        .setColor(context.guild.members.me.displayHexColor),],
                 });
                 await msg.react(verify.split(':')[2].slice(0, -1));
                 this.client.db.settings.updateVerificationMessageId.run(msg.id, context.guild.id);

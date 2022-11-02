@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const emojis = require('../../utils/emojis.json');
 
@@ -24,7 +24,7 @@ module.exports = class SetAdminRoleCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const role = interaction.options.getRole('role');
-        this.handle(role, interaction, true);
+        await this.handle(role, interaction, true);
     }
 
     async handle(role, context, isInteraction) {
@@ -35,7 +35,7 @@ module.exports = class SetAdminRoleCommand extends Command {
             context.guild.roles.cache.find((r) => r.id === adminRoleId) ||
             '`None`';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -49,12 +49,12 @@ module.exports = class SetAdminRoleCommand extends Command {
             const payload = {
                 embeds: [
                     embed
-                        .addField('Current Admin Role', `${oldAdminRole}`)
+                        .addFields([{name: 'Current Admin Role', value:  `${oldAdminRole}`}])
                         .setDescription(this.description),
                 ]
             };
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -63,7 +63,7 @@ module.exports = class SetAdminRoleCommand extends Command {
         const adminRole = isInteraction ? role : await this.getGuildRole(context.guild, role);
         if (!adminRole) {
             const payload = emojis.fail + ' Please mention a role or provide a valid role ID.';
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -74,12 +74,12 @@ module.exports = class SetAdminRoleCommand extends Command {
         );
 
         const payload = {
-            embeds: [embed.addField('Admin Role', `${oldAdminRole} ➔ ${adminRole}`).setDescription(
+            embeds: [embed.addFields([{name: 'Admin Role', value:  `${oldAdminRole} ➔ ${adminRole}`}]).setDescription(
                 `The \`admin role\` was successfully updated. ${success}\nTo clear the \`admin role\`, type \`clearadminrole\``
             ),]
         };
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

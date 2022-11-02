@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const moment = require('moment');
 const {mem, cpu, os} = require('node-os-utils');
 const {stripIndent} = require('common-tags');
@@ -23,7 +23,7 @@ module.exports = class BotInfoCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        await this.handle(interaction, true);
     }
 
     async handle(context, isInteraction) {
@@ -64,32 +64,19 @@ module.exports = class BotInfoCommand extends Command {
       Uptime      :: ${days}, ${hours}, ${minutes}, and ${seconds}
       Started     :: ${date}
     `;
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${this.client.name}'s Statistics`)
-            .addField('Prefix', `\`${prefix}\``,)
-            .addField('Client ID', `\`${this.client.user.id}\``,)
-            .addField(
-                'Commands',
-                `\`${this.client.commands.size}\` commands`,
-                true
-            )
-            .addField(
-                'Aliases',
-                `\`${this.client.aliases.size}\` aliases`,
-                true
-            )
-            .addField(
-                'Command Types',
-                `\`${Object.keys(this.client.types).length}\` command types`,
-                true
-            )
-            .addField('Client', `\`\`\`asciidoc\n${clientStats}\`\`\``)
-            .addField('Server', `\`\`\`asciidoc\n${serverStats}\`\`\``)
-            .addField('Tech', `\`\`\`asciidoc\n${tech}\`\`\``)
-            .addField('Time', `\`\`\`asciidoc\n${time}\`\`\``)
-            .addField(
-                'Links',
-                `**[Invite Me](${this.client.config.inviteLink})**`
+            .addFields(
+                {name: 'Prefix', value: `\`${prefix}\``},
+                {name: 'Client ID', value: `\`${this.client.user.id}\``},
+                {name: 'Commands', value: `\`${this.client.commands.size}\` commands`, inline: true},
+                {name: 'Aliases', value: `\`${this.client.aliases.size}\` aliases`, inline: true},
+                {name: 'Command Types', value: `\`${Object.keys(this.client.types).length}\` command types`, inline: true},
+                {name: 'Client', value: `\`\`\`asciidoc\n${clientStats}\`\`\``},
+                {name: 'Server', value: `\`\`\`asciidoc\n${serverStats}\`\`\``},
+                {name: 'Tech', value: `\`\`\`asciidoc\n${tech}\`\`\``},
+                {name: 'Time', value: `\`\`\`asciidoc\n${time}\`\`\``},
+                {name: 'Links', value: `**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands)**`},
             )
             .setFooter({
                 text: this.getUserIdentifier(context.author),
@@ -98,16 +85,16 @@ module.exports = class BotInfoCommand extends Command {
             .setTimestamp();
 
         if (this.client.owners?.length > 0) {
-            embed.addField('Developed By', `${this.client.owners[0]}`);
+            embed.addFields([{name: 'Developed By', value:  `${this.client.owners[0]}`}]);
             if (this.client.owners.length > 1)
-                embed.addField(`${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, this.client.owners.join(', '));
+                embed.addFields([{name: `${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, value:  this.client.owners.join(', inline:  ')}]);
         }
         if (this.client.managers?.length > 0) {
-            embed.addField(`${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, this.client.managers.join(', '));
+            embed.addFields([{name: `${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, value:  this.client.managers.join(', inline:  ')}]);
         }
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -38,7 +38,7 @@ module.exports = class setconfessionchannelCommand extends Command {
         const oldConfessionsChannel =
             context.guild.channels.cache.get(confessionsChannelID) || '`None`';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Confessions`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
@@ -46,7 +46,7 @@ module.exports = class setconfessionchannelCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Display current confessions channel
         if (!channel) {
@@ -68,7 +68,7 @@ module.exports = class setconfessionchannelCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+        if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
             const payload = `${fail} The channel must be a text channel. Please try again.`;
 
             if (isInteraction) context.editReply(payload);

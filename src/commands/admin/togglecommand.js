@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -41,7 +41,7 @@ module.exports = class ToggleCommandCommand extends Command {
             const validCommands = this.client.commands.filter(c => c.type != OWNER && c.type != ADMIN).map(c => c.name);
 
             const payload = {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle('Invalid command')
                     .setDescription(`${fail} Please provide a valid command. Valid commands are: \`${validCommands.join('`, `')}\``)
                 ]
@@ -56,7 +56,7 @@ module.exports = class ToggleCommandCommand extends Command {
 
         if (command.type === ADMIN) {
             const payload = {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle('Invalid command')
                     .setDescription(`${fail} ${capitalize(ADMIN)} commands cannot be disabled`)
                 ]
@@ -89,17 +89,17 @@ module.exports = class ToggleCommandCommand extends Command {
         );
 
         disabledCommands = disabledCommands.map((c) => `\`${c}\``).join(' ') || '`None`';
-        const payload = new MessageEmbed()
+        const payload = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(description)
-            .addField('Disabled Commands', disabledCommands, true)
+            .addFields([{name: 'Disabled Commands', value:  disabledCommands, inline:  true}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         if (isInteraction) context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);

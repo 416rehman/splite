@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {permissions} = require('../../utils/constants.json');
 const {oneLine} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class PermissionsCommand extends Command {
     constructor(client) {
@@ -41,7 +41,7 @@ module.exports = class PermissionsCommand extends Command {
             else finalPermissions.push(`- ${permissions[permission]}`);
         }
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${member.displayName}'s Permissions`)
             .setThumbnail(this.getAvatarURL(member.user))
             .setDescription(`\`\`\`diff\n${finalPermissions.join('\n')}\`\`\``)

@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class BannerCommand extends Command {
     constructor(client) {
@@ -41,7 +41,7 @@ module.exports = class BannerCommand extends Command {
                 targetUser.banner.startsWith('a_') ? '.gif' : '.png'
             }?size=512`;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${this.getUserIdentifier(targetUser)}'s Banner`)
             .setFooter({
                 text: this.getUserIdentifier(targetUser),

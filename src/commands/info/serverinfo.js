@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, GatewayIntentBits, ChannelType} = require('discord.js');
 const moment = require('moment');
 const {owner, voice} = require('../../utils/emojis.json');
 const {stripIndent} = require('common-tags');
@@ -23,7 +23,7 @@ module.exports = class ServerInfoCommand extends Command {
     async interact(interaction) {
         const guild = interaction.guild;
         await interaction.deferReply();
-        this.handle(guild, interaction, true);
+        await this.handle(guild, interaction, true);
     }
 
     async handle(guild, context, isInteraction) {
@@ -39,18 +39,18 @@ module.exports = class ServerInfoCommand extends Command {
         const afk = members.filter((m) => m.presence?.status === 'idle').length;
         const bots = members.filter((b) => b.user.bot).length;
 
-        const intentIsEnabled = this.client.enabledIntents.find(i => i === this.client.intents.GUILD_PRESENCES);
+        const intentIsEnabled = this.client.intents.find(i => i === GatewayIntentBits.GuildPresences);
 
         // Get channel stats
         const channels = [...guild.channels.cache.values()];
         const channelCount = channels.length;
 
         const textChannels = channels
-            .filter((c) => c.type === 'GUILD_TEXT' && c.viewable)
+            .filter((c) => c.type === ChannelType.GuildText && c.viewable)
             .sort((a, b) => a.rawPosition - b.rawPosition);
-        const voiceChannels = channels.filter((c) => c.type === 'GUILD_VOICE').length;
-        const newsChannels = channels.filter((c) => c.type === 'GUILD_NEWS').length;
-        const categoryChannels = channels.filter((c) => c.type === 'GUILD_CATEGORY').length;
+        const voiceChannels = channels.filter((c) => c.type === ChannelType.GuildVoice).length;
+        const newsChannels = channels.filter((c) => c.type === ChannelType.GuildNews).length;
+        const categoryChannels = channels.filter((c) => c.type === ChannelType.GuildCategory).length;
 
         const systemchannel = this.client.db.settings.selectSystemChannelId
             .pluck()
@@ -72,25 +72,27 @@ module.exports = class ServerInfoCommand extends Command {
       Roles    :: [ ${roleCount} ]
     `;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${guild.name}'s Information`)
             .setThumbnail(guild.iconURL({dynamic: true}))
-            .addField('ID', `\`${guild.id}\``, true)
+            .addFields([{name: 'ID', value:  `\`${guild.id}\``, inline:  true}])
 
-            .addField(`Owner ${owner}`, (await guild.fetchOwner()).toString(), true)
-            .addField('Verification Level', `\`${guild.verificationLevel.replace('_', ' ')}\``, true)
-            .addField('Rules Channel', guild.rulesChannel ? `${guild.rulesChannel}` : '`None`', true)
-            .addField('System Channel', systemchannel ? `<#${systemchannel}>` : '`None`', true)
-            .addField('AFK Channel', guild.afkChannel ? `${voice} ${guild.afkChannel.name}` : '`None`', true)
-            .addField('AFK Timeout', guild.afkChannel ? `\`${moment
-                .duration(guild.afkTimeout * 1000)
-                .asMinutes()} minutes\`` : '`None`', true)
+            .addFields([{name: `Owner ${owner}`, value:  (await guild.fetchOwner()).toString(), inline:  true}])
+            .addFields([{name: 'Verification Level', value: `\`${guild.verificationLevel.replace('_', ' ')}\``, inline:  true}])
+            .addFields([{name: 'Rules Channel', value:  guild.rulesChannel ? `${guild.rulesChannel}` : '`None`', inline:  true}])
+            .addFields([{name: 'System Channel', value:  systemchannel ? `<#${systemchannel}>` : '`None`', inline:  true}])
+            .addFields([{name: 'AFK Channel', value:  guild.afkChannel ? `${voice} ${guild.afkChannel.name}` : '`None`', inline:  true}])
+            .addFields([{
+                name: 'AFK Timeout',
+                value: guild.afkChannel ? `\`${moment.duration(guild.afkTimeout * 1000).asMinutes()} minutes\`` : '`None`',
+                inline: true
+            }])
 
-            .addField('Default Notifications', `\`${guild.defaultMessageNotifications.replace('_', ' ')}\``, true)
-            .addField('Partnered', `\`${guild.partnered}\``, true)
-            .addField('Verified', `\`${guild.verified}\``, true)
-            .addField('Created On', `\`${moment(guild.createdAt).format('MMM DD YYYY')}\``, true)
-            .addField('Server Stats', `\`\`\`asciidoc\n${serverStats}\`\`\``)
+            .addFields([{name: 'Default Notifications', value: `\`${guild.defaultMessageNotifications.replace('_', ' ')}\``, inline:  true}])
+            .addFields([{name: 'Partnered', value:  `\`${guild.partnered}\``, inline:  true}])
+            .addFields([{name: 'Verified', value:  `\`${guild.verified}\``, inline:  true}])
+            .addFields([{name: 'Created On', value:  `\`${moment(guild.createdAt).format('MMM DD YYYY')}\``, inline:  true}])
+            .addFields([{name: 'Server Stats', value:  `\`\`\`asciidoc\n${serverStats}\`\`\``}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
@@ -101,7 +103,7 @@ module.exports = class ServerInfoCommand extends Command {
 
         const payload = {embeds: [embed]};
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
     }
 };

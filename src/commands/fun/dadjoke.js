@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const {fail, load} = require('../../utils/emojis.json');
 
@@ -16,7 +16,7 @@ module.exports = class dadjokeCommand extends Command {
     async run(message) {
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(message, false);
@@ -25,7 +25,7 @@ module.exports = class dadjokeCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        await this.handle(interaction, true);
     }
 
     async handle(context, isInteraction) {
@@ -38,7 +38,7 @@ module.exports = class dadjokeCommand extends Command {
 
             const joke = (await res.json()).joke;
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setDescription(joke)
                 .setFooter({
                     text: this.getUserIdentifier(context.author),
@@ -46,7 +46,7 @@ module.exports = class dadjokeCommand extends Command {
                 });
 
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }
@@ -59,12 +59,12 @@ module.exports = class dadjokeCommand extends Command {
             }
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }

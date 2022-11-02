@@ -29,7 +29,7 @@ module.exports = class RemoveEmojiCommand extends Command {
         await interaction.deferReply();
         const emojis = interaction.options.getString('emojis');
         const args = emojis.split(' ');
-        this.handle(args, interaction);
+        await this.handle(args, interaction);
     }
 
     async handle(emojis, context) {
@@ -64,7 +64,7 @@ async function removeemoji(emoji, context, command) {
         customemoji.delete().then(() => {
             context.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed()
+                    new Discord.EmbedBuilder()
                         .setDescription(`${_emojis.success} ${emoji} Removed!`)
                 ],
             });

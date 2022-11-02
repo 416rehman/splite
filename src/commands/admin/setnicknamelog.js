@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -32,7 +32,7 @@ module.exports = class SetNicknameLogCommand extends Command {
     handle(channel, context, isInteraction) {
         const nicknameLogId = this.client.db.settings.selectNicknameLogId.pluck().get(context.guild.id);
         const oldNicknameLog = context.guild.channels.cache.get(nicknameLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
@@ -46,7 +46,7 @@ module.exports = class SetNicknameLogCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addField('Current Nickname Log', `${oldNicknameLog}`)
+                        .addFields([{name: 'Current Nickname Log', value:  `${oldNicknameLog}`}])
                         .setDescription(this.description),
                 ],
             });
@@ -57,7 +57,7 @@ module.exports = class SetNicknameLogCommand extends Command {
         }
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
-        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+        if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} Please provide a valid text channel.`;
 
             if (isInteraction) context.editReply(payload);

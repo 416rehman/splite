@@ -1,6 +1,6 @@
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class anonymous extends Command {
     constructor(client) {
@@ -50,7 +50,7 @@ module.exports = class anonymous extends Command {
             });
 
         const channel = client.channels.cache.get(interaction.channel.id);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Anonymous Message')
             .setDescription(`"${anonMsg}"`)
             .setFooter({

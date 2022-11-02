@@ -1,23 +1,20 @@
 const Discord = require('discord.js');
-const {REST} = require('@discordjs/rest');
-const {Routes} = require('discord-api-types/v9');
 const {readdir, readdirSync} = require('fs');
 const {join, resolve} = require('path');
 const AsciiTable = require('ascii-table');
 const {fail, online} = require('./utils/emojis.json');
 const amethyste = require('amethyste-api');
-const {Collection} = require('discord.js');
+const {Collection, ChannelType} = require('discord.js');
 const {NekoBot} = require('nekobot-api');
 const {Player} = require('discord-player');
-const {enabledIntents, allIntents} = require('../intents.js');
+const intents = require('../intents.js');
 const {Configuration, OpenAIApi} = require('openai');
 const moment = require('moment');
 
 class Client extends Discord.Client {
     constructor(config, options) {
-        super({...options, intents: enabledIntents,});
-        this.intents = allIntents;
-        this.enabledIntents = enabledIntents;
+        super({...options, intents: intents,});
+        this.intents = intents;
         this.config = config;
         this.name = config.botName;
         this.logger = require('./utils/logger.js');
@@ -38,7 +35,7 @@ class Client extends Discord.Client {
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
         this.topics = {};
-        this.ameApi = new amethyste(config.apiKeys.amethyste);
+        this.ameApi = config?.apiKeys?.amethyste ? new amethyste(config.apiKeys.amethyste) : null;
         this.nekoApi = new NekoBot();
         this.supportServerId = config.supportServerId;
         this.utils = require('./utils/utils.js');
@@ -135,9 +132,9 @@ class Client extends Discord.Client {
         const systemChannel = guild.channels.cache.get(systemChannelId);
 
         if ( // Check channel and permissions
-            !systemChannel || !systemChannel.viewable || !systemChannel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return;
+            !systemChannel || !systemChannel.viewable || !systemChannel.permissionsFor(guild.members.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return;
 
-        const embed = new Discord.MessageEmbed()
+        const embed = new Discord.EmbedBuilder()
             .setAuthor({
                 name: `${this.user.tag}`, iconURL: this.getAvatarURL(this.user)
             })
@@ -216,15 +213,14 @@ class Client extends Discord.Client {
      */
     handleMusicEvents() {
         this.player.on('error', (queue, error) => {
-            console.log(`Error emitted from the queue ${error.message}`);
+            this.logger.error(`Error emitted from the queue ${error.message}`);
         });
 
         this.player.on('connectionError', (queue, error) => {
-            console.log(`Error emitted from the connection ${error.message}`);
+            this.logger.error(`Error emitted from the connection ${error.message}`);
         });
 
         this.player.on('trackStart', (queue, track) => {
-            if (!this.config.music.loopMessage && queue.repeatMode !== 0) return;
             queue.metadata.send(`Started playing ${track.title} in **${queue.connection.channel.name}** 🎧`);
         });
 
@@ -344,11 +340,11 @@ class Client extends Discord.Client {
 
             for (const channel of guild.channels.cache.values()) {
                 try {
-                    if (channel.viewable && channel.permissionsFor(guild.me).has('MANAGE_ROLES')) {
-                        if (channel.type === 'GUILD_TEXT') // Deny permissions in text channels
+                    if (channel.viewable && channel.permissionsFor(guild.members.me).has('MANAGE_ROLES')) {
+                        if (channel.type === ChannelType.GuildText) // Deny permissions in text channels
                             await channel.permissionOverwrites.edit(muteRole, {
                                 'SEND_MESSAGES': false, 'ADD_REACTIONS': false
-                            }); else if (channel.type === 'GUILD_VOICE' && channel.editable) // Deny permissions in voice channels
+                            }); else if (channel.type === ChannelType.GuildVoice && channel.manageable) // Deny permissions in voice channels
                             await channel.permissionOverwrites.edit(muteRole, {
                                 'SPEAK': false, 'STREAM': false
                             });

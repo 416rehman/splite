@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -34,7 +34,7 @@ module.exports = class clearMessageDeleteLogCommand extends Command {
                 .get(context.guild.id);
         const oldMessageDeleteLog =
             context.guild.channels.cache.get(messageDeleteLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(

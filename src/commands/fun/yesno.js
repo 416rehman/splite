@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const {load, fail} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class YesNoCommand extends Command {
     constructor(client) {
@@ -19,7 +19,7 @@ module.exports = class YesNoCommand extends Command {
     async run(message) {
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(message, false);
@@ -28,7 +28,7 @@ module.exports = class YesNoCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        await this.handle(interaction, true);
     }
 
     async handle(context, isInteraction) {
@@ -39,7 +39,7 @@ module.exports = class YesNoCommand extends Command {
             else if (answer === 'No') answer = '👎  ' + answer + '!  👎';
             else answer = '👍  ' + answer + '...  👎';
             const img = res.image;
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(answer)
                 .setImage(img)
                 .setFooter({
@@ -48,7 +48,7 @@ module.exports = class YesNoCommand extends Command {
                 });
 
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }
@@ -61,12 +61,12 @@ module.exports = class YesNoCommand extends Command {
             }
         }
         catch (err) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
                 .setColor('RED');
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed],
                 });
             }

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, verify, fail} = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
 
@@ -34,7 +34,7 @@ module.exports = class SetVerificationChannelCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const channel = interaction.options.getChannel('channel');
-        this.handle(channel, interaction, true);
+        await this.handle(channel, interaction, true);
     }
 
     async handle(channel, context, isInteraction) {
@@ -58,17 +58,17 @@ module.exports = class SetVerificationChannelCommand extends Command {
         if (verificationMessage && verificationMessage.length > 1024)
             verificationMessage = verificationMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Verification`')
-            .addField('Role', verificationRole.toString() || '`None`', true)
-            .addField('Message', verificationMessage || '`None`')
+            .addFields([{name: 'Role', value:  verificationRole.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Message', value:  verificationMessage || '`None`'}])
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Display current verification channel
         if (!channel) {
@@ -95,10 +95,10 @@ module.exports = class SetVerificationChannelCommand extends Command {
         );
         const verificationChannel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!verificationChannel || verificationChannel.type != 'GUILD_TEXT' || !verificationChannel.viewable) {
+        if (!verificationChannel || verificationChannel.type != ChannelType.GuildText || !verificationChannel.viewable) {
             const payload = `${fail} Please provide a valid \`verification channel\`.`;
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
             return;
         }
@@ -124,7 +124,7 @@ module.exports = class SetVerificationChannelCommand extends Command {
             ],
         });
 
-        if (isInteraction) context.editReply(payload);
+        if (isInteraction) await context.editReply(payload);
         else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
 
         // Send verification message to the new verification channel
@@ -139,9 +139,9 @@ module.exports = class SetVerificationChannelCommand extends Command {
                 }
                 const msg = await verificationChannel.send({
                     embeds: [
-                        new MessageEmbed()
+                        new EmbedBuilder()
                             .setDescription(verificationMessage.slice(3, -3))
-                            .setColor(context.guild.me.displayHexColor),
+                            .setColor(context.guild.members.me.displayHexColor),
                     ],
                 });
                 await msg.react(verify.split(':')[2].slice(0, -1));

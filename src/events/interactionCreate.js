@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const wait = require('node:timers/promises').setTimeout;
 const {fail} = require('../utils/emojis.json');
 
@@ -8,10 +8,10 @@ module.exports = async (client, interaction) => {
         if (command.slashCommand) {
             //Blacklisted user
             if (command.checkBlacklist(interaction.user)) {
-                const replyEmbed = new MessageEmbed()
+                const replyEmbed = new EmbedBuilder()
                     .setDescription(`${fail} You are blacklisted.`);
                 if (client.owners.length) {
-                    replyEmbed.addField('If you think this is a mistake', `contact ${client.owners[0]}`);
+                    replyEmbed.addFields([{name: 'If you think this is a mistake', value:  `contact ${client.owners[0]}`}]);
                 }
                 return interaction
                     .reply({
@@ -29,14 +29,14 @@ module.exports = async (client, interaction) => {
             // check cooldown
             const cooldown = await command.isOnCooldown(interaction.user.id);
             if (cooldown) return interaction.reply({
-                embeds: [new MessageEmbed().setDescription(`You are on a cooldown. Try again in **${cooldown}** seconds.`),],
+                embeds: [new EmbedBuilder().setDescription(`You are on a cooldown. Try again in **${cooldown}** seconds.`),],
                 ephemeral: true,
             });
 
             // check if instance already running
             const instanceExists = command.isInstanceRunning(interaction.user.id, interaction.channel.id);
             if (instanceExists) return interaction.reply({
-                embeds: [new MessageEmbed().setDescription('Command already in progress, please wait for it.'),],
+                embeds: [new EmbedBuilder().setDescription('Command already in progress, please wait for it.'),],
                 ephemeral: true,
             });
 
@@ -79,7 +79,7 @@ module.exports = async (client, interaction) => {
             if (!permissionErrors) return interaction.reply({
                 content: '**This command can only be used by the bot creator.**', ephemeral: true,
             });
-            if (permissionErrors instanceof MessageEmbed) return interaction.reply({
+            if (permissionErrors instanceof EmbedBuilder) return interaction.reply({
                 embeds: [permissionErrors], ephemeral: true,
             });
 
@@ -88,27 +88,28 @@ module.exports = async (client, interaction) => {
                 .pluck()
                 .get(interaction.guild.id) || [];
             if (typeof disabledCommands === 'string') disabledCommands = disabledCommands.split(' ');
+            if (disabledCommands.includes(command.name)) return; // Disabled command
 
-            if (!disabledCommands?.includes(command.name)) {
-                if (!command.checkNSFW(channel)) {
-                    return interaction.reply({
-                        embeds: [new MessageEmbed()
-                            .setAuthor({
-                                name: `${interaction.user.username}#${interaction.user.discriminator}`,
-                                iconURL: command.getAvatarURL(interaction.user),
-                            })
-                            .setDescription('NSFW Commands can only be run in NSFW channels.')
-                            .setTimestamp()
-                            .setColor('RED'),], ephemeral: true,
-                    });
-                }
 
-                if (command.exclusive) command.setInstance(interaction.user.id, null); // Track per-user instance
-                if (command.channelExclusive) command.setInstance(null, interaction.channelId); // Track per-channel instance
-                command.setCooldown(interaction.user.id);
-
-                return command.interact(interaction, interaction.options._hoistedOptions || null); // Run command
+            if (!command.checkNSFW(channel)) {
+                return interaction.reply({
+                    embeds: [new EmbedBuilder()
+                        .setAuthor({
+                            name: `${interaction.user.username}#${interaction.user.discriminator}`,
+                            iconURL: command.getAvatarURL(interaction.user),
+                        })
+                        .setDescription('NSFW Commands can only be run in NSFW channels.')
+                        .setTimestamp()
+                        .setColor('RED'),], ephemeral: true,
+                });
             }
+            if (!command.checkVoiceChannel(interaction)) return command.sendReplyAndDelete(interaction, 'You must be in a voice channel to use this command.');
+
+            if (command.exclusive) command.setInstance(interaction.user.id, null); // Track per-user instance
+            if (command.channelExclusive) command.setInstance(null, interaction.channelId); // Track per-channel instance
+            command.setCooldown(interaction.user.id);
+
+            return command.interact(interaction, interaction.options._hoistedOptions || null); // Run command
         }
     }
 };

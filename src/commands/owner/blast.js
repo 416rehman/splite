@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class BlastCommand extends Command {
     constructor(client) {
@@ -42,10 +42,10 @@ module.exports = class BlastCommand extends Command {
                 systemChannel &&
                 systemChannel.viewable &&
                 systemChannel
-                    .permissionsFor(guild.me)
+                    .permissionsFor(guild.members.me)
                     .has(['SEND_MESSAGES', 'EMBED_LINKS'])
             ) {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`${this.client.name} System Message`)
                     .setThumbnail('https://i.imgur.com/B0XSinY.png')
                     .setDescription(messageText)
@@ -63,7 +63,7 @@ module.exports = class BlastCommand extends Command {
             // Trim array
             const description = this.client.utils.trimStringFromArray(guilds);
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Blast Failures')
                 .setDescription(description)
                 .setFooter({
@@ -71,11 +71,11 @@ module.exports = class BlastCommand extends Command {
                     iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(context.guild.me.displayHexColor);
+                .setColor(context.guild.members.me.displayHexColor);
             this.sendReply(context, {embeds: [embed]});
         }
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Blast Success')
             .setDescription('All messages were sent successfully to **' + guilds.length + '** servers.')
             .setFooter({
@@ -83,7 +83,7 @@ module.exports = class BlastCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
         this.sendReply(context, {embeds: [embed]});
 
     }

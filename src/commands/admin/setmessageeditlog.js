@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -35,7 +35,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
             .get(context.guild.id);
         const oldMessageEditLog =
             context.guild.channels.cache.get(messageEditLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -69,7 +69,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+        if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} The channel must be a text channel. Please try again.`;
 
             if (isInteraction) context.editReply(payload);

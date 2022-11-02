@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class WipePointsCommand extends Command {
     constructor(client) {
@@ -22,7 +22,7 @@ module.exports = class WipePointsCommand extends Command {
         await interaction.deferReply();
         const userId = interaction.options.getString('userid');
         const percentage = interaction.options.getInteger('percent');
-        this.handle(userId, percentage, interaction);
+        await this.handle(userId, percentage, interaction);
     }
 
     async handle(userId, percent, context) {
@@ -46,7 +46,7 @@ module.exports = class WipePointsCommand extends Command {
             lose: (100 - parseInt(percent)) / 100,
             win: parseInt(percent) / 100,
         });
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Set Odds')
             .setDescription(
                 `Successfully set ${member}'s winning odds to \`${percent}%\`.`
@@ -56,6 +56,6 @@ module.exports = class WipePointsCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
-        this.sendReply(context, {embeds: [embed]});
+        await this.sendReply(context, {embeds: [embed]});
     }
 };

@@ -1,12 +1,12 @@
 const Command = require('../Command.js');
 const {
-    MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton,
+    EmbedBuilder, ActionRowBuilder, SelectMenuBuilder, ButtonBuilder, ButtonStyle, ComponentType
 } = require('discord.js');
 const fs = require('fs');
 const YAML = require('yaml');
 const {oneLine} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
 
 const reward = 10;
@@ -26,16 +26,21 @@ module.exports = class TriviaCommand extends Command {
       `,
             type: client.types.FUN,
             examples: ['trivia sports'],
-            slashCommand: new SlashCommandBuilder().addStringOption(topic => topic.setName('topic').setRequired(false).setDescription('The topic to play trivia on')
-                .addChoices(client.topics.trivia.map(topic => {
-                    return [topic, topic];
-                })))
+            disabled: client.topics?.trivia?.length === 0,
+            slashCommand: new SlashCommandBuilder()
+                .addStringOption(topic =>
+                    topic.setName('topic')
+                        .setRequired(false)
+                        .setDescription('The topic to play trivia on')
+                        .addChoices(...client.topics.trivia.map(topic => {
+                            return {name: topic, value: topic};
+                        })))
         });
     }
 
     run(message) {
         if (!this.client.topics?.trivia?.length) return message.channel.send('There are no trivia questions available.');
-        const row = new MessageActionRow().addComponents(new MessageSelectMenu()
+        const row = new ActionRowBuilder().addComponents(new SelectMenuBuilder()
             .setCustomId('trivia-topic')
             .setPlaceholder('Select a topic')
             .addOptions(this.client.topics.trivia.map(topic => {
@@ -46,7 +51,7 @@ module.exports = class TriviaCommand extends Command {
             })));
 
         message.reply({
-            embeds: [new MessageEmbed().setDescription('**Trivia** - Please select a category.')], components: [row]
+            embeds: [new EmbedBuilder().setDescription('**Trivia** - Please select a category.')], components: [row]
         }).then(msg => {
             const filter = (option) => {
                 option.deferUpdate();
@@ -54,7 +59,7 @@ module.exports = class TriviaCommand extends Command {
             };
 
             const selectCollector = msg.createMessageComponentCollector({
-                filter, componentType: 'SELECT_MENU', maxUsers: 1, time: 30000
+                filter, componentType: ComponentType.SelectMenu, maxUsers: 1, time: 30000
             });
 
             selectCollector.on('collect', (component) => {
@@ -72,7 +77,7 @@ module.exports = class TriviaCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const topic = interaction.options.getString('topic') || this.client.topics.trivia[Math.floor(Math.random() * this.client.topics.trivia.length)];
-        this.handle(topic, interaction, true);
+        await this.handle(topic, interaction, true);
     }
 
     async handle(topic, context) {
@@ -104,24 +109,24 @@ module.exports = class TriviaCommand extends Command {
             choices.sort(() => Math.random() - 0.5);
 
 
-            const row = new MessageActionRow();
+            const row = new ActionRowBuilder();
             const choiceEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣'];
 
             let correctAnswerIndex = '0';
 
             choices.forEach((choice, i) => {
                 if (choice === answers[0]) correctAnswerIndex = `${i}`;
-                row.addComponents(new MessageButton()
+                row.addComponents(new ButtonBuilder()
                     .setCustomId(`${i}`)
                     .setLabel(`${choice}`)
                     .setEmoji(choiceEmojis[i])
-                    .setStyle('PRIMARY'));
+                    .setStyle(ButtonStyle.Primary));
             });
 
-            const questionEmbed = new MessageEmbed()
+            const questionEmbed = new EmbedBuilder()
                 .setTitle('Trivia')
-                .addField('Topic', `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``)
-                .addField('Question', `${question}`)
+                .addFields([{name: 'Topic', value:  `\`${this.client.utils.capitalize(topic.replace('-', ' '))}\``}])
+                .addFields([{name: 'Question', value:  `${question}`}])
                 .setFooter({
                     text: `Expires in ${timeout / 1000} seconds`, iconURL: this.getAvatarURL(context.author)
                 })
@@ -138,7 +143,7 @@ module.exports = class TriviaCommand extends Command {
             let winner;
             const answeredUsers = new Set();
             const collector = msg.createMessageComponentCollector({
-                componentType: 'BUTTON', time: timeout, dispose: true
+                componentType: ComponentType.Button, time: timeout, dispose: true
             });
 
             collector.on('collect', interaction => {
@@ -172,7 +177,7 @@ module.exports = class TriviaCommand extends Command {
                     const payload = {
                         embeds: [questionEmbed
                             .setFooter({text: `Answered by ${winner.tag}`, iconURL: this.getAvatarURL(winner)})
-                            .addField('Winner', winner.toString())
+                            .addFields([{name: 'Winner', value:  winner.toString()}])
                         ],
                         components: []
                     };
@@ -183,8 +188,8 @@ module.exports = class TriviaCommand extends Command {
                     const payload = {
                         embeds: [questionEmbed
                             .setDescription('Sorry, time\'s up! Better luck next time.')
-                            .addField('Question', `${question}`)
-                            .addField('Correct Answer', origAnswers[0])
+                            .addFields([{name: 'Question', value:  `${question}`}])
+                            .addFields([{name: 'Correct Answer', value:  origAnswers[0]}])
                             .setFooter({text: 'No one answered correctly', iconURL: this.getAvatarURL(context.author)})
                         ],
                         components: []
@@ -196,12 +201,12 @@ module.exports = class TriviaCommand extends Command {
         }
         catch (err) {
             const payload = {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
                     .setColor('RED')],
             };
-            this.sendReply(context, payload);
+            await this.sendReply(context, payload);
         }
     }
 };

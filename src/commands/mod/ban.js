@@ -1,8 +1,6 @@
 const Command = require('../Command.js');
-const {MessageActionRow} = require('discord.js');
-const {MessageButton} = require('discord.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {ActionRowBuilder,ButtonBuilder, EmbedBuilder, ButtonStyle, ComponentType} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class BanCommand extends Command {
     constructor(client) {
@@ -67,22 +65,22 @@ module.exports = class BanCommand extends Command {
         if (!reason) reason = '`None`';
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
-        const row = new MessageActionRow()
+        const row = new ActionRowBuilder()
             .addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                     .setCustomId('proceed')
                     .setLabel('✅ Proceed')
-                    .setStyle('SUCCESS')
+                    .setStyle(ButtonStyle.Success)
             ).addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                     .setCustomId('cancel')
                     .setLabel('❌ Cancel')
-                    .setStyle('DANGER')
+                    .setStyle(ButtonStyle.Danger)
             );
 
         const payload = {
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setTitle('Ban Member')
                     .setDescription(`Do you want to ban ${member}?`)
                     .setFooter({
@@ -97,7 +95,7 @@ module.exports = class BanCommand extends Command {
             const filter = (button) => button.user.id === context.author.id;
             const collector = msg.createMessageComponentCollector({
                 filter,
-                componentType: 'BUTTON',
+                componentType: ComponentType.Button,
                 time: 15000,
                 dispose: true,
             });
@@ -110,24 +108,24 @@ module.exports = class BanCommand extends Command {
                     try {
                         await member.ban({reason: reason});
 
-                        const embed = new MessageEmbed()
+                        const embed = new EmbedBuilder()
                             .setTitle('Ban Member')
                             .setDescription(`${member} was successfully banned.`)
-                            .addField('Moderator', context.member.toString(), true)
-                            .addField('Member', member.toString(), true)
-                            .addField('Reason', reason)
+                            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+                            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+                            .addFields([{name: 'Reason', value:  reason}])
                             .setFooter({
                                 text: context.member.displayName,
                                 iconURL: this.getAvatarURL(context.author),
                             })
                             .setTimestamp()
-                            .setColor(context.guild.me.displayHexColor);
+                            .setColor(context.guild.members.me.displayHexColor);
                         msg.edit({embeds: [embed], components: []});
                         this.client.logger.info(
                             `${context.guild.name}: ${context.author.tag} banned ${member.user.tag}`
                         );
                         // Update mod log
-                        this.sendModLogMessage(context, reason, {Member: member});
+                        await this.sendModLogMessage(context, reason, {Member: member});
                     }
                     catch (e) {
                         this.sendErrorMessage(context, 0, 'The provided member is not bannable');
@@ -139,7 +137,7 @@ module.exports = class BanCommand extends Command {
                     msg.edit({
                         components: [],
                         embeds: [
-                            new MessageEmbed()
+                            new EmbedBuilder()
                                 .setTitle('Ban Member')
                                 .setDescription(`${member} Not banned - Cancelled`),
                         ],
@@ -152,7 +150,7 @@ module.exports = class BanCommand extends Command {
                 msg.edit({
                     components: [],
                     embeds: [
-                        new MessageEmbed()
+                        new EmbedBuilder()
                             .setTitle('Ban Member')
                             .setDescription(`${member} Not banned - Expired`),
                     ],

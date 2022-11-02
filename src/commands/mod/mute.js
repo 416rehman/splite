@@ -1,9 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ButtonBuilder,ActionRowBuilder, ButtonStyle, ComponentType} = require('discord.js');
 const ms = require('ms');
-const {MessageButton} = require('discord.js');
-const {MessageActionRow} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class MuteCommand extends Command {
     constructor(client) {
@@ -61,7 +59,7 @@ module.exports = class MuteCommand extends Command {
             this.done(context.author.id);
             return this.sendErrorMessage(context, 0, 'You cannot mute yourself');
         }
-        if (member === context.guild.me) {
+        if (member === context.guild.members.me) {
             this.done(context.author.id);
             return this.sendErrorMessage(context, 0, 'You cannot mute me');
         }
@@ -99,23 +97,23 @@ module.exports = class MuteCommand extends Command {
             );
         }
 
-        const row = new MessageActionRow();
+        const row = new ActionRowBuilder();
         row.addComponents(
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('proceed')
                 .setLabel('✅ Proceed')
-                .setStyle('SUCCESS')
+                .setStyle(ButtonStyle.Success)
         );
         row.addComponents(
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('cancel')
                 .setLabel('❌ Cancel')
-                .setStyle('DANGER')
+                .setStyle(ButtonStyle.Danger)
         );
 
         const payload = {
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setTitle('Mute Member')
                     .setDescription(
                         `Do you want to mute ${member} for **${ms(time, {
@@ -131,7 +129,7 @@ module.exports = class MuteCommand extends Command {
             const filter = (button) => button.user.id === context.author.id;
             const collector = msg.createMessageComponentCollector({
                 filter,
-                componentType: 'BUTTON',
+                componentType: ComponentType.Button,
                 time: 15000,
                 dispose: true,
             });
@@ -153,34 +151,34 @@ module.exports = class MuteCommand extends Command {
                             err.context
                         );
                     }
-                    const muteEmbed = new MessageEmbed()
+                    const muteEmbed = new EmbedBuilder()
                         .setTitle('Mute Member')
                         .setDescription(
                             `${member} has now been muted for **${ms(time, {
                                 long: true,
                             })}**.`
                         )
-                        .addField('Moderator', context.member.toString(), true)
-                        .addField('Member', member.toString(), true)
-                        .addField('Time', `\`${ms(time)}\``, true)
-                        .addField('Reason', reason)
+                        .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+                        .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+                        .addFields([{name: 'Time', value:  `\`${ms(time)}\``, inline:  true}])
+                        .addFields([{name: 'Reason', value:  reason}])
                         .setFooter({
                             text: this.getUserIdentifier(context.member),
                             iconURL: this.getAvatarURL(context.author)
                         })
                         .setTimestamp()
-                        .setColor(context.guild.me.displayHexColor);
+                        .setColor(context.guild.members.me.displayHexColor);
                     msg.edit({embeds: [muteEmbed], components: []});
 
                     // Unmute member
                     member.timeout = setTimeout(async () => {
                         try {
                             await member.roles.remove(muteRole);
-                            const unmuteEmbed = new MessageEmbed()
+                            const unmuteEmbed = new EmbedBuilder()
                                 .setTitle('Unmute Member')
                                 .setDescription(`${member} has been unmuted.`)
                                 .setTimestamp()
-                                .setColor(context.guild.me.displayHexColor);
+                                .setColor(context.guild.members.me.displayHexColor);
                             context.channel.send({embeds: [unmuteEmbed]});
                         }
                         catch (err) {
@@ -195,7 +193,7 @@ module.exports = class MuteCommand extends Command {
                     }, time);
 
                     // Update mod log
-                    this.sendModLogMessage(context, reason, {
+                    await this.sendModLogMessage(context, reason, {
                         Member: member,
                         Time: `\`${ms(time)}\``,
                     });
@@ -205,7 +203,7 @@ module.exports = class MuteCommand extends Command {
                     msg.edit({
                         components: [],
                         embeds: [
-                            new MessageEmbed()
+                            new EmbedBuilder()
                                 .setTitle('Mute Member')
                                 .setDescription(`${member} Not Muted - Cancelled`),
                         ],
@@ -218,7 +216,7 @@ module.exports = class MuteCommand extends Command {
                 msg.edit({
                     components: [],
                     embeds: [
-                        new MessageEmbed()
+                        new EmbedBuilder()
                             .setTitle('Mute Member')
                             .setDescription(`${member} Not Muted - Expired`),
                     ],

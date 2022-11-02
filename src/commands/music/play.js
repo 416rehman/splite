@@ -20,13 +20,14 @@ module.exports = class MusicPlayCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const query = interaction.options.getString('query') || null;
-        this.handle(query, interaction);
+        await this.handle(query, interaction);
     }
 
     async handle(query, context) {
         if (!query) {
             const queue = this.client.player.getQueue(context.guild.id);
             if (!queue) {
+                console.log('No queue found');
                 return this.sendReplyAndDelete(context, `Please enter a valid search ${context.author}... try again ? ❌`);
             }
             else {

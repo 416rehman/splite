@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class EvalCommand extends Command {
     constructor(client) {
@@ -31,7 +31,7 @@ module.exports = class EvalCommand extends Command {
                 'Please provide code to eval'
             );
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
 
         try {
             let output = eval(input);

@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {load} = require('../../utils/emojis.json');
 
 module.exports = class clydeCommand extends Command {
@@ -19,7 +19,7 @@ module.exports = class clydeCommand extends Command {
 
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(args.join(' '), message, false);
@@ -29,17 +29,17 @@ module.exports = class clydeCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const text = interaction.options.getString('text') || `${this.client.name}  is the best bot!`;
-        this.handle(text, interaction, true);
+        await this.handle(text, interaction, true);
     }
 
     async handle(text, context, isInteraction) {
         const buffer = await context.client.nekoApi.generate('clyde', {
             text: text
         });
-        const attachment = new MessageAttachment(buffer, 'clyde.png');
+        const attachment = new AttachmentBuilder(buffer, { name:  'clyde.png' });
 
         if (isInteraction) {
-            context.editReply({
+            await context.editReply({
                 files: [attachment],
             });
         }

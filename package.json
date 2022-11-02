@@ -1,11 +1,9 @@
 {
   "name": "splite",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "A fully customizable bot built with discord.js",
   "main": "app.js",
   "dependencies": {
-    "@discordjs/builders": "^0.6.0",
-    "@discordjs/rest": "^0.1.0-canary.0",
     "amethyste-api": "^1.1.5",
     "ascii-table": "0.0.9",
     "better-sqlite3": "^7.4.3",
@@ -13,8 +11,8 @@
     "common-tags": "^1.8.0",
     "cron-parser": "^4.4.0",
     "discord-banner": "^1.6.7",
-    "discord-player": "^5.1.0",
-    "discord.js": "^13.6.0",
+    "discord-player": "^5.3.2",
+    "discord.js": "^14.6.0",
     "fast-sort": "^3.0.2",
     "ffmpeg-static": "^4.4.0",
     "he": "^1.2.0",

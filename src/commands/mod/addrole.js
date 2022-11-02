@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class AddRoleCommand extends Command {
     constructor(client) {
@@ -24,7 +24,7 @@ module.exports = class AddRoleCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const rolename = interaction.options.getString('name');
-        this.handle(rolename, interaction, true);
+        await this.handle(rolename, interaction, true);
     }
 
     async handle(name, context) {
@@ -43,17 +43,17 @@ module.exports = class AddRoleCommand extends Command {
                     reason: `Created By ${this.getUserIdentifier(context.author)}(${context.author.id})`,
                 })
                 .then((role) => {
-                    const embed = new MessageEmbed()
+                    const embed = new EmbedBuilder()
                         .setTitle('Add Role')
                         .setDescription(`${role} was successfully created.`)
-                        .addField('Created By', context.member.toString(), true)
-                        .addField('Role', role.toString(), true)
+                        .addFields([{name: 'Created By', value:  context.member.toString(), inline:  true}])
+                        .addFields([{name: 'Role', value:  role.toString(), inline:  true}])
                         .setFooter({
                             text: this.getUserIdentifier(context.member),
                             iconURL: this.getAvatarURL(context.author),
                         })
                         .setTimestamp()
-                        .setColor(context.guild.me.displayHexColor);
+                        .setColor(context.guild.members.me.displayHexColor);
                     this.sendReply(context, {embeds: [embed]});
 
                     // Update mod log

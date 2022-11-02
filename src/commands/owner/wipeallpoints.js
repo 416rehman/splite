@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 const rgx = /^(?:<@!?)?(\d+)>?$/;
 
@@ -44,7 +44,7 @@ module.exports = class WipeAllPointsCommand extends Command {
             );
 
         this.client.db.users.wipeAllPoints.run(guildId);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Wipe All Points')
             .setDescription(`Successfully wiped **${guild.name}**'s points.`)
             .setFooter({
@@ -52,7 +52,7 @@ module.exports = class WipeAllPointsCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
         context.channel.send({embeds: [embed]});
     }
 };

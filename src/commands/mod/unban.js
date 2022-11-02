@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class UnbanCommand extends Command {
     constructor(client) {
@@ -32,7 +32,7 @@ module.exports = class UnbanCommand extends Command {
         const id = interaction.options.getString('userid');
         const reason = interaction.options.getString('reason');
 
-        this.handle(id, reason, interaction);
+        await this.handle(id, reason, interaction);
     }
 
     async handle(id, reason, context) {
@@ -50,25 +50,25 @@ module.exports = class UnbanCommand extends Command {
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
         await context.guild.members.unban(user, reason);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Unban Member')
             .setDescription(`${user.tag} was successfully unbanned.`)
-            .addField('Moderator', context.member.toString(), true)
-            .addField('Member', user.tag, true)
-            .addField('Reason', reason)
+            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+            .addFields([{name: 'Member', value:  user.tag, inline:  true}])
+            .addFields([{name: 'Reason', value:  reason}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
-        this.sendReply(context, {embeds: [embed]});
+        await this.sendReply(context, {embeds: [embed]});
         this.client.logger.info(
             `${context.guild.name}: ${context.author.tag} unbanned ${user.tag}`
         );
 
         // Update mod log
-        this.sendModLogMessage(context, reason, {Member: user.tag});
+        await this.sendModLogMessage(context, reason, {Member: user.tag});
     }
 };

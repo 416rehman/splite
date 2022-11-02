@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const Discord = require('discord.js');
 const {parse} = require('twemoji-parser');
 const _emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class AddEmojiCommand extends Command {
     constructor(client) {
@@ -47,7 +47,7 @@ module.exports = class AddEmojiCommand extends Command {
         const args = [...emojis];
         if (name) args.push(name);
 
-        this.handle(args, interaction, true);
+        await this.handle(args, interaction, true);
     }
 
     handle(args, context, isInteraction) {
@@ -102,7 +102,7 @@ async function addEmoji(emoji, context, command, emojiName, isInteraction) {
         const emoji = await context.guild.emojis.create(`${Link}`, `${name}`);
         const payload = {
             embeds: [
-                new Discord.MessageEmbed().setDescription(
+                new Discord.EmbedBuilder().setDescription(
                     `${_emojis.success} ${emoji} added with name "${name}"`
                 ),
             ],
@@ -122,7 +122,7 @@ async function addEmoji(emoji, context, command, emojiName, isInteraction) {
             );
             const payload = {
                 embeds: [
-                    new Discord.MessageEmbed()
+                    new Discord.EmbedBuilder()
                         .setDescription(
                             `${addedEmoji} added with name "${addedEmoji.name}"`
                         )
@@ -138,7 +138,7 @@ async function addEmoji(emoji, context, command, emojiName, isInteraction) {
         catch (e) {
             const payload = {
                 embeds: [
-                    new Discord.MessageEmbed()
+                    new Discord.EmbedBuilder()
                         .setDescription(
                             `${_emojis.fail} Failed to add emoji\n\`\`\`${e.message}\`\`\``
                         )

@@ -41,6 +41,9 @@ the repo on GitHub to help with development! ⭐
 
 # Table of Contents
 - [Setup](#setup)
+  - [Prerequisites](#prerequisites)
+  - [Configuration](#configuration)
+  - [Starting the Bot](#starting-the-bot)
 - [Modifying Functionality](#modifying-functionality)
 - [Command Handler](#command-handler)
     - [Command Handler Features](#command-handler-features)
@@ -65,15 +68,17 @@ the repo on GitHub to help with development! ⭐
 - [Commands](#commands)
 <hr/>
 
-## Setup
+### Setup
+#### Prerequisites
+1. Clone the repo and install the dependencies with `npm install`
+2. Add the emojis from `emojis.zip` to your server and update the emoji IDs in `src/utils/emoji.json` to match your server's emoji IDs
 
-1. Clone the repo
-2. Add the emojis from emojis.zip to your server
-3. Update src/utils/emoji.json to use emojis from your server
-4. Fill the config.js file - Incomplete config.js file might result in bot not functioning properly
-5. Run `npm install` in the repo directory to install dependencies
-6. Run `npm run register` to register all slash commands
-6. Run `node app.js` command to start the bot
+#### Configuration
+1. Rename the `config.example.yaml` file to `config.yaml` and fill it - Incomplete config.yaml file might result in bot not functioning properly
+
+#### Starting the Bot
+1. Run `npm run register` to register all slash commands
+2. Run `node app.js` command to start the bot
 
 *If you wish to run the bot over pm2, use the command `pm2 start`*
 <hr/>
@@ -82,6 +87,7 @@ the repo on GitHub to help with development! ⭐
 
 Commands are stored in `/src/commands/{category}/` directory<br>
 Events are stored in `/src/events/` directory<br>
+Endpoints are stored in `/src/endpoints/` directory<br>
 
 ### Command Handler
 
@@ -117,8 +123,8 @@ the `interact(interaction, args, author)` method of the Command class.
 
 // Avatar Command
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class AvatarCommand extends Command {
     // Command Info and Staging
@@ -152,7 +158,7 @@ module.exports = class AvatarCommand extends Command {
 
     // Core Logic
     handle(targetUser, context) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setDescription(`[Avatar URL](${this.getAvatarURL(targetUser)})`)
             .setTitle(`${this.getUserIdentifier(targetUser)}'s Avatar`)
             .setImage(this.getAvatarURL(targetUser));
@@ -173,8 +179,8 @@ module.exports = class AvatarCommand extends Command {
 - **MOD:** Commands that can be used by server moderators to manage the server.
 - **MUSIC:** Commands that are used by the music system.
 - **ADMIN:** Commands that can be used by server admins to manage the server.
-- **MANAGER:** Commands that can be used by bot managers. **NOTE** These commands can ONLY be used by bot managers (set in config.json).
-- **OWNER:**  Commands that can be used by the bot owner. **NOTE** These commands can ONLY be used by the bot owner (set in config.json).
+- **MANAGER:** Commands that can be used by bot managers. **NOTE** These commands can ONLY be used by bot managers (set in config.yaml).
+- **OWNER:**  Commands that can be used by the bot owner. **NOTE** These commands can ONLY be used by the bot owner (set in config.yaml).
 
 #### Restrictions
 These are the restrictions that can be set for a command.
@@ -209,9 +215,9 @@ Example:
 ```js
 type: 'OWNER' // Default is 'MISC'
 ```
-Make sure to add the bot owners' ID(s) to the `owners` array in the config.json file.
+Make sure to add the bot owners' ID(s) to the `owners` array in the config.yaml file.
 ```js
-/// config.json
+/// config.yaml
   "owners": ["123456789012346578", "123456789012346579"], // Add the bot owners' ID(s) here
 ```
 
@@ -222,9 +228,9 @@ Example:
 ```js
 type: 'MANAGER' // Default is 'MISC'
 ```
-Make sure to add the bot managers' ID(s) to the `managers` array in the config.json file.
+Make sure to add the bot managers' ID(s) to the `managers` array in the config.yaml file.
 ```js
-/// config.json
+/// config.yaml
   "managers": ["123456789012346578", "123456789012346579"], // Add the bot managers' ID(s) here
 ```
 
@@ -277,9 +283,9 @@ module.exports = class prefixCommand extends Command {
     async run(interaction, args) {
         const prefix = interaction.client.db.settings.selectPrefix.pluck().get(interaction.guild_id);
         message.reply({
-            embeds: [new MessageEmbed().setTitle(`${interaction.client.config.name}'s Prefix`)
+            embeds: [new EmbedBuilder().setTitle(`${interaction.client.config.name}'s Prefix`)
                 .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
-                .addField(`Current Prefix`, `**\`${prefix}\`**`)
+                .addFields([{name: `Current Prefix`, value:  `**\`${prefix}\`**`}])
                 .setThumbnail( this.getAvatarURL(interaction.client.user))
                 .setFooter({
                     text: interaction.author.tag,
@@ -316,7 +322,7 @@ examples: ["An example of how to use the command"],
 cooldown: 2 // The cooldown of the command in seconds
 nsfwOnly: false // If the command can only be used in NSFW channels
 voiceChannelOnly: false // If the command can only be used in voice channels
-disabled: false // If true, the command will not be registered and will not be able to be used. Config.json also provides a `disabledCommands` option to disable commands globally. Config.json has priority over this option.
+disabled: false // If true, the command will not be registered and will not be able to be used. config.yaml also provides a `disabledCommands` option to disable commands globally. config.yaml has priority over this option.
 exclusive: false // If the command is exclusive, the user will not be able to call the command again until the done() method is called
 slashCommand: new SlashCommandBuilder() // Builds a slash command using the name and description. Use the `interact` method to handle logic.
 ```
@@ -324,7 +330,7 @@ slashCommand: new SlashCommandBuilder() // Builds a slash command using the name
 ### Endpoint Handler
 Splite also comes packed with a lightweight endpoint handler, powered by KoaJS. 
 This endpoint handler can help in creating a REST API for your bot, or by listening for external webhooks.
-Endpoint handler only work if the webserver is running, you can enable the webserver by setting `webserver.enabled` to `true` inside the `config.json` file.
+Endpoint handler only work if the webserver is running, you can enable the webserver by setting `webserver.enabled` to `true` inside the `config.yaml` file.
 
 #### Endpoint Handler Features
 - Authorization: Set the `authorization` field to the authorization key you expect to receive from the webhook.
@@ -410,7 +416,7 @@ Instead of using the TopGG API over and over again, TopGG also provides a webhoo
 Let's create an endpoint handler that TopGG will send us the user's vote to.
 
 ###### Prerequisites
-Before you can start creating and using endpoints, you must tell Splite you wish to do so by setting `webserver.enabled` to `true` in the `config.json` file.
+Before you can start creating and using endpoints, you must tell Splite you wish to do so by setting `webserver.enabled` to `true` in the `config.yaml` file.
 ###### Create an endpoint
 - Go to the `src/endpoints` directory, and create a new **folder** called `topgg`.
 - Inside the `topgg` folder, create a new file called `vote.js`.
@@ -461,9 +467,9 @@ Splite provides 2 modes for integrating with TopGG.
 1. **`api_mode`** (Default) uses TopGG API, caches the votes in memory, does not interact with database, and comes with the above mentioned limitation (5 minutes wait after voting)
 2. **`webhook_mode`** uses TopGG webhooks, does not use the cache and stores/retrieves the votes in database. Requires endpoint to be accessible by TopGG and is much more reliable.
 
-To use TopGG webhooks, first make sure Splite's webserver is enabled (`webserver.enabled` set to `true` in `config.json`) is accessible from the internet by sending a GET request to `<yourIP>:17170`, if you are greeted with a 200 OK response, you can proceed to the next step.
+To use TopGG webhooks, first make sure Splite's webserver is enabled (`webserver.enabled` set to `true` in `config.yaml`) is accessible from the internet by sending a GET request to `<yourIP>:17170`, if you are greeted with a 200 OK response, you can proceed to the next step.
 
-Simply set `webserver.enabled` to `true` and `apiKeys.topGG.useMode` to `webhook_mode`in the `config.json` file.
+Simply set `webserver.enabled` to `true` and `apiKeys.topGG.useMode` to `webhook_mode`in the `config.yaml` file.
 Then set the Webhook URL in [TopGG](https://docs.top.gg/resources/webhooks/) to your endpoint URL. (Default: `http://<yourIP>:17170/topgg/vote`)
 Make sure to set the `apiKeys.topGG.webhook_mode.authorization` to the authorization-string provided by TopGG to make sure only TopGG can access the webhook.
 

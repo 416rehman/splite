@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -48,7 +48,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
         if (farewellMessage && farewellMessage.length > 1024)
             farewellMessage = farewellMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Farewells`')
 
             .addField(
@@ -88,7 +88,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+        if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
             const payload = `${fail} The channel must be a text channel. Please try again.`;
 
             if (isInteraction) context.editReply(payload);

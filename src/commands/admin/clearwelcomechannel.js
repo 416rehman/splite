@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -45,7 +45,7 @@ module.exports = class clearWelcomeChannelCommand extends Command {
         if (welcomeMessage && welcomeMessage.length > 1024)
             welcomeMessage = welcomeMessage.slice(0, 1021) + '...';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Welcomes`')
             .setDescription(
                 `The \`welcome channel\` was successfully cleared. ${success}`
@@ -60,7 +60,7 @@ module.exports = class clearWelcomeChannelCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Clear if no args provided
         this.client.db.settings.updateWelcomeChannelId.run(

@@ -1,4 +1,4 @@
-const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
+const {EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType} = require('discord.js');
 
 /**
  * Reaction Menu class
@@ -49,7 +49,7 @@ module.exports = class LeaderboardMenu {
 
         /**
          * The embed passed to the Reaction Menu
-         * @type {MessageEmbed}
+         * @type {EmbedBuilder}
          */
         this.embed = embed;
 
@@ -85,29 +85,29 @@ module.exports = class LeaderboardMenu {
 
         /**
          * The buttons to be displayed
-         * @type {MessageButton[]}
+         * @type {ButtonBuilder[]}
          */
         this.buttons = [
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('first')
                 .setLabel('⏮️')
-                .setStyle('PRIMARY'),
-            new MessageButton()
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
                 .setCustomId('previous')
                 .setLabel('◀️')
-                .setStyle('PRIMARY'),
-            new MessageButton()
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
                 .setCustomId('next')
                 .setLabel('▶️')
-                .setStyle('PRIMARY'),
-            new MessageButton()
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
                 .setCustomId('last')
                 .setLabel('⏭️')
-                .setStyle('PRIMARY'),
-            new MessageButton()
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
                 .setCustomId('stop')
                 .setLabel('⏹️')
-                .setStyle('DANGER'),
+                .setStyle(ButtonStyle.Danger),
         ];
 
         /**
@@ -134,7 +134,7 @@ module.exports = class LeaderboardMenu {
          */
         this.timeout = timeout;
 
-        const first = new MessageEmbed(this.json);
+        const first = new EmbedBuilder(this.json);
         const description = this.arr
             ? this.arr.slice(this.current, this.interval)
             : null;
@@ -152,7 +152,7 @@ module.exports = class LeaderboardMenu {
                 )
                 .setDescription(description.join('\n'));
 
-        const row = new MessageActionRow();
+        const row = new ActionRowBuilder();
         this.buttons.forEach((button) => row.addComponents(button));
         this.channel
             .send({
@@ -181,7 +181,7 @@ module.exports = class LeaderboardMenu {
         };
         const collector = this.message.createMessageComponentCollector({
             filter,
-            componentType: 'BUTTON',
+            componentType: ComponentType.Button,
             time: this.timeout,
         });
 
@@ -206,7 +206,7 @@ module.exports = class LeaderboardMenu {
     first() {
         if (this.current === 0) return;
         this.current = 0;
-        return new MessageEmbed(this.json)
+        return new EmbedBuilder(this.json)
             .setTitle(
                 this.embed.title +
                 ' ' +
@@ -226,7 +226,7 @@ module.exports = class LeaderboardMenu {
         if (this.current === 0) return;
         this.current -= this.interval;
         if (this.current < 0) this.current = 0;
-        return new MessageEmbed(this.json)
+        return new EmbedBuilder(this.json)
             .setTitle(
                 this.embed.title +
                 ' ' +
@@ -252,7 +252,7 @@ module.exports = class LeaderboardMenu {
             this.current + this.interval >= this.max
                 ? this.max
                 : this.current + this.interval;
-        return new MessageEmbed(this.json)
+        return new EmbedBuilder(this.json)
             .setTitle(
                 this.embed.title +
                 ' ' +
@@ -270,7 +270,7 @@ module.exports = class LeaderboardMenu {
             return;
         this.current = cap;
         if (this.current === this.max) this.current -= this.interval;
-        return new MessageEmbed(this.json)
+        return new EmbedBuilder(this.json)
             .setTitle(
                 this.embed.title +
                 ' ' +

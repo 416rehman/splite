@@ -1,8 +1,6 @@
 const Command = require('../Command.js');
-const {MessageButton} = require('discord.js');
-const {MessageActionRow} = require('discord.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {ButtonBuilder,ActionRowBuilder, EmbedBuilder, ButtonStyle, ComponentType} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class KickCommand extends Command {
     constructor(client) {
@@ -67,23 +65,23 @@ module.exports = class KickCommand extends Command {
         if (!reason) reason = '`None`';
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
-        const row = new MessageActionRow();
+        const row = new ActionRowBuilder();
         row.addComponents(
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('proceed')
                 .setLabel('✅ Proceed')
-                .setStyle('SUCCESS')
+                .setStyle(ButtonStyle.Success)
         );
         row.addComponents(
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('cancel')
                 .setLabel('❌ Cancel')
-                .setStyle('DANGER')
+                .setStyle(ButtonStyle.Danger)
         );
 
         const payload = {
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setTitle('Kick Member')
                     .setDescription(`Do you want to kick ${member}?`)
                     .setFooter({
@@ -97,7 +95,7 @@ module.exports = class KickCommand extends Command {
             const filter = (button) => button.user.id === context.author.id;
             const collector = msg.createMessageComponentCollector({
                 filter,
-                componentType: 'BUTTON',
+                componentType: ComponentType.Button,
                 time: 15000,
                 dispose: true,
             });
@@ -109,12 +107,12 @@ module.exports = class KickCommand extends Command {
                     try {
                         await member.kick(reason);
 
-                        const embed = new MessageEmbed()
+                        const embed = new EmbedBuilder()
                             .setTitle('Kick Member')
                             .setDescription(`${member} was successfully kicked.`)
-                            .addField('Moderator', context.member.toString(), true)
-                            .addField('Member', member.toString(), true)
-                            .addField('Reason', reason)
+                            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+                            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+                            .addFields([{name: 'Reason', value:  reason}])
                             .setFooter({
                                 text: context.member.displayName,
                                 iconURL: context.author.displayAvatarURL({
@@ -122,14 +120,14 @@ module.exports = class KickCommand extends Command {
                                 }),
                             })
                             .setTimestamp()
-                            .setColor(context.guild.me.displayHexColor);
+                            .setColor(context.guild.members.me.displayHexColor);
                         msg.edit({embeds: [embed], components: []});
                         this.client.logger.info(
                             `${context.guild.name}: ${context.author.tag} kicked ${member.user.tag}`
                         );
                         updated = true;
                         // Update mod log
-                        this.sendModLogMessage(context, reason, {Member: member});
+                        await this.sendModLogMessage(context, reason, {Member: member});
                     }
                     catch (e) {
                         this.sendErrorMessage(context, 0, 'Failed to kick member - Not kickable');
@@ -142,7 +140,7 @@ module.exports = class KickCommand extends Command {
                     msg.edit({
                         components: [],
                         embeds: [
-                            new MessageEmbed()
+                            new EmbedBuilder()
                                 .setTitle('Kick Member')
                                 .setDescription(`${member} Not Kicked - Cancelled`),
                         ],
@@ -155,7 +153,7 @@ module.exports = class KickCommand extends Command {
                 msg.edit({
                     components: [],
                     embeds: [
-                        new MessageEmbed()
+                        new EmbedBuilder()
                             .setTitle('Kick Member')
                             .setDescription(`${member} Not Kicked - Expired`),
                     ],

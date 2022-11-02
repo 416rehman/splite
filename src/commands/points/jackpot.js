@@ -1,10 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-
+const {EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {MessageButton} = require('discord.js');
-const {MessageActionRow} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class raffleCommand extends Command {
     constructor(client) {
@@ -31,7 +28,7 @@ module.exports = class raffleCommand extends Command {
         await interaction.deferReply();
         const amount = interaction.options.getNumber('amount');
 
-        this.handle(amount, interaction, true);
+        await this.handle(amount, interaction, true);
     }
 
     async handle(amount, context, isInteraction) {
@@ -53,40 +50,40 @@ module.exports = class raffleCommand extends Command {
         }
         if (amount > this.client.config.stats.jackpot.limit) amount = this.client.config.stats.jackpot.limit;
 
-        const row = new MessageActionRow();
-        row.addComponents(new MessageButton()
+        const row = new ActionRowBuilder();
+        row.addComponents(new ButtonBuilder()
             .setCustomId('match')
             .setLabel('Match the jackpot!')
-            .setStyle('PRIMARY'));
-        row.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Primary));
+        row.addComponents(new ButtonBuilder()
             .setCustomId('10percent')
             .setLabel(`Raise ${parseInt(Math.ceil(amount * 0.1))}`)
-            .setStyle('SECONDARY'));
-        row.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Secondary));
+        row.addComponents(new ButtonBuilder()
             .setCustomId('half')
             .setLabel(`Raise ${parseInt(Math.ceil(amount * 0.5))}`)
-            .setStyle('SECONDARY'));
-        row.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Secondary));
+        row.addComponents(new ButtonBuilder()
             .setCustomId('all')
             .setLabel('Go all in!')
-            .setStyle('DANGER'));
-        const row2 = new MessageActionRow();
-        row2.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Danger));
+        const row2 = new ActionRowBuilder();
+        row2.addComponents(new ButtonBuilder()
             .setCustomId('2')
             .setLabel(`Raise ${parseInt(Math.ceil(Math.min(amount * 2, this.client.config.stats.jackpot.limit)))} points`)
-            .setStyle('SECONDARY'));
-        row2.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Secondary));
+        row2.addComponents(new ButtonBuilder()
             .setCustomId('4')
             .setLabel(`Raise ${parseInt(Math.ceil(Math.min(amount * 4, this.client.config.stats.jackpot.limit)))} points`)
-            .setStyle('SECONDARY'));
-        row2.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Secondary));
+        row2.addComponents(new ButtonBuilder()
             .setCustomId('8')
             .setLabel(`Raise ${parseInt(Math.ceil(Math.min(amount * 8, this.client.config.stats.jackpot.limit)))} points`)
-            .setStyle('SECONDARY'));
-        row2.addComponents(new MessageButton()
+            .setStyle(ButtonStyle.Secondary));
+        row2.addComponents(new ButtonBuilder()
             .setCustomId('16')
             .setLabel(`Raise ${parseInt(Math.ceil(Math.min(amount * 16, this.client.config.stats.jackpot.limit)))} points`)
-            .setStyle('SECONDARY'));
+            .setStyle(ButtonStyle.Secondary));
 
         const entries = {
             [context.author.id]: {
@@ -110,10 +107,10 @@ module.exports = class raffleCommand extends Command {
             return this.client.config.stats.jackpot.maxEntries - currentLength > 0 ? Math.min(this.client.config.stats.jackpot.maxEntries, 25) - currentLength : 0;
         };
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`💰 Lottery - ${remainingEntries()} Entries Left 🤑`)
             .setDescription(`A new lotto has been started!\n\nThe jackpot is currently at **${calculateJackpot()}** ${emojis.point}.\n\nEnter your bet below!`)
-            .addField(`${this.getUserIdentifier(context.author)} (100%)`, `${amount} ${emojis.point}`)
+            .addFields([{name: `${this.getUserIdentifier(context.author)} (100%)`, value:  `${amount} ${emojis.point}`}])
             .setImage('https://media0.giphy.com/media/eTrYclI5fuEIzuTo3A/giphy.gif?cid=ecf05e47pxm8zd60eipj09wd4p3hshj9ph0xst824qb4lh89&rid=giphy.gif')
             .setFooter({
                 text: 'Ends in 30 seconds'
@@ -172,7 +169,7 @@ module.exports = class raffleCommand extends Command {
             }, isInteraction);
 
             const collector = msg.createMessageComponentCollector({
-                componentType: 'BUTTON', time: 30000, dispose: true
+                componentType: ComponentType.Button, time: 30000, dispose: true
             });
 
             collector.on('collect', (b) => {

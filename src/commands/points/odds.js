@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class WipePointsCommand extends Command {
     constructor(client) {
@@ -20,14 +20,14 @@ module.exports = class WipePointsCommand extends Command {
         const member = (await this.getGuildMember(message.guild, args[0])) || message.member;
         if (!member) return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
 
-        this.handle(member, message, false);
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || interaction.member;
 
-        this.handle(member, interaction, true);
+        await this.handle(member, interaction, true);
     }
 
     async handle(member, context, isInteraction) {
@@ -48,21 +48,21 @@ module.exports = class WipePointsCommand extends Command {
         const shipOddsTime = context.guild.shippingOdds.get(context.author.id);
         const hasRiggedShipping = shipOddsTime && new Date().getTime() - shipOddsTime < 1800000;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${this.getUserIdentifier(member)}'s Odds`)
             .setThumbnail(this.getAvatarURL(member))
             .setDescription(
                 `${hasVoted ? `${emojis.Voted} **+${Math.ceil(gamblingModifier * 100)}**% boost to gambling odds\n${emojis.Voted} **+${Math.ceil(robbingModifier * 100)}**% boost to robbing odds.` : `To boost your odds, use the \`${prefix}vote\` command.`}\n` +
                 `${hasRiggedShipping ? `${emojis.Voted} Ship Odds are in your favour.` : `To rig ship odds, use the \`${prefix}rig\` command`}`)
 
-            .addField('Gambling Win Odds', `**${gamblingOdds}%** ${gamblingProgressBar}\n\n**Robbing Success Odds**\n**${robbingOdds}%** ${robbingProgressBar}`)
-            .addField('Voted?', `${hasVoted ? `${emojis.success}` : `${emojis.fail}`}`, true)
-            .addField('Shipping Rigged?', `${hasRiggedShipping ? `${emojis.success}` : `${emojis.fail}`}`, true)
+            .addFields([{name: 'Gambling Win Odds', value:  `**${gamblingOdds}%** ${gamblingProgressBar}\n\n**Robbing Success Odds**\n**${robbingOdds}%** ${robbingProgressBar}`}])
+            .addFields([{name: 'Voted?', value:  `${hasVoted ? `${emojis.success}` : `${emojis.fail}`}`, inline:  true}])
+            .addFields([{name: 'Shipping Rigged?', value:  `${hasRiggedShipping ? `${emojis.success}` : `${emojis.fail}`}`, inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author)
             });
 
-        this.sendReply(context, {embeds: [embed]}, isInteraction);
+        await this.sendReply(context, {embeds: [embed]}, isInteraction);
     }
 };

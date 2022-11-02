@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const {oneLine} = require('common-tags');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
 
 module.exports = class YoMommaCommand extends Command {
@@ -24,13 +24,13 @@ module.exports = class YoMommaCommand extends Command {
     async run(message, args) {
         const member = await this.getGuildMember(message.guild, args[0]);
 
-        this.handle(member, message, false);
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user');
-        this.handle(member, interaction, true);
+        await this.handle(member, interaction, true);
     }
 
     async handle(member, context, isInteraction) {
@@ -43,7 +43,7 @@ module.exports = class YoMommaCommand extends Command {
 
             const payload = {
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setTitle('🍼  Yo Mamma  🍼')
                         .setDescription(member ? `${member}, ${joke}` : `${joke}`)
                         .setFooter({
@@ -54,17 +54,17 @@ module.exports = class YoMommaCommand extends Command {
                 ]
             };
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
         }
         catch (err) {
             const payload = {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
                     .setColor('RED')]
             };
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
         }
     }

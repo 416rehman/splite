@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class ServerStaffCommand extends Command {
     constructor(client) {
@@ -66,11 +66,11 @@ module.exports = class ServerStaffCommand extends Command {
         else if (!adminRole) admins = 'No Admin Role is set. Please use /adminrole command';
         else admins = 'No admins found.';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`Server Staff List [${modList.length + adminList.length}]`)
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addField(`Admins [${adminList.length}]`, admins, true)
-            .addField(`Mods [${modList.length}]`, mods, true)
+            .addFields([{name: `Admins [${adminList.length}]`, value:  admins, inline:  true}])
+            .addFields([{name: `Mods [${modList.length}]`, value:  mods, inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),

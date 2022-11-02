@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {fail} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class AiCommand extends Command {
     constructor(client) {
@@ -28,7 +28,7 @@ module.exports = class AiCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction.options.getString('question'), interaction, true);
+        await this.handle(interaction.options.getString('question'), interaction, true);
     }
 
     async handle(question, context, isInteraction) {
@@ -41,7 +41,7 @@ module.exports = class AiCommand extends Command {
         });
 
         if (response.data.choices) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setDescription(response.data.choices.map(c => c.text).join('\n'))
                 .setTitle(question)
                 .setAuthor({
@@ -55,7 +55,7 @@ module.exports = class AiCommand extends Command {
                 .setTimestamp();
 
             if (isInteraction) {
-                context.editReply({
+                await context.editReply({
                     embeds: [embed]
                 });
             }

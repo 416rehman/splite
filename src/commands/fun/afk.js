@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {idle} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class AfkCommand extends Command {
     constructor(client) {
@@ -24,7 +24,7 @@ module.exports = class AfkCommand extends Command {
     async interact(interaction) {
         await interaction.deferReply();
         const messageText = interaction.options.getString('message');
-        this.handle(messageText, interaction);
+        await this.handle(messageText, interaction);
     }
 
     async handle(messageText, context) {

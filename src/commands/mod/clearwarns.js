@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {EmbedBuilder} = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class ClearWarnsCommand extends Command {
     constructor(client) {
@@ -53,19 +53,19 @@ module.exports = class ClearWarnsCommand extends Command {
 
         this.client.db.users.updateWarns.run('', member.id, context.guild.id);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Clear Warns')
             .setDescription(`${member}'s warns have been successfully cleared.`)
-            .addField('Moderator', context.member.toString(), true)
-            .addField('Member', member.toString(), true)
-            .addField('Warn Count', '`0`', true)
-            .addField('Reason', reason)
+            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
+            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+            .addFields([{name: 'Warn Count', value:  '`0`', inline:  true}])
+            .addFields([{name: 'Reason', value:  reason}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         this.sendReply(context, {embeds: [embed]});
 

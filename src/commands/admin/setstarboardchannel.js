@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -32,7 +32,7 @@ module.exports = class SetStarboardChannelCommand extends Command {
     handle(channel, context, isInteraction) {
         const starboardChannelId = this.client.db.settings.selectStarboardChannelId.pluck().get(context.guild.id);
         const oldStarboardChannel = context.guild.channels.cache.get(starboardChannelId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Starboard`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -58,7 +58,7 @@ module.exports = class SetStarboardChannelCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+        if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
             const payload = `${fail} I can't find that channel.`;
             if (isInteraction) context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);

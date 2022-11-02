@@ -1,10 +1,8 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ButtonStyle, ActionRowBuilder, ComponentType, ButtonBuilder} = require('discord.js');
 const ButtonMenu = require('../ButtonMenu.js');
 const emojis = require('../../utils/emojis.json');
-const {MessageActionRow} = require('discord.js');
-const {MessageButton} = require('discord.js');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class modActivityCommand extends Command {
     constructor(client) {
@@ -31,7 +29,7 @@ module.exports = class modActivityCommand extends Command {
     async run(message, args) {
         const target = args[0] ? await this.getGuildMemberOrRole(message.guild, args[0]) : null;
         let days = args[1] ? parseInt(args[1]) : 1000;
-        this.handle(target, days, message);
+        await this.handle(target, days, message);
     }
 
     async interact(interaction) {
@@ -40,23 +38,23 @@ module.exports = class modActivityCommand extends Command {
         const user = interaction.options.getMember('user');
         const days = interaction.options.getInteger('days') || 1000;
 
-        this.handle(role || user, days, interaction);
+        await this.handle(role || user, days, interaction);
     }
 
     async handle(target, days, context) {
-        const activityButton = new MessageButton()
+        const activityButton = new ButtonBuilder()
             .setCustomId('activity')
             .setLabel('Activity Leaderboard')
-            .setStyle('SECONDARY')
+            .setStyle(ButtonStyle.Secondary)
             .setEmoji(emojis.info.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
 
-        const pointsButton = new MessageButton()
+        const pointsButton = new ButtonBuilder()
             .setCustomId('points')
             .setLabel('Points Leaderboard')
-            .setStyle('SECONDARY')
+            .setStyle(ButtonStyle.Secondary)
             .setEmoji(emojis.point.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
 
-        const row = new MessageActionRow()
+        const row = new ActionRowBuilder()
             .addComponents(activityButton)
             .addComponents(pointsButton);
 
@@ -85,7 +83,7 @@ module.exports = class modActivityCommand extends Command {
     }
 
     async sendMultipleMessageCount(context, title, days = 1000, row, role) {
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         if (days > 1000 || days < 0) days = 1000;
 
         let moderators;
@@ -150,7 +148,7 @@ module.exports = class modActivityCommand extends Command {
                     const filter = (button) => button.user.id === context.author.id;
                     const collector = m.createMessageComponentCollector({
                         filter,
-                        componentType: 'BUTTON',
+                        componentType: ComponentType.Button,
                         time: 120000,
                         dispose: true,
                     });
@@ -184,7 +182,7 @@ module.exports = class modActivityCommand extends Command {
         const messages = this.client.db.activities.getModerations
             .pluck()
             .get(target.id, context.guild.id, days || 1000);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${target.displayName}'s ${days < 1000 && days > 0 ? days + ' Day ' : ''}Activity`)
             .setDescription(`${target} has performed **${messages || 0} moderations** ${days === 1000 ? 'so far!' : 'in the last ' + days + ' days!'}`);
 

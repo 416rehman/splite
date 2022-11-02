@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class PrefixCommand extends Command {
     constructor(client) {
@@ -18,7 +18,7 @@ module.exports = class PrefixCommand extends Command {
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        await this.handle(interaction, true);
     }
 
     async handle(context, isInteraction) {
@@ -26,7 +26,7 @@ module.exports = class PrefixCommand extends Command {
 
         const payload = {
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setTitle(`${this.client.name}'s Prefix`)
                     .setThumbnail(
                         `${
@@ -34,8 +34,8 @@ module.exports = class PrefixCommand extends Command {
                             'https://i.imgur.com/B0XSinY.png'
                         }`
                     )
-                    .addField('Prefix', `\`${prefix}\``, true)
-                    .addField('Example', `\`${prefix}ping\``, true)
+                    .addFields([{name: 'Prefix', value:  `\`${prefix}\``, inline:  true}])
+                    .addFields([{name: 'Example', value:  `\`${prefix}ping\``, inline:  true}])
                     .setFooter({text: `To change the prefix, type ${prefix}setprefix`})
                     .setTimestamp()
             ]

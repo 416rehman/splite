@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 
 module.exports = class clearModRoleCommand extends Command {
@@ -31,7 +31,7 @@ module.exports = class clearModRoleCommand extends Command {
         const oldModRole =
             context.guild.roles.cache.find((r) => r.id === modRoleId) || '`None`';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(
@@ -47,7 +47,7 @@ module.exports = class clearModRoleCommand extends Command {
         this.client.db.settings.updateModRoleId.run(null, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addField('Mod Role', `${oldModRole} ➔ \`None\``)],
+            embeds: [embed.addFields([{name: 'Mod Role', value:  `${oldModRole} ➔ \`None\``}])],
         });
 
         if (isInteraction) context.editReply(payload);

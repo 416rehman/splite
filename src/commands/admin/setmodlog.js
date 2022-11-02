@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -34,7 +34,7 @@ module.exports = class SetModLogCommand extends Command {
             .pluck()
             .get(context.guild.id);
         const oldModLog = context.guild.channels.cache.get(modLogId) || '`None`';
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
@@ -43,14 +43,14 @@ module.exports = class SetModLogCommand extends Command {
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp()
-            .setColor(context.guild.me.displayHexColor);
+            .setColor(context.guild.members.me.displayHexColor);
 
         // Show current mod log
         if (!channel) {
             const payload = ({
                 embeds: [
                     embed
-                        .addField('Current Mod Log', `${oldModLog}` || '`None`')
+                        .addFields([{name: 'Current Mod Log', value:  `${oldModLog}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
@@ -62,7 +62,7 @@ module.exports = class SetModLogCommand extends Command {
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
 
-        if (!channel || channel.type != 'GUILD_TEXT' || !channel.viewable) {
+        if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} The channel you provided is invalid. Please provide a valid text channel.`;
             if (isInteraction) context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
@@ -73,7 +73,7 @@ module.exports = class SetModLogCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addField('Mod Log', `${oldModLog} ➔ ${channel}`)
+                .addFields([{name: 'Mod Log', value:  `${oldModLog} ➔ ${channel}`}])
                 .setDescription(
                     `The \`mod log\` was successfully updated. ${success}\nUse \`clearmodlog\` to clear the current \`mod log\`.`
                 )],

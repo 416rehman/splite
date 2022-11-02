@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class TotalPointsCommand extends Command {
     constructor(client) {
@@ -38,11 +38,11 @@ module.exports = class TotalPointsCommand extends Command {
         const points = this.client.db.users.selectTotalPoints
             .pluck()
             .get(member.id, context.guild.id);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${this.getUserIdentifier(member)}'s Total Points`)
             .setThumbnail(this.getAvatarURL(member))
-            .addField('Member', member.toString(), true)
-            .addField(`Points ${emojis.point}`, `\`${points}\``, true)
+            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+            .addFields([{name: `Points ${emojis.point}`, value:  `\`${points}\``, inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),

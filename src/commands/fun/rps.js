@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {load} = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+const {SlashCommandBuilder} = require('discord.js');
 const rps = ['scissors', 'rock', 'paper'];
 const res = ['Scissors :v:', 'Rock :fist:', 'Paper :raised_hand:'];
 
@@ -14,11 +14,10 @@ module.exports = class RockPaperScissorsCommand extends Command {
             type: client.types.FUN,
             examples: ['rps rock'],
             slashCommand: new SlashCommandBuilder().addStringOption(s => s.setName('choice').setRequired(true).setDescription('Your choice').addChoices(
-                [
-                    ['rock', 'rock'],
-                    ['paper', 'paper'],
-                    ['scissors', 'scissors'],
-                ])),
+                {name: 'rock', value: 'rock'},
+                {name: 'paper', value: 'paper'},
+                {name: 'scissors', value: 'scissors'},
+            )),
         });
     }
 
@@ -34,7 +33,7 @@ module.exports = class RockPaperScissorsCommand extends Command {
 
         await message.channel
             .send({
-                embeds: [new MessageEmbed().setDescription(`${load} Loading...`)],
+                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
             }).then(msg => {
                 message.loadingMessage = msg;
                 this.handle(userChoice || 6, message, false);
@@ -57,11 +56,11 @@ module.exports = class RockPaperScissorsCommand extends Command {
         else result = `**${context.author}** wins!`;
 
         const payload = {
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setTitle(`${this.getUserIdentifier(context.author)} vs. ${this.client.name}`)
-                .addField('Your Choice:', res[userChoice], true)
-                .addField(`${this.client.name}'s Choice`, res[botChoice], true)
-                .addField('Result', result, true)
+                .addFields([{name: 'Your Choice:', value: res[userChoice], inline: true}])
+                .addFields([{name: `${this.client.name}'s Choice`, value: res[botChoice], inline: true}])
+                .addFields([{name: 'Result', value: result, inline: true}])
                 .setFooter({
                     text: this.getUserIdentifier(context.author),
                     iconURL: this.getAvatarURL(context.author),

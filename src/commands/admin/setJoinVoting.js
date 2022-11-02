@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder, ChannelType} = require('discord.js');
 const {success, fail} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -36,7 +36,7 @@ module.exports = class setJoinVoting extends Command {
         const emoji = interaction.options.getString('emoji');
         const channel = interaction.options.getChannel('channel');
 
-        this.handle(messageID, emoji, channel, interaction, true);
+        await this.handle(messageID, emoji, channel, interaction, true);
     }
 
     async handle(messageId, emoji, channel, context, isInteraction) {
@@ -51,29 +51,29 @@ module.exports = class setJoinVoting extends Command {
 
         // Show current settings
         if (!messageId || !emoji || !channel) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Settings: `Join Voting`')
                 .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setDescription(this.description)
-                .addField('Usage', `\`${this.usage}\``)
+                .addFields([{name: 'Usage', value:  `\`${this.usage}\``}])
                 .setFooter({
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp()
-                .setColor(context.guild.me.displayHexColor);
+                .setColor(context.guild.members.me.displayHexColor);
 
             const emoji = (await context.guild.emojis.cache.find((e) => e.id === joinvotingEmoji)) || joinvotingEmoji;
 
             const payload = ({
                 embeds: [
                     embed
-                        .addField('Status', oldStatus, true)
+                        .addFields([{name: 'Status', value:  oldStatus, inline:  true}])
                         .addField(
                             'Current MessageID',
                             `\`${joinvotingMessageId || 'None'}\``
                         )
-                        .addField('Current Emoji', `${emoji || '`None`'}`)
+                        .addFields([{name: 'Current Emoji', value:  `${emoji || '`None`'}`}])
                         .addField(
                             'Current ChannelID',
                             `${
@@ -85,7 +85,7 @@ module.exports = class setJoinVoting extends Command {
                 ],
             });
 
-            if (isInteraction) context.editReply(payload);
+            if (isInteraction) await context.editReply(payload);
             else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
         }
         else {
@@ -101,7 +101,7 @@ module.exports = class setJoinVoting extends Command {
                 catch (err) {
                     const payload = `${fail} I could not find the message with the ID \`${messageId}\``;
 
-                    if (isInteraction) context.editReply(payload);
+                    if (isInteraction) await context.editReply(payload);
                     else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
                     return;
                 }
@@ -111,7 +111,7 @@ module.exports = class setJoinVoting extends Command {
                 const payload = isInteraction ? `${fail} Please provide a valid messageID. A messageID is a 18 digit number that can be found by right clicking a message and selecting "Copy ID".`
                     : `${fail} First argument needs to be a messageID. Example: setjoinvoting 832878346979377193 🦶 #generalChannel`;
 
-                if (isInteraction) context.editReply(payload);
+                if (isInteraction) await context.editReply(payload);
                 else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
                 return;
             }
@@ -135,7 +135,7 @@ module.exports = class setJoinVoting extends Command {
                 catch (err) {
                     const payload = `${fail} I could not find the emoji with the ID \`${emoji}\``;
 
-                    if (isInteraction) context.editReply(payload);
+                    if (isInteraction) await context.editReply(payload);
                     else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
                     return;
                 }
@@ -143,7 +143,7 @@ module.exports = class setJoinVoting extends Command {
             else {
                 const payload = isInteraction ? `${fail} Please provide a valid emoji.` : `${fail} Second argument needs to be an emoji. Example: setjoinvoting 832878346979377193 🦶 #generalChannel`;
 
-                if (isInteraction) context.editReply(payload);
+                if (isInteraction) await context.editReply(payload);
                 else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
                 return;
             }
@@ -153,15 +153,15 @@ module.exports = class setJoinVoting extends Command {
             if (!channel) {
                 const payload = isInteraction ? `${fail} Please provide a valid channel.` : `${fail} Third argument needs to be a channel. Example: setjoinvoting 832878346979377193 🦶 #generalChannel`;
 
-                if (isInteraction) context.editReply(payload);
+                if (isInteraction) await context.editReply(payload);
                 else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
                 return;
             }
 
-            if (!channel || (channel.type != 'GUILD_TEXT' && channel.type != 'GUILD_NEWS') || !channel.viewable) {
+            if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
                 const payload = `${fail} The channel you provided is not a text channel.`;
 
-                if (isInteraction) context.editReply(payload);
+                if (isInteraction) await context.editReply(payload);
                 else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
                 return;
             }
@@ -173,7 +173,7 @@ module.exports = class setJoinVoting extends Command {
             catch (err) {
                 const payload = `${fail} I could not react to the message with the ID \`${messageId}\``;
 
-                if (isInteraction) context.editReply(payload);
+                if (isInteraction) await context.editReply(payload);
                 else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
                 return;
             }
@@ -191,22 +191,22 @@ module.exports = class setJoinVoting extends Command {
                 context.guild.id
             );
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Settings: `Join Voting`')
                 .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setDescription(
                     `The \`join voting system\` was successfully updated. ${success}\nUse \`clearJoinVoting\` to disable. If someone reacts with the ${parsedEmoji} emoji you set, the voting will start in the ${channel} channel.`
                 )
-                .addField('Status', '`enabled`', true)
-                .addField('message ID', `\`${messageId}\``)
-                .addField('Voting Channel', `${channel}`, true)
+                .addFields([{name: 'Status', value:  '`enabled`', inline:  true}])
+                .addFields([{name: 'message ID', value:  `\`${messageId}\``}])
+                .addFields([{name: 'Voting Channel', value:  `${channel}`, inline:  true}])
                 .setFooter({
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
                 .setTimestamp();
 
-            if (isInteraction) context.editReply(embed);
+            if (isInteraction) await context.editReply(embed);
             else context.loadingMessage ? context.loadingMessage.edit(embed) : context.reply(embed);
         }
     }

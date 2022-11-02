@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed, MessageButton, MessageActionRow} = require('discord.js');
+const {EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType} = require('discord.js');
 
 module.exports = class rebuildCommand extends Command {
     constructor(client) {
@@ -21,7 +21,7 @@ module.exports = class rebuildCommand extends Command {
         await interaction.deferReply();
         const id = interaction.options.getString('id');
 
-        this.handle(id, interaction);
+        await this.handle(id, interaction);
     }
 
     async handle(id, context) {
@@ -34,21 +34,21 @@ module.exports = class rebuildCommand extends Command {
                 'Please provide a valid server ID or user ID or mention.'
             );
 
-        const row = new MessageActionRow();
+        const row = new ActionRowBuilder();
         row.addComponents(
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('proceed')
                 .setLabel('✅ Proceed')
-                .setStyle('SUCCESS')
+                .setStyle(ButtonStyle.Success)
         );
         row.addComponents(
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('cancel')
                 .setLabel('❌ Cancel')
-                .setStyle('DANGER')
+                .setStyle(ButtonStyle.Danger)
         );
 
-        const embedPrompt = new MessageEmbed().setDescription(
+        const embedPrompt = new EmbedBuilder().setDescription(
             `This will rebuild all the data for the ${guild ? `server ${guild.name}` : `user ${this.getUserIdentifier(member)}`}. ALL PREVIOUS DATA WILL BE CLEARED. Are you sure you want to do this?`
         );
         this.sendReply(context, {
@@ -58,7 +58,7 @@ module.exports = class rebuildCommand extends Command {
             const filter = (button) => button.user.id === context.author.id;
             const collector = msg.createMessageComponentCollector({
                 filter,
-                componentType: 'BUTTON',
+                componentType: ComponentType.Button,
                 time: 15000,
                 dispose: true,
             });
@@ -66,7 +66,7 @@ module.exports = class rebuildCommand extends Command {
             collector.on('collect', async (button) => {
                 if (button.customId === 'proceed') {
                     try {
-                        const embed = new MessageEmbed();
+                        const embed = new EmbedBuilder();
 
                         if (guild) {
                             this.client.db.settings.deleteGuild.run(guild.id);
@@ -110,7 +110,7 @@ module.exports = class rebuildCommand extends Command {
                                 iconURL: this.getAvatarURL(context.author),
                             })
                             .setTimestamp()
-                            .setColor(context.guild.me.displayHexColor);
+                            .setColor(context.guild.members.me.displayHexColor);
 
                         msg.edit({components: [], embeds: [embed]});
                     }

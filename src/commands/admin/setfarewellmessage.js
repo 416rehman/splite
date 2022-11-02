@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const {success} = require('../../utils/emojis.json');
 const {oneLine} = require('common-tags');
 
@@ -44,11 +44,11 @@ module.exports = class SetFarewellMessageCommand extends Command {
         // Get status
         const oldStatus = this.client.utils.getStatus(farewellChannelId, oldFarewellMessage);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Settings: `Farewells`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
-            .addField('Channel', farewellChannel?.toString() || '`None`', true)
+            .addFields([{name: 'Channel', value:  farewellChannel?.toString() || '`None`', inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
@@ -58,8 +58,8 @@ module.exports = class SetFarewellMessageCommand extends Command {
         if (!text) {
             const payload = ({
                 embeds: [embed
-                    .addField('Current Farewell Message', `${oldFarewellMessage}` || '`None`')
-                    .addField('Status', oldStatus, true)
+                    .addFields([{name: 'Current Farewell Message', value:  `${oldFarewellMessage}` || '`None`'}])
+                    .addFields([{name: 'Status', value:  oldStatus, inline:  true}])
                     .setDescription(this.description),],
             });
 
@@ -78,8 +78,8 @@ module.exports = class SetFarewellMessageCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addField('Status', statusUpdate, true)
-                .addField('Message', this.client.utils.replaceKeywords(text))
+                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
+                .addFields([{name: 'Message', value:  this.client.utils.replaceKeywords(text)}])
                 .setDescription(`The \`farewell message\` was successfully updated. ${success}\nUse \`clearfarewellmessage\` to clear the current \`farewell message\`.`),],
         });
 

@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const ButtonMenu = require('../ButtonMenu.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = class EmojisCommand extends Command {
     constructor(client) {
@@ -28,7 +28,7 @@ module.exports = class EmojisCommand extends Command {
             emojis.push(`${e} **-** \`:${e.name}:\``)
         );
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`Emoji List [${context.guild.emojis.cache.size}]`)
             .setFooter({
                 text: this.getUserIdentifier(context.author),

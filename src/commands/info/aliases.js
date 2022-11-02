@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 const {oneLine, stripIndent} = require('common-tags');
 const ButtonMenu = require('../ButtonMenu');
@@ -30,7 +30,7 @@ module.exports = class AliasesCommand extends Command {
             disabledCommands = disabledCommands.split(' ');
 
         const aliases = {};
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         for (const type of Object.values(this.client.types)) {
             aliases[type] = [];
         }
@@ -98,7 +98,7 @@ module.exports = class AliasesCommand extends Command {
                     iconURL: this.getAvatarURL(message.author),
                 })
                 .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
+                .setColor(message.guild.members.me.displayHexColor);
 
 
             if (aliases[type].length <= 20) {
@@ -156,7 +156,7 @@ module.exports = class AliasesCommand extends Command {
                     iconURL: this.getAvatarURL(message.author),
                 })
                 .setTimestamp()
-                .setColor(message.guild.me.displayHexColor);
+                .setColor(message.guild.members.me.displayHexColor);
 
             for (const type of Object.values(this.client.types)) {
                 if (type === OWNER && !this.client.isOwner(message.member))
@@ -177,10 +177,10 @@ module.exports = class AliasesCommand extends Command {
 
             embed.addField(
                 '**Links**',
-                `**[Invite Me](${this.client.config.inviteLink})**`
+                `**[Invite Me](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands)**`
             );
             if (this.client.owners.length) {
-                embed.addField('Developed By', `${this.client.owners[0]}`);
+                embed.addFields([{name: 'Developed By', value:  `${this.client.owners[0]}`}]);
             }
 
             message.channel.send({embeds: [embed]});
