@@ -8,7 +8,7 @@
     <img src="https://discordapp.com/api/guilds/668625434157776896/widget.png?style=shield" alt="Join Splite's Support Server">
   </a>
   <a href="https://github.com/discordjs">
-    <img src="https://img.shields.io/badge/discord.js-v13.2.0-gold.svg?logo=npm" alt="DiscordJS Version">
+    <img src="https://img.shields.io/badge/discord.js-v14.6.0-gold.svg?logo=npm" alt="DiscordJS Version">
   </a>
   <a href="https://github.com/sabattle/CalypsoBot">
     <img src="https://img.shields.io/badge/Based%20on-Calypso-green.svg" alt="Based on Calypso Bot">
@@ -16,10 +16,10 @@
 
 </div>
 
-# SPLITE - Multi-Purpose Discord v13 Bot
+# SPLITE - Multi-Purpose Discord v14 Bot
 
 ### Now with Slash Commands, Music, Moderation, and more!
-#### New in Splite 4.0: All 200+ commands have been ported to Slash Commands
+#### New in Splite 5.0: Discord v14 support, YAML configuration, and many bug fixes
 
 Splite is a free to use multipurpose Discord bot. It is designed to be a flexible and easy to use. ⭐ Consider starring
 the repo on GitHub to help with development! ⭐
