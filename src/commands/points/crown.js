@@ -56,7 +56,7 @@ module.exports = class CrownCommand extends Command {
 
 
         if (context.guild.job.nextInvocation) {
-            embed.setTimestamp(context.guild.job.nextInvocation())
+            embed.setTimestamp(new Date(context.guild.job.nextInvocation()))
                 .setFooter({text: 'Upcoming Crown Transfer --> '});
         }
         const payload = {embeds: [embed]};

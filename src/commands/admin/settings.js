@@ -104,7 +104,7 @@ module.exports = class SettingsCommand extends Command {
         const welcomeStatus = `\`${this.client.utils.getStatus(row.welcome_message && row.welcome_channel_id)}\``;
         const farewellStatus = `\`${this.client.utils.getStatus(row.farewell_message && row.farewell_channel_id)}\``;
         const pointsStatus = `\`${this.client.utils.getStatus(row.point_tracking)}\``;
-        const crownStatus = `\`${this.client.utils.getStatus(row.crown_role_id && row.crown_schedule)}\``;
+        const crownStatus = `\`${this.client.utils.getStatus(row.crown_role_id && row.crown_schedule && row.crown_channel_id)}\``;
         const anonymous = `\`${this.client.utils.getStatus(row.anonymous)}\``;
         const joinVotingStatus = `\`${this.client.utils.getStatus(row.joinvoting_message_id && row.voting_channel_id && row.joinvoting_emoji)}\``;
 
