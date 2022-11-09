@@ -36,6 +36,7 @@ module.exports = class SetPrefixCommand extends Command {
             const payload = emojis.fail + ' Please ensure the prefix is no larger than 3 characters';
             if (isInteraction) await context.reply(payload);
             else context.reply(payload);
+            return;
         }
 
         const oldPrefix = this.client.db.settings.selectPrefix.pluck().get(context.guild.id);
