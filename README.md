@@ -84,8 +84,8 @@ the repo on GitHub to help with development! ⭐
 
 #### Configuration
 
-1. Rename the `config.example.yaml` file to `config.yaml` and fill it - Incomplete config.yaml file might result in bot
-   not functioning properly
+1. Fill the `config.yaml` file or alternatively, provide the corresponding environment variables (Click
+   [here](#cloud-configuration) for more information)
 2. **OPTIONAL**: If needed, environment variables can be used instead of a config file.
 
 #### Starting the Bot
