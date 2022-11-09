@@ -142,7 +142,7 @@ module.exports = class LeaderboardMenu {
         if (description)
             first
                 .setTitle(
-                    this.embed.title +
+                    this.embed.data.title +
                     ' ' +
                     this.client.utils.getRange(
                         this.arr,
@@ -208,7 +208,7 @@ module.exports = class LeaderboardMenu {
         this.current = 0;
         return new EmbedBuilder(this.json)
             .setTitle(
-                this.embed.title +
+                this.embed.data.title +
                 ' ' +
                 this.client.utils.getRange(this.arr, this.current, this.interval)
             )
@@ -228,7 +228,7 @@ module.exports = class LeaderboardMenu {
         if (this.current < 0) this.current = 0;
         return new EmbedBuilder(this.json)
             .setTitle(
-                this.embed.title +
+                this.embed.data.title +
                 ' ' +
                 this.client.utils.getRange(this.arr, this.current, this.interval)
             )
@@ -254,7 +254,7 @@ module.exports = class LeaderboardMenu {
                 : this.current + this.interval;
         return new EmbedBuilder(this.json)
             .setTitle(
-                this.embed.title +
+                this.embed.data.title +
                 ' ' +
                 this.client.utils.getRange(this.arr, this.current, this.interval)
             )
@@ -272,7 +272,7 @@ module.exports = class LeaderboardMenu {
         if (this.current === this.max) this.current -= this.interval;
         return new EmbedBuilder(this.json)
             .setTitle(
-                this.embed.title +
+                this.embed.data.title +
                 ' ' +
                 this.client.utils.getRange(this.arr, this.current, this.interval)
             )
