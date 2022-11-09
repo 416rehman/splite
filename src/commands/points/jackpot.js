@@ -31,12 +31,12 @@ module.exports = class raffleCommand extends Command {
         await this.handle(amount, interaction, true);
     }
 
-    async handle(amount, context, isInteraction) {
+    async handle(amount, context) {
         if (isNaN(amount) === true || !amount) {
             if (amount === 'all' || amount === 'max') amount = Math.min(amount, this.client.config.stats.jackpot.limit);
             else {
                 this.done(null, context.channel.id);
-                return this.sendReplyAndDelete(context, {embeds: [this.createErrorEmbed('Please provide a valid point count')]}, isInteraction);
+                return this.sendReplyAndDelete(context, {embeds: [this.createErrorEmbed('Please provide a valid point count')]});
             }
         }
 
@@ -46,7 +46,7 @@ module.exports = class raffleCommand extends Command {
 
         if (amount < 0 || amount > points) {
             this.done(null, context.channel.id);
-            return this.sendReplyAndDelete(context, `${emojis.nep} Nope, you only have ${points} points ${emojis.point}`, isInteraction);
+            return this.sendReplyAndDelete(context, `${emojis.nep} Nope, you only have ${points} points ${emojis.point}`);
         }
         if (amount > this.client.config.stats.jackpot.limit) amount = this.client.config.stats.jackpot.limit;
 
@@ -166,7 +166,7 @@ module.exports = class raffleCommand extends Command {
             const msg = await this.sendReply(context, {
                 embeds: [embed],
                 components: [row, row2],
-            }, isInteraction);
+            });
 
             const collector = msg.createMessageComponentCollector({
                 componentType: ComponentType.Button, time: 30000, dispose: true

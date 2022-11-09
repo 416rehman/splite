@@ -58,7 +58,7 @@ module.exports = class reportCommand extends Command {
     }
 };
 
-function sendBugReport(report, context, isInteraction) {
+function sendBugReport(report, context) {
     const reportChannel = this.client.channels.cache.get(this.client.config.bugReportChannelId);
 
     if (!reportChannel) return context.reply({
@@ -98,9 +98,5 @@ function sendBugReport(report, context, isInteraction) {
         .setTimestamp()
         .setColor(context.guild.members.me.displayHexColor);
 
-    if (isInteraction) return context.reply({
-        embeds: [embed],
-    });
-
-    context.channel.send({embeds: [embed]});
+    this.sendReply(context, embed);
 }

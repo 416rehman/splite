@@ -22,7 +22,7 @@ module.exports = class EmojisCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const emojis = [];
         context.guild.emojis.cache.forEach((e) =>
             emojis.push(`${e} **-** \`:${e.name}:\``)
@@ -39,8 +39,7 @@ module.exports = class EmojisCommand extends Command {
         const interval = 25;
         if (emojis.length === 0) {
             const payload = {embeds: [embed.setDescription('No emojis found. 😢')]};
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         else if (emojis.length <= interval) {
             const range = emojis.length == 1 ? '[1]' : `[1 - ${emojis.length}]`;
@@ -53,8 +52,7 @@ module.exports = class EmojisCommand extends Command {
                         .setThumbnail(context.guild.iconURL({dynamic: true})),
                 ]
             };
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
 
         }
         else {

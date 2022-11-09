@@ -54,7 +54,6 @@ module.exports = class WarnCommand extends Command {
                             name: context.member.user.tag,
                             iconURL: context.member.user.displayAvatarURL({dynamic: true})
                         })
-                        .setColor('RANDOM'),
                 ],
             });
         }
@@ -65,7 +64,7 @@ module.exports = class WarnCommand extends Command {
                         .setDescription(
                             `${emojis.fail} **There is no farewell message set for this server.**\n\n\`setfarewellmessage\` Sets a farewell context\n\`setfarewellchannel\` Sets the channel to post the farewell message to. `
                         )
-                        .setColor('RED')
+                        .setColor('Red')
                         .setFooter({
                             text: context.member.displayName,
                             iconURL: context.author.displayAvatarURL({

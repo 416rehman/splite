@@ -55,8 +55,7 @@ module.exports = class anonymous extends Command {
             .setDescription(`"${anonMsg}"`)
             .setFooter({
                 text: 'To send an anonymous message, type /anonymous',
-            })
-            .setColor('RANDOM');
+            });
         channel.send({embeds: [embed]}).then(() => {
             client.db.users.setPoints.run(
                 points - cost,

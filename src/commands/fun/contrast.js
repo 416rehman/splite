@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {fail} = require('../../utils/emojis.json');
 
 module.exports = class contrastCommand extends Command {
     constructor(client) {
@@ -11,18 +11,13 @@ module.exports = class contrastCommand extends Command {
             description: 'contrast a burn image',
             type: client.types.FUN,
             examples: ['contrast @split'],
+            disabled: client.ameApi === null,
         });
     }
 
     async run(message, args) {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(member, message, false);
-            });
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
@@ -31,44 +26,25 @@ module.exports = class contrastCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(targetUser, context, isInteraction) {
+    async handle(targetUser, context) {
         try {
             const buffer = await context.client.ameApi.generate('contrast', {
                 url: this.getAvatarURL(targetUser, 'png'),
             });
             const attachment = new AttachmentBuilder(buffer, { name:  'contrast.png' });
 
-            if (isInteraction) {
-                await context.editReply({
-                    files: [attachment],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    files: [attachment],
-                    embeds: []
-                }) : context.channel.send({
-                    files: [attachment],
-                });
-            }
+            const payload = {
+                files: [attachment],
+            }; await this.sendReply(context, payload);
         }
         catch (err) {
             const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
-                .setColor('RED');
-            if (isInteraction) {
-                await context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed]
-                }) : context.channel.send({
-                    embeds: [embed]
-                });
-            }
+                .setColor('Red');
+            const payload = {
+                embeds: [embed],
+            }; await this.sendReply(context, payload);
         }
 
     }

@@ -24,7 +24,7 @@ module.exports = class ServerStaffCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         // Get mod role
         const modRoleId = this.client.db.settings.selectModRoleId
             .pluck()
@@ -78,7 +78,6 @@ module.exports = class ServerStaffCommand extends Command {
             .setTimestamp();
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

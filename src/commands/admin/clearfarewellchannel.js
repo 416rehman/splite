@@ -27,7 +27,7 @@ module.exports = class clearFarewellChannelCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         let {
             farewell_channel_id: farewellChannelId,
             farewell_message: farewellMessage,
@@ -91,7 +91,6 @@ module.exports = class clearFarewellChannelCommand extends Command {
             ],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

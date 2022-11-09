@@ -24,7 +24,7 @@ module.exports = class clearMuteRoleCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const muteRoleId = this.client.db.settings.selectMuteRoleId
             .pluck()
             .get(context.guild.id);
@@ -50,7 +50,6 @@ module.exports = class clearMuteRoleCommand extends Command {
             embeds: [embed.addFields([{name: 'Mute Role', value:  `${oldMuteRole} ➔ \`None\``}])],
         });
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

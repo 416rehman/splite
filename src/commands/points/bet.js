@@ -39,7 +39,7 @@ module.exports = class betCommand extends Command {
         await this.handle(member, points, interaction, true);
     }
 
-    async handle(member, amount, context, isInteraction) {
+    async handle(member, amount, context) {
         if (isNaN(amount) === true || !amount) {
             if (amount !== 'all' && amount !== 'max') {
                 this.done(context.author.id);
@@ -105,7 +105,7 @@ module.exports = class betCommand extends Command {
                 content: `${member}, ${this.getUserIdentifier(context.author)} has sent you a bet of ${amount} points ${emojis.point}. Do you accept?`,
                 components: [row],
             };
-            let msg = await this.sendReply(context, payload, isInteraction);
+            let msg = await this.sendReply(context, payload);
 
             const filter = (button) => button.user.id === member.id;
             const collector = msg.createMessageComponentCollector({

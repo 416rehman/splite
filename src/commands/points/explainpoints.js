@@ -25,7 +25,7 @@ module.exports = class ExplainPointsCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         // Get disabled leaderboard
         let disabledCommands =
             this.client.db.settings.selectDisabledCommands
@@ -101,8 +101,7 @@ module.exports = class ExplainPointsCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
         if (checkingPoints)
             embed.addFields([{name: `Checking Points ${emojis.point}`, value:  checkingPoints}]);
         if (leaderboard) embed.addFields([{name: 'The Leaderboard', value:  leaderboard}]);
@@ -110,7 +109,6 @@ module.exports = class ExplainPointsCommand extends Command {
 
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

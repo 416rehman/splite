@@ -26,7 +26,7 @@ module.exports = class BotInfoCommand extends Command {
         await this.handle(interaction, true);
     }
 
-    async handle(context, isInteraction) {
+    async handle(context) {
         const prefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(context.guild.id);
@@ -94,7 +94,6 @@ module.exports = class BotInfoCommand extends Command {
         }
 
         const payload = {embeds: [embed]};
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
     }
 };

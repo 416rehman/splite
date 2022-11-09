@@ -28,7 +28,7 @@ module.exports = class clearCrownRoleCommand extends Command {
         this.handle(role, interaction, true);
     }
 
-    handle(role, context, isInteraction) {
+    handle(role, context) {
         let {
             crown_role_id: crownRoleId,
             crown_channel_id: crownChannelId,
@@ -69,8 +69,7 @@ module.exports = class clearCrownRoleCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear role
         this.client.db.settings.updateCrownRoleId.run(null, context.guild.id);
@@ -97,8 +96,7 @@ module.exports = class clearCrownRoleCommand extends Command {
             ],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 
 };

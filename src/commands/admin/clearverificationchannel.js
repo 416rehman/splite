@@ -28,7 +28,7 @@ module.exports = class clearVerificationChannelCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         let {
             verification_role_id: verificationRoleId,
             verification_channel_id: verificationChannelId,
@@ -55,8 +55,7 @@ module.exports = class clearVerificationChannelCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         this.client.db.settings.updateVerificationChannelId.run(
@@ -78,7 +77,6 @@ module.exports = class clearVerificationChannelCommand extends Command {
                 .addFields([{name: 'Status', value:  `${oldStatus} ➔ \`${statusUpdate}\``}]),],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

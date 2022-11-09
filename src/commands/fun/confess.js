@@ -63,8 +63,7 @@ module.exports = class confessCommand extends Command {
                     viewConfessionRole > 0 ? '| Viewable by staff' : ''
                 }`,
             })
-            .setTimestamp()
-            .setColor('RANDOM');
+            .setTimestamp();
         confessionsChannel.send({embeds: [embed]}).then((msg) => {
             client.db.confessions.insertRow.run(
                 n,

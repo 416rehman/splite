@@ -24,7 +24,7 @@ module.exports = class PositionCommand extends Command {
         const member = (await this.getGuildMember(message.guild, args[0])) || message.member;
         if (!member) return this.sendErrorMessage(message, 0, 'Please mention a user or provide a valid user ID');
 
-        this.handle(member, message, false);
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
@@ -34,7 +34,7 @@ module.exports = class PositionCommand extends Command {
         this.handle(member, interaction, true);
     }
 
-    handle(member, context, isInteraction) {
+    handle(member, context) {
 
         const leaderboard = this.client.db.users.selectLeaderboard.all(context.guild.id);
         const pos = leaderboard.map((row) => row.user_id).indexOf(member.id) + 1;
@@ -58,9 +58,8 @@ module.exports = class PositionCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(member.displayHexColor);
+            .setTimestamp();
 
-        this.sendReply(context, {embeds: [embed]}, isInteraction);
+        this.sendReply(context, {embeds: [embed]});
     }
 };

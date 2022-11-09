@@ -118,7 +118,6 @@ module.exports = class PurgeCommand extends Command {
                                 iconURL: this.getAvatarURL(context.author),
                             })
                             .setTimestamp()
-                            .setColor(context.guild.members.me.displayHexColor),
                     ],
                 })
                 .then((msg) => {

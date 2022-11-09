@@ -26,7 +26,7 @@ module.exports = class clearJoinVoting extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         let {
             joinvoting_message_id: joinvotingMessageId,
             joinvoting_emoji: joinvotingEmoji,
@@ -78,7 +78,6 @@ module.exports = class clearJoinVoting extends Command {
                 .addFields([{name: 'Message', value:  '`None`'}]),],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

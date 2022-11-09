@@ -36,7 +36,7 @@ module.exports = class MusicSearchCommand extends Command {
 
         const embed = new EmbedBuilder();
 
-        embed.setColor('RED');
+        
         embed.setAuthor({
             name: `Results for ${query}`, iconURL: this.client.user.displayAvatarURL({
                 size: 1024, dynamic: true,

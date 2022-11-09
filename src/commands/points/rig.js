@@ -50,9 +50,8 @@ module.exports = class WipePointsCommand extends Command {
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
-                .setTimestamp()
-                .setColor(context.guild.members.me.displayHexColor);
-            this.sendReply(context, {embeds: [embed]}, isInteraction);
+                .setTimestamp();
+            this.sendReply(context, {embeds: [embed]});
         }
         else {
             this.sendReply(

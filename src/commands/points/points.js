@@ -31,7 +31,7 @@ module.exports = class PointsCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(member, context, isInteraction) {
+    async handle(member, context) {
         const prefix = this.client.db.settings.selectPrefix.pluck().get(context.guild.id);
         const points = this.client.db.users.selectPoints.pluck().get(member.id, context.guild.id) || 0;
         const voted = await this.client.utils.checkTopGGVote(this.client, member.id) || false;
@@ -45,9 +45,8 @@ module.exports = class PointsCommand extends Command {
                 text: `Boost your odds: ${prefix}vote`,
                 iconURL: this.getAvatarURL(context.author)
             })
-            .setTimestamp()
-            .setColor(member.displayHexColor);
+            .setTimestamp();
         if (voted) embed.setDescription(`${emojis.Voted}**+10%** Gambling Odds`);
-        await this.sendReply(context, {embeds: [embed]}, isInteraction);
+        await this.sendReply(context, {embeds: [embed]});
     }
 };

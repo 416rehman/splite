@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
 const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
-const {load, fail} = require('../../utils/emojis.json');
+const {fail} = require('../../utils/emojis.json');
 
 module.exports = class BirdCommand extends Command {
     constructor(client) {
@@ -14,13 +14,7 @@ module.exports = class BirdCommand extends Command {
     }
 
     async run(message) {
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(message, false);
-            });
+        await this.handle(message, false);
     }
 
     async interact(interaction) {
@@ -28,7 +22,7 @@ module.exports = class BirdCommand extends Command {
         await this.handle(interaction, true);
     }
 
-    async handle(context, isInteraction) {
+    async handle(context) {
         try {
             const res = await fetch('http://shibe.online/api/birds');
             const img = (await res.json())[0];
@@ -44,8 +38,7 @@ module.exports = class BirdCommand extends Command {
                 ]
             };
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         catch (err) {
             const payload = {
@@ -53,11 +46,10 @@ module.exports = class BirdCommand extends Command {
                     new EmbedBuilder()
                         .setTitle('Error')
                         .setDescription(fail + ' ' + err.message)
-                        .setColor('RED')
+                        .setColor('Red')
                 ]
             };
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
     }
 };

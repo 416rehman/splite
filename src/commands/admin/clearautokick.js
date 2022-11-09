@@ -27,7 +27,7 @@ module.exports = class clearautokickCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const autoKick =
             this.client.db.settings.selectAutoKick
                 .pluck()
@@ -47,7 +47,6 @@ module.exports = class clearautokickCommand extends Command {
 
         const payload = {embeds: [embed.addFields([{name: 'Auto Kick', value:  `\`${autoKick}\` ➔ \`disabled\``}]),],};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

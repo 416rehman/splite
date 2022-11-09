@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const jsdom = require('jsdom');
-const {load, fail} = require('../../utils/emojis.json');
+const {fail} = require('../../utils/emojis.json');
 const {SlashCommandBuilder} = require('discord.js');
 const {JSDOM} = jsdom;
 
@@ -21,13 +21,7 @@ module.exports = class pickupCommand extends Command {
 
     async run(message, args) {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(member, message, false);
-            });
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
@@ -36,7 +30,7 @@ module.exports = class pickupCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(targetUser, context, isInteraction) {
+    async handle(targetUser, context) {
         try {
             const res = await fetch('http://www.pickuplinegen.com/');
             const pickup = await res.text();
@@ -57,19 +51,17 @@ module.exports = class pickupCommand extends Command {
                     })],
             };
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
         catch (err) {
             const payload = {
                 embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
-                    .setColor('RED')]
+                    .setColor('Red')]
             };
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
 
     }

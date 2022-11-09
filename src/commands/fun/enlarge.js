@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
 const Discord = require('discord.js');
 const {SlashCommandBuilder} = require('discord.js');
-const {EmbedBuilder} = require('discord.js');
-const {load, fail} = require('../../utils/emojis.json');
+const {EmbedBuilder, parseEmoji} = require('discord.js');
+const {fail} = require('../../utils/emojis.json');
 
 module.exports = class enlargeCommand extends Command {
     constructor(client) {
@@ -30,40 +30,26 @@ module.exports = class enlargeCommand extends Command {
     async run(message, args) {
         if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Enlarge Emoji', this)]});
 
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(args[0], message, false);
-            });
+        await this.handle(args[0], message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction.options.getString('emoji'), interaction, true);
+        this.handle(interaction.options.getString('emoji'), interaction);
     }
 
-    handle(text, context, isInteraction) {
+    async handle(text, context) {
         try {
-            let customemoji = Discord.Util.parseEmoji(text); //Check if it's a emoji
+            let customemoji = parseEmoji(text); //Check if it's a emoji
 
             if (customemoji.id) {
                 const Link = `https://cdn.discordapp.com/emojis/${customemoji.id}.${
                     customemoji.animated ? 'gif' : 'png'
                 }`;
-                if (isInteraction) {
-                    context.editReply({
-                        files: [new Discord.AttachmentBuilder(Link)],
-                    });
-                }
-                else {
-                    context.loadingMessage ? context.loadingMessage.edit({
-                        files: [new Discord.AttachmentBuilder(Link)],
-                    }) : context.channel.send({
-                        files: [new Discord.AttachmentBuilder(Link)],
-                    });
-                }
+                const payload = {
+                    files: [new Discord.AttachmentBuilder(Link)],
+                };
+                this.sendReply(context, payload);
             }
             else {
                 this.sendErrorMessage(
@@ -77,19 +63,11 @@ module.exports = class enlargeCommand extends Command {
             const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
-                .setColor('RED');
-            if (isInteraction) {
-                context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed]
-                }) : context.channel.send({
-                    embeds: [embed]
-                });
-            }
+                .setColor('Red');
+            const payload = {
+                embeds: [embed]
+            };
+            await this.sendReply(context, payload);
         }
     }
 };

@@ -45,8 +45,7 @@ module.exports = class setconfessionchannelCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Display current confessions channel
         if (!channel) {
@@ -61,8 +60,7 @@ module.exports = class setconfessionchannelCommand extends Command {
                 ],
             });
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -71,8 +69,7 @@ module.exports = class setconfessionchannelCommand extends Command {
         if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
             const payload = `${fail} The channel must be a text channel. Please try again.`;
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -93,7 +90,6 @@ module.exports = class setconfessionchannelCommand extends Command {
         });
 
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

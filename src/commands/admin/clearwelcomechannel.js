@@ -27,7 +27,7 @@ module.exports = class clearWelcomeChannelCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         let {
             welcome_channel_id: welcomeChannelId,
             welcome_message: welcomeMessage,
@@ -59,8 +59,7 @@ module.exports = class clearWelcomeChannelCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         this.client.db.settings.updateWelcomeChannelId.run(
@@ -89,7 +88,6 @@ module.exports = class clearWelcomeChannelCommand extends Command {
                 }),],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

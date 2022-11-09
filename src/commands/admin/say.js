@@ -47,13 +47,12 @@ module.exports = class SayCommand extends Command {
         this.handle(text, channel, interaction, true);
     }
 
-    handle(text, channel, context, isInteraction) {
+    handle(text, channel, context) {
         // Check type and viewable
         if (channel.type !== ChannelType.GuildText || !channel.viewable) {
             const payload = fail + ' The provided channel is not a text channel or is not viewable.';
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -65,8 +64,7 @@ module.exports = class SayCommand extends Command {
         if (modChannelIds.includes(channel.id)) {
             const payload = fail + ' Provided channel is moderator only, please mention an accessible text channel or provide a valid text channel ID.';
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -74,8 +72,7 @@ module.exports = class SayCommand extends Command {
         if (!channel.permissionsFor(context.guild.members.me).has(['SEND_MESSAGES'])) {
             const payload = fail + ' I do not have permission to send messages in this channel.';
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -83,15 +80,13 @@ module.exports = class SayCommand extends Command {
         if (!channel.permissionsFor(context.member).has(['SEND_MESSAGES'])) {
             const payload = fail + ' You do not have permission to send messages in this channel.';
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
         // const msg = context.content.slice(context.content.indexOf(args[0]), context.content.length);
         channel.send(text);
 
-        if (isInteraction) context.editReply({content: 'Message sent.', ephemeral: true});
-        else context.loadingMessage ? context.loadingMessage.edit('Message sent.') : context.reply('Message sent.');
+        this.sendReply(context, 'Message sent!');
     }
 };

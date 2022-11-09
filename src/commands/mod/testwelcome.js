@@ -49,7 +49,6 @@ module.exports = class testWelcomeCommand extends Command {
                 embeds: [
                     new EmbedBuilder()
                         .setDescription(welcomeMessage)
-                        .setColor('RANDOM'),
                 ],
             });
         }
@@ -60,7 +59,7 @@ module.exports = class testWelcomeCommand extends Command {
                         .setDescription(
                             `${emojis.fail} There is no welcome message set for this server.\n\n\`setwelcomemessage\` Sets a welcome context\n\`setwelcomechannel\` Sets the channel to post the welcome message to. `
                         )
-                        .setColor('RED')
+                        .setColor('Red')
                         .setFooter({
                             text: context.member.displayName,
                             iconURL: context.author.displayAvatarURL({

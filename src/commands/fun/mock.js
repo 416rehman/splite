@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {load, fail} = require('../../utils/emojis.json');
 const {SlashCommandBuilder} = require('discord.js');
 
 async function createImagePayload(text1, text2, requestingUser) {

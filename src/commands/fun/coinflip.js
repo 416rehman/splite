@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
 const {EmbedBuilder} = require('discord.js');
 const {SlashCommandBuilder} = require('discord.js');
-const {load, fail} = require('../../utils/emojis.json');
+const {fail} = require('../../utils/emojis.json');
 
 module.exports = class CoinFlipCommand extends Command {
     constructor(client) {
@@ -16,13 +16,7 @@ module.exports = class CoinFlipCommand extends Command {
     }
 
     async run(message) {
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(message, false);
-            });
+        await this.handle(message, false);
     }
 
     async interact(interaction) {
@@ -30,7 +24,7 @@ module.exports = class CoinFlipCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    async handle(context) {
         try {
             const n = Math.floor(Math.random() * 2);
             let result;
@@ -47,36 +41,20 @@ module.exports = class CoinFlipCommand extends Command {
                 })
                 .setTimestamp();
 
-            if (isInteraction) {
-                context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed],
-                }) : context.channel.send({
-                    embeds: [embed],
-                });
-            }
+            const payload = {
+                embeds: [embed],
+            };
+            await this.sendReply(context, payload);
         }
         catch (err) {
             const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
-                .setColor('RED');
-            if (isInteraction) {
-                context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed]
-                }) : context.channel.send({
-                    embeds: [embed]
-                });
-            }
+                .setColor('Red');
+            const payload = {
+                embeds: [embed]
+            };
+            await this.sendReply(context, payload);
         }
     }
 };

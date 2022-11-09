@@ -27,7 +27,7 @@ module.exports = class clearWelcomeMessageCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const {
             welcome_channel_id: welcomeChannelId, welcome_message: oldWelcomeMessage,
         } = this.client.db.settings.selectWelcomes.get(context.guild.id);
@@ -44,8 +44,7 @@ module.exports = class clearWelcomeMessageCommand extends Command {
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         this.client.db.settings.updateWelcomeMessage.run(null, context.guild.id);
 
@@ -59,7 +58,6 @@ module.exports = class clearWelcomeMessageCommand extends Command {
                 .addFields([{name: 'Message', value:  '`None`'}])],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

@@ -100,7 +100,7 @@ module.exports = async (client, interaction) => {
                         })
                         .setDescription('NSFW Commands can only be run in NSFW channels.')
                         .setTimestamp()
-                        .setColor('RED'),], ephemeral: true,
+                        .setColor('Red'),], ephemeral: true,
                 });
             }
             if (!command.checkVoiceChannel(interaction)) return command.sendReplyAndDelete(interaction, 'You must be in a voice channel to use this command.');

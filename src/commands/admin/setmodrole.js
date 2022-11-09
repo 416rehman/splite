@@ -41,18 +41,18 @@ module.exports = class SetModRoleCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         if (!role) {
-            return context.channel.send({
+            const payload = {
                 embeds: [
                     embed
                         .addFields([{name: 'Current Mod Role', value:  `${oldModRole}` || '`None`'}])
                         .setDescription(this.description),
                 ],
-            });
+            };
+            return this.sendReply(context, payload);
         }
 
         // Update role
@@ -61,8 +61,7 @@ module.exports = class SetModRoleCommand extends Command {
         if (!modRole) {
             const payload = `${fail} Please mention a role or provide a valid role ID`;
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
         this.client.db.settings.updateModRoleId.run(modRole.id, context.guild.id);
@@ -72,7 +71,6 @@ module.exports = class SetModRoleCommand extends Command {
                 .setDescription(`The \`mod role\` was successfully updated. ${success}\nUse \`clearmodrole\` to clear the current \`mod role\`.`)],
         });
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

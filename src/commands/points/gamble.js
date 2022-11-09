@@ -48,16 +48,14 @@ module.exports = class gambleCommand extends Command {
             this.done(context.author.id);
 
             const payload = `${emojis.nep} Please provide an amount you currently have! You have **${points} points** ${emojis.point}`;
-            if (isInteraction) context.editReply(payload).then(m => setTimeout(() => m.delete(), 5000));
-            else (context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload)).then(m => setTimeout(() => m.delete(), 5000));
+            await this.sendReplyAndDelete(context, payload);
             return;
         }
         if (amount > this.client.config.stats.gambling.limit) {
             this.done(context.author.id);
 
             const payload = `${emojis.fail} You can't bet more than ${this.client.config.stats.gambling.limit} points ${emojis.point} at a time. Please try again!`;
-            if (isInteraction) context.editReply(payload).then(m => setTimeout(() => m.delete(), 5000));
-            else (context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload)).then(m => setTimeout(() => m.delete(), 5000));
+            await this.sendReplyAndDelete(context, payload);
             return;
         }
 
@@ -79,8 +77,7 @@ module.exports = class gambleCommand extends Command {
         const payload = {embeds: [embed]};
         let msg;
         try {
-            if (isInteraction) msg = await context.editReply(payload);
-            else msg = context.loadingMessage ? await context.loadingMessage.edit(payload) : await context.reply(payload);
+            msg = await this.sendReply(context, payload);
         }
         catch (e) {
             this.done(context.author.id);

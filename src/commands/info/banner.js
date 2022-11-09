@@ -34,7 +34,7 @@ module.exports = class BannerCommand extends Command {
         this.handle(user, interaction, true);
     }
 
-    handle(targetUser, context, isInteraction) {
+    handle(targetUser, context) {
         const banner =
             targetUser.banner &&
             `https://cdn.discordapp.com/banners/${targetUser.id}/${targetUser.banner}${
@@ -54,7 +54,6 @@ module.exports = class BannerCommand extends Command {
 
         const payload = {embeds: [embed]};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

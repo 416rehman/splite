@@ -39,8 +39,7 @@ module.exports = class ServersCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         if (servers.length <= 25) {
             const range = servers.length === 1 ? '[1]' : `[1 - ${servers.length}]`;

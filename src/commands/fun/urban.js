@@ -3,7 +3,7 @@ const {EmbedBuilder} = require('discord.js');
 const emoji = require('../../utils/emojis.json');
 const ud = require('urban-dictionary');
 const ButtonMenu = require('../ButtonMenu.js');
-const {load} = require('../../utils/emojis.json');
+
 const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class urbanCommand extends Command {
@@ -29,10 +29,10 @@ module.exports = class urbanCommand extends Command {
         this.handle(text, interaction, true);
     }
 
-    handle(text, context, isInteraction) {
+    handle(text, context) {
         const embed = new EmbedBuilder()
             .setTitle('🎭  Urban Dictionary  🎭')
-            .setDescription(`${load} Loading...`)
+            .setDescription('Loading...')
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
@@ -50,19 +50,15 @@ module.exports = class urbanCommand extends Command {
                     );
                 }
                 const payload = {embeds: [embed]};
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+                this.sendReply(context, payload);
             });
-        }
-        else {
+        } else {
             ud.define(text, (error, result) => {
                 if (error) {
                     embed.setDescription(`${emoji.fail} ${error.message}`);
                     const payload = {embeds: [embed]};
-                    if (isInteraction) context.editReply(payload);
-                    else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
-                }
-                else {
+                    this.sendReply(context, payload);
+                } else {
                     embed.setFooter({
                         text: 'Expires after two minutes. | ' + this.getUserIdentifier(context.author),
                         iconURL: this.getAvatarURL(context.author),

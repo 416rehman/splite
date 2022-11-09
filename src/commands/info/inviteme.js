@@ -24,7 +24,7 @@ module.exports = class InviteMeCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const embed = new EmbedBuilder()
             .setTitle('Invite Me')
             .setThumbnail(
@@ -50,7 +50,6 @@ module.exports = class InviteMeCommand extends Command {
         }
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

@@ -50,7 +50,6 @@ module.exports = class BlastCommand extends Command {
                     .setThumbnail('https://i.imgur.com/B0XSinY.png')
                     .setDescription(messageText)
                     .setTimestamp()
-                    .setColor('RANDOM')
                     .setFooter({
                         text: 'Don\'t want this message here? Use the "setsystemchannel" command to change it',
                     });
@@ -70,8 +69,7 @@ module.exports = class BlastCommand extends Command {
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
-                .setTimestamp()
-                .setColor(context.guild.members.me.displayHexColor);
+                .setTimestamp();
             this.sendReply(context, {embeds: [embed]});
         }
 
@@ -82,8 +80,7 @@ module.exports = class BlastCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
         this.sendReply(context, {embeds: [embed]});
 
     }

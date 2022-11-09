@@ -72,8 +72,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
                     .setDescription(this.description),],
             });
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -82,8 +81,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
         role = isInteraction ? role : await this.getGuildRole(context.guild, role);
         if (!role) {
             const payload = emojis.fail + ' Please mention a role or provide a valid role ID.';
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -103,8 +101,7 @@ module.exports = class SetVerificationRoleCommand extends Command {
                 }),],
         });
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
 
         // Update verification
         if (status === 'enabled') {

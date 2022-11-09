@@ -55,8 +55,7 @@ module.exports = class clearafkCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         this.sendReply(context, {embeds: [embed]});
         this.sendModLogMessage(context, null, {Member: member.toString()});

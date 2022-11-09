@@ -35,7 +35,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
         this.handle(text, interaction, true);
     }
 
-    handle(text, context, isInteraction) {
+    handle(text, context) {
         const {
             farewell_channel_id: farewellChannelId, farewell_message: oldFarewellMessage,
         } = this.client.db.settings.selectFarewells.get(context.guild.id);
@@ -63,8 +63,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
                     .setDescription(this.description),],
             });
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -83,7 +82,6 @@ module.exports = class SetFarewellMessageCommand extends Command {
                 .setDescription(`The \`farewell message\` was successfully updated. ${success}\nUse \`clearfarewellmessage\` to clear the current \`farewell message\`.`),],
         });
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

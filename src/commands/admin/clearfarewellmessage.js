@@ -27,7 +27,7 @@ module.exports = class clearFarewellMessageCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const {
             farewell_channel_id: farewellChannelId, farewell_message: oldFarewellMessage,
         } = this.client.db.settings.selectFarewells.get(context.guild.id);
@@ -58,7 +58,6 @@ module.exports = class clearFarewellMessageCommand extends Command {
                 .addFields([{name: 'Message', value:  '`None`'}]),],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

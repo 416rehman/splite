@@ -34,7 +34,7 @@ module.exports = class TotalPointsCommand extends Command {
         this.handle(target, interaction, true);
     }
 
-    handle(member, context, isInteraction) {
+    handle(member, context) {
         const points = this.client.db.users.selectTotalPoints
             .pluck()
             .get(member.id, context.guild.id);
@@ -47,9 +47,8 @@ module.exports = class TotalPointsCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(member.displayHexColor);
+            .setTimestamp();
 
-        this.sendReply(context, {embeds: [embed]}, isInteraction);
+        this.sendReply(context, {embeds: [embed]});
     }
 };

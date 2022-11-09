@@ -95,8 +95,7 @@ module.exports = class WarnCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         await this.sendReply(context, {embeds: [embed]});
 

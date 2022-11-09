@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
 const {EmbedBuilder} = require('discord.js');
 const {SlashCommandBuilder} = require('discord.js');
-const {load} = require('../../utils/emojis.json');
+
 
 module.exports = class RollCommand extends Command {
     constructor(client) {
@@ -18,13 +18,7 @@ module.exports = class RollCommand extends Command {
     }
 
     async run(message, args) {
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(args[0] || 6, message, false);
-            });
+        await this.handle(args[0] || 6, message, false);
     }
 
     async interact(interaction) {
@@ -33,12 +27,11 @@ module.exports = class RollCommand extends Command {
         this.handle(sides, interaction, true);
     }
 
-    handle(sides, context, isInteraction) {
+    handle(sides, context) {
         const n = Math.floor(Math.random() * sides + 1);
         if (!n || sides <= 0) {
             const payload = 'Invalid number of sides - must be greater than 0';
-            if (isInteraction) return context.editReply(payload);
-            return context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            return this.sendReply(context, payload);
         }
         const payload = {
             embeds: [new EmbedBuilder()
@@ -51,7 +44,6 @@ module.exports = class RollCommand extends Command {
                 .setTimestamp()]
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+        this.sendReply(context, payload);
     }
 };

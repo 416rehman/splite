@@ -33,7 +33,7 @@ module.exports = class RoleInfoCommand extends Command {
         this.handle(role, interaction, true);
     }
 
-    handle(role, context, isInteraction) {
+    handle(role, context) {
         // Get role permissions
         const rolePermissions = role.permissions.toArray();
         const finalPermissions = [];
@@ -75,7 +75,6 @@ module.exports = class RoleInfoCommand extends Command {
             .setTimestamp();
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

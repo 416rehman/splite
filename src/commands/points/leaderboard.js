@@ -36,7 +36,7 @@ module.exports = class LeaderboardCommand extends Command {
         this.handle(amount, interaction, true);
     }
 
-    handle(max, context, isInteraction) {
+    handle(max, context) {
         if (!max || max < 0) max = 10; else if (max > 25) max = 25;
         let leaderboard = this.client.db.users.selectLeaderboard.all(context.guild.id);
         const position = leaderboard
@@ -53,8 +53,7 @@ module.exports = class LeaderboardCommand extends Command {
                 text: `${context.member.displayName}'s position: ${position + 1}`,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         if (members.length <= max) {
             const range = members.length === 1 ? '[1]' : `[1 - ${members.length}]`;
@@ -64,7 +63,7 @@ module.exports = class LeaderboardCommand extends Command {
                     .setDescription(members.join('\n')),]
             };
 
-            this.sendReply(context, payload, isInteraction);
+            this.sendReply(context, payload);
         }
         else {
             embed
@@ -92,7 +91,7 @@ module.exports = class LeaderboardCommand extends Command {
                 row.addComponents(moderationButton);
             }
 
-            this.sendReply(context, 'Leaderboard Generated!', isInteraction).then(() => {
+            this.sendReply(context, 'Leaderboard Generated!').then(() => {
                 new ButtonMenu(this.client, context.channel, context.member, embed, members, max, null, 120000, [row], (msg) => {
                     const filter = (button) => button.user.id === context.author.id;
                     const collector = msg.createMessageComponentCollector({

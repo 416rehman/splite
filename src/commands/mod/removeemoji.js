@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const Discord = require('discord.js');
+const {parseEmoji, EmbedBuilder} = require('discord.js');
 const _emojis = require('../../utils/emojis.json');
 
 module.exports = class RemoveEmojiCommand extends Command {
@@ -54,7 +54,7 @@ module.exports = class RemoveEmojiCommand extends Command {
 async function removeemoji(emoji, context, command) {
     if (!emoji)
         command.sendErrorMessage(context, 0, 'Please mention a valid emoji.');
-    let customemoji = Discord.Util.parseEmoji(emoji); //Check if it's a emoji
+    let customemoji = parseEmoji(emoji); //Check if it's a emoji
 
     customemoji = await context.guild.emojis.cache.find(
         (e) => e.id === customemoji.id
@@ -64,7 +64,7 @@ async function removeemoji(emoji, context, command) {
         customemoji.delete().then(() => {
             context.channel.send({
                 embeds: [
-                    new Discord.EmbedBuilder()
+                    new EmbedBuilder()
                         .setDescription(`${_emojis.success} ${emoji} Removed!`)
                 ],
             });

@@ -21,7 +21,7 @@ module.exports = class PrefixCommand extends Command {
         await this.handle(interaction, true);
     }
 
-    async handle(context, isInteraction) {
+    async handle(context) {
         const prefix = this.client.db.settings.selectPrefix.pluck().get(context.guild.id);
 
         const payload = {
@@ -41,7 +41,6 @@ module.exports = class PrefixCommand extends Command {
             ]
         };
 
-        if (isInteraction) await context.editReply(payload);
-        else context.reply(payload);
+        await this.sendReply(context, payload);
     }
 };

@@ -29,7 +29,7 @@ module.exports = class SetMemberLogCommand extends Command {
         this.handle(channel, interaction, true);
     }
 
-    handle(channel, context, isInteraction) {
+    async handle(channel, context, isInteraction) {
         const memberLogId = this.client.db.settings.selectMemberLogId
             .pluck()
             .get(context.guild.id);
@@ -43,21 +43,19 @@ module.exports = class SetMemberLogCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Display current member log
         if (!channel) {
             const payload = ({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Member Log', value:  `${oldMemberLog}` || '`None`'}])
+                        .addFields([{name: 'Current Member Log', value: `${oldMemberLog}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
 
-            if (isInteraction) context.editReply(payload);
-            else context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -66,8 +64,7 @@ module.exports = class SetMemberLogCommand extends Command {
         if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} Please mention an accessible text channel or provide a valid text channel ID.`;
 
-            if (isInteraction) context.editReply(payload);
-            else context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -75,14 +72,13 @@ module.exports = class SetMemberLogCommand extends Command {
 
         const payload = ({
             embeds: [
-                embed.addFields([{name: 'Member Log', value:  `${oldMemberLog} ➔ ${channel}`}])
+                embed.addFields([{name: 'Member Log', value: `${oldMemberLog} ➔ ${channel}`}])
                     .setDescription(
                         `The \`member log\` was successfully updated. ${success}\nUse \`clearmemberlog\` to clear the current \`member log\`.`
                     ),
             ],
         });
 
-        if (isInteraction) context.editReply(payload);
-        else context.reply(payload);
+        await this.sendReplyAndDelete(context, payload);
     }
 };

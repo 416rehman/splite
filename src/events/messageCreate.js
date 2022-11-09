@@ -114,7 +114,7 @@ module.exports = async (client, message) => {
                     })
                     .setDescription(`${nsfw} NSFW Commands can only be run in NSFW channels.`)
                     .setTimestamp()
-                    .setColor('RED'),],
+                    .setColor('Red'),],
             });
 
             // Check if command is voice channel only

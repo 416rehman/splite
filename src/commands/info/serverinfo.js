@@ -26,7 +26,7 @@ module.exports = class ServerInfoCommand extends Command {
         await this.handle(guild, interaction, true);
     }
 
-    async handle(guild, context, isInteraction) {
+    async handle(guild, context) {
         // Get roles count
         const roleCount = guild.roles.cache.size - 1; // Don't count @everyone
 
@@ -103,7 +103,6 @@ module.exports = class ServerInfoCommand extends Command {
 
         const payload = {embeds: [embed]};
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
     }
 };

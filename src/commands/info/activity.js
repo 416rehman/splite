@@ -62,8 +62,7 @@ module.exports = class activityCommand extends Command {
 
     handle(target, days, context) {
         const embed = new EmbedBuilder()
-            .setDescription(`${emojis.load} Fetching Message Count...`)
-            .setColor('RANDOM');
+            .setDescription(`${emojis.load} Fetching Message Count...`);
 
         this.sendReply(context, {embeds: [embed]}).then(async (msg) => {
             const moderationButton = context.member.permissions.has('VIEW_AUDIT_LOG') && new ButtonBuilder()

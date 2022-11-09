@@ -27,7 +27,7 @@ module.exports = class clearSystemChannelCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const systemChannelId = this.client.db.settings.selectSystemChannelId
             .pluck()
             .get(context.guild.id);
@@ -43,8 +43,7 @@ module.exports = class clearSystemChannelCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         this.client.db.settings.updateSystemChannelId.run(
@@ -54,7 +53,6 @@ module.exports = class clearSystemChannelCommand extends Command {
 
         const payload = {embeds: [embed.addFields([{name: 'System Channel', value:  `${oldSystemChannel} ➔ \`None\``}]),],};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

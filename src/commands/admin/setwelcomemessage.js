@@ -35,7 +35,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
         this.handle(text, interaction, true);
     }
 
-    handle(text, context, isInteraction) {
+    handle(text, context) {
         const {
             welcome_channel_id: welcomeChannelId, welcome_message: oldWelcomeMessage,
         } = this.client.db.settings.selectWelcomes.get(context.guild.id);
@@ -51,8 +51,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         if (!text) {
             const payload = ({
@@ -62,8 +61,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
                     .setDescription(this.description),],
             });
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -82,7 +80,6 @@ module.exports = class SetWelcomeMessageCommand extends Command {
                 .addFields([{name: 'Message', value:  this.client.utils.replaceKeywords(text)}]),],
         });
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

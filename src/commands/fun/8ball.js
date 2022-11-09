@@ -44,24 +44,20 @@ module.exports = class EightBallCommand extends Command {
                 0,
                 'Please provide a question to ask'
             );
-        this.handle(message, args, false);
+        this.handle(message, args.join(' '));
     }
 
     interact(interaction) {
-        this.handle(interaction, null, true);
+        this.handle(interaction, interaction.options.getString('question'), true);
     }
 
-    async handle(context, args, isInteraction) {
-        const question = isInteraction ? context.options.getString('question') : args.join(' ');
+    async handle(context, question) {
         const payload = {
             embeds: [
                 new EmbedBuilder()
                     .setTitle('🎱  The Magic 8-Ball  🎱')
                     .addFields([{name: 'Question', value:  question}])
-                    .addField(
-                        'Answer',
-                        `${answers[Math.floor(Math.random() * answers.length)]}`
-                    )
+                    .addFields([{name: 'Answer', value: `${answers[Math.floor(Math.random() * answers.length)]}`}])
                     .setFooter({
                         text: this.getUserIdentifier(context.author),
                         iconURL: this.getAvatarURL(context.author),
@@ -70,7 +66,6 @@ module.exports = class EightBallCommand extends Command {
             ]
         };
 
-        if (isInteraction) await context.reply(payload);
-        else context.reply(payload);
+        await this.sendReply(context, payload);
     }
 };

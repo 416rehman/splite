@@ -33,7 +33,7 @@ module.exports = class YoMommaCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(member, context, isInteraction) {
+    async handle(member, context) {
         try {
             const res = await fetch('https://api.yomomma.info');
             let joke = (await res.json()).joke;
@@ -54,18 +54,16 @@ module.exports = class YoMommaCommand extends Command {
                 ]
             };
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
         catch (err) {
             const payload = {
                 embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
-                    .setColor('RED')]
+                    .setColor('Red')]
             };
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
     }
 };

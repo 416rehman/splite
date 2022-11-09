@@ -140,8 +140,7 @@ class Client extends Discord.Client {
             })
             .setTitle(`${fail} System Error: \`${error}\``)
             .setDescription(`\`\`\`diff\n- System Failure\n+ ${errorMessage}\`\`\``)
-            .setTimestamp()
-            .setColor('RANDOM');
+            .setTimestamp();
         systemChannel.send({embeds: [embed]});
     }
 

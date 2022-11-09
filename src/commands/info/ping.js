@@ -25,8 +25,7 @@ module.exports = class PingCommand extends Command {
 
     async handle(context) {
         const embed = new EmbedBuilder()
-            .setDescription('`Pinging...`')
-            .setColor('RANDOM');
+            .setDescription('`Pinging...`');
 
         let msg;
         let payload = {embeds: [embed]};
@@ -41,9 +40,10 @@ module.exports = class PingCommand extends Command {
         const apiLatency = `\`\`\`ini\n[ ${Math.round(
             this.client.ws.ping
         )}ms ]\`\`\``;
+
         embed
             .setTitle(`Pong!  ${pong}`)
-            .setDescription('')
+            .setDescription(null)
             .addFields([{name: 'Latency', value:  latency, inline:  true}])
             .addFields([{name: 'API Latency', value:  apiLatency, inline:  true}])
             .setFooter({

@@ -16,21 +16,21 @@ module.exports = class InviteMeCommand extends Command {
     }
 
     run(message) {
-        this.handle(message, false);
+        this.handle(message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
-        this.handle(interaction, true);
+        this.handle(interaction);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const prefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(context.guild.id);
         this.client.utils
             .checkTopGGVote(this.client, context.author.id)
-            .then((hasVoted) => {
+            .then(async (hasVoted) => {
                 const gamblingModifier = Math.ceil((this.client.config.votePerks.gamblingWinOdds - this.client.config.stats.gambling.winOdds) * 100);
                 const robbingModifier = Math.ceil((this.client.config.votePerks.robbingSuccessOdds - this.client.config.stats.robbing.successOdds) * 100);
                 const embed = new EmbedBuilder()
@@ -42,8 +42,16 @@ module.exports = class InviteMeCommand extends Command {
                         ${hasVoted ? `${emojis.Voted} Your active perks: ` : 'After voting, you will receive the following perks:'}`)
                     .setURL(`https://top.gg/bot/${this.client.user.id}/vote`)
                     .addFields(
-                        {name: 'Gambling Odds', value: `${hasVoted ? emojis.Voted : ''} +${gamblingModifier}% Boost`, inline: true},
-                        {name: 'Robbing Odds', value: `${hasVoted ? emojis.Voted : ''} +${robbingModifier}% Boost`, inline: true}
+                        {
+                            name: 'Gambling Odds',
+                            value: `${hasVoted ? emojis.Voted : ''} +${gamblingModifier}% Boost`,
+                            inline: true
+                        },
+                        {
+                            name: 'Robbing Odds',
+                            value: `${hasVoted ? emojis.Voted : ''} +${robbingModifier}% Boost`,
+                            inline: true
+                        }
                     )
                     .setFooter({
                         text: `${hasVoted ? 'You have already voted, thank you <3' : 'Perks will be activated 5 mins after voting'}`,
@@ -53,17 +61,15 @@ module.exports = class InviteMeCommand extends Command {
 
                 if (!hasVoted) {
                     const payload = {embeds: [embed]};
-                    if (isInteraction) context.editReply(payload);
-                    else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                    await this.sendReply(context, payload);
                 }
                 else {
                     const payload = {embeds: [embed.setTitle(`${emojis.Voted} You have already voted`),]};
-                    if (isInteraction) context.editReply(payload);
-                    else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                    await this.sendReply(context, payload);
                 }
             })
             .catch((e) => {
-                console.log(e);
+                this.sendErrorMessage(context, 1, 'Unable to check if you have voted', e.message);
             });
     }
 };

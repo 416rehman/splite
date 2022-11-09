@@ -34,7 +34,7 @@ module.exports = class geoGuessrCommand extends Command {
         try {
             if (!this.client.topics?.geoguessr?.length) {
                 const payload = `${fail} No GeoGuessr questions available.`;
-                if (isInteraction) return context.editReply(payload); else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+                if (isInteraction) return this.sendReply(context, payload);
             }
 
             const topic = this.client.topics.geoguessr[Math.floor(Math.random() * this.client.topics.geoguessr.length)];
@@ -158,7 +158,7 @@ module.exports = class geoGuessrCommand extends Command {
                 embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
-                    .setColor('RED')]
+                    .setColor('Red')]
             };
             await this.sendReply(context, payload);
         }

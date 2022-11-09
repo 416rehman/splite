@@ -522,8 +522,7 @@ class Command {
                 .setDescription(
                     '```SEND_MESSAGES```\n```EMBED_LINKS```'
                 )
-                .setTimestamp()
-                .setColor('RANDOM');
+                .setTimestamp();
         const clientPermission = this.checkClientPermissions(channel, guild);
         if (clientPermission instanceof EmbedBuilder) return clientPermission;
 
@@ -595,8 +594,7 @@ class Command {
                                 .map((p) => `- ${p}`)
                                 .join('\n')}\`\`\``
                         )
-                        .setTimestamp()
-                        .setColor('RANDOM');
+                        .setTimestamp();
                 }
                 else {
                     return true;
@@ -628,8 +626,7 @@ class Command {
                         .map((p) => `- ${p}`)
                         .join('\n')}\`\`\``
                 )
-                .setTimestamp()
-                .setColor('RANDOM');
+                .setTimestamp();
         }
         return true;
     }
@@ -806,7 +803,7 @@ class Command {
                     **Example**:
                     \`\`\`${this.examples.join('\n')}\`\`\``
             )
-            .setColor('RED');
+            .setColor('Red');
     }
 
     /**

@@ -36,7 +36,7 @@ module.exports = class ChannelInfoCommand extends Command {
         this.handle(channel, interaction, true);
     }
 
-    handle(channel, context, isInteraction) {
+    handle(channel, context) {
         const embed = new EmbedBuilder()
             .setTitle('Channel Information')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
@@ -114,12 +114,11 @@ module.exports = class ChannelInfoCommand extends Command {
       Please enter mention a valid text or announcement channel` +
                 ' or provide a valid text, announcement, or voice channel ID';
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         if (channel.topic) embed.addFields([{name: 'Topic', value:  channel.topic}]);
 
         const payload = {embeds: [embed]};
-        this.sendReply(context, payload, isInteraction);
+        this.sendReply(context, payload);
     }
 };
