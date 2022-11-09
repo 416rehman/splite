@@ -1,0 +1,6 @@
+.env
+config.yaml
+docs
+data/db/db.sqlite
+logs
+node_modules

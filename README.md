@@ -84,6 +84,7 @@ the repo on GitHub to help with development! ⭐
 
 #### Configuration
 
+1. Create a copy of the `config.default.yaml` called `config.yaml`.
 1. Fill the `config.yaml` file or alternatively, provide the corresponding environment variables (Click
    [here](#cloud-configuration) for more information).
 2. **OPTIONAL**: If needed, environment variables can be used instead of a config file.
