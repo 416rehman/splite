@@ -4,10 +4,10 @@ const {SlashCommandBuilder} = require('discord.js');
 module.exports = class RandomCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'random',
+            name: 'random-group',
             description: 'Generate a random image',
             type: client.types.FUN,
-            slashCommand: new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder().setName('random')
                 .addSubcommand((o) => o.setName('bird').setDescription('Generate a random bird image'))
                 .addSubcommand((o) => o.setName('biryani').setDescription('Generate a random biryani image'))
                 .addSubcommand((o) => o.setName('cat').setDescription('Generate a random cat image'))

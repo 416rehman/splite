@@ -4,10 +4,10 @@ const {SlashCommandBuilder} = require('discord.js');
 module.exports = class GenerateCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'generator1',
+            name: 'generator1-group',
             description: 'Image generator 1',
             type: client.types.FUN,
-            slashCommand: new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder().setName('image-generator')
                 .addSubcommand((o) => o.setName('approved').setDescription('Generate an approved image from a user\'s avatar').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the approved image for')))
                 .addSubcommand((o) => o.setName('awooify').setDescription('Awooify a user\'s avatar').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to awooify')))
                 .addSubcommand((o) => o.setName('baguette').setDescription('Generate a baguette image from a user\'s avatar').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the baguette image for')))

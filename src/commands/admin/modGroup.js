@@ -1,21 +1,10 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
 
-const commandMappings = {
-    role: {
-        set: 'setmodrole',
-        clear: 'clearmodrole',
-    },
-    channels: {
-        set: 'setmodchannels',
-        clear: 'clearmodchannels',
-    }
-};
-
 module.exports = class CrownSettingsCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'mod-settings',
+            name: 'mod-group',
             description: 'Mod Management - Set the role and channel for moderators',
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
@@ -33,12 +22,22 @@ module.exports = class CrownSettingsCommandGroup extends Command {
                         .addChannelOption(p => p.setName('channel5').setRequired(false).setDescription('The channel to set as extra mod channel.'))
                     )
                     .addSubcommand((o) => o.setName('clear').setDescription('Resets/clears all mod channels'))
-                )
+                ),
+            subCommandMappings: {
+                role: {
+                    set: 'setmodrole',
+                    clear: 'clearmodrole',
+                },
+                channels: {
+                    set: 'setmodchannels',
+                    clear: 'clearmodchannels',
+                }
+            },
         });
     }
 
     interact(interaction) {
-        const command = this.client.commands.get(commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
+        const command = this.client.commands.get(this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
         if (command) {
             command.interact(interaction);
         }

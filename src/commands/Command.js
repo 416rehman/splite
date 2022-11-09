@@ -3,7 +3,7 @@ const {permissions} = require('../utils/constants.json');
 const {Collection} = require('discord.js');
 const {fail} = require('../utils/emojis.json');
 const emojis = require('../utils/emojis.json');
-const {capitalize} = require('../utils/utils');
+const {capitalize, removeDisabledCommandsFromGroup} = require('../utils/utils');
 
 /**
  * Command class
@@ -114,6 +114,7 @@ class Command {
          */
         if (options.slashCommand) {
             this.slashCommand = options.slashCommand;
+
             if (!this.slashCommand.name) this.slashCommand.setName(this.name); // Implicitly set the name to the command name if not set
             if (this.type === this.client.types.OWNER)
                 this.slashCommand.setDescription(('OWNER COMMAND: ' + this.description).substring(0, 100));
@@ -122,6 +123,11 @@ class Command {
             else if (this.type === this.client.types.NSFW || this.nsfwOnly)
                 this.slashCommand.setDescription(('NSFW COMMAND: ' + this.description).substring(0, 100));
             else this.slashCommand.setDescription(this.description.substring(0, 100));
+
+            if (this.slashCommand.options && this.name.toLowerCase().includes('group')) {
+                this.subCommandMappings = options.subCommandMappings || null;
+                removeDisabledCommandsFromGroup(this, this.slashCommand.options, this.subCommandMappings);
+            }
         }
 
         /**
@@ -258,9 +264,27 @@ class Command {
     /**
      * Interacts with the slash command - Call this in your command class if using the slash command
      */
-    // interact(interaction, args, author) {
-    //     throw {name: 'NotImplementedError', message: `${this.name} interact method not implemented`};
-    // }
+    interact(interaction, args, author) {
+        if (this.name.toLowerCase().includes('group')) {
+            let commandName;
+            if (this.subCommandMappings) {
+                commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
+                    this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
+                    this.subCommandMappings[interaction.options.getSubcommand()];
+            }
+            else commandName = interaction.options.getSubcommand();
+
+            let command = this.client.commands.get(commandName);
+
+            if (command) command.interact(interaction, args, author);
+            else interaction.reply({content: 'Command not found', ephemeral: true});
+
+            this.client.logger.info(`No command found for ${commandName}`);
+        }
+        else {
+            throw {name: 'NotImplementedError', message: `${this.name} interact method not implemented`};
+        }
+    }
 
     /**
      * If this.exclusive or this.channelExclusive is true, this method will finish the commands execution and allow any future instance of the command to run

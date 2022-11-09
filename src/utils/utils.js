@@ -71,6 +71,44 @@ class Statics {
 }
 
 /**
+ * Loops through all options of a command, finds subcommands, and if no corresponding subcommand is enabled, removes it from the options
+ * @param client    The client
+ * @param {Array} options   The command options
+ * @param commandMappings   The command mappings - an object with the subcommand name as the key and the corresponding command name as the value
+ */
+function removeDisabledCommandsFromGroup(client, options, commandMappings = null) {
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].constructor.name === 'SlashCommandSubcommandBuilder') {
+            if (!client.commands.has(commandMappings ? commandMappings[options[i].name] : options[i].name)) {
+                options.splice(i, 1);
+                i--;
+            }
+        }
+        else if (options[i].constructor.name === 'SlashCommandSubcommandGroupBuilder') {
+            console.log(`Checking subgroup ${options[i].name}`);
+            // go through all the subcommands of this subcommandGroup, check if corresponding command exists, and if not, remove it
+            for (let j = 0; j < options[i].options.length; j++) {
+                console.log(`commandMappings[${options[i].name}][${options[i].options[j].name}] = ${commandMappings[options[i].name][options[i].options[j].name]}`);
+                if (options[i].options[j].constructor.name === 'SlashCommandSubcommandBuilder') {
+                    const commandName = commandMappings ? commandMappings[options[i].name][options[i].options[j].name] : options[i].options[j].name;
+                    if (!client.commands.has(commandName)) {
+                        console.log(`Removing ${commandName}`);
+                        options[i].options.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+            // // if there are no subcommands left, remove the group
+            // if (options[i].options.length === 0) {
+            //     options.splice(i, 1);
+            //     i--;
+            // }
+        }
+    }
+}
+
+
+/**
  * Capitalizes a string
  * @param {string} string
  */
@@ -605,6 +643,7 @@ function isCommandOrBotMessage(msg, prefix) {
 
 module.exports = {
     Statics,
+    removeDisabledCommandsFromGroup,
     capitalize,
     removeElement,
     trimArray,

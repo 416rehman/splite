@@ -175,36 +175,56 @@ class Client extends Discord.Client {
         let table = new AsciiTable('Commands');
         table.setHeading('File', 'Aliases', 'Type', 'Status');
 
+        // sort it so that files with the word "group" are loaded at the end
+        const groups = [];
+
         readdirSync(path).filter(f => !f.endsWith('.js')).forEach(dir => {
             const commands = readdirSync(resolve(__basedir, join(path, dir))).filter(file => file.endsWith('js'));
-
             commands.forEach(f => {
-                const Command = require(resolve(__basedir, join(path, dir, f)));
-                const command = new Command(this); // Instantiate the specific command
-                if (command.name && !command.disabled) {
-                    // Map command
-                    this.commands.set(command.name, command);
-
-                    // Map command aliases
-                    let aliases = '';
-                    if (command.aliases) {
-                        command.aliases.forEach(alias => {
-                            this.aliases.set(alias, command);
-                        });
-                        aliases = command.aliases.join(', ');
-                    }
-
-
-                    table.addRow(f, aliases, command.type, 'pass');
-                }
-                else {
-                    this.logger.warn(`${f} failed to load`);
-                    table.addRow(f, '', '', 'fail');
-                }
+                if (f.toLowerCase().includes('group')) groups.push(resolve(__basedir, join(path, dir, f)));
+                else this.tryLoadCommand(resolve(__basedir, join(path, dir, f)), table);
             });
         });
+
+        groups.forEach(f => {
+            this.tryLoadCommand(f, table);
+        });
+
         this.logger.info(`\n${table.toString()}`);
         return this;
+    }
+
+    tryLoadCommand(filepath, table) {
+        const Command = require(filepath);
+        const command = new Command(this);
+
+        const filename = filepath.split('/').pop().split('\\').pop();
+        if (filename.toLowerCase().includes('group') && !command.name.toLowerCase().includes('group')) {
+            this.logger.error(`Command Group files must have the word "group" in their filename and command name: ${filename}`);
+            this.logger.error(`Make sure the command file ${filename} has the word "group" in its name property`);
+            process.exit(1);
+        }
+
+        if (command.name && !command.disabled) {
+            // Map command
+            this.commands.set(command.name, command);
+
+            // Map command aliases
+            let aliases = '';
+            if (command.aliases) {
+                command.aliases.forEach(alias => {
+                    this.aliases.set(alias, command);
+                });
+                aliases = command.aliases.join(', ');
+            }
+
+
+            table.addRow(filename, aliases, command.type, 'pass');
+        }
+        else {
+            this.logger.warn(`${filename} failed to load`);
+            table.addRow(filename, '', '', 'fail');
+        }
     }
 
     /**
