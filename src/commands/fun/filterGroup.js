@@ -30,14 +30,4 @@ module.exports = class FilterCommandGroup extends Command {
                 .addSubcommand((o) => o.setName('frame').setDescription('Frame an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to frame')))
         });
     }
-
-    interact(interaction) {
-        const command = this.client.commands.get(interaction.options.getSubcommand());
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command');
-        }
-    }
 };

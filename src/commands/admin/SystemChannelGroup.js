@@ -21,17 +21,4 @@ module.exports = class SystemChannelSettingsCommandGroup extends Command {
             }
         });
     }
-
-    interact(interaction) {
-        const command = this.client.commands.get(this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply({
-                content: 'Invalid command - Potential mapping error',
-                ephemeral: true,
-            });
-        }
-    }
 };

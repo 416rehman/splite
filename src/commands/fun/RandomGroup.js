@@ -21,14 +21,4 @@ module.exports = class RandomCommandGroup extends Command {
                 .addSubcommand((o) => o.setName('shibe').setDescription('Generate a random shibe image'))
         });
     }
-
-    interact(interaction) {
-        const command = this.client.commands.get(interaction.options.getSubcommand());
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command');
-        }
-    }
 };

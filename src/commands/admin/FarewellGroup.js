@@ -33,15 +33,4 @@ module.exports = class FarewellSettingsCommandGroup extends Command {
             }
         });
     }
-
-    interact(interaction) {
-        let commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
-            this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
-            this.subCommandMappings[interaction.options.getSubcommand()];
-
-        const command = this.client.commands.get(commandName);
-
-        if (command) command.interact(interaction);
-        else interaction.reply('Invalid command - Potential mapping error');
-    }
 };

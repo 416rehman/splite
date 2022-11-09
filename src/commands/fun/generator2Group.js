@@ -15,14 +15,4 @@ module.exports = class GenerateCommandGroup2 extends Command {
                 .addSubcommand((o) => o.setName('wasted').setDescription('Generate a wasted image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User to generate the image for')))
         });
     }
-
-    interact(interaction) {
-        const command = this.client.commands.get(interaction.options.getSubcommand());
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command');
-        }
-    }
 };

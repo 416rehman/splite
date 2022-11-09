@@ -126,7 +126,7 @@ class Command {
 
             if (this.slashCommand.options && this.name.toLowerCase().includes('group')) {
                 this.subCommandMappings = options.subCommandMappings || null;
-                removeDisabledCommandsFromGroup(this, this.slashCommand.options, this.subCommandMappings);
+                removeDisabledCommandsFromGroup(this.client, this.slashCommand.options, this.subCommandMappings);
             }
         }
 
@@ -277,9 +277,10 @@ class Command {
             let command = this.client.commands.get(commandName);
 
             if (command) command.interact(interaction, args, author);
-            else interaction.reply({content: 'Command not found', ephemeral: true});
-
-            this.client.logger.info(`No command found for ${commandName}`);
+            else {
+                interaction.reply({content: 'Command not found', ephemeral: true});
+                this.client.logger.info(`No command found for ${commandName}`);
+            }
         }
         else {
             throw {name: 'NotImplementedError', message: `${this.name} interact method not implemented`};

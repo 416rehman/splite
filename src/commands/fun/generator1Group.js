@@ -35,14 +35,4 @@ module.exports = class GenerateCommandGroup extends Command {
                 .addSubcommand((o) => o.setName('tobecontinued').setDescription('Generate a to be continued image').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the to be continued image for')))
         });
     }
-
-    interact(interaction) {
-        const command = this.client.commands.get(interaction.options.getSubcommand());
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command');
-        }
-    }
 };

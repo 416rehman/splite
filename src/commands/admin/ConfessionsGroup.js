@@ -29,14 +29,4 @@ module.exports = class ConfessionsSettingsCommandGroup extends Command {
             }
         });
     }
-
-    interact(interaction) {
-        const command = this.client.commands.get(this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command - Potential mapping error');
-        }
-    }
 };
