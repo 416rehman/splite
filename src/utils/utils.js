@@ -12,7 +12,8 @@ class Statics {
 
     static get config() {
         if (this.#config === null) {
-            const configObj = YAML.parse(fs.readFileSync(__basedir + '/config.yaml', 'utf8'));
+            // if __basedir + '/config.yaml' exists read it, else read __basedir + '/config.example.yaml'
+            const configObj = YAML.parse(fs.readFileSync(__basedir + (fs.existsSync(__basedir + '/config.yaml') ? '/config.yaml' : '/config.default.yaml'), 'utf8'));
             const replace = (obj, path = []) => {
                 for (const [key, value] of Object.entries(obj)) {
                     if (typeof value === 'object' && !Array.isArray(value)) {
