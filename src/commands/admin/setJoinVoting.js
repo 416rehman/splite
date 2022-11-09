@@ -60,8 +60,7 @@ module.exports = class setJoinVoting extends Command {
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
-                .setTimestamp()
-                .setColor(context.guild.members.me.displayHexColor);
+                .setTimestamp();
 
             const emoji = (await context.guild.emojis.cache.find((e) => e.id === joinvotingEmoji)) || joinvotingEmoji;
 
@@ -85,8 +84,7 @@ module.exports = class setJoinVoting extends Command {
                 ],
             });
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         else {
             let parsedEmoji,
@@ -101,8 +99,7 @@ module.exports = class setJoinVoting extends Command {
                 catch (err) {
                     const payload = `${fail} I could not find the message with the ID \`${messageId}\``;
 
-                    if (isInteraction) await context.editReply(payload);
-                    else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                    this.sendReply(context, payload);
                     return;
                 }
 
@@ -111,8 +108,7 @@ module.exports = class setJoinVoting extends Command {
                 const payload = isInteraction ? `${fail} Please provide a valid messageID. A messageID is a 18 digit number that can be found by right clicking a message and selecting "Copy ID".`
                     : `${fail} First argument needs to be a messageID. Example: setjoinvoting 832878346979377193 🦶 #generalChannel`;
 
-                if (isInteraction) await context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
@@ -135,16 +131,14 @@ module.exports = class setJoinVoting extends Command {
                 catch (err) {
                     const payload = `${fail} I could not find the emoji with the ID \`${emoji}\``;
 
-                    if (isInteraction) await context.editReply(payload);
-                    else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                    this.sendReply(context, payload);
                     return;
                 }
             }
             else {
                 const payload = isInteraction ? `${fail} Please provide a valid emoji.` : `${fail} Second argument needs to be an emoji. Example: setjoinvoting 832878346979377193 🦶 #generalChannel`;
 
-                if (isInteraction) await context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
@@ -153,16 +147,14 @@ module.exports = class setJoinVoting extends Command {
             if (!channel) {
                 const payload = isInteraction ? `${fail} Please provide a valid channel.` : `${fail} Third argument needs to be a channel. Example: setjoinvoting 832878346979377193 🦶 #generalChannel`;
 
-                if (isInteraction) await context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
             if (!channel || (channel.type != ChannelType.GuildText && channel.type != ChannelType.GuildNews) || !channel.viewable) {
                 const payload = `${fail} The channel you provided is not a text channel.`;
 
-                if (isInteraction) await context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
@@ -173,8 +165,7 @@ module.exports = class setJoinVoting extends Command {
             catch (err) {
                 const payload = `${fail} I could not react to the message with the ID \`${messageId}\``;
 
-                if (isInteraction) await context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
@@ -206,8 +197,7 @@ module.exports = class setJoinVoting extends Command {
                 })
                 .setTimestamp();
 
-            if (isInteraction) await context.editReply(embed);
-            else context.loadingMessage ? context.loadingMessage.edit(embed) : context.reply(embed);
+            this.sendReply(context, embed);
         }
     }
 };

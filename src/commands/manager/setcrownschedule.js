@@ -82,8 +82,7 @@ module.exports = class SetCrownScheduleCommand extends Command {
             .addFields([{name: 'Role', value:  `${crownRole}` || '`None`', inline:  true}])
             .addFields([{name: 'Channel', value:  `${crownChannel}` || '`None`', inline:  true}])
             .addFields([{name: 'Message', value:  this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
-            .setTimestamp()
-            .setColor('RANDOM');
+            .setTimestamp();
 
         // Display current schedule
         if (!cron) {

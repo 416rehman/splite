@@ -29,7 +29,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
         this.handle(channel, interaction, true);
     }
 
-    handle(channel, context, isInteraction) {
+    async handle(channel, context, isInteraction) {
         const messageDeleteLogId =
             this.client.db.settings.selectMessageDeleteLogId.pluck().get(context.guild.id);
         const oldMessageDeleteLog = context.guild.channels.cache.get(messageDeleteLogId) || '`None`';
@@ -41,8 +41,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         if (!channel) {
@@ -57,8 +56,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
                 ],
             });
 
-            if (isInteraction) context.editReply(payload);
-            else context.channel.send(payload);
+            this.sendReply(context, payload);
         }
 
         channel = isInteraction ? channel : this.getChannelFromMention(context, channel) || context.guild.channels.cache.get(channel);
@@ -66,8 +64,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
         if (!channel || channel.type != ChannelType.GuildText || !channel.viewable) {
             const payload = `${fail} Please mention an accessible text channel or provide a valid text channel ID.`;
 
-            if (isInteraction) context.editReply(payload);
-            else context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
         this.client.db.settings.updateMessageDeleteLogId.run(channel.id, context.guild.id);
@@ -83,7 +80,6 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
             ],
         });
 
-        if (isInteraction) context.editReply(payload);
-        else context.reply(payload);
+        await this.sendReplyAndDelete(context, payload);
     }
 };

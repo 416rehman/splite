@@ -90,8 +90,7 @@ module.exports = class SlowmodeCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Slowmode disabled
         if (rate === '0') {

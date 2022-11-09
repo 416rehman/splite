@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const Discord = require('discord.js');
+const {parseEmoji, EmbedBuilder} = require('discord.js');
 const {parse} = require('twemoji-parser');
 const _emojis = require('../../utils/emojis.json');
 const {SlashCommandBuilder} = require('discord.js');
@@ -54,10 +54,10 @@ module.exports = class AddEmojiCommand extends Command {
         try {
             let emoji;
             if (args.length > 1) {
-                const isSecondArgEmoji = /^(ftp|http|https):\/\/[^ "]+$/.test(args[1]) || Discord.Util.parseEmoji(args[1]).id;
+                const isSecondArgEmoji = /^(ftp|http|https):\/\/[^ "]+$/.test(args[1]) || parseEmoji(args[1]).id;
                 if (isSecondArgEmoji) {
                     args.forEach((emoji) => {
-                        addEmoji.call(this, emoji, context, this, null, isInteraction);
+                        addEmoji.call(this, emoji, context, this, null);
                     });
                     return this.sendModLogMessage(context, null, {
                         Emoji: 'Multiple Emojis',
@@ -73,42 +73,42 @@ module.exports = class AddEmojiCommand extends Command {
                     );
                 }
             }
-            else emoji = addEmoji.call(this, args[0], context, this, args.slice(1).join('_'), isInteraction);
+            else emoji = addEmoji.call(this, args[0], context, this, args.slice(1).join('_'));
 
             this.sendModLogMessage(context, null, {Emoji: emoji});
         }
         catch (err) {
             this.client.logger.error(err);
-            this.sendReplyAndDelete(context, `${_emojis.fail} A error occured while adding the emoji. Common reasons are:- unallowed characters in emoji name, 50 emoji limit.`, isInteraction);
+            this.sendReplyAndDelete(context, `${_emojis.fail} A error occured while adding the emoji. Common reasons are:- unallowed characters in emoji name, 50 emoji limit.`);
         }
     }
 };
 
-async function addEmoji(emoji, context, command, emojiName, isInteraction) {
+async function addEmoji(emoji, context, command, emojiName) {
     const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/);
     if (!emoji) {
-        this.sendReplyAndDelete(context, {embeds: [this.createErrorEmbed('Please provide a valid emoji.')]}, isInteraction);
+        this.sendReplyAndDelete(context, {embeds: [this.createErrorEmbed('Please provide a valid emoji.')]});
     }
 
     let name;
-    let customemoji = Discord.Util.parseEmoji(emoji); //Check if it's a emoji
+    let customemoji = parseEmoji(emoji); //Check if it's a emoji
 
     //If it's a custom emoji
     if (customemoji.id) {
-        const Link = `https://cdn.discordapp.com/emojis/${customemoji.id}.${
+        const url = `https://cdn.discordapp.com/emojis/${customemoji.id}.${
             customemoji.animated ? 'gif' : 'png'
         }`;
         name = emojiName || customemoji.name;
-        const emoji = await context.guild.emojis.create(`${Link}`, `${name}`);
+        const emoji = await context.guild.emojis.create({attachment: url, name: name});
         const payload = {
             embeds: [
-                new Discord.EmbedBuilder().setDescription(
+                new EmbedBuilder().setDescription(
                     `${_emojis.success} ${emoji} added with name "${name}"`
                 ),
             ],
         };
 
-        await this.sendReply(context, payload, isInteraction);
+        await this.sendReply(context, payload);
 
         return emoji;
     }
@@ -122,7 +122,7 @@ async function addEmoji(emoji, context, command, emojiName, isInteraction) {
             );
             const payload = {
                 embeds: [
-                    new Discord.EmbedBuilder()
+                    new EmbedBuilder()
                         .setDescription(
                             `${addedEmoji} added with name "${addedEmoji.name}"`
                         )
@@ -133,12 +133,12 @@ async function addEmoji(emoji, context, command, emojiName, isInteraction) {
                 ],
             };
 
-            return this.sendReply(context, payload, isInteraction);
+            return this.sendReply(context, payload);
         }
         catch (e) {
             const payload = {
                 embeds: [
-                    new Discord.EmbedBuilder()
+                    new EmbedBuilder()
                         .setDescription(
                             `${_emojis.fail} Failed to add emoji\n\`\`\`${e.message}\`\`\``
                         )
@@ -155,6 +155,6 @@ async function addEmoji(emoji, context, command, emojiName, isInteraction) {
     else {
         let CheckEmoji = parse(emoji, {assetType: 'png'});
         if (!CheckEmoji[0])
-            return this.sendReplyAndDelete(context, {embeds: [this.createErrorEmbed(`Please mention a valid emoji. ${emoji} is invalid`)]}, isInteraction);
+            return this.sendReplyAndDelete(context, {embeds: [this.createErrorEmbed(`Please mention a valid emoji. ${emoji} is invalid`)]});
     }
 }

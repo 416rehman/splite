@@ -23,7 +23,7 @@ module.exports = class SnipeCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
 
         const snipedMSg = context.guild.editSnipes.get(context.channel.id);
 
@@ -52,8 +52,7 @@ module.exports = class SnipeCommand extends Command {
                 });
 
             const payload = {embeds: [embed]};
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         else {
             const embed = new EmbedBuilder()
@@ -66,8 +65,7 @@ module.exports = class SnipeCommand extends Command {
                 .setTimestamp();
 
             const payload = {embeds: [embed]};
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
     }
 };

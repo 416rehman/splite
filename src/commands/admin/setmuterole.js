@@ -50,8 +50,7 @@ module.exports = class SetMuteRoleCommand extends Command {
                 ],
             });
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -59,8 +58,7 @@ module.exports = class SetMuteRoleCommand extends Command {
         role = isInteraction ? role : await this.getGuildRole(context.guild, role);
         if (!role) {
             const payload = `${fail} I couldn't find that role.`;
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -71,7 +69,6 @@ module.exports = class SetMuteRoleCommand extends Command {
                 .setDescription(`The \`mute role\` was successfully updated. ${success}\nUse \`clearmuterole\` to clear the current \`mute role\``)],
         });
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
     }
 };

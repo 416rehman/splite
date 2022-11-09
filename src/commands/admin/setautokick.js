@@ -36,7 +36,7 @@ module.exports = class SetAutoKickCommand extends Command {
         this.handle(amount, interaction, true);
     }
 
-    handle(amount, context, isInteraction) {
+    handle(amount, context) {
         const autoKick =
             this.client.db.settings.selectAutoKick
                 .pluck()
@@ -50,8 +50,7 @@ module.exports = class SetAutoKickCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         if (!amount) {
@@ -63,8 +62,7 @@ module.exports = class SetAutoKickCommand extends Command {
                 ],
             });
 
-            if (isInteraction) return context.editReply(payload);
-            else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return this.sendReply(context, payload);
         }
 
         this.client.db.settings.updateAutoKick.run(amount, context.guild.id);
@@ -77,7 +75,6 @@ module.exports = class SetAutoKickCommand extends Command {
             ],
         });
 
-        if (isInteraction) return context.editReply(payload);
-        else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        return this.sendReply(context, payload);
     }
 };

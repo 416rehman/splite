@@ -53,8 +53,7 @@ module.exports = class MembersCommand extends Command {
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
                 })
-                .setTimestamp()
-                .setColor(context.guild.members.me.displayHexColor);
+                .setTimestamp();
             return this.sendReply(context, {embeds: [embed]});
         }
 

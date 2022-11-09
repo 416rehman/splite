@@ -39,10 +39,10 @@ module.exports = class FeedbackCommand extends Command {
         this.handle(feedback, message, false);
     }
 
-    handle(feedback, context, isInteraction) {
+    handle(feedback, context) {
         const feedbackChannel = this.client.channels.cache.get(this.client.config.feedbackChannelId);
         if (!feedbackChannel) {
-            this.sendReplyAndDelete(context, `${emojis.fail} This bot is not setup to send feedback.`, isInteraction);
+            this.sendReplyAndDelete(context, `${emojis.fail} This bot is not setup to send feedback.`);
         }
 
         // Send report
@@ -56,8 +56,7 @@ module.exports = class FeedbackCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         feedbackChannel.send({embeds: [feedbackEmbed]});
 
@@ -76,9 +75,8 @@ module.exports = class FeedbackCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
-        this.sendReply(context, {embeds: [embed]}, isInteraction);
+        this.sendReply(context, {embeds: [embed]});
     }
 };

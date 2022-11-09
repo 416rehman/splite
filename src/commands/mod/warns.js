@@ -48,8 +48,7 @@ module.exports = class WarnsCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         const buildEmbed = async (current, embed) => {
             const max = count > current + 5 ? current + 5 : count;

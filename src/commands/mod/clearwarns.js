@@ -64,8 +64,7 @@ module.exports = class ClearWarnsCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         this.sendReply(context, {embeds: [embed]});
 

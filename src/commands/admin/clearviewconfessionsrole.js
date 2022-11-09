@@ -34,7 +34,7 @@ module.exports = class clearViewConfessionsRoleCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const view_confessions_role =
             this.client.db.settings.selectViewConfessionsRole
                 .pluck()
@@ -55,8 +55,7 @@ module.exports = class clearViewConfessionsRoleCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear role
         this.client.db.settings.updateViewConfessionsRole.run(
@@ -85,7 +84,6 @@ module.exports = class clearViewConfessionsRoleCommand extends Command {
                 }),],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

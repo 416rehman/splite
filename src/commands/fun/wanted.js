@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {fail} = require('../../utils/emojis.json');
 
 module.exports = class wantedCommand extends Command {
     constructor(client) {
@@ -10,18 +10,13 @@ module.exports = class wantedCommand extends Command {
             description: 'Generates a wanted image',
             type: client.types.FUN,
             examples: ['wanted @split'],
+            disabled: client.ameApi === null,
         });
     }
 
     async run(message, args) {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(member, message, false);
-            });
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
@@ -30,25 +25,23 @@ module.exports = class wantedCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(targetUser, context, isInteraction) {
+    async handle(targetUser, context) {
         try {
             const buffer = await context.client.ameApi.generate('wanted', {
                 url: this.getAvatarURL(targetUser, 'png'),
             });
             const payload = {files: [new AttachmentBuilder(buffer, { name:  'wanted.png' })]};
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
         catch (err) {
             const payload = {
                 embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
-                    .setColor('RED')],
+                    .setColor('Red')],
             };
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
     }
 };

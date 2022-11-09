@@ -24,7 +24,7 @@ module.exports = class clearPrefixCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const oldPrefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(context.guild.id);
@@ -52,7 +52,6 @@ module.exports = class clearPrefixCommand extends Command {
                 .setTimestamp()]
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

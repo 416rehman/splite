@@ -42,7 +42,7 @@ module.exports = class GivePointsCommand extends Command {
         await this.handle(member, points, interaction, true);
     }
 
-    handle(member, amount, context, isInteraction) {
+    handle(member, amount, context) {
         if (member.id === this.client.user.id) {
             const payload = `${emojis.fail} Thank you, you're too kind! But I must decline. I prefer not to take handouts.`;
             return this.sendReplyAndDelete(context, payload, 5000);
@@ -102,10 +102,9 @@ module.exports = class GivePointsCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.member),
             })
-            .setTimestamp()
-            .setColor('RANDOM');
+            .setTimestamp();
 
         const payload = {embeds: [embed]};
-        this.sendReply(context, payload, isInteraction);
+        this.sendReply(context, payload);
     }
 };

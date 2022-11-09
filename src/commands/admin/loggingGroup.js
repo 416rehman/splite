@@ -1,37 +1,10 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
 
-const commandMappings = {
-    member: {
-        set: 'setmemberlog',
-        clear: 'clearmemberlog',
-    },
-    messagedelete: {
-        set: 'setmessagedeletelog',
-        clear: 'clearmessagedeletelog',
-    },
-    messageedit: {
-        set: 'setmessageeditlog',
-        clear: 'clearmessageeditlog',
-    },
-    role: {
-        set: 'setrolelog',
-        clear: 'clearrolelog',
-    },
-    mod: {
-        set: 'setmodlog',
-        clear: 'clearmodlog',
-    },
-    nickname: {
-        set: 'setnicknamelog',
-        clear: 'clearnicknamelog',
-    }
-};
-
 module.exports = class LoggingSettingsCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'logging-settings',
+            name: 'logging-group',
             description: 'Logs Management - Logs provide a way to view the logs of the server',
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
@@ -54,17 +27,33 @@ module.exports = class LoggingSettingsCommandGroup extends Command {
                 ).addSubcommandGroup((o) => o.setName('nickname').setDescription('Nickname logs when a user changes their nickname')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the nickname logs channel - To view current channel, don\'t provide a channel').addChannelOption(p => p.setName('channel').setRequired(false).setDescription('To view current channel, don\'t provide this option')))
                     .addSubcommand((o) => o.setName('clear').setDescription('Disable logging for nickname'))
-                )
+                ),
+            subCommandMappings: {
+                member: {
+                    set: 'setmemberlog',
+                    clear: 'clearmemberlog',
+                },
+                messagedelete: {
+                    set: 'setmessagedeletelog',
+                    clear: 'clearmessagedeletelog',
+                },
+                messageedit: {
+                    set: 'setmessageeditlog',
+                    clear: 'clearmessageeditlog',
+                },
+                role: {
+                    set: 'setrolelog',
+                    clear: 'clearrolelog',
+                },
+                mod: {
+                    set: 'setmodlog',
+                    clear: 'clearmodlog',
+                },
+                nickname: {
+                    set: 'setnicknamelog',
+                    clear: 'clearnicknamelog',
+                }
+            }
         });
-    }
-
-    interact(interaction) {
-        const command = this.client.commands.get(commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command - Potential mapping error');
-        }
     }
 };

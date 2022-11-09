@@ -204,7 +204,7 @@ module.exports = class TriviaCommand extends Command {
                 embeds: [new EmbedBuilder()
                     .setTitle('Error')
                     .setDescription(fail + ' ' + err.message)
-                    .setColor('RED')],
+                    .setColor('Red')],
             };
             await this.sendReply(context, payload);
         }

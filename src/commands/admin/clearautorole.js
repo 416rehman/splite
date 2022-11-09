@@ -27,7 +27,7 @@ module.exports = class clearAutoRoleCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const autoRoleId = this.client.db.settings.selectAutoRoleId
             .pluck()
             .get(context.guild.id);
@@ -44,14 +44,12 @@ module.exports = class clearAutoRoleCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         this.client.db.settings.updateAutoRoleId.run(null, context.guild.id);
 
         const payload = {embeds: [embed.addFields([{name: 'Auto Role', value:  `${oldAutoRole}`}])],};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

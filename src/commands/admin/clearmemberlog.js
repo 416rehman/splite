@@ -27,7 +27,7 @@ module.exports = class clearMemberLogCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const memberLogId = this.client.db.settings.selectMemberLogId
             .pluck()
             .get(context.guild.id);
@@ -50,7 +50,6 @@ module.exports = class clearMemberLogCommand extends Command {
 
         const payload = {embeds: [embed.addFields([{name: 'Member Log', value:  `${oldMemberLog} ➔ \`None\``}])],};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

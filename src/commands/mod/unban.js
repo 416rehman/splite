@@ -60,8 +60,7 @@ module.exports = class UnbanCommand extends Command {
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         await this.sendReply(context, {embeds: [embed]});
         this.client.logger.info(

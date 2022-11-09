@@ -32,7 +32,7 @@ module.exports = (client, message) => {
                 }),
             })
             .setTimestamp()
-            .setColor('RED');
+            .setColor('Red');
     }
     catch (e) {
         return;

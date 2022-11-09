@@ -33,7 +33,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
         await this.handle(text, interaction, true);
     }
 
-    async handle(text, context, isInteraction) {
+    async handle(text, context) {
         let {
             verification_role_id: verificationRoleId,
             verification_channel_id: verificationChannelId,
@@ -55,8 +55,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         if (!text) {
             const payload = ({
@@ -67,8 +66,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
                     .setDescription(this.description),],
             });
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -87,8 +85,7 @@ module.exports = class SetVerificationMessageCommand extends Command {
                 .addFields([{name: 'Message', value:  text}]),],
         });
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
 
         // Update verification and send the new message to the verification channel
         if (status === 'enabled') {

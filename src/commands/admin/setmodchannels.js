@@ -57,7 +57,7 @@ module.exports = class SetModChannelsCommand extends Command {
         this.handle(channels, interaction, true);
     }
 
-    handle(channels, context, isInteraction) {
+    handle(channels, context) {
         const modChannelIds = this.client.db.settings.selectModChannelIds.pluck().get(context.guild.id);
 
         let oldModChannels = [];
@@ -75,8 +75,7 @@ module.exports = class SetModChannelsCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Show current mod channels
         if (!channels) {
@@ -91,8 +90,7 @@ module.exports = class SetModChannelsCommand extends Command {
                 ],
             });
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -112,7 +110,6 @@ module.exports = class SetModChannelsCommand extends Command {
             ],
         });
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

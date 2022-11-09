@@ -31,7 +31,7 @@ module.exports = class clearconfessionchannelCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Confessions`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
@@ -51,7 +51,6 @@ module.exports = class clearconfessionchannelCommand extends Command {
 
         const payload = {embeds: [embed.addFields([{name: 'Confessions Channel', value:  '`None`'}])],};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

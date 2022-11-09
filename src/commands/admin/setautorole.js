@@ -43,8 +43,7 @@ module.exports = class SetAutoRoleCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         if (!role) {
@@ -57,8 +56,7 @@ module.exports = class SetAutoRoleCommand extends Command {
             });
 
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
 
         // Update role
@@ -74,7 +72,6 @@ module.exports = class SetAutoRoleCommand extends Command {
                 .setDescription(`The \`auto role\` was successfully updated. ${success}\nUse \`clearautorole\` to clear the current \`auto role\`.`)],
         });
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
     }
 };

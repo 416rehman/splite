@@ -1,27 +1,13 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
 
-const commandMappings = {
-    'blacklist': 'blacklist',
-    'whitelist': 'whitelist',
-    'setcrownschedule': 'setcrownschedule',
-    'odds': {
-        'set': 'setodds',
-        'reset': 'clearodds'
-    },
-    'points': {
-        'set': 'setpoints'
-    },
-    'servers': 'servers',
-};
-
 module.exports = class ManagerCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'manage',
+            name: 'manage-group',
             description: 'Manager commands',
             type: client.types.MANAGER,
-            slashCommand: new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder().setName('manage')
                 // MANAGER COMMANDS
                 .addSubcommand(c => c.setName('blacklist').setDescription('Globally blacklist a user from using the bot')
                     .addStringOption((option) => option.setName('userid').setDescription('The user to blacklist').setRequired(true))
@@ -49,18 +35,20 @@ module.exports = class ManagerCommandGroup extends Command {
                         .addIntegerOption((option) => option.setName('amount').setDescription('The points to set the user to').setRequired(true))
                     )
                 )
-                .addSubcommand(c => c.setName('servers').setDescription('List all the servers the bot is in'))
+                .addSubcommand(c => c.setName('servers').setDescription('List all the servers the bot is in')),
+            subCommandMappings: {
+                'blacklist': 'blacklist',
+                'whitelist': 'whitelist',
+                'setcrownschedule': 'setcrownschedule',
+                'odds': {
+                    'set': 'setodds',
+                    'reset': 'clearodds'
+                },
+                'points': {
+                    'set': 'setpoints'
+                },
+                'servers': 'servers',
+            }
         });
-    }
-
-    interact(interaction) {
-        let commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
-            commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
-            commandMappings[interaction.options.getSubcommand()];
-
-        const command = this.client.commands.get(commandName);
-
-        if (command) command.interact(interaction);
-        else interaction.reply('Invalid command - Potential mapping error');
     }
 };

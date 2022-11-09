@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {EmbedBuilder} = require('discord.js');
-const {fail, load} = require('../../utils/emojis.json');
+const {fail} = require('../../utils/emojis.json');
 const {SlashCommandBuilder} = require('discord.js');
 
 const types = Array(
@@ -60,22 +60,16 @@ module.exports = class thighsCommand extends Command {
     }
 
     async run(message, args) {
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(args.shift(), message, false);
-            });
+        await this.handle(args.shift(), message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const category = interaction.options.getString('category');
-        await this.handle(category, interaction, true);
+        await this.handle(category, interaction);
     }
 
-    async handle(category, context, isInteraction) {
+    async handle(category, context) {
         try {
             let chosen;
             if (category) {
@@ -86,18 +80,10 @@ module.exports = class thighsCommand extends Command {
                     const embed = new EmbedBuilder().setDescription(
                         `${fail} Category **${category}** Invalid!\n\n**Supported Categories:**\n${description}`
                     );
-                    if (isInteraction) {
-                        return context.editReply({
-                            embeds: [embed],
-                        });
-                    }
-                    else {
-                        return context.loadingMessage ? context.loadingMessage.edit({
-                            embeds: [embed],
-                        }) : context.channel.send({
-                            embeds: [embed],
-                        });
-                    }
+                    const payload = {
+                        embeds: [embed],
+                    };
+                    return this.sendReply(context, payload);
                 }
             }
             else chosen = types[Math.floor(Math.random() * types.length)];
@@ -112,36 +98,13 @@ module.exports = class thighsCommand extends Command {
                     text: `Specify category like this, ${prefix}nsfw boobs`,
                 });
 
-            if (isInteraction) {
-                await context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed],
-                }) : context.channel.send({
-                    embeds: [embed],
-                });
-            }
+            const payload = {
+                embeds: [embed],
+            };
+            this.sendReply(context, payload);
         }
         catch (err) {
-            const embed = new EmbedBuilder()
-                .setTitle('Error')
-                .setDescription(fail + ' ' + err.message)
-                .setColor('RED');
-            if (isInteraction) {
-                await context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed]
-                }) : context.channel.send({
-                    embeds: [embed]
-                });
-            }
+            this.sendErrorMessage(context, 0, err.message);
         }
     }
 };

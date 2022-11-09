@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {load} = require('../../utils/emojis.json');
+const {AttachmentBuilder} = require('discord.js');
+
 const fetch = require('node-fetch');
 const {SlashCommandBuilder} = require('discord.js');
 module.exports = class whowouldwinCommand extends Command {
@@ -24,23 +24,17 @@ module.exports = class whowouldwinCommand extends Command {
 
         if (!member || !member2) return this.sendErrorMessage(message, 'Could not find the user you specified.');
 
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(member, member2, message, false);
-            });
+        await this.handle(member, member2, message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const member = interaction.options.getUser('user') || await this.getGuildMember(interaction.guild, this.client.db.users.getRandom.get(interaction.guild.id).user_id);
         const member2 = interaction.options.getUser('user2') || interaction.author;
-        await this.handle(member, member2, interaction, true);
+        await this.handle(member, member2, interaction);
     }
 
-    async handle(member, member2, context, isInteraction) {
+    async handle(member, member2, context) {
         const res = await fetch(
             encodeURI(
                 `https://nekobot.xyz/api/imagegen?type=whowouldwin&user1=${this.getAvatarURL(
@@ -53,34 +47,13 @@ module.exports = class whowouldwinCommand extends Command {
             json.message,
             'whowouldwin.png'
         );
-
-        if (isInteraction) {
-            context.editReply({
-                content: `<@${member.id}> **VS** <@${member2.id}>`,
-                files: [attachment],
-            }).then(m => {
-                if (m.channel.permissionsFor(m.guild.members.me).has('ADD_REACTIONS'))
-                    m.react('👈').then(() => m.react('👉'));
-            });
-        }
-        else {
-            if (context.loadingMessage) {
-                context.loadingMessage.edit({
-                    content: `<@${member.id}> **VS** <@${member2.id}>`,
-                    files: [attachment],
-                    embeds: []
-                });
-                context.loadingMessage.react('👈').then(() => context.loadingMessage.react('👉'));
-            }
-            else {
-                context.channel.send({
-                    content: `<@${member.id}> **VS** <@${member2.id}>`,
-                    files: [attachment],
-                }).then(m => {
-                    if (m.channel.permissionsFor(m.guild.members.me).has('ADD_REACTIONS'))
-                        m.react('👈').then(() => m.react('👉'));
-                });
-            }
-        }
+        const payload = {
+            content: `<@${member.id}> **VS** <@${member2.id}>`,
+            files: [attachment],
+        };
+        this.sendReply(context, payload).then(m => {
+            if (m.channel.permissionsFor(m.guild.members.me).has('ADD_REACTIONS'))
+                m.react('👈').then(() => m.react('👉'));
+        });
     }
 };

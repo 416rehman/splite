@@ -32,7 +32,7 @@ module.exports = class HelpCommand extends Command {
         await this.handle(commandString, interaction, true);
     }
 
-    async handle(commandString, context, isInteraction) {
+    async handle(commandString, context) {
         // Get disabled commands
         let disabledCommands = this.client.db.settings.selectDisabledCommands.pluck().get(context.guild.id) || [];
         if (typeof disabledCommands === 'string') disabledCommands = disabledCommands.split(' ');
@@ -57,13 +57,11 @@ module.exports = class HelpCommand extends Command {
             const embed = this.createHelpEmbed(context, command, prefix);
 
             const payload = {embeds: [embed]};
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         else if (commandString && !all) {
             const payload = `${emojis.fail} **${capitalize(commandString)} is not a valid command.** Please try again.`;
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         else {
             // Get commands
@@ -162,8 +160,7 @@ module.exports = class HelpCommand extends Command {
             let msg;
             const payload = {components: rows, embeds: [embed],};
 
-            if (isInteraction) msg = await context.editReply(payload);
-            else msg = context.loadingMessage ? await context.loadingMessage.edit(payload) : await context.reply(payload);
+            msg = await this.sendReply(context, payload);
 
 
             const filter = (button) => button.user.id === context.author.id;

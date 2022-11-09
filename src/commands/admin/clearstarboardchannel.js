@@ -27,7 +27,7 @@ module.exports = class clearStarboardChannelCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const starboardChannelId =
             this.client.db.settings.selectStarboardChannelId
                 .pluck()
@@ -44,8 +44,7 @@ module.exports = class clearStarboardChannelCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear if no args provided
         this.client.db.settings.updateStarboardChannelId.run(
@@ -60,7 +59,6 @@ module.exports = class clearStarboardChannelCommand extends Command {
             )],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

@@ -11,4 +11,4 @@ private
 # do not ignore
 !.gitkeep
 .env
-.config.yaml
+config.yaml

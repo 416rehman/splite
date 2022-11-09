@@ -27,7 +27,7 @@ module.exports = class clearMessageEditLogCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const messageEditLogId = this.client.db.settings.selectMessageEditLogId
             .pluck()
             .get(context.guild.id);
@@ -60,7 +60,6 @@ module.exports = class clearMessageEditLogCommand extends Command {
             ],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

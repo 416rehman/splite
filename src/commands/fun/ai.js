@@ -31,7 +31,7 @@ module.exports = class AiCommand extends Command {
         await this.handle(interaction.options.getString('question'), interaction, true);
     }
 
-    async handle(question, context, isInteraction) {
+    async handle(question, context) {
 
         if (!question.endsWith('?') && !question.endsWith('.')) question += '?';
         const response = await this.client.openai.createCompletion('text-davinci-002', {
@@ -54,16 +54,9 @@ module.exports = class AiCommand extends Command {
                 })
                 .setTimestamp();
 
-            if (isInteraction) {
-                await context.editReply({
-                    embeds: [embed]
-                });
-            }
-            else {
-                context.reply({
-                    embeds: [embed]
-                });
-            }
+            const payload = {
+                embeds: [embed]
+            }; await this.sendReply(context, payload);
         }
         else {
             context.reply(`${fail} ${response.data.error || 'Sorry, I couldn\'t find a response'}`);

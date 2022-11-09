@@ -1,25 +1,9 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
-
-const commandMappings = {
-    channel: {
-        set: 'setverificationchannel',
-        clear: 'clearverificationchannel',
-    },
-    role: {
-        set: 'setverificationrole',
-        clear: 'clearverificationrole',
-    },
-    message: {
-        set: 'setverificationmessage',
-        clear: 'clearverificationmessage',
-    }
-};
-
 module.exports = class VerificationChannelSettingsCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'verification-settings',
+            name: 'verification-group',
             description: 'Verification Management - Set a verification channel, message, and role to be shown and given to new members',
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
@@ -33,20 +17,21 @@ module.exports = class VerificationChannelSettingsCommandGroup extends Command {
                 ).addSubcommandGroup((o) => o.setName('role').setDescription('The verification role is the role that will be given to new members')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the verification role - To view current role, don\'t provide a role').addRoleOption(p => p.setName('role').setRequired(false).setDescription('Role to give after verification. To view current role, don\'t provide this option')))
                     .addSubcommand((o) => o.setName('clear').setDescription('Clear the verification role'))
-                )
+                ),
+            subCommandMappings: {
+                channel: {
+                    set: 'setverificationchannel',
+                    clear: 'clearverificationchannel',
+                },
+                role: {
+                    set: 'setverificationrole',
+                    clear: 'clearverificationrole',
+                },
+                message: {
+                    set: 'setverificationmessage',
+                    clear: 'clearverificationmessage',
+                }
+            }
         });
-    }
-
-    interact(interaction) {
-        const command = this.client.commands.get(commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()]);
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply({
-                content: 'Invalid command - Potential mapping error',
-                ephemeral: true,
-            });
-        }
     }
 };

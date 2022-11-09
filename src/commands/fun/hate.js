@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {load} = require('../../utils/emojis.json');
+const {AttachmentBuilder} = require('discord.js');
+
 
 module.exports = class HateCommand extends Command {
     constructor(client) {
@@ -19,26 +19,20 @@ module.exports = class HateCommand extends Command {
     async run(message, args) {
         if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Hate', this)]});
 
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(async msg => {
-                message.loadingMessage = msg;
-                const text = await this.client.utils.replaceMentionsWithNames(
-                    args.join(' '),
-                    message.guild
-                );
-                await this.handle(text, message, false);
-            });
+        const text = await this.client.utils.replaceMentionsWithNames(
+            args.join(' '),
+            message.guild
+        );
+        await this.handle(text, message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const text = interaction.options.getString('text') || `${this.client.name}  is the best bot!`;
-        await this.handle(text, interaction, true);
+        await this.handle(text, interaction);
     }
 
-    async handle(text, context, isInteraction) {
+    async handle(text, context) {
         const buffer = await this.client.utils.generateImgFlipImage(
             this.client,
             242461078,
@@ -47,20 +41,10 @@ module.exports = class HateCommand extends Command {
             '#EBDBD1',
             '#2E251E'
         );
-        const attachment = new AttachmentBuilder(buffer, { name:  'changemymind.png' });
-
-        if (isInteraction) {
-            await context.editReply({
-                files: [attachment],
-            });
-        }
-        else {
-            context.loadingMessage ? context.loadingMessage.edit({
-                files: [attachment],
-                embeds: []
-            }) : context.channel.send({
-                files: [attachment],
-            });
-        }
+        const attachment = new AttachmentBuilder(buffer, {name: 'changemymind.png'});
+        const payload = {
+            files: [attachment],
+        };
+        this.sendReply(context, payload);
     }
 };

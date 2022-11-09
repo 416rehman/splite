@@ -1,20 +1,14 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
 
-const commandMappings = {
-    create: 'addrole',
-    give: 'giverole',
-    info: 'roleinfo'
-};
-
 module.exports = class RoleCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'role',
+            name: 'role-group',
             description: 'Role management commands - Create, Give, Info',
             type: client.types.MOD,
             userPermissions: ['MANAGE_ROLES'],
-            slashCommand: new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder().setName('role')
                 .addSubcommand((o) => o.setName('create').setDescription('Create a role')
                     .addStringOption(name => name.setName('name').setDescription('The name of the role').setRequired(true))
                 )
@@ -24,17 +18,12 @@ module.exports = class RoleCommandGroup extends Command {
                 )
                 .addSubcommand((o) => o.setName('info').setDescription('Get info about a role')
                     .addRoleOption(role => role.setName('role').setDescription('The role to get info about').setRequired(true))
-                )
+                ),
+            subCommandMappings: {
+                create: 'addrole',
+                give: 'giverole',
+                info: 'roleinfo'
+            }
         });
-    }
-
-    interact(interaction) {
-        const command = this.client.commands.get(commandMappings[interaction.options.getSubcommand()]);
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command - Potential mapping error');
-        }
     }
 };

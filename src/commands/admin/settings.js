@@ -45,7 +45,7 @@ module.exports = class SettingsCommand extends Command {
         this.handle(setting, interaction, true);
     }
 
-    handle(setting, context, isInteraction) {
+    handle(setting, context) {
         const {trimArray, replaceKeywords, replaceCrownKeywords} = this.client.utils;
 
         // Set values
@@ -154,8 +154,7 @@ module.exports = class SettingsCommand extends Command {
                         .addFields([{name: 'Disabled Commands', value: disabledCommands}]),],
                 });
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
@@ -178,8 +177,7 @@ module.exports = class SettingsCommand extends Command {
                         }]),],
                 });
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
@@ -196,8 +194,7 @@ module.exports = class SettingsCommand extends Command {
                         .addFields([{name: 'Message', value: verificationMessage.toString()}])]
                 };
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
             case 'w':
@@ -211,8 +208,7 @@ module.exports = class SettingsCommand extends Command {
                         .addFields([{name: 'Message', value: welcomeMessage}])]
                 };
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
             case'f':
@@ -226,8 +222,7 @@ module.exports = class SettingsCommand extends Command {
                         .addFields([{name: 'Message', value: farewellMessage}])]
                 };
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
             case 'p':
@@ -241,8 +236,7 @@ module.exports = class SettingsCommand extends Command {
                         .addFields([{name: 'Voice Points', value: voicePoints, inline: true}])
                         .addFields([{name: 'Status', value: pointsStatus}]),]
                 };
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
             case 'c':
@@ -261,8 +255,7 @@ module.exports = class SettingsCommand extends Command {
                         .addFields([{name: 'Message', value: crownMessage}])]
                 };
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
 
@@ -282,8 +275,7 @@ module.exports = class SettingsCommand extends Command {
                             inline: true
                         }]),]
                 };
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
             }
@@ -291,8 +283,7 @@ module.exports = class SettingsCommand extends Command {
             if (setting) {
                 const payload = `${fail} Please enter a valid setting.`;
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+                this.sendReply(context, payload);
                 return;
             }
         }
@@ -319,7 +310,6 @@ module.exports = class SettingsCommand extends Command {
             ]
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

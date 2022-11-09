@@ -37,7 +37,7 @@ module.exports = class YoutubeCommand extends Command {
         await this.handle(text, interaction, true);
     }
 
-    async handle(videoName, context, isInteraction) {
+    async handle(videoName, context) {
         try {
             const searchOptions = {maxResults: 1, key: this.client.config.apiKeys.googleApi, type: 'video'};
             if (!context.channel.nsfw) searchOptions['safeSearch'] = 'strict';
@@ -48,20 +48,18 @@ module.exports = class YoutubeCommand extends Command {
             const payload = 'Searched YouTube for **' + capitalize(videoName) + '**\n\n' + result.title + ' - ' + result.link
                 || emoji.fail + ' ' + 'Unable to find video, please provide a different YouTube video name';
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
         catch (err) {
             const payload = {
                 embeds: [
                     new EmbedBuilder()
-                        .setColor('RED')
+                        .setColor('Red')
                         .setTitle('Error')
                         .setDescription(err.message)
                 ]
             };
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
     }
 };

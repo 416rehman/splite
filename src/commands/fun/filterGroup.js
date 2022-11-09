@@ -1,14 +1,13 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
 
-
 module.exports = class FilterCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'imagefilter',
+            name: 'imagefilter-group',
             description: 'Apply a filter to an image',
             type: client.types.FUN,
-            slashCommand: new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder().setName('image-filter')
                 .addSubcommand((o) => o.setName('blur').setDescription('Blur an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to blur')))
                 .addSubcommand((o) => o.setName('blurple').setDescription('Blurple an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply blurple filter to')))
                 .addSubcommand((o) => o.setName('contrast').setDescription('Add a contrast effect to an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply contrast filter to')))
@@ -30,15 +29,5 @@ module.exports = class FilterCommandGroup extends Command {
                 .addSubcommand((o) => o.setName('unsharpen').setDescription('Unsharpen an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to unsharpen')))
                 .addSubcommand((o) => o.setName('frame').setDescription('Frame an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to frame')))
         });
-    }
-
-    interact(interaction) {
-        const command = this.client.commands.get(interaction.options.getSubcommand());
-        if (command) {
-            command.interact(interaction);
-        }
-        else {
-            interaction.reply('Invalid command');
-        }
     }
 };

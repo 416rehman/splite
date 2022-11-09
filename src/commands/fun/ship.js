@@ -3,7 +3,7 @@ const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
 const jimp = require('jimp');
 const {SlashCommandBuilder} = require('discord.js');
-const {load} = require('../../utils/emojis.json');
+
 
 module.exports = class shipCommand extends Command {
     constructor(client) {
@@ -24,13 +24,7 @@ module.exports = class shipCommand extends Command {
 
         if (!member || !member2) return this.sendErrorMessage(message, 0, 'Could not find the user you specified.');
 
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(member, member2, message, false);
-            });
+        await this.handle(member, member2, message, false);
     }
 
     async interact(interaction) {
@@ -42,7 +36,7 @@ module.exports = class shipCommand extends Command {
         await this.handle(user, user2, interaction, true);
     }
 
-    async handle(member, member2, context, isInteraction) {
+    async handle(member, member2, context) {
         let shipOddsTime;
         if (member2.id === context.author.id || member.id === context.author.id)
             shipOddsTime = context.guild.shippingOdds.get(context.author.id);
@@ -94,13 +88,13 @@ module.exports = class shipCommand extends Command {
             await bg.composite(av2, 610, 25);
             await bg.composite(overlay, 0, 0);
 
-            bg.getBase64(jimp.AUTO, function(e, img64) {
+            bg.getBase64(jimp.AUTO, (e, img64) => {
                 const buff = new Buffer.from(img64.split(',')[1], 'base64');
 
                 const payload = {
                     embeds: [
                         new EmbedBuilder()
-                            .setColor('LUMINOUS_VIVID_PINK')
+                            .setColor('LuminousVividPink')
                             .setDescription(
                                 `\`${
                                     member2.user
@@ -144,8 +138,7 @@ module.exports = class shipCommand extends Command {
                     files: [new AttachmentBuilder(buff, { name:  'ship.png' })],
                 };
 
-                if (isInteraction) context.editReply(payload);
-                else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+                this.sendReply(context, payload);
             });
         }
         catch (e) {
@@ -155,8 +148,7 @@ module.exports = class shipCommand extends Command {
                     new EmbedBuilder().setDescription(`${emojis.fail} ${e}`),
                 ],
             };
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+            await this.sendReply(context, payload);
         }
 
     }

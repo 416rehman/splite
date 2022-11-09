@@ -30,7 +30,7 @@ module.exports = class WipePointsCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(member, context, isInteraction) {
+    async handle(member, context) {
         const prefix = this.client.db.settings.selectPrefix
             .pluck()
             .get(context.guild.id);
@@ -63,6 +63,6 @@ module.exports = class WipePointsCommand extends Command {
                 iconURL: this.getAvatarURL(context.author)
             });
 
-        await this.sendReply(context, {embeds: [embed]}, isInteraction);
+        await this.sendReply(context, {embeds: [embed]});
     }
 };

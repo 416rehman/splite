@@ -34,14 +34,13 @@ module.exports = class ToggleTypeCommand extends Command {
         this.handle(categoryName, interaction, true);
     }
 
-    handle(categoryName, context, isInteraction) {
+    handle(categoryName, context) {
         const {ADMIN, OWNER} = this.client.types;
 
         if (!categoryName || categoryName.toLowerCase() === OWNER.toLowerCase()) {
             const payload = new EmbedBuilder().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
 
         const type = categoryName.toLowerCase();
@@ -49,8 +48,7 @@ module.exports = class ToggleTypeCommand extends Command {
         if (type === ADMIN) {
             const payload = new EmbedBuilder().setTitle('Invalid command type').setDescription(`${fail} \`${ADMIN}\` commands cannot be disabled.`);
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -96,8 +94,7 @@ module.exports = class ToggleTypeCommand extends Command {
         else {
             const payload = new EmbedBuilder().setTitle('Invalid command type').setDescription(`${fail} Please provide a valid command type. Valid command types are: \`${Object.keys(this.client.types.filter(t => t !== OWNER && t !== ADMIN)).join('`, `')}\``);
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -118,7 +115,6 @@ module.exports = class ToggleTypeCommand extends Command {
             })
             .setTimestamp();
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

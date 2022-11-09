@@ -33,7 +33,7 @@ module.exports = class MusicNowPlayingCommand extends Command {
 
         const embed = new EmbedBuilder();
 
-        embed.setColor('RED');
+        
         embed.setThumbnail(track.thumbnail);
         embed.setAuthor({
             name: track.title,

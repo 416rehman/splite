@@ -56,7 +56,7 @@ module.exports = class WhoIsCommand extends Command {
         await this.handle(user, interaction, true);
     }
 
-    async handle(targetUser, context, isInteraction) {
+    async handle(targetUser, context) {
         const userFlags = (await targetUser.user.fetchFlags()).toArray();
         if (this.client.getOwnerFromId(targetUser.id)) userFlags.push('BOT_OWNER');
         if (this.client.getManagerFromId(targetUser.id)) userFlags.push('BOT_MANAGER');
@@ -126,7 +126,6 @@ module.exports = class WhoIsCommand extends Command {
             `${context.guild.ownerId === targetUser.id ? emojis.owner + ' **`SERVER OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``);
 
         const payload = {embeds: [embed]};
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
     }
 };

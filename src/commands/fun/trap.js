@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {load} = require('../../utils/emojis.json');
+const {AttachmentBuilder} = require('discord.js');
+
 const fetch = require('node-fetch');
 module.exports = class trapCommand extends Command {
     constructor(client) {
@@ -20,13 +20,7 @@ module.exports = class trapCommand extends Command {
 
         if (!member) return this.sendErrorMessage(message, 'Could not find the user you specified.');
 
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(member, message, false);
-            });
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
@@ -35,7 +29,7 @@ module.exports = class trapCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(member, context, isInteraction) {
+    async handle(member, context) {
         const url = encodeURI(
             `https://nekobot.xyz/api/imagegen?type=trap&name=${
                 member.username || member.user.username
@@ -55,18 +49,8 @@ module.exports = class trapCommand extends Command {
             'trap.png'
         );
 
-        if (isInteraction) {
-            await context.editReply({
-                files: [attachment],
-            });
-        }
-        else {
-            context.loadingMessage ? context.loadingMessage.edit({
-                files: [attachment],
-                embeds: []
-            }) : context.channel.send({
-                files: [attachment],
-            });
-        }
+        const payload = {
+            files: [attachment],
+        }; await this.sendReply(context, payload);
     }
 };

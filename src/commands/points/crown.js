@@ -25,7 +25,7 @@ module.exports = class CrownCommand extends Command {
         await this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const {crown_role_id} = this.client.db.settings.selectCrown.get(
             context.guild.id
         );
@@ -33,7 +33,7 @@ module.exports = class CrownCommand extends Command {
             context.guild.roles.cache.get(crown_role_id);
         if (!crownRole) {
             const payload = 'There is no crown role set up for this server. Use the `setcrownrole` command to set one up';
-            return this.sendReply(context, payload, isInteraction);
+            return this.sendReply(context, payload);
         }
         const crowned = [
             ...crownRole.members.values()
@@ -60,6 +60,6 @@ module.exports = class CrownCommand extends Command {
                 .setFooter({text: 'Upcoming Crown Transfer --> '});
         }
         const payload = {embeds: [embed]};
-        this.sendReply(context, payload, isInteraction);
+        this.sendReply(context, payload);
     }
 };

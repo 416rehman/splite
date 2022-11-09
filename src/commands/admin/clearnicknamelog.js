@@ -27,7 +27,7 @@ module.exports = class clearNicknameLogCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const nicknameLogId = this.client.db.settings.selectNicknameLogId
             .pluck()
             .get(context.guild.id);
@@ -53,7 +53,6 @@ module.exports = class clearNicknameLogCommand extends Command {
 
         const payload = {embeds: [embed.addFields([{name: 'Nickname Log', value:  `${oldNicknameLog} ➔ \`None\``}]),],};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

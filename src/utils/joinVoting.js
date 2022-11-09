@@ -69,7 +69,7 @@ module.exports = {
                                 }
                                 else {
                                     embed
-                                        .setColor('RED')
+                                        .setColor('Red')
                                         .setTitle(`Failed to ban ${user.username}#${user.discriminator}!`)
                                         .setImage('https://media4.giphy.com/media/ljtfkyTD3PIUZaKWRi/giphy.gif')
                                         .setDescription(`**Maybe they have higher perms than me?**\nThey received ${yesVotes} 👍 and ${noVotes} 👎`);
@@ -78,7 +78,7 @@ module.exports = {
                             }
                             catch {
                                 embed
-                                    .setColor('RED')
+                                    .setColor('Red')
                                     .setTitle(`Failed to ban ${user.username}#${user.discriminator}!`)
                                     .setImage('https://media4.giphy.com/media/ljtfkyTD3PIUZaKWRi/giphy.gif')
                                     .setDescription(`**Maybe they have higher perms than me?**\nThey received ${yesVotes} 👍 and ${noVotes} 👎`);
@@ -86,7 +86,7 @@ module.exports = {
                             }
 
                             embed
-                                .setColor('RED')
+                                .setColor('Red')
                                 .setTitle(`${user.username}#${user.discriminator} was voted off the server!`)
                                 .setImage('https://media.tenor.com/images/da66a96ca7f65f949a07db8ab9926297/tenor.gif')
                                 .setDescription(`They received ${yesVotes} 👍 and ${noVotes} 👎`);
@@ -97,7 +97,7 @@ module.exports = {
                                 .send('Welcome, enjoy your stay!.')
                                 .catch(() => console.log('Can\'t send DM to your user!'));
                             embed
-                                .setColor('GREEN')
+                                .setColor('Green')
                                 .setImage('https://i.pinimg.com/originals/5e/78/af/5e78affab2547d678e4c5458dd931381.gif')
                                 .setTitle(`${user.username}#${user.discriminator} has been welcomed to the server!`)
                                 .setDescription(`They received ${yesVotes} 👍 and ${noVotes} 👎`);

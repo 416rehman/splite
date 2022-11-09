@@ -113,8 +113,7 @@ module.exports = class WarnPurgeCommand extends Command {
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         await this.sendReply(context, {embeds: [embed]});
 

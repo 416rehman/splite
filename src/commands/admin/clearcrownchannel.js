@@ -22,7 +22,7 @@ module.exports = class clearCrownChannelCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         let {
             crown_role_id: crownRoleId,
             crown_channel_id: crownChannelId,
@@ -46,8 +46,7 @@ module.exports = class clearCrownChannelCommand extends Command {
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         // Clear channel
         this.client.db.settings.updateCrownChannelId.run(null, context.guild.id);
@@ -58,7 +57,6 @@ module.exports = class clearCrownChannelCommand extends Command {
             }),],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

@@ -22,20 +22,19 @@ module.exports = class SetPrefixCommand extends Command {
         if (!prefix)
             return this.sendErrorMessage(message, 0, 'Please provide a prefix');
 
-        this.handle(prefix, message, false);
+        this.handle(prefix, message);
     }
 
     async interact(interaction) {
         await interaction.deferReply();
         const prefix = interaction.options.getString('prefix');
-        await this.handle(prefix, interaction, true);
+        await this.handle(prefix, interaction);
     }
 
-    async handle(prefix, context, isInteraction) {
+    async handle(prefix, context) {
         if (prefix.length > 3) {
             const payload = emojis.fail + ' Please ensure the prefix is no larger than 3 characters';
-            if (isInteraction) await context.reply(payload);
-            else context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -59,7 +58,6 @@ module.exports = class SetPrefixCommand extends Command {
             ]
         };
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

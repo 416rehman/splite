@@ -27,7 +27,7 @@ module.exports = class clearRoleLogCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const roleLogId = this.client.db.settings.selectRoleLogId
             .pluck()
             .get(context.guild.id);
@@ -52,7 +52,6 @@ module.exports = class clearRoleLogCommand extends Command {
             embeds: [embed.addFields([{name: 'Role Log', value:  `${oldRoleLog} ➔ \`None\``}])],
         });
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

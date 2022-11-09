@@ -27,7 +27,7 @@ module.exports = class clearMessageDeleteLogCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const messageDeleteLogId =
             this.client.db.settings.selectMessageDeleteLogId
                 .pluck()
@@ -61,7 +61,6 @@ module.exports = class clearMessageDeleteLogCommand extends Command {
             ],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

@@ -1,33 +1,16 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
 
-const commandMappings = {
-    previous: 'back',
-    filter: 'filter',
-    nowplaying: 'nowplaying',
-    pause: 'pause',
-    play: 'play',
-    progress: 'progress',
-    queue: {
-        view: 'queue',
-        shuffle: 'shuffle',
-        clear: 'clear',
-    },
-    loop: 'loop',
-    search: 'search',
-    seek: 'seek',
-    skip: 'skip',
-    stop: 'stop',
-};
-
 module.exports = class MusicCommandGroup extends Command {
     constructor(client) {
+
         super(client, {
-            name: 'music',
+            name: 'music-group',
             description: 'Music / DJ commands',
             type: client.types.MUSIC,
             voiceChannelOnly: true,
-            slashCommand: new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder().setName('music')
+                .setDescription('Music commands')
                 .addSubcommand((o) => o.setName('play').setDescription('Play / Resume the music')
                     .addStringOption((o) => o.setName('query').setDescription('Query or URL to play'))
                 )
@@ -50,18 +33,25 @@ module.exports = class MusicCommandGroup extends Command {
                     .addStringOption((o) => o.setName('query').setDescription('Query to search for'))
                 )
                 .addSubcommand((o) => o.setName('progress').setDescription('View the progress of the current track'))
-                .addSubcommand((o) => o.setName('nowplaying').setDescription('View the currently playing track'))
+                .addSubcommand((o) => o.setName('nowplaying').setDescription('View the currently playing track')),
+            subCommandMappings: {
+                previous: 'back',
+                filter: 'filter',
+                nowplaying: 'nowplaying',
+                pause: 'pause',
+                play: 'play',
+                progress: 'progress',
+                queue: {
+                    view: 'queue',
+                    shuffle: 'shuffle',
+                    clear: 'clear',
+                },
+                loop: 'loop',
+                search: 'search',
+                seek: 'seek',
+                skip: 'skip',
+                stop: 'stop',
+            }
         });
-    }
-
-    interact(interaction) {
-        let commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
-            commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
-            commandMappings[interaction.options.getSubcommand()];
-
-        const command = this.client.commands.get(commandName);
-
-        if (command) command.interact(interaction);
-        else interaction.reply('Invalid command - Potential mapping error');
     }
 };

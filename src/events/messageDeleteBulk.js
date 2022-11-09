@@ -42,7 +42,7 @@ module.exports = (client, messages) => {
                 `**${messages.size} messages** in ${message.channel} were deleted.`
             )
             .setTimestamp()
-            .setColor('RED');
+            .setColor('Red');
         messageDeleteLog.send({embeds: [embed]});
     }
 };

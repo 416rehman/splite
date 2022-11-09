@@ -56,8 +56,7 @@ module.exports = class SetCrownRoleCommand extends Command {
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         if (!role) {
             const payload = {
@@ -73,16 +72,14 @@ module.exports = class SetCrownRoleCommand extends Command {
                 ]
             };
 
-            if (isInteraction) return context.editReply(payload);
-            else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return this.sendReply(context, payload);
         }
 
         // Update role
         const crownRole = isInteraction ? role : await this.getGuildRole(context.guild, role);
         if (!crownRole) {
             const payload = emojis.fail + ' Please mention a role or provide a valid role ID.';
-            if (isInteraction) return context.editReply(payload);
-            else return context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            return this.sendReply(context, payload);
         }
 
         this.client.db.settings.updateCrownRoleId.run(crownRole.id, context.guild.id);
@@ -100,8 +97,7 @@ module.exports = class SetCrownRoleCommand extends Command {
             ]
         };
 
-        if (isInteraction) await context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        await this.sendReply(context, payload);
 
         // Schedule crown role rotation
         this.client.utils.scheduleCrown(this.client, context.guild);

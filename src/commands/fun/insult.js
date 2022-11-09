@@ -2,7 +2,7 @@ const Command = require('../Command.js');
 const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 const {SlashCommandBuilder} = require('discord.js');
-const {load, fail} = require('../../utils/emojis.json');
+const {fail} = require('../../utils/emojis.json');
 
 module.exports = class insultCommand extends Command {
     constructor(client) {
@@ -19,13 +19,7 @@ module.exports = class insultCommand extends Command {
 
     async run(message, args) {
         const member = (await this.getGuildMember(message.guild, args.join(' '))) || message.author;
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(member, message, false);
-            });
+        await this.handle(member, message, false);
     }
 
     async interact(interaction) {
@@ -34,7 +28,7 @@ module.exports = class insultCommand extends Command {
         await this.handle(member, interaction, true);
     }
 
-    async handle(targetUser, context, isInteraction) {
+    async handle(targetUser, context) {
         try {
             const res = await fetch(
                 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
@@ -49,36 +43,18 @@ module.exports = class insultCommand extends Command {
                 })
                 .setTimestamp();
 
-            if (isInteraction) {
-                await context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed],
-                }) : context.channel.send({
-                    embeds: [embed],
-                });
-            }
+            const payload = {
+                embeds: [embed],
+            }; await this.sendReply(context, payload);
         }
         catch (err) {
             const embed = new EmbedBuilder()
                 .setTitle('Error')
                 .setDescription(fail + ' ' + err.message)
-                .setColor('RED');
-            if (isInteraction) {
-                await context.editReply({
-                    embeds: [embed],
-                });
-            }
-            else {
-                context.loadingMessage ? context.loadingMessage.edit({
-                    embeds: [embed]
-                }) : context.channel.send({
-                    embeds: [embed]
-                });
-            }
+                .setColor('Red');
+            const payload = {
+                embeds: [embed],
+            }; await this.sendReply(context, payload);
         }
     }
 };

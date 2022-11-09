@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {load} = require('../../utils/emojis.json');
+const {AttachmentBuilder} = require('discord.js');
+
 
 module.exports = class changemymindCommand extends Command {
     constructor(client) {
@@ -11,19 +11,14 @@ module.exports = class changemymindCommand extends Command {
             description: 'Generates a changemymind image with provided text',
             type: client.types.FUN,
             examples: [`changemymind ${client.name} is the best bot!`],
+            disabled: client.ameApi === null,
         });
     }
 
     async run(message, args) {
         if (!args[0]) return message.reply({embeds: [this.createHelpEmbed(message, 'Change My Mind!', this)]});
 
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(args.join(' '), message, false);
-            });
+        await this.handle(args.join(' '), message, false);
     }
 
     async interact(interaction) {
@@ -32,24 +27,14 @@ module.exports = class changemymindCommand extends Command {
         await this.handle(text, interaction, true);
     }
 
-    async handle(text, context, isInteraction) {
+    async handle(text, context) {
         const buffer = await context.client.ameApi.generate('changemymind', {
             text: text
         });
         const attachment = new AttachmentBuilder(buffer, { name:  'changemymind.png' });
 
-        if (isInteraction) {
-            await context.editReply({
-                files: [attachment],
-            });
-        }
-        else {
-            context.loadingMessage ? context.loadingMessage.edit({
-                files: [attachment],
-                embeds: []
-            }) : context.channel.send({
-                files: [attachment],
-            });
-        }
+        const payload = {
+            files: [attachment],
+        }; await this.sendReply(context, payload);
     }
 };

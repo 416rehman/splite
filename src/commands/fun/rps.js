@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const {EmbedBuilder} = require('discord.js');
-const {load} = require('../../utils/emojis.json');
+
 const {SlashCommandBuilder} = require('discord.js');
 const rps = ['scissors', 'rock', 'paper'];
 const res = ['Scissors :v:', 'Rock :fist:', 'Paper :raised_hand:'];
@@ -31,13 +31,7 @@ module.exports = class RockPaperScissorsCommand extends Command {
                 'Please enter rock, paper, or scissors'
             );
 
-        await message.channel
-            .send({
-                embeds: [new EmbedBuilder().setDescription(`${load} Loading...`)],
-            }).then(msg => {
-                message.loadingMessage = msg;
-                this.handle(userChoice || 6, message, false);
-            });
+        await this.handle(userChoice || 6, message, false);
     }
 
     async interact(interaction) {
@@ -46,7 +40,7 @@ module.exports = class RockPaperScissorsCommand extends Command {
         this.handle(choice, interaction, true);
     }
 
-    handle(choice, context, isInteraction) {
+    handle(choice, context) {
         const userChoice = rps.indexOf(choice);
         const botChoice = Math.floor(Math.random() * 3);
         let result;
@@ -67,7 +61,6 @@ module.exports = class RockPaperScissorsCommand extends Command {
                 })]
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.channel.send(payload);
+        this.sendReply(context, payload);
     }
 };

@@ -59,8 +59,7 @@ module.exports = class SetCrownChannelCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author)
             })
-            .setTimestamp()
-            .setColor(context.guild.members.me.displayHexColor);
+            .setTimestamp();
 
         if (!channel) {
             const payload = ({
@@ -72,8 +71,7 @@ module.exports = class SetCrownChannelCommand extends Command {
                 ],
             });
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -82,8 +80,7 @@ module.exports = class SetCrownChannelCommand extends Command {
         if (!channel || (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.GuildNews) || !channel.viewable) {
             const payload = emojis.fail + ' Please mention an accessible text or announcement channel or provide a valid text or announcement channel ID.';
 
-            if (isInteraction) context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
             return;
         }
 
@@ -104,8 +101,7 @@ module.exports = class SetCrownChannelCommand extends Command {
                 .setDescription(`The \`crown channel\` was successfully updated. ${success}\nUse \`clearcrownchannel\` to clear the current \`crown channel\`.`),],
         };
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
 
         // Schedule crown role rotation
         this.client.utils.scheduleCrown(this.client, context.guild);

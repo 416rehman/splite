@@ -1,25 +1,13 @@
 const Command = require('../Command.js');
 const {SlashCommandBuilder} = require('discord.js');
 
-const commandMappings = {
-    'blast': 'blast',
-    'eval': 'eval',
-    'leaveguild': 'leaveguild',
-    'rebuild': 'rebuild',
-    'wipe': {
-        'allpoints': 'wipeallpoints',
-        'totalpoints': 'wipealltotalpoints',
-        'points': 'wipetotalpoints'
-    },
-};
-
 module.exports = class SudoCommandGroup extends Command {
     constructor(client) {
         super(client, {
-            name: 'sudo',
+            name: 'sudo-group',
             description: 'SUDO commands',
             type: client.types.OWNER,
-            slashCommand: new SlashCommandBuilder()
+            slashCommand: new SlashCommandBuilder().setName('sudo')
                 .addSubcommand(c => c.setName('blast').setDescription('Blast a message to all servers')
                     .addStringOption((option) => option.setName('message').setDescription('The message to blast').setRequired(true))
                 )
@@ -42,18 +30,18 @@ module.exports = class SudoCommandGroup extends Command {
                     .addSubcommand(c => c.setName('totalpoints').setDescription('Wipe total points (normal and accumulated) for a user')
                         .addStringOption((option) => option.setName('userid').setDescription('The user to wipe points for').setRequired(true))
                     )
-                )
+                ),
+            subCommandMappings: {
+                'blast': 'blast',
+                'eval': 'eval',
+                'leaveguild': 'leaveguild',
+                'rebuild': 'rebuild',
+                'wipe': {
+                    'allpoints': 'wipeallpoints',
+                    'totalpoints': 'wipealltotalpoints',
+                    'points': 'wipetotalpoints'
+                },
+            }
         });
-    }
-
-    interact(interaction) {
-        let commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
-            commandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
-            commandMappings[interaction.options.getSubcommand()];
-
-        const command = this.client.commands.get(commandName);
-
-        if (command) command.interact(interaction);
-        else interaction.reply('Invalid command - Potential mapping error');
     }
 };

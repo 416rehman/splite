@@ -23,7 +23,7 @@ module.exports = class ServerIconCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const embed = new EmbedBuilder()
             .setTitle(`${context.guild.name}'s Icon`)
             .setImage(context.guild.iconURL({dynamic: true, size: 512}))
@@ -31,11 +31,9 @@ module.exports = class ServerIconCommand extends Command {
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
             })
-            .setTimestamp()
-            .setColor('RANDOM');
+            .setTimestamp();
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

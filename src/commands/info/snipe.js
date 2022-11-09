@@ -24,7 +24,7 @@ module.exports = class SnipeCommand extends Command {
         await this.handle(interaction, true);
     }
 
-    async handle(context, isInteraction) {
+    async handle(context) {
         const snipedMSg = context.guild.snipes.get(context.channel.id);
 
         if (snipedMSg && !this.client.utils.isEmptyMessage(snipedMSg)) {
@@ -58,8 +58,7 @@ module.exports = class SnipeCommand extends Command {
                 }) : [],
             };
 
-            if (isInteraction) await context.editReply(payload);
-            else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+            this.sendReply(context, payload);
         }
         else {
             const embed = new EmbedBuilder()
@@ -73,8 +72,7 @@ module.exports = class SnipeCommand extends Command {
 
             const payload = {embeds: [embed]};
             let msg;
-            if (isInteraction) msg = await context.editReply(payload);
-            else msg = context.loadingMessage ? await context.loadingMessage.edit(payload) : await context.reply(payload);
+            msg = await this.sendReply(context, payload);
 
             msg.edit({embeds: [embed]}).then((m) => {
                 setTimeout(() => m.delete(), 5000);

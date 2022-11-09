@@ -31,7 +31,7 @@ module.exports = class PermissionsCommand extends Command {
         this.handle(user, interaction, true);
     }
 
-    handle(member, context, isInteraction) {
+    handle(member, context) {
         // Get member permissions
         const memberPermissions = member.permissions.toArray();
         const finalPermissions = [];
@@ -52,7 +52,6 @@ module.exports = class PermissionsCommand extends Command {
             .setTimestamp();
 
         const payload = {embeds: [embed]};
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

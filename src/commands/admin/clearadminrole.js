@@ -24,7 +24,7 @@ module.exports = class ClearAdminRoleCommand extends Command {
         this.handle(interaction, true);
     }
 
-    handle(context, isInteraction) {
+    handle(context) {
         const adminRoleId = this.client.db.settings.selectAdminRoleId
             .pluck()
             .get(context.guild.id);
@@ -48,7 +48,6 @@ module.exports = class ClearAdminRoleCommand extends Command {
 
         const payload = {embeds: [embed.addFields([{name: 'Admin Role', value:  `${oldAdminRole} ➔ \`None\``}])],};
 
-        if (isInteraction) context.editReply(payload);
-        else context.loadingMessage ? context.loadingMessage.edit(payload) : context.reply(payload);
+        this.sendReply(context, payload);
     }
 };

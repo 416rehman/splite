@@ -37,27 +37,27 @@ module.exports = class WipePointsCommand extends Command {
         this.handle(target, interaction, true);
     }
 
-    handle(target, context, isInteraction) {
+    handle(target, context) {
         if (!target) {
-            return this.sendReplyAndDelete(context, 'Please provide a valid user.', isInteraction);
+            return this.sendReplyAndDelete(context, 'Please provide a valid user.');
         }
 
         if (target.id === context.author.id) {
-            return this.sendReplyAndDelete(context, 'You can\'t rob yourself 🤦‍', isInteraction);
+            return this.sendReplyAndDelete(context, 'You can\'t rob yourself 🤦‍');
         }
 
         let target_balance = this.client.db.users.selectPoints
             .pluck()
             .get(target.id, context.guild.id);
         if (!target_balance) {
-            return this.sendReplyAndDelete(context, `${emojis.nep} That user has no points.`, isInteraction);
+            return this.sendReplyAndDelete(context, `${emojis.nep} That user has no points.`);
         }
 
         let author_balance = this.client.db.users.selectPoints
             .pluck()
             .get(context.author.id, context.guild.id);
         if (!author_balance) {
-            return this.sendReplyAndDelete(context, `${emojis.nep} You have no points.`, isInteraction);
+            return this.sendReplyAndDelete(context, `${emojis.nep} You have no points.`);
         }
 
         this.sendReply(context, {
@@ -65,7 +65,7 @@ module.exports = class WipePointsCommand extends Command {
                 new EmbedBuilder()
                     .setDescription(`${this.getUserIdentifier(context.author)} is trying to rob ${this.getUserIdentifier(target)}...`)
             ]
-        }, isInteraction).then(async (msg) => {
+        }).then(async (msg) => {
             let amount = this.client.utils.getRandomInt(1, Math.min(author_balance, target_balance) / 2);
             if (amount > target_balance) {
                 amount = target_balance;
