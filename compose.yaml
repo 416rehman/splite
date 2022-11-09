@@ -1,0 +1,13 @@
+version: "2"
+services:
+    node:
+        image: "node:16"
+        user: "root"
+        working_dir: /home/node/app
+        environment:
+            - NODE_ENV=production
+        volumes:
+            - ./splite-data:/home/node/app
+        expose:
+            - "17170"
+        command: sh -c "npm install && npm run register && npm run start"
