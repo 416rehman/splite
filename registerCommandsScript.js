@@ -6,11 +6,11 @@ const AsciiTable = require('ascii-table');
 const { readdirSync } = require('fs');
 const { resolve, join } = require('path');
 const Discord = require('discord.js');
-const {readYAML} = require('./src/utils/utils');
+const {Statics} = require('./src/utils/utils');
 const logger = require('./src/utils/logger');
 const intents = require('./intents.js');
 
-const config = readYAML(__basedir + '/config.yaml');
+const config = Statics.config;
 
 class CommandRegistrar extends Discord.Client {
     constructor() {

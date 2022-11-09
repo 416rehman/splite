@@ -1,9 +1,9 @@
 global.__basedir = __dirname;
 const Client = require('./src/Client.js');
-const {readYAML} = require('./src/utils/utils');
+const {Statics} = require('./src/utils/utils');
 require('./src/utils/prototypes').arrayProto(Array);
-const config = readYAML(__basedir + '/config.yaml');
 const Webserver = require('./src/Webserver.js');
+const config = Statics.config;
 
 const client = new Client(config, {
     partials: ['MESSAGE', 'CHANNEL', 'REACTION'],

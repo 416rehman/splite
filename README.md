@@ -19,6 +19,7 @@
 # SPLITE - Multi-Purpose Discord v14 Bot
 
 ### Now with Slash Commands, Music, Moderation, and more!
+
 #### New in Splite 5.0: Discord v14 support, YAML configuration, and many bug fixes
 
 Splite is a free to use multipurpose Discord bot. It is designed to be a flexible and easy to use. ⭐ Consider starring
@@ -27,7 +28,8 @@ the repo on GitHub to help with development! ⭐
 
 ### Features
 
-- Robust and flexible command handler supporting text-based and slash commands, restrict to permission level, VCs, NSFW channels, bot owners, bot managers, and more.
+- Robust and flexible command handler supporting text-based and slash commands, restrict to permission level, VCs, NSFW
+  channels, bot owners, bot managers, and more.
 - Endpoint handler to listen to and respond to external web requests (Webhooks).
 - Music Module to play music in voice channels from YouTube, SoundCloud, and Spotify.
 - Logging features
@@ -37,13 +39,16 @@ the repo on GitHub to help with development! ⭐
 - Betting and Gambling features - Users can gamble and bet against other users to win or lose their daily points.
 - Leaderboards to see the top active users, top moderators, and top points users.
 - Fun commands such as ship, mock, whowouldwin, and many many more.
+
 <hr/>
 
 # Table of Contents
+
 - [Setup](#setup)
-  - [Prerequisites](#prerequisites)
-  - [Configuration](#configuration)
-  - [Starting the Bot](#starting-the-bot)
+    - [Prerequisites](#prerequisites)
+    - [Configuration](#configuration)
+    - [Starting the Bot](#starting-the-bot)
+- [Cloud Configuration](#cloud-configuration)
 - [Modifying Functionality](#modifying-functionality)
 - [Command Handler](#command-handler)
     - [Command Handler Features](#command-handler-features)
@@ -66,22 +71,54 @@ the repo on GitHub to help with development! ⭐
             - [Finishing Off](#finishing-off)
 - [TopGG Integration](#topgg-integration)
 - [Commands](#commands)
+
 <hr/>
 
 ### Setup
+
 #### Prerequisites
+
 1. Clone the repo and install the dependencies with `npm install`
-2. Add the emojis from `emojis.zip` to your server and update the emoji IDs in `src/utils/emoji.json` to match your server's emoji IDs
+2. Add the emojis from `emojis.zip` to your server and update the emoji IDs in `src/utils/emoji.json` to match your
+   server's emoji IDs
 
 #### Configuration
-1. Rename the `config.example.yaml` file to `config.yaml` and fill it - Incomplete config.yaml file might result in bot not functioning properly
+
+1. Rename the `config.example.yaml` file to `config.yaml` and fill it - Incomplete config.yaml file might result in bot
+   not functioning properly
+2. **OPTIONAL**: If needed, environment variables can be used instead of a config file.
 
 #### Starting the Bot
+
 1. Run `npm run register` to register all slash commands
 2. Run `node app.js` command to start the bot
 
 *If you wish to run the bot over pm2, use the command `pm2 start`*
 <hr/>
+
+### Cloud Configuration
+
+Splite's configuration can be set via environment variables. This is useful for cloud deployments such as Heroku, and
+Repl.it.
+
+Keep the following in mind when using environment variables:
+
+- Prefix the configuration key with `SPLITE_`.
+- Environment variables MUST be in all caps.
+- List values are separated by a comma.
+- Nested properties are separated by an underscore
+
+**Example:**
+
+
+
+| CONFIG.YAML                            | ENVIRONMENT VARIABLE                       |
+|----------------------------------------|--------------------------------------------|
+| token: "1234567890"                    | SPLITE_TOKEN=1234567890                    |
+| owners: ["1234","1234"]                | SPLITE_OWNERS=1234,1234                    |
+| apiKeys.topGG.api_mode.token: "q1w2e3" | SPLITE_APIKEYS_TOPGG_API_MODE_TOKEN=q1w2e3 |
+
+*For convenience, the bot will output an environment variable equivalent of your config file upon startup.*
 
 ## Modifying Functionality
 
@@ -137,7 +174,7 @@ module.exports = class AvatarCommand extends Command {
             type: client.types.INFO,
             examples: ['avatar @split'],
             slashCommand: new SlashCommandBuilder()
-                .addUserOption((option) => 
+                .addUserOption((option) =>
                     option.setName('user').setDescription('The user to display the avatar of.')),
         });
     }
@@ -170,6 +207,7 @@ module.exports = class AvatarCommand extends Command {
 ```
 
 #### Command Types
+
 - **MISC:** This is the default type, and is used for commands that do not fit into any other category.
 - **INFO:** Commands that do not change the state of the data and are used to display information.
 - **FUN:** Commands that are used to entertain people.
@@ -179,62 +217,84 @@ module.exports = class AvatarCommand extends Command {
 - **MOD:** Commands that can be used by server moderators to manage the server.
 - **MUSIC:** Commands that are used by the music system.
 - **ADMIN:** Commands that can be used by server admins to manage the server.
-- **MANAGER:** Commands that can be used by bot managers. **NOTE** These commands can ONLY be used by bot managers (set in config.yaml).
-- **OWNER:**  Commands that can be used by the bot owner. **NOTE** These commands can ONLY be used by the bot owner (set in config.yaml).
+- **MANAGER:** Commands that can be used by bot managers. **NOTE** These commands can ONLY be used by bot managers (set
+  in config.yaml).
+- **OWNER:**  Commands that can be used by the bot owner. **NOTE** These commands can ONLY be used by the bot owner (set
+  in config.yaml).
 
 #### Restrictions
+
 These are the restrictions that can be set for a command.
 
 ##### Restrict command to Voice Channels
-To restrict a text command to only be used if a user is in a voice channel, add and set the `voiceChannelOnly` property to `true`.
+
+To restrict a text command to only be used if a user is in a voice channel, add and set the `voiceChannelOnly` property
+to `true`.
 
 Example:
+
 ```js
 voiceChannelOnly: true // Default is false
 ```
 
 ##### Restrict command to NSFW channels
+
 To restrict a command to only be used in NSFW channels, add and set the `nsfwOnly` property to `true`.
 
 Example:
+
 ```js
 nsfwOnly: true // Default is false
 ```
-##### Restrict command to a specific permission level
-To restrict a command so only users with a specific permission level can use it, add the permissions to the `userPermissions` property.
 
-Example: 
+##### Restrict command to a specific permission level
+
+To restrict a command so only users with a specific permission level can use it, add the permissions to
+the `userPermissions` property.
+
+Example:
+
 ```js
 userPermissions: ['KICK_MEMBERS', 'MANAGE_MESSAGES'] // Default is null
 ```
 
 ##### Restrict commands to Splite Bot Owners
+
 To restrict a command to only be used by Splite Bot Owners, set the type to `OWNER`.
 
 Example:
+
 ```js
 type: 'OWNER' // Default is 'MISC'
 ```
+
 Make sure to add the bot owners' ID(s) to the `owners` array in the config.yaml file.
+
 ```js
 /// config.yaml
-  "owners": ["123456789012346578", "123456789012346579"], // Add the bot owners' ID(s) here
+"owners"
+:
+["123456789012346578", "123456789012346579"], // Add the bot owners' ID(s) here
 ```
 
 ##### Restrict commands to Splite Bot Managers
+
 To restrict a command to only be used by Splite Bot Managers, set the type in the Command file to `MANAGER`.
 
 Example:
+
 ```js
 type: 'MANAGER' // Default is 'MISC'
 ```
+
 Make sure to add the bot managers' ID(s) to the `managers` array in the config.yaml file.
+
 ```js
 /// config.yaml
-  "managers": ["123456789012346578", "123456789012346579"], // Add the bot managers' ID(s) here
+"managers"
+:
+["123456789012346578", "123456789012346579"], // Add the bot managers' ID(s) here
 ```
-
-
 
 #### Cooldowns
 
@@ -256,7 +316,8 @@ In the below example, once the user calls the `prefix` command, they won't be ab
 after that command has been run.
 
 ##### Channel Exclusive
-Similar to the `exclusive` option, but will act on an entire channel. This option allows for one running command at a 
+
+Similar to the `exclusive` option, but will act on an entire channel. This option allows for one running command at a
 time in a channel, i.e. a trivia game command is set to be `channelExclusive: true`, now if a user starts a game of
 trivia, another user won't be able to start another game of trivia in the same channel until the first game is finished
 (done method is called).
@@ -285,11 +346,11 @@ module.exports = class prefixCommand extends Command {
         message.reply({
             embeds: [new EmbedBuilder().setTitle(`${interaction.client.config.name}'s Prefix`)
                 .setDescription(`To change the prefix: \`${prefix}prefix <new prefix>\``)
-                .addFields([{name: `Current Prefix`, value:  `**\`${prefix}\`**`}])
-                .setThumbnail( this.getAvatarURL(interaction.client.user))
+                .addFields([{name: `Current Prefix`, value: `**\`${prefix}\`**`}])
+                .setThumbnail(this.getAvatarURL(interaction.client.user))
                 .setFooter({
                     text: interaction.author.tag,
-                    iconURL: this.getAvatarURL( interaction.author)
+                    iconURL: this.getAvatarURL(interaction.author)
                 })
                 .setTimestamp()]
         })
@@ -312,14 +373,30 @@ The following options are available for commands (default values are shown):
 
 ```javascript
 name: "The name of the command - Must be unique",
-aliases: ["The aliases of the command - Must be unique"],
-usage: "A usage example for the command",
-description: "The description of the command",
-type: "Should be the same as the folder name of the command. Valid choices: INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER, MANAGER",
-clientPermissions: ["The permissions the client needs to run the command. Valid values in src/utils/permissions.json"],
-userPermissions: ["The permissions the user needs to run the command. Valid values in src/utils/permissions.json"],
-examples: ["An example of how to use the command"],
-cooldown: 2 // The cooldown of the command in seconds
+    aliases
+:
+["The aliases of the command - Must be unique"],
+    usage
+:
+"A usage example for the command",
+    description
+:
+"The description of the command",
+    type
+:
+"Should be the same as the folder name of the command. Valid choices: INFO, FUN, POINTS, SMASHORPASS, NSFW, MISC, MOD, MUSIC, ADMIN, OWNER, MANAGER",
+    clientPermissions
+:
+["The permissions the client needs to run the command. Valid values in src/utils/permissions.json"],
+    userPermissions
+:
+["The permissions the user needs to run the command. Valid values in src/utils/permissions.json"],
+    examples
+:
+["An example of how to use the command"],
+    cooldown
+:
+2 // The cooldown of the command in seconds
 nsfwOnly: false // If the command can only be used in NSFW channels
 voiceChannelOnly: false // If the command can only be used in voice channels
 disabled: false // If true, the command will not be registered and will not be able to be used. config.yaml also provides a `disabledCommands` option to disable commands globally. config.yaml has priority over this option.
@@ -328,15 +405,20 @@ slashCommand: new SlashCommandBuilder() // Builds a slash command using the name
 ```
 
 ### Endpoint Handler
-Splite also comes packed with a lightweight endpoint handler, powered by KoaJS. 
+
+Splite also comes packed with a lightweight endpoint handler, powered by KoaJS.
 This endpoint handler can help in creating a REST API for your bot, or by listening for external webhooks.
-Endpoint handler only work if the webserver is running, you can enable the webserver by setting `webserver.enabled` to `true` inside the `config.yaml` file.
+Endpoint handler only work if the webserver is running, you can enable the webserver by setting `webserver.enabled`
+to `true` inside the `config.yaml` file.
 
 #### Endpoint Handler Features
+
 - Authorization: Set the `authorization` field to the authorization key you expect to receive from the webhook.
-- Per IP Rate Limiting: Set the `rateLimit.rpm` field to the number of requests you want to allow per minute and `rateLimitCooldown` to the cooldown in milliseconds after hitting the rate limit.
+- Per IP Rate Limiting: Set the `rateLimit.rpm` field to the number of requests you want to allow per minute
+  and `rateLimitCooldown` to the cooldown in milliseconds after hitting the rate limit.
 - Restrict to IPs: Set the `allowedIPs` field to an array of IPs that are allowed to use the endpoint.
-- Automatic routing: The endpoints URL will be generated automatically based on the folder's name and the file name. For more, [Accessing the Endpoint](#accessing-the-endpoint)
+- Automatic routing: The endpoints URL will be generated automatically based on the folder's name and the file name. For
+  more, [Accessing the Endpoint](#accessing-the-endpoint)
 
 #### Sample Endpoint
 
@@ -350,7 +432,7 @@ module.exports = class SampleWebhook extends Endpoint {
             description: 'This is a sample webhook', // Description of the endpoint
         });
     }
-    
+
     get(req, res) {
         return {
             status: 200,
@@ -377,50 +459,79 @@ module.exports = class SampleWebhook extends Endpoint {
 ```
 
 #### Endpoint Options
+
 The following options are available for Endpoint handlers:
+
 ```javascript
 description: 'This is a sample webhook', // Description of the endpoint
-rateLimit: {       // Rate limit info - Leave out to disable rate limiting
+    rateLimit
+:
+{       // Rate limit info - Leave out to disable rate limiting
     rpm: 30,        // Requests per minute. Default: 30 - Set to 0 to disable rate limiting
-    cooldown: 60000 // Cooldown (in milliseconds) for the IP after reaching the rate limit - Default: 60000 (1 minute)
-},
+        cooldown
+:
+    60000 // Cooldown (in milliseconds) for the IP after reaching the rate limit - Default: 60000 (1 minute)
+}
+,
 allowedIPs: ['192.168.0.1', '192.168.0.2'], // Array of IPs that are allowed to use this endpoint - Leave out to disable check
-authorization: 'ASDFAGASDGASDFASDFA', // Expects authorization header with this value to access this endpoint - Leave out to disable check
-disabled: false // Set to true to disable this endpoint - Leave out or set to false to disable check
+    authorization
+:
+'ASDFAGASDGASDFASDFA', // Expects authorization header with this value to access this endpoint - Leave out to disable check
+    disabled
+:
+false // Set to true to disable this endpoint - Leave out or set to false to disable check
 ```
 
 #### Scenario
 
-NOTE: This section goes over creating an endpoint handler for TopGG, a built-in endpoint handler for TopGG webhooks is already provided, and to use that, skip over to [TopGG Integration](#topgg-integration)
+NOTE: This section goes over creating an endpoint handler for TopGG, a built-in endpoint handler for TopGG webhooks is
+already provided, and to use that, skip over to [TopGG Integration](#topgg-integration)
 
-TopGG is a popular bot directory where you can advertise your bot, and the more votes a bot has on TopGG the better chance it has of being listed higher.
-Splite's gambling system allows for dynamic odds, so we will setup a system, so if someone votes for our bot on TopGG, we increase their odds by 10%.
+TopGG is a popular bot directory where you can advertise your bot, and the more votes a bot has on TopGG the better
+chance it has of being listed higher.
+Splite's gambling system allows for dynamic odds, so we will setup a system, so if someone votes for our bot on TopGG,
+we increase their odds by 10%.
 
-TopGG comes with an endpoint you can query everytime you want to see if someone has voted for your bot. However this endpoint has extremely heavy rate limiting.
-To counteract this, we will query the endpoint once every 5 minutes, and if the user has voted, we will cache their vote so we don't have to query the TopGG API anymore for this user for 6 hours.
-However, if the bot starts checking for votes for thousands of users who have not voted, we will flood the TopGG API, and the bot will start getting rate limited.
+TopGG comes with an endpoint you can query everytime you want to see if someone has voted for your bot. However this
+endpoint has extremely heavy rate limiting.
+To counteract this, we will query the endpoint once every 5 minutes, and if the user has voted, we will cache their vote
+so we don't have to query the TopGG API anymore for this user for 6 hours.
+However, if the bot starts checking for votes for thousands of users who have not voted, we will flood the TopGG API,
+and the bot will start getting rate limited.
 
 ##### Problem
-This would work, and is in fact a strategy we use in Splite to check for votes, but it is not very friendly when it comes to User Experience.
 
-Imagine this, a user checks their odds by running the `odds` command, the bot queries the TopGG API, user has not voted, and the bot will wait 5 minutes before it queries the API for this user again.
-Now the user goes, and votes for our bot, they run the `odds` command again, but now the bot is waiting on the 5 minutes to be over, before it can check the TopGG API again to verify the user's vote.
-After waiting for 5 minutes, the user checks their `odds` again, and now the 5 minutes wait is over, and the bot verifies the user has voted by checking the TopGG API, and caches the user's vote, so 
+This would work, and is in fact a strategy we use in Splite to check for votes, but it is not very friendly when it
+comes to User Experience.
+
+Imagine this, a user checks their odds by running the `odds` command, the bot queries the TopGG API, user has not voted,
+and the bot will wait 5 minutes before it queries the API for this user again.
+Now the user goes, and votes for our bot, they run the `odds` command again, but now the bot is waiting on the 5 minutes
+to be over, before it can check the TopGG API again to verify the user's vote.
+After waiting for 5 minutes, the user checks their `odds` again, and now the 5 minutes wait is over, and the bot
+verifies the user has voted by checking the TopGG API, and caches the user's vote, so
 for the next 6 hours, the bot will not have to query the TopGG API for this user.
 
 The user waits 5 minutes after voting, and that is not a good user experience. How can we fix this?
 
 ##### Solution - Webhooks via Endpoint Handler
-Instead of using the TopGG API over and over again, TopGG also provides a webhook, so that everytime someone votes for our bot, TopGG sends us the user's vote to an endpoint of our choice.
+
+Instead of using the TopGG API over and over again, TopGG also provides a webhook, so that everytime someone votes for
+our bot, TopGG sends us the user's vote to an endpoint of our choice.
 
 Let's create an endpoint handler that TopGG will send us the user's vote to.
 
 ###### Prerequisites
-Before you can start creating and using endpoints, you must tell Splite you wish to do so by setting `webserver.enabled` to `true` in the `config.yaml` file.
+
+Before you can start creating and using endpoints, you must tell Splite you wish to do so by setting `webserver.enabled`
+to `true` in the `config.yaml` file.
+
 ###### Create an endpoint
+
 - Go to the `src/endpoints` directory, and create a new **folder** called `topgg`.
 - Inside the `topgg` folder, create a new file called `vote.js`.
 - Input the following code into the `vote.js` file:
+
 ```js
 const Endpoint = require('../Endpoint');
 
@@ -430,7 +541,7 @@ module.exports = class TopGGVoteEndpoint extends Endpoint {
             description: 'Receives TopGG vote events.',
         });
     }
-    
+
     post(req, res) {
         if (req.body?.user) {
             this.webserver.db.integrations.setTopGG.run(req.body.user, Date.now());
@@ -438,10 +549,14 @@ module.exports = class TopGGVoteEndpoint extends Endpoint {
     }
 };
 ```
+
 ###### Accessing the endpoint
-Splite's webserver will automatically do routing for you by using the folder and file names inside the `src/endpoints` directory.
+
+Splite's webserver will automatically do routing for you by using the folder and file names inside the `src/endpoints`
+directory.
 
 Here is an example of how to access endpoints LOCALLY based on their directory and file names:
+
 ```
 | file                                | URL                                             |
 |-------------------------------------|-------------------------------------------------|
@@ -452,26 +567,38 @@ Here is an example of how to access endpoints LOCALLY based on their directory a
 | src/endpoints/topgg/votes/check.js  | INVALID - Only 1 layer of folders is supported. |
 | src/endpoints/github/space check.js | github/space-check                              |
 ```
-*The above URLs are for local development, to access the endpoints outside of your own network, you must use the external IP address of your computer and set Port Forwarding, we won't be covering that here.*
+
+*The above URLs are for local development, to access the endpoints outside of your own network, you must use the
+external IP address of your computer and set Port Forwarding, we won't be covering that here.*
 
 ###### Finishing Off
-Now assuming, you have port forwarding set up and the webserver is accessible from the internet, you can provide the URL of your endpoint to TopGG,
+
+Now assuming, you have port forwarding set up and the webserver is accessible from the internet, you can provide the URL
+of your endpoint to TopGG,
 and your bot will be able to receive votes from TopGG, and update the database accordingly.
 
-⛔**DO NOT** use the above example in your project since a complete implementation of TopGG webhooks is already provided with all the functionality built-in. Check [TopGG Integration](#topgg-integration) for more information.
+⛔**DO NOT** use the above example in your project since a complete implementation of TopGG webhooks is already provided
+with all the functionality built-in. Check [TopGG Integration](#topgg-integration) for more information.
 <hr/>
 
 ## TopGG Integration
 
 Splite provides 2 modes for integrating with TopGG.
-1. **`api_mode`** (Default) uses TopGG API, caches the votes in memory, does not interact with database, and comes with the above mentioned limitation (5 minutes wait after voting)
-2. **`webhook_mode`** uses TopGG webhooks, does not use the cache and stores/retrieves the votes in database. Requires endpoint to be accessible by TopGG and is much more reliable.
 
-To use TopGG webhooks, first make sure Splite's webserver is enabled (`webserver.enabled` set to `true` in `config.yaml`) is accessible from the internet by sending a GET request to `<yourIP>:17170`, if you are greeted with a 200 OK response, you can proceed to the next step.
+1. **`api_mode`** (Default) uses TopGG API, caches the votes in memory, does not interact with database, and comes with
+   the above mentioned limitation (5 minutes wait after voting)
+2. **`webhook_mode`** uses TopGG webhooks, does not use the cache and stores/retrieves the votes in database. Requires
+   endpoint to be accessible by TopGG and is much more reliable.
+
+To use TopGG webhooks, first make sure Splite's webserver is enabled (`webserver.enabled` set to `true`
+in `config.yaml`) is accessible from the internet by sending a GET request to `<yourIP>:17170`, if you are greeted with
+a 200 OK response, you can proceed to the next step.
 
 Simply set `webserver.enabled` to `true` and `apiKeys.topGG.useMode` to `webhook_mode`in the `config.yaml` file.
-Then set the Webhook URL in [TopGG](https://docs.top.gg/resources/webhooks/) to your endpoint URL. (Default: `http://<yourIP>:17170/topgg/vote`)
-Make sure to set the `apiKeys.topGG.webhook_mode.authorization` to the authorization-string provided by TopGG to make sure only TopGG can access the webhook.
+Then set the Webhook URL in [TopGG](https://docs.top.gg/resources/webhooks/) to your endpoint URL. (
+Default: `http://<yourIP>:17170/topgg/vote`)
+Make sure to set the `apiKeys.topGG.webhook_mode.authorization` to the authorization-string provided by TopGG to make
+sure only TopGG can access the webhook.
 
 To modify the functionality of this endpoint, you can edit the `src/endpoints/topgg/vote.js` file.
 
@@ -481,15 +608,25 @@ For the deployed list of commands, visit the [Commands Endpoint](https://splite.
 
 **![:info~1:](https://cdn.discordapp.com/emojis/838615107181346887.gif?v=1) Info [30]**
 
-`activity`, `admins`, `aliases`, `avatar`, `banner`, `botinfo`, `calculator`, `channelinfo`, `editsnipe`, `emojis`, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`, `serverstaff`, `snipe`, `stats`, `texthelp`, `uptime`, `vote`, `whois`, `report`, `clearafk`, `modactivity`
+`activity`, `admins`, `aliases`, `avatar`, `banner`, `botinfo`, `calculator`, `channelinfo`, `editsnipe`, `emojis`
+, `help`, `inviteme`, `mods`, `permissions`, `ping`, `prefix`, `roleinfo`, `servercount`, `servericon`, `serverinfo`
+, `serverstaff`, `snipe`, `stats`, `texthelp`, `uptime`, `vote`, `whois`, `report`, `clearafk`, `modactivity`
 
 **![:fun~1:](https://cdn.discordapp.com/emojis/838614336749568020.gif?v=1) Fun [88]**
 
-`8ball`, `afk`, `anonymous`, `approved`, `awooify`, `baguette`, `beautiful`, `bio`, `bird`, `biryani`, `blur`, `blurple`, `brazzers`, `burn`, `cat`, `catfact`, `challenger`, `changemymind`, `circle`, `clyde`, `coinflip`, `confess`, `contrast`, `crush`, `dadjoke`, `deepfry`, `dictator`, `distort`, `dog`, `dogfact`, `duck`, `dungeon`, `emboss`, `emojify`, `enlarge`, `fire`, `fox`, `frame`, `gay`, `geoguessr`, `glitch`, `greyple`, `greyscale`, `hate`, `instagram`, `insult`, `invert`, `jail`, `magik`, `meme`, `missionpassed`, `mock`, `moustache`, `nsfw`, `pickup`, `pixelize`, `posterize`, `ps4`, `quickclick`, `redple`, `rejected`, `rip`, `roll`, `rps`, `scary`, `sepia`, `sharpen`, `shibe`, `ship`, `snake`, `sniper`, `thanos`, `thouart`, `threats`, `tobecontinued`, `trap`, `triggered`, `trumptweet`, `unsharpen`, `urban`, `tatoo`, `view`, `wanted`, `wasted`, `whowouldwin`, `yesno`, `yomomma`, `youtube`
+`8ball`, `afk`, `anonymous`, `approved`, `awooify`, `baguette`, `beautiful`, `bio`, `bird`, `biryani`, `blur`, `blurple`
+, `brazzers`, `burn`, `cat`, `catfact`, `challenger`, `changemymind`, `circle`, `clyde`, `coinflip`, `confess`
+, `contrast`, `crush`, `dadjoke`, `deepfry`, `dictator`, `distort`, `dog`, `dogfact`, `duck`, `dungeon`, `emboss`
+, `emojify`, `enlarge`, `fire`, `fox`, `frame`, `gay`, `geoguessr`, `glitch`, `greyple`, `greyscale`, `hate`
+, `instagram`, `insult`, `invert`, `jail`, `magik`, `meme`, `missionpassed`, `mock`, `moustache`, `nsfw`, `pickup`
+, `pixelize`, `posterize`, `ps4`, `quickclick`, `redple`, `rejected`, `rip`, `roll`, `rps`, `scary`, `sepia`, `sharpen`
+, `shibe`, `ship`, `snake`, `sniper`, `thanos`, `thouart`, `threats`, `tobecontinued`, `trap`, `triggered`, `trumptweet`
+, `unsharpen`, `urban`, `tatoo`, `view`, `wanted`, `wasted`, `whowouldwin`, `yesno`, `yomomma`, `youtube`
 
 **![:points~1:](https://cdn.discordapp.com/emojis/838615754894475264.gif?v=1) Points [12]**
 
-`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `odds`, `points`, `pointsper`, `position`, `rigship`, `totalpoints`
+`bet`, `crown`, `explainpoints`, `gamble`, `givepoints`, `leaderboard`, `odds`, `points`, `pointsper`, `position`
+, `rigship`, `totalpoints`
 
 **![:smashorpass:](https://cdn.discordapp.com/emojis/838588533497266217.gif?v=1) Smash or Pass [5]**
 
@@ -501,11 +638,13 @@ For the deployed list of commands, visit the [Commands Endpoint](https://splite.
 
 **![:mods:](https://cdn.discordapp.com/emojis/838614337904050237.gif?v=1) Mod [21]**
 
-`addemoji`, `addrole`, `ban`, `clearwarns`, `kick`, `members`, `mute`, `purge`, `purgebot`, `removeemoji`, `role`, `setnickname`, `slowmode`, `softban`, `testfarewell`, `testwelcome`, `unban`, `unmute`, `warn`, `warnpurge`, `warns`
+`addemoji`, `addrole`, `ban`, `clearwarns`, `kick`, `members`, `mute`, `purge`, `purgebot`, `removeemoji`, `role`
+, `setnickname`, `slowmode`, `softban`, `testfarewell`, `testwelcome`, `unban`, `unmute`, `warn`, `warnpurge`, `warns`
 
 **![:music:](https://cdn.discordapp.com/emojis/920916668484579328.gif?v=1) Music [16]**
 
-`back`, `clear`, `filter`, `loop`, `nowplaying`, `pause`, `play`, `progress`, `queue`, `resume`, `save`, `search`, `seek`, `shuffle`, `skip`, `stop`, `volume`
+`back`, `clear`, `filter`, `loop`, `nowplaying`, `pause`, `play`, `progress`, `queue`, `resume`, `save`, `search`
+, `seek`, `shuffle`, `skip`, `stop`, `volume`
 
 **![:admin~1:](https://cdn.discordapp.com/emojis/838614338515370064.gif?v=1) Admin [33]**
 

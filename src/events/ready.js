@@ -1,3 +1,4 @@
+const {Statics} = require('../utils/utils');
 module.exports = (client) => {
     // Set status
     const activities = [
@@ -80,4 +81,6 @@ module.exports = (client) => {
 
     client.logger.info(`${client.name} is now online`);
     client.logger.info(`${client.name} is running on ${client.guilds.cache.size} server(s)`);
+
+    client.logger.debug('For cloud hosting, you can use the following environment variables: \n' + Statics.configAsEnvirons);
 };

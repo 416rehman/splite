@@ -1,5 +1,10 @@
 # IMPORTANT - Rename this file to config.yaml or create a copy of it named config.yaml and edit that file.
-# This file is used to configure the various parameters used by the bot.
+
+# CLOUD HOSTING - If you are hosting this bot on a cloud service, you can use environment variables to set the config values.
+# Environment variables are prepended with "SPLITE_", all the subkeys are capitalized and separated by underscores. List values are separated by commas (,)
+# EXAMPLES:
+#    - token: "ajkdfhakljh2352009adfha" can be set using the environment variable SPLITE_TOKEN=ajkdfhakljh2352009adfha
+#    - music.dj.commands: ["play", "skip", "stop"] can be set using the environment variable SPLITE_MUSIC_DJ_COMMANDS="play, skip, stop"
 
 botName: "Splite"
 

@@ -1,6 +1,6 @@
 /* eslint-disable */
-const {readYAML} = require('./utils');
-const config = readYAML(__basedir + '/config.yaml');
+const {Statics} = require('./utils');
+const config = Statics.config;
 const Database = require('better-sqlite3');
 const db = new Database(__basedir + '/data/db.sqlite');
 

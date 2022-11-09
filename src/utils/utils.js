@@ -6,13 +6,65 @@ const request = require('request');
 const YAML = require('yaml');
 const fs = require('fs');
 
-/**
- * Reads config.yaml and validates it, then returns it
- * @param path
- * @returns {any}
- */
-function readYAML(path) {
-    return YAML.parse(fs.readFileSync(path, 'utf8'));
+// statics are shared across all instances of the class
+class Statics {
+    static #config = null;
+
+    static get config() {
+        if (this.#config === null) {
+            const configObj = YAML.parse(fs.readFileSync(__basedir + '/config.yaml', 'utf8'));
+            const replace = (obj, path = []) => {
+                for (const [key, value] of Object.entries(obj)) {
+                    if (typeof value === 'object' && !Array.isArray(value)) {
+                        replace(value, [...path, key]);
+                    }
+                    else {
+                        const envVar = 'SPLITE_'+[...path, key].join('_').toUpperCase();
+                        if (process.env[envVar]) {
+                            if (typeof value === 'string') {
+                                obj[key] = process.env[envVar];
+                                if (obj[key] === 'true') obj[key] = true;
+                                else if (obj[key] === 'false') obj[key] = false;
+                            }
+                            else if (typeof value === 'number') {
+                                obj[key] = Number(process.env[envVar]);
+                            }
+                            else if (typeof value === 'boolean') {
+                                obj[key] = process.env[envVar].toLowerCase() === 'true';
+                            }
+                            else if (Array.isArray(value)) {
+                                // trim and split by comma
+                                obj[key] = process.env[envVar].trim().split(',').map(v => v.trim());
+                            }
+                            console.log(`Set config.yaml value ${key} to environment variable ${envVar} with value ${process.env[envVar]}`);
+                        }
+                    }
+                }
+            };
+            replace(configObj);
+            this.#config = configObj;
+        }
+        return this.#config;
+    }
+    static get configAsEnvirons() {
+        const environs = {};
+        const replace = (obj, path = []) => {
+            for (const [key, value] of Object.entries(obj)) {
+                if (typeof value === 'object' && !Array.isArray(value)) {
+                    replace(value, [...path, key]);
+                }
+                else {
+                    if (Array.isArray(value)) {
+                        environs['SPLITE_'+[...path, key].join('_').toUpperCase()] = value.join(',');
+                    } else {
+                        environs['SPLITE_'+[...path, key].join('_').toUpperCase()] = value;
+                    }
+                }
+            }
+        };
+        replace(this.config);
+        return Object.entries(environs).map(([key, value]) => `${key}=${value}`).join('\n');
+    }
 }
 
 /**
@@ -549,7 +601,7 @@ function isCommandOrBotMessage(msg, prefix) {
 }
 
 module.exports = {
-    readYAML,
+    Statics,
     capitalize,
     removeElement,
     trimArray,
