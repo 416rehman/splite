@@ -2,7 +2,7 @@
 const {Statics} = require('./utils');
 const config = Statics.config;
 const Database = require('better-sqlite3');
-const db = new Database(__basedir + '/data/db.sqlite');
+const db = new Database(__basedir + '/data/db/db.sqlite');
 
 // Set pragmas
 db.pragma('synchronous = 1');
