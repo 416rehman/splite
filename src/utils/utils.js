@@ -12,8 +12,10 @@ class Statics {
 
     static get config() {
         if (this.#config === null) {
-            // if __basedir + '/config.yaml' exists read it, else read __basedir + '/config.example.yaml'
-            const configObj = YAML.parse(fs.readFileSync(__basedir + (fs.existsSync(__basedir + '/config.yaml') ? '/config.yaml' : '/config.default.yaml'), 'utf8'));
+
+            const configFilename = fs.existsSync(__basedir + '/config.yaml') ? '/config.yaml' : '/config.default.yaml'
+            console.warn('config.yaml not found, using config.default.yaml');
+            const configObj = YAML.parse(fs.readFileSync(__basedir + configFilename, 'utf8'));
             const replace = (obj, path = []) => {
                 for (const [key, value] of Object.entries(obj)) {
                     if (typeof value === 'object' && !Array.isArray(value)) {
@@ -37,7 +39,7 @@ class Statics {
                                 // trim and split by comma
                                 obj[key] = process.env[envVar].trim().split(',').map(v => v.trim());
                             }
-                            console.log(`Set config.yaml value ${key} to environment variable ${envVar} with value ${process.env[envVar]}`);
+                            console.log(`Set ${configFilename} value ${key} to environment variable ${envVar} with value ${process.env[envVar]}`);
                         }
                     }
                 }
