@@ -6,7 +6,6 @@ logs/*
 data/emojis
 .vscode
 .directory
-config.yaml
 to-do.txt
 private
 # do not ignore
