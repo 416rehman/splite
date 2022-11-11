@@ -46,7 +46,7 @@ module.exports = class InviteMeCommand extends Command {
             .setTimestamp();
 
         if (this.client.owners.length > 0) {
-            embed.addFields([{name: 'Developed By', value:  `${this.client.owners[0]}`, inline:  true}]);
+            embed.addFields([{name: 'Developed By', value:  `<@${this.client.owners[0]}>`, inline:  true}]);
         }
 
         const payload = {embeds: [embed]};

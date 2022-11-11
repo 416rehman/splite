@@ -390,11 +390,11 @@ class Client extends Discord.Client {
     }
 
     getOwnerFromId(id) {
-        return this.owners?.find(o => o.startsWith(`<@${id}>`));
+        return this.owners?.includes(id);
     }
 
     getManagerFromId(id) {
-        return this.managers?.find(m => m.startsWith(`<@${id}>`));
+        return this.managers?.includes(id);
     }
 }
 

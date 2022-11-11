@@ -88,7 +88,7 @@ function sendBugReport(report, context) {
         .setThumbnail('https://i.imgur.com/B0XSinY.png')
         .setDescription(oneLine`
         Successfully sent bug report!
-         ${this.client.owners[0] && `To further discuss your issue, contact ${this.client.owners[0]}`}
+         ${this.client.owners[0] && `To further discuss your issue, contact <@${this.client.owners[0]}>`}
       `)
         .addFields([{name: 'Member', value:  context.member.toString(), inline:  true}])
         .addFields([{name: 'Message', value:  report}])
