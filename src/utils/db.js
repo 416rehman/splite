@@ -1,7 +1,10 @@
 /* eslint-disable */
-const {Statics} = require('./utils');
+const {Statics, createDatabaseFolder} = require('./utils');
 const config = Statics.config;
 const Database = require('better-sqlite3');
+
+createDatabaseFolder();
+
 const db = new Database(__basedir + '/data/db/db.sqlite');
 
 // Set pragmas

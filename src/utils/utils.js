@@ -5,6 +5,7 @@ const emojis = require('./emojis.json');
 const request = require('request');
 const YAML = require('yaml');
 const fs = require('fs');
+const path = require('path');
 
 // statics are shared across all instances of the class
 class Statics {
@@ -67,6 +68,14 @@ class Statics {
         };
         replace(this.config);
         return Object.entries(environs).map(([key, value]) => `${key}=${value}`).join('\n');
+    }
+}
+
+// create database folder
+function createDatabaseFolder() {
+    const dbPath = path.join(__basedir, 'data/db');
+    if (!fs.existsSync(dbPath)) {
+        fs.mkdirSync(dbPath, {recursive: true});
     }
 }
 
@@ -643,6 +652,7 @@ function isCommandOrBotMessage(msg, prefix) {
 
 module.exports = {
     Statics,
+    createDatabaseFolder,
     removeDisabledCommandsFromGroup,
     capitalize,
     removeElement,
