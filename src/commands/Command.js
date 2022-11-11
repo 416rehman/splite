@@ -268,7 +268,7 @@ class Command {
         if (this.name.toLowerCase().includes('group')) {
             let commandName = (this.subCommandMappings && interaction.options.data.some((option) => option.type === 2)) ?
                 this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
-                interaction.options.getSubcommand();
+                this.subCommandMappings[interaction.options.getSubcommand()];
 
             let command = this.client.commands.get(commandName);
 
