@@ -82,10 +82,10 @@ module.exports = class SetModChannelsCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addField(
-                            'Current Mod Channels',
-                            `${oldModChannels}` || '`None`'
-                        )
+                        .addFields({
+                            name: 'Current Mod Channels',
+                            value: `${oldModChannels}` || '`None`'
+                        })
                         .setDescription(this.description),
                 ],
             });
@@ -101,10 +101,10 @@ module.exports = class SetModChannelsCommand extends Command {
         );
         const payload = ({
             embeds: [
-                embed.addField(
-                    'Mod Channels',
-                    `${oldModChannels} ➔ ${this.client.utils.trimArray(channels).join(' ')}`
-                ).setDescription(
+                embed.addFields({
+                    name: 'Mod Channels',
+                    value: `${oldModChannels} ➔ ${this.client.utils.trimArray(channels).join(' ')}`
+                }).setDescription(
                     `The \`mod channels\` were successfully updated. ${success}\nUse \`clearmodchannels\` to clear the current \`mod channels\`.`
                 ),
             ],

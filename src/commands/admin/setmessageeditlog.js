@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, ChannelType} = require('discord.js');
-const {success, fail} = require('../../utils/emojis.json');
-const {oneLine} = require('common-tags');
+const { EmbedBuilder, ChannelType } = require('discord.js');
+const { success, fail } = require('../../utils/emojis.json');
+const { oneLine } = require('common-tags');
 
 module.exports = class SetMessageEditLogCommand extends Command {
     constructor(client) {
@@ -15,7 +15,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
       `,
             type: client.types.ADMIN,
             userPermissions: ['MANAGE_GUILD'],
-            examples: ['setmessageeditlog #bot-log', 'clearmessageeditlog'],
+            examples: ['setmessageeditlog #bot-log', 'clearmessageeditlog']
         });
     }
 
@@ -37,11 +37,11 @@ module.exports = class SetMessageEditLogCommand extends Command {
             context.guild.channels.cache.get(messageEditLogId) || '`None`';
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
-            .setThumbnail(context.guild.iconURL({dynamic: true}))
+            .setThumbnail(context.guild.iconURL({ dynamic: true }))
 
             .setFooter({
                 text: context.member.displayName,
-                iconURL: this.getAvatarURL(context.author),
+                iconURL: this.getAvatarURL(context.author)
             })
             .setTimestamp();
 
@@ -50,12 +50,12 @@ module.exports = class SetMessageEditLogCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addField(
-                            'Current Message Edit Log',
-                            `${oldMessageEditLog}` || '`None`'
-                        )
-                        .setDescription(this.description),
-                ],
+                        .addFields([{
+                            name: 'Current Message Edit Log',
+                            value: `${oldMessageEditLog}` || '`None`'
+                        }])
+                        .setDescription(this.description)
+                ]
             });
 
             this.sendReply(context, payload);
@@ -78,11 +78,11 @@ module.exports = class SetMessageEditLogCommand extends Command {
 
         const payload = ({
             embeds: [
-                embed.addField(
-                    'Message Edit Log',
-                    `${oldMessageEditLog} ➔ ${channel}`
-                ),
-            ],
+                embed.addFields({
+                    name: 'Message Edit Log',
+                    value: `${oldMessageEditLog} ➔ ${channel}`
+                })
+            ]
         });
 
         this.sendReply(context, payload);

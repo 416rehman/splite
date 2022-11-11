@@ -11,7 +11,7 @@ module.exports = async (client, interaction) => {
                 const replyEmbed = new EmbedBuilder()
                     .setDescription(`${fail} You are blacklisted.`);
                 if (client.owners.length) {
-                    replyEmbed.addFields([{name: 'If you think this is a mistake', value:  `contact ${client.owners[0]}`}]);
+                    replyEmbed.addFields([{name: 'If you think this is a mistake', value:  `contact <@${client.owners[0]}>`}]);
                 }
                 return interaction
                     .reply({
@@ -55,6 +55,9 @@ module.exports = async (client, interaction) => {
             const {
                 point_tracking: pointTracking, message_points: messagePoints,
             } = client.db.settings.selectPoints.get(interaction.guild.id);
+
+            // Update points with messagePoints value
+            if (pointTracking) client.db.users.updatePoints.run({points: messagePoints}, author.id, interaction.guild.id);
 
             // Check if mod channel
             let modChannelIds = command.client.db.settings.selectModChannelIds

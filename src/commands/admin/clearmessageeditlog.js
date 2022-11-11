@@ -53,10 +53,10 @@ module.exports = class clearMessageEditLogCommand extends Command {
 
         const payload = {
             embeds: [
-                embed.addField(
-                    'Message Edit Log',
-                    `${oldMessageEditLog} ➔ \`None\``
-                ),
+                embed.addFields({
+                    name: 'Message Edit Log',
+                    value: `${oldMessageEditLog} ➔ \`None\``
+                }),
             ],
         };
 

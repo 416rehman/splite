@@ -30,10 +30,7 @@ module.exports = async (client, member) => {
             })
             .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`${member} (**${member.user.tag}**)`)
-            .addField(
-                'Account created on',
-                moment(member.user.createdAt).format('dddd, MMMM Do YYYY')
-            )
+            .addFields([{name: 'Account Created On', value: moment(member.user.createdAt).format('dddd, MMMM Do YYYY')}])
             .setTimestamp()
             .setColor(member.guild.members.me.displayHexColor);
         memberLog.send({embeds: [embed]});

@@ -56,15 +56,15 @@ module.exports = class clearCrownRoleCommand extends Command {
                 `The \`crown role\` was successfully cleared. ${success}`
             )
             .addFields([{name: 'Channel', value:  `${crownChannel}` || '`None`', inline:  true}])
-            .addField(
-                'Schedule',
-                `\`${crownSchedule ? crownSchedule : 'None'}\``,
-                true
-            )
-            .addField(
-                'Message',
-                this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'
-            )
+            .addFields({
+                name: 'Schedule',
+                value: `\`${crownSchedule ? crownSchedule : 'None'}\``,
+                inline: true
+            })
+            .addFields({
+                name: 'Message',
+                value: this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'
+            })
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),

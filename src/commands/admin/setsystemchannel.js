@@ -66,10 +66,10 @@ module.exports = class SetSystemChannelCommand extends Command {
         this.client.db.settings.updateSystemChannelId.run(channel.id, context.guild.id);
         const payload = ({
             embeds: [
-                embed.addField(
-                    'System Channel',
-                    `${oldSystemChannel} ➔ ${channel}`
-                ),
+                embed.addFields({
+                    name: 'System Channel',
+                    value: `${oldSystemChannel} ➔ ${channel}`
+                }),
             ],
         });
 

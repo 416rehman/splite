@@ -51,10 +51,10 @@ module.exports = class SetFarewellChannelCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Farewells`')
 
-            .addField(
-                'Message',
-                this.client.utils.replaceKeywords(farewellMessage) || '`None`'
-            )
+            .addFields({
+                name: 'Message',
+                value: this.client.utils.replaceKeywords(farewellMessage) || '`None`'
+            })
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: this.getUserIdentifier(context.member),

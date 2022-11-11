@@ -1,14 +1,14 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, GatewayIntentBits} = require('discord.js');
+const { EmbedBuilder, GatewayIntentBits } = require('discord.js');
 const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
-const {SlashCommandBuilder} = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
 const statuses = {
     online: `${emojis.online} \`Online\``,
     idle: `${emojis.idle} \`AFK\``,
     offline: `${emojis.offline} \`Offline\``,
-    dnd: `${emojis.dnd} \`Do Not Disturb\``,
+    dnd: `${emojis.dnd} \`Do Not Disturb\``
 };
 const flags = {
     DISCORD_EMPLOYEE: `${emojis.discord_employee} \`Discord Employee\``,
@@ -25,10 +25,10 @@ const flags = {
     VERIFIED_BOT: `${emojis.verified_bot} \`Verified Bot\``,
     EARLY_VERIFIED_BOT_DEVELOPER: `${emojis.verified_developer} \`Early Verified Bot Developer\``,
     BOT_MANAGER: `${emojis.manager} \`Bot Manager\``,
-    BOT_OWNER: `${emojis.owner} \`Bot Owner\``,
+    BOT_OWNER: `${emojis.owner} \`Bot Owner\``
 };
 
-const elevatedPerms = ['ADMINISTRATOR', 'MANAGE_GUILD', 'MANAGE_ROLES', 'MANAGE_CHANNELS', 'BAN_MEMBERS', 'KICK_MEMBERS', 'MANAGE_MESSAGES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS_AND_STICKERS',];
+const elevatedPerms = ['ADMINISTRATOR', 'MANAGE_GUILD', 'MANAGE_ROLES', 'MANAGE_CHANNELS', 'BAN_MEMBERS', 'KICK_MEMBERS', 'MANAGE_MESSAGES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS_AND_STICKERS'];
 
 module.exports = class WhoIsCommand extends Command {
     constructor(client) {
@@ -39,7 +39,7 @@ module.exports = class WhoIsCommand extends Command {
             description: 'Fetches a user\'s information. If no user is given, your own information will be displayed.',
             type: client.types.INFO,
             examples: ['whois @split'],
-            slashCommand: new SlashCommandBuilder().addUserOption(u => u.setRequired(false).setDescription('The user to get information for.').setName('user')),
+            slashCommand: new SlashCommandBuilder().addUserOption(u => u.setRequired(false).setDescription('The user to get information for.').setName('user'))
         });
     }
 
@@ -98,34 +98,53 @@ module.exports = class WhoIsCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle(`${targetUser.displayName}'s Information`)
             .setThumbnail(this.getAvatarURL(targetUser.user))
-            .addFields([{name: 'User', value:  targetUser.toString(), inline:  true}])
-            .addFields([{name: 'Discriminator', value:  `\`#${targetUser.user.discriminator}\``, inline:  true}])
-            .addFields([{name: 'ID', value:  `\`${targetUser.id}\``, inline:  true}])
-            .addFields([{name: 'Bot', value:  `\`${targetUser.user.bot}\``, inline:  true}])
-            .addField('Voted on Top.gg', (await this.client.utils.checkTopGGVote(
-                this.client,
-                targetUser.id
-            )) ? 'Yes' : 'No', true)
-            .addFields([{name: 'Highest Role', value:  targetUser.roles.highest.toString(), inline:  true}])
-            .addFields([{name: 'Joined server on', value:  `\`${moment(targetUser.joinedAt).format('MMM DD YYYY')}\``, inline:  true}])
-            .addFields([{name: 'Joined Discord on', value:  `\`${moment(targetUser.user.createdAt).format('MMM DD YYYY')}\``, inline:  true}])
+            .addFields([{ name: 'User', value: targetUser.toString(), inline: true }])
+            .addFields([{ name: 'Discriminator', value: `\`#${targetUser.user.discriminator}\``, inline: true }])
+            .addFields([{ name: 'ID', value: `\`${targetUser.id}\``, inline: true }])
+            .addFields([{ name: 'Bot', value: `\`${targetUser.user.bot}\``, inline: true }])
+            .addFields({
+                name: 'Voted on Top.gg', value: (await this.client.utils.checkTopGGVote(
+                    this.client,
+                    targetUser.id
+                )) ? 'Yes' : 'No', inline: true
+            })
+            .addFields([{ name: 'Highest Role', value: targetUser.roles.highest.toString(), inline: true }])
+            .addFields([{
+                name: 'Joined server on',
+                value: `\`${moment(targetUser.joinedAt).format('MMM DD YYYY')}\``,
+                inline: true
+            }])
+            .addFields([{
+                name: 'Joined Discord on',
+                value: `\`${moment(targetUser.user.createdAt).format('MMM DD YYYY')}\``,
+                inline: true
+            }])
             .setFooter({
-                text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
+                text: context.member.displayName, iconURL: this.getAvatarURL(context.author)
             })
             .setTimestamp();
 
-        if (this.client.intents.find(i => i === GatewayIntentBits.GuildPresences)) await embed.addFields([{name: 'Status', value:  statuses[targetUser.presence?.status || 'offline'], inline:  true}]);
+        if (this.client.intents.find(i => i === GatewayIntentBits.GuildPresences)) await embed.addFields([{
+            name: 'Status',
+            value: statuses[targetUser.presence?.status || 'offline'],
+            inline: true
+        }]);
         if (activities.length > 0) embed.setDescription(activities.join('\n'));
         if (customStatus) await embed.spliceFields(0, 0, {
-            name: 'Custom Status', value: customStatus,
+            name: 'Custom Status', value: customStatus
         });
-        if (userFlags.length > 0) await embed.addFields([{name: 'Badges', value:  userFlags.map((flag) => flags[flag]).join('\n'), inline:  true}]);
-        await embed.addFields([{name: 'Roles', value:  roles || '`None`'}]);
-        if (KeyPerms.length > 0) await embed.addField(
-            'Key Permissions',
-            `${context.guild.ownerId === targetUser.id ? emojis.owner + ' **`SERVER OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``);
+        if (userFlags.length > 0) await embed.addFields([{
+            name: 'Badges',
+            value: userFlags.map((flag) => flags[flag]).join('\n') || '`None`',
+            inline: true
+        }]);
+        await embed.addFields({ name: 'Roles', value: roles || '`None`' });
+        if (KeyPerms.length > 0) await embed.addFields({
+            name: 'Key Permissions',
+            value: `${context.guild.ownerId === targetUser.id ? emojis.owner + ' **`SERVER OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``
+        });
 
-        const payload = {embeds: [embed]};
+        const payload = { embeds: [embed] };
         await this.sendReply(context, payload);
     }
 };

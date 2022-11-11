@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const {EmbedBuilder} = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const moment = require('moment');
-const {permissions} = require('../../utils/constants.json');
+const { permissions } = require('../../utils/constants.json');
 
 module.exports = class RoleInfoCommand extends Command {
     constructor(client) {
@@ -11,7 +11,7 @@ module.exports = class RoleInfoCommand extends Command {
             usage: 'roleinfo <role mention/ID>',
             description: 'Fetches information about the provided role.',
             type: client.types.INFO,
-            examples: ['roleinfo @Member'],
+            examples: ['roleinfo @Member']
         });
     }
 
@@ -50,31 +50,31 @@ module.exports = class RoleInfoCommand extends Command {
 
         const embed = new EmbedBuilder()
             .setTitle('Role Information')
-            .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addFields([{name: 'Role', value:  role.toString(), inline:  true}])
-            .addFields([{name: 'Role ID', value:  `\`${role.id}\``, inline:  true}])
-            .addFields([{name: 'Position', value:  position, inline:  true}])
-            .addFields([{name: 'Mentionable', value:  `\`${role.mentionable}\``, inline:  true}])
-            .addFields([{name: 'Bot Role', value:  `\`${role.managed}\``, inline:  true}])
-            .addFields([{name: 'Color', value:  `\`${role.hexColor.toUpperCase()}\``, inline:  true}])
-            .addFields([{name: 'Members', value:  `\`${role.members.size}\``, inline:  true}])
-            .addFields([{name: 'Hoisted', value:  `\`${role.hoist}\``, inline:  true}])
-            .addField(
-                'Created On',
-                `\`${moment(role.createdAt).format('MMM DD YYYY')}\``,
-                true
-            )
-            .addField(
-                'Permissions',
-                `\`\`\`diff\n${finalPermissions.join('\n')}\`\`\``
-            )
+            .setThumbnail(context.guild.iconURL({ dynamic: true }))
+            .addFields([{ name: 'Role', value: role.toString(), inline: true }])
+            .addFields([{ name: 'Role ID', value: `\`${role.id}\``, inline: true }])
+            .addFields([{ name: 'Position', value: position, inline: true }])
+            .addFields([{ name: 'Mentionable', value: `\`${role.mentionable}\``, inline: true }])
+            .addFields([{ name: 'Bot Role', value: `\`${role.managed}\``, inline: true }])
+            .addFields([{ name: 'Color', value: `\`${role.hexColor.toUpperCase()}\``, inline: true }])
+            .addFields([{ name: 'Members', value: `\`${role.members.size}\``, inline: true }])
+            .addFields([{ name: 'Hoisted', value: `\`${role.hoist}\``, inline: true }])
+            .addFields([{
+                name: 'Created On',
+                value: `\`${moment(role.createdAt).format('MMM DD YYYY')}\``,
+                inline: true
+            }])
+            .addFields([{
+                name: 'Permissions',
+                value: `\`\`\`diff\n${finalPermissions.join('\n')}\`\`\``
+            }])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
-                iconURL: this.getAvatarURL(context.author),
+                iconURL: this.getAvatarURL(context.author)
             })
             .setTimestamp();
 
-        const payload = {embeds: [embed]};
+        const payload = { embeds: [embed] };
         this.sendReply(context, payload);
     }
 };

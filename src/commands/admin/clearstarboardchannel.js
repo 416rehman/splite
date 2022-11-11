@@ -53,10 +53,10 @@ module.exports = class clearStarboardChannelCommand extends Command {
         );
 
         const payload = {
-            embeds: [embed.addField(
-                'Starboard Channel',
-                `${oldStarboardChannel} ➔ \`None\``
-            )],
+            embeds: [embed.addFields({
+                name: 'Starboard Channel',
+                value: `${oldStarboardChannel} ➔ \`None\``
+            })],
         };
 
         this.sendReply(context, payload);

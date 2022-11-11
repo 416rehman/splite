@@ -50,10 +50,10 @@ module.exports = class clearFarewellChannelCommand extends Command {
             .setDescription(
                 `The \`farewell channel\` was successfully cleared. ${success}`
             )
-            .addField(
-                'Message',
-                this.client.utils.replaceKeywords(farewellMessage) || '`None`'
-            )
+            .addFields({
+                name: 'Message',
+                value: this.client.utils.replaceKeywords(farewellMessage) || '`None`'
+            })
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: this.getUserIdentifier(context.author),

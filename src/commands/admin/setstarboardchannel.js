@@ -47,10 +47,10 @@ module.exports = class SetStarboardChannelCommand extends Command {
             return context.channel.send({
                 embeds: [
                     embed
-                        .addField(
-                            'Current Starboard Channel',
-                            `${oldStarboardChannel}`
-                        )
+                        .addFields({
+                            name: 'Current Starboard Channel',
+                            value: `${oldStarboardChannel}`
+                        })
                         .setDescription(this.description),
                 ],
             });
@@ -68,10 +68,10 @@ module.exports = class SetStarboardChannelCommand extends Command {
 
         const payload = ({
             embeds: [
-                embed.addField(
-                    'Starboard Channel',
-                    `${oldStarboardChannel} ➔ ${channel}`
-                ).setDescription(
+                embed.addFields({
+                    name: 'Starboard Channel',
+                    value: `${oldStarboardChannel} ➔ ${channel}`
+                }).setDescription(
                     `The \`starboard channel\` was successfully updated. ${success}\nUse \`clearstarboardchannel\` to clear the current \`starboard channel\``
                 ),
             ],

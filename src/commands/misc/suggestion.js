@@ -68,7 +68,7 @@ module.exports = class FeedbackCommand extends Command {
             .setDescription(
                 oneLine`
         Successfully sent feedback!
-        ${this.client.owners[0] && `To further discuss your feedback, contact ${this.client.owners[0]}`}`)
+        ${this.client.owners[0] && `To further discuss your feedback, contact <@${this.client.owners[0]}>`}`)
             .addFields([{name: 'Member', value:  context.member.toString(), inline:  true}])
             .addFields([{name: 'Message', value:  feedback}])
             .setFooter({

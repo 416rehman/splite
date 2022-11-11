@@ -48,10 +48,10 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addField(
-                            'Current Message Delete Log',
-                            `${oldMessageDeleteLog}` || '`None`'
-                        )
+                        .addFields({
+                            name: 'Current Message Delete Log',
+                            value: `${oldMessageDeleteLog}` || '`None`'
+                        })
                         .setDescription(this.description),
                 ],
             });
@@ -71,10 +71,10 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
 
         const payload = ({
             embeds: [
-                embed.addField(
-                    'Message Delete Log',
-                    `${oldMessageDeleteLog} ➔ ${channel}`
-                ).setDescription(
+                embed.addFields({
+                    name: 'Message Delete Log',
+                    value: `${oldMessageDeleteLog} ➔ ${channel}`
+                }).setDescription(
                     `The \`message delete log\` was successfully updated. ${success}\nUse \`clearmessagedeletelog\` to clear the current \`message delete log\`.`
                 ),
             ],

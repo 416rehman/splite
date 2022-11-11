@@ -70,10 +70,10 @@ module.exports = class clearVerificationChannelCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addField(
-                    'Verification Channel',
-                    `${oldVerificationChannel}  ➔ \`None\``
-                )
+                .addFields({
+                    name: 'Verification Channel',
+                    value: `${oldVerificationChannel}  ➔ \`None\``
+                })
                 .addFields([{name: 'Status', value:  `${oldStatus} ➔ \`${statusUpdate}\``}]),],
         };
 

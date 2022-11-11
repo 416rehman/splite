@@ -5,6 +5,7 @@ const emojis = require('./emojis.json');
 const request = require('request');
 const YAML = require('yaml');
 const fs = require('fs');
+const path = require('path');
 
 // statics are shared across all instances of the class
 class Statics {
@@ -13,9 +14,20 @@ class Statics {
     static get config() {
         if (this.#config === null) {
 
-            const configFilename = fs.existsSync(__basedir + '/config.yaml') ? '/config.yaml' : '/config.default.yaml'
-            console.warn('config.yaml not found, using config.default.yaml');
+            let configFilename = fs.existsSync(__basedir + '/config.yml') ? '/config.yml' : fs.existsSync(__basedir + '/config.yml') ? '/config.yml' : null;
+            if (!configFilename) {
+                console.warn('Custom config.yml not found. Attempting to use config.default.yml');
+                configFilename = fs.existsSync(__basedir + '/config.default.yaml') ? '/config.default.yaml' : fs.existsSync(__basedir + '/config.default.yml') ? '/config.default.yml' : null;
+                if (!configFilename) {
+                    throw new Error('No config file found. Please create a config.yml or config.default.yml file.');
+                }
+            }
+            console.log(`Using config file ${configFilename}`);
+
             const configObj = YAML.parse(fs.readFileSync(__basedir + configFilename, 'utf8'));
+            if (!configObj) {
+                throw new Error('Invalid config file - Make sure it is valid YAML');
+            }
             const replace = (obj, path = []) => {
                 for (const [key, value] of Object.entries(obj)) {
                     if (typeof value === 'object' && !Array.isArray(value)) {
@@ -67,6 +79,14 @@ class Statics {
         };
         replace(this.config);
         return Object.entries(environs).map(([key, value]) => `${key}=${value}`).join('\n');
+    }
+}
+
+// create database folder
+function createDatabaseFolder() {
+    const dbPath = path.join(__basedir, 'data/db');
+    if (!fs.existsSync(dbPath)) {
+        fs.mkdirSync(dbPath, {recursive: true});
     }
 }
 
@@ -643,6 +663,7 @@ function isCommandOrBotMessage(msg, prefix) {
 
 module.exports = {
     Statics,
+    createDatabaseFolder,
     removeDisabledCommandsFromGroup,
     capitalize,
     removeElement,

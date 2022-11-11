@@ -50,10 +50,10 @@ module.exports = class clearWelcomeChannelCommand extends Command {
             .setDescription(
                 `The \`welcome channel\` was successfully cleared. ${success}`
             )
-            .addField(
-                'Message',
-                this.client.utils.replaceKeywords(welcomeMessage) || '`None`'
-            )
+            .addFields({
+                name: 'Message',
+                value: this.client.utils.replaceKeywords(welcomeMessage) || '`None`'
+            })
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: context.member.displayName,
