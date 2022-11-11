@@ -87,10 +87,10 @@ module.exports = class BotInfoCommand extends Command {
         if (this.client.owners?.length > 0) {
             embed.addFields([{name: 'Developed By', value:  `<@${this.client.owners[0]}>`}]);
             if (this.client.owners.length > 1)
-                embed.addFields([{name: `${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, value:  this.client.owners.join(', inline:  ')}]);
+                embed.addFields([{name: `${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, value:  this.client.owners.map(o=>`<@${o}>`).join(', inline:  ')}]);
         }
         if (this.client.managers?.length > 0) {
-            embed.addFields([{name: `${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, value:  this.client.managers.join(', inline:  ')}]);
+            embed.addFields([{name: `${emojis.manager} Bot Manager${this.client.managers.length > 1 ? 's' : ''}`, value:  this.client.managers.map(o=>`<@${o}>`).join(', inline:  ')}]);
         }
 
         const payload = {embeds: [embed]};
