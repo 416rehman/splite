@@ -68,19 +68,19 @@ module.exports = class setJoinVoting extends Command {
                 embeds: [
                     embed
                         .addFields([{name: 'Status', value:  oldStatus, inline:  true}])
-                        .addField(
-                            'Current MessageID',
-                            `\`${joinvotingMessageId || 'None'}\``
-                        )
+                        .addFields({
+                            name: 'Current MessageID',
+                            value: `\`${joinvotingMessageId || 'None'}\``
+                        })
                         .addFields([{name: 'Current Emoji', value:  `${emoji || '`None`'}`}])
-                        .addField(
-                            'Current ChannelID',
-                            `${
+                        .addFields({
+                            name: 'Current ChannelID',
+                            value: `${
                                 votingChannelID
                                     ? '<#' + votingChannelID + '>'
                                     : '`None`'
                             }`
-                        ),
+                        }),
                 ],
             });
 

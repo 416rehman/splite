@@ -48,11 +48,11 @@ module.exports = class PositionCommand extends Command {
             .setTitle(`${this.getUserIdentifier(member)}'s Position`)
             .setThumbnail(this.getAvatarURL(member))
             .setDescription(`${member} is in **${ordinalPos}** place!`)
-            .addField(
-                'Position',
-                `\`${pos}\` of \`${context.guild.memberCount}\``,
-                true
-            )
+            .addFields({
+                name: 'Position',
+                value: `\`${pos}\` of \`${context.guild.memberCount}\``,
+                inline: true
+            })
             .addFields([{name: `Points ${emojis.point}`, value:  `\`${points}\``, inline:  true}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),

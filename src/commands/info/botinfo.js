@@ -85,7 +85,7 @@ module.exports = class BotInfoCommand extends Command {
             .setTimestamp();
 
         if (this.client.owners?.length > 0) {
-            embed.addFields([{name: 'Developed By', value:  `${this.client.owners[0]}`}]);
+            embed.addFields([{name: 'Developed By', value:  `<@${this.client.owners[0]}>`}]);
             if (this.client.owners.length > 1)
                 embed.addFields([{name: `${emojis.owner} Bot Owner${this.client.owners.length > 1 ? 's' : ''}`, value:  this.client.owners.join(', inline:  ')}]);
         }

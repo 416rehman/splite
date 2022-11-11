@@ -11,7 +11,7 @@ module.exports = class thanosCommand extends Command {
             description: 'Generates a thanos image',
             type: client.types.FUN,
             examples: ['thanos @split'],
-            disabled: client.ameApi === null,
+            disabled: client.ameApi === null && console.log('Amethyst API Configuration Missing'),
         });
     }
 

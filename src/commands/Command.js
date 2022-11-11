@@ -1,9 +1,9 @@
-const {EmbedBuilder} = require('discord.js');
-const {permissions} = require('../utils/constants.json');
-const {Collection} = require('discord.js');
-const {fail} = require('../utils/emojis.json');
+const { EmbedBuilder } = require('discord.js');
+const { permissions } = require('../utils/constants.json');
+const { Collection } = require('discord.js');
+const { fail } = require('../utils/emojis.json');
 const emojis = require('../utils/emojis.json');
-const {capitalize, removeDisabledCommandsFromGroup} = require('../utils/utils');
+const { capitalize, removeDisabledCommandsFromGroup } = require('../utils/utils');
 
 /**
  * Command class
@@ -60,7 +60,7 @@ class Command {
          */
         this.clientPermissions = options.clientPermissions || [
             'SEND_MESSAGES',
-            'EMBED_LINKS',
+            'EMBED_LINKS'
         ];
 
         /**
@@ -266,24 +266,20 @@ class Command {
      */
     interact(interaction, args, author) {
         if (this.name.toLowerCase().includes('group')) {
-            let commandName;
-            if (this.subCommandMappings) {
-                commandName = interaction.options.data.some(o => o.type === 'SUB_COMMAND_GROUP') ?
-                    this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
-                    this.subCommandMappings[interaction.options.getSubcommand()];
-            }
-            else commandName = interaction.options.getSubcommand();
+            let commandName = (this.subCommandMappings && interaction.options.data.some((option) => option.type === 2)) ?
+                this.subCommandMappings[interaction.options.getSubcommandGroup()][interaction.options.getSubcommand()] :
+                interaction.options.getSubcommand();
 
             let command = this.client.commands.get(commandName);
 
             if (command) command.interact(interaction, args, author);
             else {
-                interaction.reply({content: 'Command not found', ephemeral: true});
+                interaction.reply({ content: 'Command not found', ephemeral: true });
                 this.client.logger.info(`No command found for ${commandName}`);
             }
         }
         else {
-            throw {name: 'NotImplementedError', message: `${this.name} interact method not implemented`};
+            throw { name: 'NotImplementedError', message: `${this.name} interact method not implemented` };
         }
     }
 
@@ -401,7 +397,7 @@ class Command {
         if (this.isSnowflake(text)) return await guild.members.fetch(text);
         else {
             return (await guild.members.fetch({
-                query: text,
+                query: text
             })).first();
         }
     }
@@ -419,7 +415,7 @@ class Command {
      * @param type enforces avatar type (i.e 'png' or 'gif')
      */
     getAvatarURL(user, type) {
-        const options = {dynamic: true, size: 2048};
+        const options = { dynamic: true, size: 2048 };
         if (type) options.format = type;
 
         if (user?.avatar?.startsWith('a_') || user?.user?.avatar?.startsWith('a_')) {
@@ -541,7 +537,7 @@ class Command {
             return new EmbedBuilder()
                 .setAuthor({
                     name: `${this.getUserIdentifier(member)}`,
-                    iconURL: this.getAvatarURL(member),
+                    iconURL: this.getAvatarURL(member)
                 })
                 .setTitle(`Missing Client Permissions: \`${this.name}\``)
                 .setDescription(
@@ -611,7 +607,7 @@ class Command {
                     return new EmbedBuilder()
                         .setAuthor({
                             name: `${this.getUserIdentifier(member)}`,
-                            iconURL: this.getAvatarURL(member),
+                            iconURL: this.getAvatarURL(member)
                         })
                         .setTitle(`Missing User Permissions: \`${this.name}\``)
                         .setDescription(
@@ -643,7 +639,7 @@ class Command {
             return new EmbedBuilder()
                 .setAuthor({
                     name: `${this.client.user.tag}`,
-                    iconURL: this.getAvatarURL(this.client.user),
+                    iconURL: this.getAvatarURL(this.client.user)
                 })
                 .setTitle(`Missing Bot Permissions: \`${this.name}\``)
                 .setDescription(
@@ -716,21 +712,21 @@ class Command {
         const embed = new EmbedBuilder()
             .setAuthor({
                 name: `${this.getUserIdentifier(context.author)}`,
-                iconURL: this.getAvatarURL(context.author),
+                iconURL: this.getAvatarURL(context.author)
             })
             .setTitle(`${fail} Error: \`${this.name}\``)
             .setDescription(`\`\`\`diff\n- ${errorType}\n+ ${reason}\`\`\``)
-            .addFields([{name: 'Usage', value:  `\`${prefix}${this.usage}\``}])
+            .addFields([{ name: 'Usage', value: `\`${prefix}${this.usage}\`` }])
             .setTimestamp()
             .setColor();
         if (this.examples)
-            embed.addField(
-                'Examples',
-                this.examples.map((e) => `\`${prefix}${e}\``).join('\n')
-            );
+            embed.addFields([{
+                name: 'Examples',
+                value: this.examples.map((e) => `\`${prefix}${e}\``).join('\n')
+            }]);
         if (errorMessage)
-            embed.addFields([{name: 'Error Message', value:  `\`\`\`${errorMessage}\`\`\``}]);
-        this.sendReplyAndDelete(context, {embeds: [embed]});
+            embed.addFields([{ name: 'Error Message', value: `\`\`\`${errorMessage}\`\`\`` }]);
+        this.sendReplyAndDelete(context, { embeds: [embed] });
     }
 
     /**
@@ -754,16 +750,22 @@ class Command {
             .setTitle(`Command: \`${command.name}\``)
             .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
             .setDescription(command.description)
-            .addFields([{name: 'Usage', value:  `\`${prefix}${command.usage}\``, inline:  true}])
-            .addFields([{name: 'Type', value:  `\`${capitalize(command.type)}\``, inline:  true}])
-            .addFields([{name: 'Invocation', value:  `\`${invocation}\``, inline:  true}])
+            .addFields([{ name: 'Usage', value: `\`${prefix}${command.usage}\``, inline: true }])
+            .addFields([{ name: 'Type', value: `\`${capitalize(command.type)}\``, inline: true }])
+            .addFields([{ name: 'Invocation', value: `\`${invocation}\``, inline: true }])
             .setFooter({
-                text: message.member.displayName, iconURL: this.getAvatarURL(message.author),
+                text: message.member.displayName, iconURL: this.getAvatarURL(message.author)
             })
             .setTimestamp()
             .setColor(message.guild.members.me.displayHexColor);
-        if (command.aliases) embed.addFields([{name: 'Aliases', value:  command.aliases.map((c) => `\`${c}\``).join(' ')}]);
-        if (command.examples) embed.addFields([{name: 'Examples', value:  command.examples.map((c) => `\`${prefix}${c}\``).join('\n')}]);
+        if (command.aliases) embed.addFields([{
+            name: 'Aliases',
+            value: command.aliases.map((c) => `\`${c}\``).join(' ')
+        }]);
+        if (command.examples) embed.addFields([{
+            name: 'Examples',
+            value: command.examples.map((c) => `\`${prefix}${c}\``).join('\n')
+        }]);
         return embed;
     }
 
@@ -776,7 +778,7 @@ class Command {
     async sendModLogMessage(message, reason, fields = {}) {
         this.client.db.activities.updateModerations.run({
             userId: message.author.id,
-            guildId: message.guild.id,
+            guildId: message.guild.id
         });
         const modLogId = this.client.db.settings.selectModLogId
             .pluck()
@@ -798,16 +800,16 @@ class Command {
                 .setTitle(
                     `Action: \`${this.client.utils.capitalize(this.name)}\``
                 )
-                .addFields([{name: 'Moderator', value:  message.member.toString(), inline:  true}])
-                .setFooter({text: `Case #${caseNumber}`})
+                .addFields([{ name: 'Moderator', value: message.member.toString(), inline: true }])
+                .setFooter({ text: `Case #${caseNumber}` })
                 .setTimestamp()
                 .setColor(message.guild.members.me.displayHexColor);
             for (const field in fields) {
-                embed.addFields([{name: field, value:  fields[field], inline:  true}]);
+                embed.addFields([{ name: field, value: fields[field], inline: true }]);
             }
-            embed.addFields([{name: 'Reason', value:  reason}]);
+            embed.addFields([{ name: 'Reason', value: reason }]);
             modLog
-                .send({embeds: [embed]})
+                .send({ embeds: [embed] })
                 .catch((err) => this.client.logger.error(err.stack));
         }
     }

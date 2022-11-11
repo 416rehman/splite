@@ -60,7 +60,7 @@ module.exports = async (client, message) => {
             //Blacklisted user
             if (command.checkBlacklist(message.author)) return message
                 .reply({
-                    embeds: [new EmbedBuilder().setDescription(`${fail} You are blacklisted.  ${client.owners[0] && `For appeals, contact ${client.owners[0]}`}`),],
+                    embeds: [new EmbedBuilder().setDescription(`${fail} You are blacklisted.  ${client.owners[0] && `For appeals, contact <@${client.owners[0]}>`}`),],
                 })
                 .then((msg) => {
                     setTimeout(() => msg.delete(), 15000);
@@ -140,16 +140,16 @@ module.exports = async (client, message) => {
                 .setTitle(`Hi, I'm ${client.name}. Need help?`)
                 .setThumbnail('https://i.imgur.com/B0XSinY.png')
                 .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
-                .addField('Invite Me', oneLine`
+                .addFields([{name: 'Invite Me', value: oneLine`
           You can add me to your server by clicking 
           [here](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands)!
-        `)
-                .addField('Support', oneLine`
-          If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`)
+        `}])
+                .addFields([{name: 'Support', value: oneLine`
+          If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`}])
                 .setColor(message.guild.members.me.displayHexColor);
             if (client.owners.length) {
                 await embed.setFooter({
-                    text: `To speak directly with the developer, DM ${client.owners[0]}`,
+                    text: `To speak directly with the developer, DM <@${client.owners[0]}>`,
                 });
             }
             message.channel.send({embeds: [embed]});

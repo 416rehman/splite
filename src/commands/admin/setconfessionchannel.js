@@ -52,10 +52,10 @@ module.exports = class setconfessionchannelCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addField(
-                            'Current Confessions Channel',
-                            `${oldConfessionsChannel}` || '`None`'
-                        )
+                        .addFields({
+                            name: 'Current Confessions Channel',
+                            value: `${oldConfessionsChannel}` || '`None`'
+                        })
                         .setDescription(this.description),
                 ],
             });
@@ -80,10 +80,10 @@ module.exports = class setconfessionchannelCommand extends Command {
 
         const payload = ({
             embeds: [
-                embed.addField(
-                    'Confessions Channel',
-                    `${oldConfessionsChannel} ➔ ${channel}`
-                ).setDescription(
+                embed.addFields({
+                    name: 'Confessions Channel',
+                    value: `${oldConfessionsChannel} ➔ ${channel}`
+                }).setDescription(
                     `The \`confessions channel\` was successfully updated. ${success}\nUse \`clearconfessionschannel\` to clear the current \`confessions channel\`.`
                 ),
             ],

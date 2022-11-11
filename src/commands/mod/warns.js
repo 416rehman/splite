@@ -57,12 +57,12 @@ module.exports = class WarnsCommand extends Command {
                 embed // Build warning list
                     .addFields([{name: '\u200b', value:  `**Warn \`#${i + 1}\`**`}])
                     .addFields([{name: 'Reason', value:  warns.warns[i].reason}])
-                    .addField(
-                        'Moderator',
-                        (await context.guild.members.fetch(warns.warns[i].mod))
+                    .addFields([{
+                        name: 'Moderator',
+                        value: (await context.guild.members.fetch(warns.warns[i].mod))
                             ?.toString() || '`Unable to find moderator`',
-                        true
-                    )
+                        inline: true
+                    }])
                     .addFields([{name: 'Date Issued', value:  warns.warns[i].date, inline:  true}]);
                 amount += 1;
             }

@@ -65,10 +65,10 @@ module.exports = class SetNicknameLogCommand extends Command {
         this.client.db.settings.updateNicknameLogId.run(channel.id, context.guild.id);
         const payload = ({
             embeds: [
-                embed.addField(
-                    'Nickname Log',
-                    `${oldNicknameLog} ➔ ${channel}`
-                ).setDescription(
+                embed.addFields({
+                    name: 'Nickname Log',
+                    value: `${oldNicknameLog} ➔ ${channel}`
+                }).setDescription(
                     `The \`nickname log\` was successfully updated. ${success}\nUse \`clearnicknamelog\` to clear the current \`nickname log\`.`
                 ),
             ],

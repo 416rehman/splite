@@ -75,14 +75,14 @@ module.exports = class clearVerificationMessageCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addField(
-                    'Verification Message ID',
-                    `${verificationMessageId} ➔ \`None\``
-                )
-                .addField(
-                    'Verification Message',
-                    `${oldVerificationMessage} ➔ \`None\``
-                )
+                .addFields({
+                    name: 'Verification Message ID',
+                    value: `${verificationMessageId} ➔ \`None\``
+                })
+                .addFields({
+                    name: 'Verification Message',
+                    value: `${oldVerificationMessage} ➔ \`None\``
+                })
                 .addFields([{name: 'Status', value:  `\`${statusUpdate}\``}]),],
         };
 
