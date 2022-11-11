@@ -56,6 +56,9 @@ module.exports = async (client, interaction) => {
                 point_tracking: pointTracking, message_points: messagePoints,
             } = client.db.settings.selectPoints.get(interaction.guild.id);
 
+            // Update points with messagePoints value
+            if (pointTracking) client.db.users.updatePoints.run({points: messagePoints}, author.id, interaction.guild.id);
+
             // Check if mod channel
             let modChannelIds = command.client.db.settings.selectModChannelIds
                 .pluck()
