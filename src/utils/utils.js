@@ -14,7 +14,7 @@ class Statics {
     static get config() {
         if (this.#config === null) {
 
-            let configFilename = fs.existsSync(__basedir + '/config.yml') ? '/config.yml' : fs.existsSync(__basedir + '/config.yml') ? '/config.yml' : null;
+            let configFilename = fs.existsSync(__basedir + '/config.yml') ? '/config.yml' : fs.existsSync(__basedir + '/config.yaml') ? '/config.yaml' : null;
             if (!configFilename) {
                 console.warn('Custom config.yml not found. Attempting to use config.default.yml');
                 configFilename = fs.existsSync(__basedir + '/config.default.yaml') ? '/config.default.yaml' : fs.existsSync(__basedir + '/config.default.yml') ? '/config.default.yml' : null;
@@ -32,22 +32,18 @@ class Statics {
                 for (const [key, value] of Object.entries(obj)) {
                     if (typeof value === 'object' && !Array.isArray(value)) {
                         replace(value, [...path, key]);
-                    }
-                    else {
-                        const envVar = 'SPLITE_'+[...path, key].join('_').toUpperCase();
+                    } else {
+                        const envVar = 'SPLITE_' + [...path, key].join('_').toUpperCase();
                         if (process.env[envVar]) {
                             if (typeof value === 'string') {
                                 obj[key] = process.env[envVar];
                                 if (obj[key] === 'true') obj[key] = true;
                                 else if (obj[key] === 'false') obj[key] = false;
-                            }
-                            else if (typeof value === 'number') {
+                            } else if (typeof value === 'number') {
                                 obj[key] = Number(process.env[envVar]);
-                            }
-                            else if (typeof value === 'boolean') {
+                            } else if (typeof value === 'boolean') {
                                 obj[key] = process.env[envVar].toLowerCase() === 'true';
-                            }
-                            else if (Array.isArray(value)) {
+                            } else if (Array.isArray(value)) {
                                 // trim and split by comma
                                 obj[key] = process.env[envVar].trim().split(',').map(v => v.trim());
                             }
@@ -61,18 +57,18 @@ class Statics {
         }
         return this.#config;
     }
+
     static get configAsEnvirons() {
         const environs = {};
         const replace = (obj, path = []) => {
             for (const [key, value] of Object.entries(obj)) {
                 if (typeof value === 'object' && !Array.isArray(value)) {
                     replace(value, [...path, key]);
-                }
-                else {
+                } else {
                     if (Array.isArray(value)) {
-                        environs['SPLITE_'+[...path, key].join('_').toUpperCase()] = value.join(',');
+                        environs['SPLITE_' + [...path, key].join('_').toUpperCase()] = value.join(',');
                     } else {
-                        environs['SPLITE_'+[...path, key].join('_').toUpperCase()] = value;
+                        environs['SPLITE_' + [...path, key].join('_').toUpperCase()] = value;
                     }
                 }
             }
@@ -103,8 +99,7 @@ function removeDisabledCommandsFromGroup(client, options, commandMappings = null
                 options.splice(i, 1);
                 i--;
             }
-        }
-        else if (options[i].constructor.name === 'SlashCommandSubcommandGroupBuilder') {
+        } else if (options[i].constructor.name === 'SlashCommandSubcommandGroupBuilder') {
             console.log(`Checking subgroup ${options[i].name}`);
             // go through all the subcommands of this subcommandGroup, check if corresponding command exists, and if not, remove it
             for (let j = 0; j < options[i].options.length; j++) {
@@ -318,8 +313,7 @@ async function transferCrown(client, guild, crownRoleId) {
             if (member.roles.cache.has(crownRole.id)) {
                 try {
                     await member.roles.remove(crownRole);
-                }
-                catch (err) {
+                } catch (err) {
                     quit = true;
                     // Clear points
                     client.db.users.wipeAllPoints.run(guild.id);
@@ -345,8 +339,7 @@ async function transferCrown(client, guild, crownRoleId) {
     // Give role to winner
     try {
         await winner.roles.add(crownRole);
-    }
-    catch (err) {
+    } catch (err) {
         return client.sendSystemErrorMessage(
             guild,
             'crown update',
@@ -408,8 +401,7 @@ function scheduleCrown(client, guild) {
         });
 
         client.logger.info(`${guild.name}: Successfully scheduled job`);
-    }
-    else {
+    } else {
         console.error(`${guild.name}: Failed to schedule job`);
     }
 }
@@ -436,8 +428,7 @@ function createProgressBar(percentage) {
             i++;
         }
         progressBar += emojis.EmptyEnd;
-    }
-    else {
+    } else {
         if (fives > 1) {
             let tens = Math.floor(fives / 2);
             let endWithHalfMid = fives % 2;
@@ -461,8 +452,7 @@ function createProgressBar(percentage) {
                     }
                 }
             }
-        }
-        else {
+        } else {
             progressBar += emojis.HalfBegin;
             let i = 0;
             while (i < 8) {
@@ -545,13 +535,12 @@ function generateImgFlipImage(
                 'boxes[1][outline_color]': outlineColor,
             },
         };
-        request(options, function(error, response) {
+        request(options, function (error, response) {
             const res = JSON.parse(response.body);
 
             if (res.success === true && res.data.url) {
                 resolve(res.data.url || error);
-            }
-            else reject(res.error_message);
+            } else reject(res.error_message);
         });
     });
 }
@@ -576,8 +565,7 @@ function checkTopGGVote(client, userId) {
             const votes = client.db.integrations.selectRow.get(userId);
             if (votes && votes.topgg) {
                 resolve(votes.topgg && Date.now() - votes.topgg < 43200000);
-            }
-            else {
+            } else {
                 resolve(false);
             }
         });
@@ -595,19 +583,17 @@ function getTopGGVoteFromAPI(client, userId) {
                 Authorization: client.config?.apiKeys?.topGG?.api_mode?.token,
             },
         };
-        request(options, function(error, response) {
+        request(options, function (error, response) {
             try {
                 const res = JSON.parse(response.body);
                 if (res) {
                     client.votes.set(userId, {time: new Date(), voted: res.voted});
                     resolve(res.voted);
-                }
-                else {
+                } else {
                     client.votes.set(userId, {time: new Date(), voted: 0});
                     resolve(0);
                 }
-            }
-            catch (e) {
+            } catch (e) {
                 client.votes.set(userId, {time: new Date(), voted: 0});
                 resolve(0);
             }
