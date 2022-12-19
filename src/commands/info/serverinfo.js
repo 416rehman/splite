@@ -51,6 +51,7 @@ module.exports = class ServerInfoCommand extends Command {
         const voiceChannels = channels.filter((c) => c.type === ChannelType.GuildVoice).length;
         const newsChannels = channels.filter((c) => c.type === ChannelType.GuildNews).length;
         const categoryChannels = channels.filter((c) => c.type === ChannelType.GuildCategory).length;
+        const forumChannels = channels.filter((c) => c.type === ChannelType.GuildForum).length;
 
         const systemchannel = this.client.db.settings.selectSystemChannelId
             .pluck()
@@ -66,6 +67,7 @@ module.exports = class ServerInfoCommand extends Command {
             
       Channels :: [ ${channelCount} ]
                :: ${textChannels.length} Text
+               :: ${forumChannels} Forum
                :: ${voiceChannels} Voice
                :: ${newsChannels} Announcement
                :: ${categoryChannels} Category
@@ -75,24 +77,44 @@ module.exports = class ServerInfoCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle(`${guild.name}'s Information`)
             .setThumbnail(guild.iconURL({dynamic: true}))
-            .addFields([{name: 'ID', value:  `\`${guild.id}\``, inline:  true}])
+            .addFields([{name: 'ID', value: `\`${guild.id}\``, inline: true}])
 
-            .addFields([{name: `Owner ${owner}`, value:  (await guild.fetchOwner()).toString(), inline:  true}])
-            .addFields([{name: 'Verification Level', value: `\`${guild.verificationLevel.replace('_', ' ')}\``, inline:  true}])
-            .addFields([{name: 'Rules Channel', value:  guild.rulesChannel ? `${guild.rulesChannel}` : '`None`', inline:  true}])
-            .addFields([{name: 'System Channel', value:  systemchannel ? `<#${systemchannel}>` : '`None`', inline:  true}])
-            .addFields([{name: 'AFK Channel', value:  guild.afkChannel ? `${voice} ${guild.afkChannel.name}` : '`None`', inline:  true}])
+            .addFields([{name: `Owner ${owner}`, value: (await guild.fetchOwner()).toString(), inline: true}])
+            .addFields([{name: 'Verification Level', value: `\`${guild.verificationLevel}\``, inline: true}])
+            .addFields([{
+                name: 'Rules Channel',
+                value: guild.rulesChannel ? `${guild.rulesChannel}` : '`None`',
+                inline: true
+            }])
+            .addFields([{
+                name: 'System Channel',
+                value: systemchannel ? `<#${systemchannel}>` : '`None`',
+                inline: true
+            }])
+            .addFields([{
+                name: 'AFK Channel',
+                value: guild.afkChannel ? `${voice} ${guild.afkChannel.name}` : '`None`',
+                inline: true
+            }])
             .addFields([{
                 name: 'AFK Timeout',
                 value: guild.afkChannel ? `\`${moment.duration(guild.afkTimeout * 1000).asMinutes()} minutes\`` : '`None`',
                 inline: true
             }])
 
-            .addFields([{name: 'Default Notifications', value: `\`${guild.defaultMessageNotifications.replace('_', ' ')}\``, inline:  true}])
-            .addFields([{name: 'Partnered', value:  `\`${guild.partnered}\``, inline:  true}])
-            .addFields([{name: 'Verified', value:  `\`${guild.verified}\``, inline:  true}])
-            .addFields([{name: 'Created On', value:  `\`${moment(guild.createdAt).format('MMM DD YYYY')}\``, inline:  true}])
-            .addFields([{name: 'Server Stats', value:  `\`\`\`asciidoc\n${serverStats}\`\`\``}])
+            .addFields([{
+                name: 'Default Notifications',
+                value: `\`${guild.defaultMessageNotifications}\``,
+                inline: true
+            }])
+            .addFields([{name: 'Partnered', value: `\`${guild.partnered}\``, inline: true}])
+            .addFields([{name: 'Verified', value: `\`${guild.verified}\``, inline: true}])
+            .addFields([{
+                name: 'Created On',
+                value: `\`${moment(guild.createdAt).format('MMM DD YYYY')}\``,
+                inline: true
+            }])
+            .addFields([{name: 'Server Stats', value: `\`\`\`asciidoc\n${serverStats}\`\`\``}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
