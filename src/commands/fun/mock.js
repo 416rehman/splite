@@ -142,7 +142,6 @@ module.exports = class MockCommand extends Command {
     }
 
     async interact(interaction) {
-        await interaction.deferReply();
         if (interaction.options.getSubcommand() === 'text') {
             const text = interaction.options.getString('text');
             const payload = await createImagePayload.call(
