@@ -12,7 +12,7 @@ async function createImagePayload(text1, text2, requestingUser) {
     );
 
     if (buffer) {
-        const attachment = new AttachmentBuilder(buffer, { name:  'mocking.png' });
+        const attachment = new AttachmentBuilder(buffer, {name: 'mocking.png'});
         const embed = new EmbedBuilder()
             .setTitle(
                 `${this.getUserIdentifier(requestingUser)} is mocking ${text1}`
@@ -142,7 +142,6 @@ module.exports = class MockCommand extends Command {
     }
 
     async interact(interaction) {
-        await interaction.deferReply();
         if (interaction.options.getSubcommand() === 'text') {
             const text = interaction.options.getString('text');
             const payload = await createImagePayload.call(
@@ -151,7 +150,7 @@ module.exports = class MockCommand extends Command {
                 this.client.utils.spongebobText(text),
                 interaction.author
             );
-            interaction.reply(payload);
+            await this.sendReply(interaction, payload);
         }
         else if (interaction.options.getSubcommand() === 'user') {
             const user = interaction.options.getUser('user');
