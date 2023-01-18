@@ -142,6 +142,7 @@ module.exports = class MockCommand extends Command {
     }
 
     async interact(interaction) {
+        await interaction.deferReply();
         if (interaction.options.getSubcommand() === 'text') {
             const text = interaction.options.getString('text');
             const payload = await createImagePayload.call(
@@ -150,7 +151,7 @@ module.exports = class MockCommand extends Command {
                 this.client.utils.spongebobText(text),
                 interaction.author
             );
-            await this.sendReply(interaction, payload);
+            return this.sendReply(interaction, payload);
         }
         else if (interaction.options.getSubcommand() === 'user') {
             const user = interaction.options.getUser('user');
