@@ -7,7 +7,7 @@ module.exports = class JoinVotingSettingsCommandGroup extends Command {
             name: 'joinvoting-group',
             description: 'Join Vote management - New members will be subject to a vote to join the server',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             slashCommand: new SlashCommandBuilder().setName('joinvoting')
                 .addSubcommand((o) => o.setName('configure').setDescription('Configure the join voting settings')
                     .addStringOption(p => p.setName('message-id').setRequired(false).setDescription('ID of the message which the user must react to to join the server'))

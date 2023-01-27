@@ -10,8 +10,8 @@ module.exports = class WarnCommand extends Command {
             usage: 'testfarewell',
             description: 'Sends a test farewell message.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
-            userPermissions: ['KICK_MEMBERS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks'],
+            userPermissions: ['KickMembers'],
             examples: ['testfarewell'],
         });
     }
@@ -38,7 +38,7 @@ module.exports = class WarnCommand extends Command {
             farewellChannel.viewable &&
             farewellChannel
                 .permissionsFor(context.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+                .has(['SendMessages', 'EmbedLinks']) &&
             farewellMessage
         ) {
             farewellMessage = farewellMessage

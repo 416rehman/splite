@@ -13,7 +13,7 @@ module.exports = class clearModChannelsCommand extends Command {
         Clears the moderator only text channels for your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearmodchannels'],
         });
     }
@@ -58,7 +58,7 @@ module.exports = class clearModChannelsCommand extends Command {
             context.guild.id
         );
 
-        const payload = {embeds: [embed.addFields([{name: 'Mod Channels', value:  `${oldModChannels} ➔ \`None\``}])]};
+        const payload = {embeds: [embed.addFields([{name: 'Mod Channels', value: `${oldModChannels} ➔ \`None\``}])]};
 
         this.sendReply(context, payload);
     }

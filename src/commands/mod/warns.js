@@ -12,7 +12,7 @@ module.exports = class WarnsCommand extends Command {
             description:
                 'Displays a member\'s current warnings. A max of 5 warnings can be displayed at one time.',
             type: client.types.MOD,
-            userPermissions: ['KICK_MEMBERS'],
+            userPermissions: ['KickMembers'],
             examples: ['warns @split'],
             slashCommand: new SlashCommandBuilder()
                 .addUserOption(u => u.setName('user').setRequired(true).setDescription('The user to view warnings for'))
@@ -55,15 +55,15 @@ module.exports = class WarnsCommand extends Command {
             let amount = 0;
             for (let i = current; i < max; i++) {
                 embed // Build warning list
-                    .addFields([{name: '\u200b', value:  `**Warn \`#${i + 1}\`**`}])
-                    .addFields([{name: 'Reason', value:  warns.warns[i].reason}])
+                    .addFields([{name: '\u200b', value: `**Warn \`#${i + 1}\`**`}])
+                    .addFields([{name: 'Reason', value: warns.warns[i].reason}])
                     .addFields([{
                         name: 'Moderator',
                         value: (await context.guild.members.fetch(warns.warns[i].mod))
                             ?.toString() || '`Unable to find moderator`',
                         inline: true
                     }])
-                    .addFields([{name: 'Date Issued', value:  warns.warns[i].date, inline:  true}]);
+                    .addFields([{name: 'Date Issued', value: warns.warns[i].date, inline: true}]);
                 amount += 1;
             }
 

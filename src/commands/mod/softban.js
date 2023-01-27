@@ -9,8 +9,8 @@ module.exports = class SoftBanCommand extends Command {
             usage: 'softban <user mention/ID> [reason]',
             description: 'Bans a member then immediately unbans. This wipes all messages from that member from your server.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'BAN_MEMBERS'],
-            userPermissions: ['BAN_MEMBERS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'BanMembers'],
+            userPermissions: ['BanMembers'],
             examples: ['softban @split'],
             exclusive: true,
             slashCommand: new SlashCommandBuilder()
@@ -122,9 +122,9 @@ module.exports = class SoftBanCommand extends Command {
                         const embed = new EmbedBuilder()
                             .setTitle('Softban Member')
                             .setDescription(`${member} was successfully softbanned.`)
-                            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-                            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-                            .addFields([{name: 'Reason', value:  reason}])
+                            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+                            .addFields([{name: 'Member', value: member.toString(), inline: true}])
+                            .addFields([{name: 'Reason', value: reason}])
                             .setFooter({
                                 text: context.member.displayName,
                                 iconURL: context.author.displayAvatarURL({

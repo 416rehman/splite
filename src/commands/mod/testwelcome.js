@@ -10,8 +10,8 @@ module.exports = class testWelcomeCommand extends Command {
             usage: 'testwelcome',
             description: 'Sends a test welcome message.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
-            userPermissions: ['KICK_MEMBERS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks'],
+            userPermissions: ['KickMembers'],
             examples: ['testwelcome'],
         });
     }
@@ -37,7 +37,7 @@ module.exports = class testWelcomeCommand extends Command {
             welcomeChannel.viewable &&
             welcomeChannel
                 .permissionsFor(context.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+                .has(['SendMessages', 'EmbedLinks']) &&
             welcomeMessage
         ) {
             welcomeMessage = welcomeMessage

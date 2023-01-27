@@ -15,11 +15,11 @@ module.exports = class SetNicknameCommand extends Command {
       `,
             type: client.types.MOD,
             clientPermissions: [
-                'SEND_MESSAGES',
-                'EMBED_LINKS',
-                'MANAGE_NICKNAMES',
+                'SendMessages',
+                'EmbedLinks',
+                'ManageNicknames',
             ],
-            userPermissions: ['MANAGE_NICKNAMES'],
+            userPermissions: ['ManageNicknames'],
             examples: [
                 'setnickname @split Noodles',
                 'setnickname @split "Val Kilmer"',
@@ -85,9 +85,9 @@ module.exports = class SetNicknameCommand extends Command {
                 const embed = new EmbedBuilder()
                     .setTitle('Set Nickname')
                     .setDescription(`${member}'s nickname was successfully updated.`)
-                    .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-                    .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-                    .addFields([{name: 'Nickname', value:  nicknameStatus, inline:  true}])
+                    .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+                    .addFields([{name: 'Member', value: member.toString(), inline: true}])
+                    .addFields([{name: 'Nickname', value: nicknameStatus, inline: true}])
                     .setFooter({
                         text: context.member.displayName,
                         iconURL: this.getAvatarURL(context.author),

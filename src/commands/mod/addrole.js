@@ -9,8 +9,8 @@ module.exports = class AddRoleCommand extends Command {
             usage: 'addrole roleName',
             description: 'Creates a new role with the provided name.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
-            userPermissions: ['MANAGE_ROLES'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageRoles'],
+            userPermissions: ['ManageRoles'],
             examples: ['addrole MyRole'],
         });
     }
@@ -46,8 +46,8 @@ module.exports = class AddRoleCommand extends Command {
                     const embed = new EmbedBuilder()
                         .setTitle('Add Role')
                         .setDescription(`${role} was successfully created.`)
-                        .addFields([{name: 'Created By', value:  context.member.toString(), inline:  true}])
-                        .addFields([{name: 'Role', value:  role.toString(), inline:  true}])
+                        .addFields([{name: 'Created By', value: context.member.toString(), inline: true}])
+                        .addFields([{name: 'Role', value: role.toString(), inline: true}])
                         .setFooter({
                             text: this.getUserIdentifier(context.member),
                             iconURL: this.getAvatarURL(context.author),

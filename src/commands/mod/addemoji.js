@@ -14,11 +14,11 @@ module.exports = class AddEmojiCommand extends Command {
                 'Add emoji from a server, or an image link.\nMultiple emojis can be added by typing all of them at once seperated by spaces.',
             type: client.types.MOD,
             clientPermissions: [
-                'SEND_MESSAGES',
-                'EMBED_LINKS',
-                'MANAGE_EMOJIS_AND_STICKERS',
+                'SendMessages',
+                'EmbedLinks',
+                'ManageEmojisAndStickers',
             ],
-            userPermissions: ['MANAGE_ROLES'],
+            userPermissions: ['ManageRoles'],
             examples: [
                 'addemoji 🙄 feelsbad',
                 'em https://i.imgur.com/iYU1mgQ.png coolEmoji',

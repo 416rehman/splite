@@ -11,11 +11,11 @@ module.exports = class RemoveEmojiCommand extends Command {
             description: 'Delete emojis from the server.',
             type: client.types.MOD,
             clientPermissions: [
-                'SEND_MESSAGES',
-                'EMBED_LINKS',
-                'MANAGE_EMOJIS_AND_STICKERS',
+                'SendMessages',
+                'EmbedLinks',
+                'ManageEmojisAndStickers',
             ],
-            userPermissions: ['MANAGE_ROLES'],
+            userPermissions: ['ManageRoles'],
             examples: ['removeemoji 🙄', 'rem 😂 😙 😎'],
         });
     }

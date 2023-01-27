@@ -18,8 +18,8 @@ module.exports = class PurgeBotCommand extends Command {
         Messages older than 2 weeks old cannot be deleted.
       `,
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_MESSAGES'],
-            userPermissions: ['MANAGE_MESSAGES'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageMessages'],
+            userPermissions: ['ManageMessages'],
             examples: ['purgebot 20'],
             slashCommand: new SlashCommandBuilder().setName('cleanup').setDescription('purgebot - clears bot spam messages in a channel')
                 .addChannelOption(c => c.setName('channel').setDescription('The channel to purge messages from'))
@@ -63,7 +63,7 @@ module.exports = class PurgeBotCommand extends Command {
             amount = 100;
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.members.me).has(['MANAGE_MESSAGES']))
+        if (!channel.permissionsFor(context.guild.members.me).has(['ManageMessages']))
             return this.sendErrorMessage(
                 context,
                 0,
@@ -92,8 +92,8 @@ module.exports = class PurgeBotCommand extends Command {
                         .setTitle('Purgebot')
                         .setDescription(`Unable to find any bot messages or commands. 
                             This context will be deleted after \`10 seconds\`.`)
-                        .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
-                        .addFields([{name: 'Found Messages', value:  `\`${messages.size}\``, inline:  true}])
+                        .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
+                        .addFields([{name: 'Found Messages', value: `\`${messages.size}\``, inline: true}])
                         .setFooter({
                             text: context.member.displayName,
                             iconURL: this.getAvatarURL(context.author),
@@ -111,9 +111,9 @@ module.exports = class PurgeBotCommand extends Command {
                     .setTitle('Purgebot')
                     .setDescription(`Successfully deleted **${msgs.size}** context(s). 
                     This context will be deleted after \`10 seconds\`.`)
-                    .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
-                    .addFields([{name: 'Found Messages', value:  `\`${msgs.size}\``, inline:  true}])
-                    .addFields([{name: 'Reason', value:  reason}])
+                    .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
+                    .addFields([{name: 'Found Messages', value: `\`${msgs.size}\``, inline: true}])
+                    .addFields([{name: 'Reason', value: reason}])
                     .setFooter({
                         text: context.member.displayName,
                         iconURL: this.getAvatarURL(context.author),

@@ -13,7 +13,7 @@ module.exports = class clearAutoRoleCommand extends Command {
         clears the current \`auto role\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearautorole'],
         });
     }
@@ -48,7 +48,7 @@ module.exports = class clearAutoRoleCommand extends Command {
 
         this.client.db.settings.updateAutoRoleId.run(null, context.guild.id);
 
-        const payload = {embeds: [embed.addFields([{name: 'Auto Role', value:  `${oldAutoRole}`}])],};
+        const payload = {embeds: [embed.addFields([{name: 'Auto Role', value: `${oldAutoRole}`}])],};
 
         this.sendReply(context, payload);
     }

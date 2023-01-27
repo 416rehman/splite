@@ -13,8 +13,8 @@ module.exports = class clearVerificationMessageCommand extends Command {
         Clears the \`verification message\` used in \`verification channel\`.
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearverificationmessage'],
         });
     }
@@ -83,7 +83,7 @@ module.exports = class clearVerificationMessageCommand extends Command {
                     name: 'Verification Message',
                     value: `${oldVerificationMessage} ➔ \`None\``
                 })
-                .addFields([{name: 'Status', value:  `\`${statusUpdate}\``}]),],
+                .addFields([{name: 'Status', value: `\`${statusUpdate}\``}]),],
         };
 
         this.sendReply(context, payload);

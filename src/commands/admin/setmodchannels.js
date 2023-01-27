@@ -20,7 +20,7 @@ module.exports = class SetModChannelsCommand extends Command {
         \nUse \`clearmodchannels\` to clear the current \`mod channels\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: [
                 'setmodchannels #general #memes #off-topic',
                 'clearmodchannels',

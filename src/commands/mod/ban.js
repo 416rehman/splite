@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {ActionRowBuilder,ButtonBuilder, EmbedBuilder, ButtonStyle, ComponentType} = require('discord.js');
+const {ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, ComponentType} = require('discord.js');
 const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class BanCommand extends Command {
@@ -9,8 +9,8 @@ module.exports = class BanCommand extends Command {
             usage: 'ban <user mention/ID> [reason]',
             description: 'Bans a member from your server indefinitely',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'BAN_MEMBERS'],
-            userPermissions: ['BAN_MEMBERS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'BanMembers'],
+            userPermissions: ['BanMembers'],
             examples: ['ban @split'],
             exclusive: true,
             slashCommand: new SlashCommandBuilder()
@@ -111,9 +111,9 @@ module.exports = class BanCommand extends Command {
                         const embed = new EmbedBuilder()
                             .setTitle('Ban Member')
                             .setDescription(`${member} was successfully banned.`)
-                            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-                            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-                            .addFields([{name: 'Reason', value:  reason}])
+                            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+                            .addFields([{name: 'Member', value: member.toString(), inline: true}])
+                            .addFields([{name: 'Reason', value: reason}])
                             .setFooter({
                                 text: context.member.displayName,
                                 iconURL: this.getAvatarURL(context.author),

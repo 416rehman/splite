@@ -19,7 +19,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
         \nUse \`clearwelcomemessage\` to clear the current \`welcome message\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setwelcomemessage ?member has joined the server!', 'clearwelcomemessage',],
         });
     }
@@ -47,7 +47,7 @@ module.exports = class SetWelcomeMessageCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Welcomes`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addFields([{name: 'Channel', value:  welcomeChannel?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Channel', value: welcomeChannel?.toString() || '`None`', inline: true}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
@@ -56,8 +56,8 @@ module.exports = class SetWelcomeMessageCommand extends Command {
         if (!text) {
             const payload = ({
                 embeds: [embed
-                    .addFields([{name: 'Status', value:  oldStatus, inline:  true}])
-                    .addFields([{name: 'Current Welcome Message', value:  `${oldWelcomeMessage}`}])
+                    .addFields([{name: 'Status', value: oldStatus, inline: true}])
+                    .addFields([{name: 'Current Welcome Message', value: `${oldWelcomeMessage}`}])
                     .setDescription(this.description),],
             });
 
@@ -76,8 +76,8 @@ module.exports = class SetWelcomeMessageCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
-                .addFields([{name: 'Message', value:  this.client.utils.replaceKeywords(text)}]),],
+                .addFields([{name: 'Status', value: statusUpdate, inline: true}])
+                .addFields([{name: 'Message', value: this.client.utils.replaceKeywords(text)}]),],
         });
 
         this.sendReply(context, payload);

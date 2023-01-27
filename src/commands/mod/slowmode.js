@@ -15,8 +15,8 @@ module.exports = class SlowmodeCommand extends Command {
         Provide a rate of 0 to disable.
       `,
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_CHANNELS'],
-            userPermissions: ['MANAGE_CHANNELS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageChannels'],
+            userPermissions: ['ManageChannels'],
             examples: ['slowmode #general 2', 'slowmode 3'],
             slashCommand: new SlashCommandBuilder()
                 .addIntegerOption(i => i.setName('rate').setDescription('The rate (0-59) to set slowmode at. 0 to disable').setRequired(true))
@@ -71,7 +71,7 @@ module.exports = class SlowmodeCommand extends Command {
             );
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.members.me).has(['MANAGE_CHANNELS']))
+        if (!channel.permissionsFor(context.guild.members.me).has(['ManageChannels']))
             return this.sendErrorMessage(
                 context,
                 0,
@@ -98,9 +98,9 @@ module.exports = class SlowmodeCommand extends Command {
                 embeds: [
                     embed
                         .setDescription(`\`${status}\` ➔ \`disabled\``)
-                        .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-                        .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
-                        .addFields([{name: 'Reason', value:  reason}]),
+                        .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+                        .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
+                        .addFields([{name: 'Reason', value: reason}]),
                 ],
             };
 
@@ -112,10 +112,10 @@ module.exports = class SlowmodeCommand extends Command {
                 embeds: [
                     embed
                         .setDescription(`\`${status}\` ➔ \`enabled\``)
-                        .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-                        .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
-                        .addFields([{name: 'Rate', value:  `\`${rate}\``, inline:  true}])
-                        .addFields([{name: 'Reason', value:  reason}]),
+                        .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+                        .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
+                        .addFields([{name: 'Rate', value: `\`${rate}\``, inline: true}])
+                        .addFields([{name: 'Reason', value: reason}]),
                 ],
             };
             await this.sendReply(context, payload);

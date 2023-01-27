@@ -16,8 +16,8 @@ module.exports = class PurgeCommand extends Command {
         Messages older than 2 weeks old cannot be deleted.
       `,
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_MESSAGES'],
-            userPermissions: ['MANAGE_MESSAGES'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageMessages'],
+            userPermissions: ['ManageMessages'],
             examples: [
                 'purge 20',
                 'purge #general 10',
@@ -77,7 +77,7 @@ module.exports = class PurgeCommand extends Command {
             );
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.members.me).has(['MANAGE_MESSAGES']))
+        if (!channel.permissionsFor(context.guild.members.me).has(['ManageMessages']))
             return this.sendErrorMessage(
                 context,
                 0,
@@ -110,9 +110,9 @@ module.exports = class PurgeCommand extends Command {
             This message will be deleted after \`10 seconds\`.
           `
                             )
-                            .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
-                            .addFields([{name: 'Member', value:  member.toString()}])
-                            .addFields([{name: 'Found Messages', value:  `\`${messages.size}\``, inline:  true}])
+                            .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
+                            .addFields([{name: 'Member', value: member.toString()}])
+                            .addFields([{name: 'Found Messages', value: `\`${messages.size}\``, inline: true}])
                             .setFooter({
                                 text: context.member.displayName,
                                 iconURL: this.getAvatarURL(context.author),
@@ -137,9 +137,9 @@ module.exports = class PurgeCommand extends Command {
             This context will be deleted after \`10 seconds\`.
           `
                     )
-                    .addFields([{name: 'Channel', value:  channel.toString(), inline:  true}])
-                    .addFields([{name: 'Message Count', value:  `\`${contexts.size}\``, inline:  true}])
-                    .addFields([{name: 'Reason', value:  reason}])
+                    .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
+                    .addFields([{name: 'Message Count', value: `\`${contexts.size}\``, inline: true}])
+                    .addFields([{name: 'Reason', value: reason}])
                     .setFooter({
                         text: context.member.displayName,
                         iconURL: this.getAvatarURL(context.author),

@@ -20,7 +20,7 @@ module.exports = async (client, member) => {
         memberLog.viewable &&
         memberLog
             .permissionsFor(member.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+            .has(['SendMessages', 'EmbedLinks'])
     ) {
         const embed = new EmbedBuilder()
             .setTitle('Member Joined')
@@ -30,7 +30,10 @@ module.exports = async (client, member) => {
             })
             .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .setDescription(`${member} (**${member.user.tag}**)`)
-            .addFields([{name: 'Account Created On', value: moment(member.user.createdAt).format('dddd, MMMM Do YYYY')}])
+            .addFields([{
+                name: 'Account Created On',
+                value: moment(member.user.createdAt).format('dddd, MMMM Do YYYY')
+            }])
             .setTimestamp()
             .setColor(member.guild.members.me.displayHexColor);
         memberLog.send({embeds: [embed]});
@@ -76,7 +79,7 @@ module.exports = async (client, member) => {
         welcomeChannel.viewable &&
         welcomeChannel
             .permissionsFor(member.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+            .has(['SendMessages', 'EmbedLinks']) &&
         welcomeMessage
     ) {
         welcomeMessage = welcomeMessage

@@ -13,7 +13,7 @@ module.exports = class clearRoleLogCommand extends Command {
         clears the role change log text channel for your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearrolelog'],
         });
     }
@@ -49,7 +49,7 @@ module.exports = class clearRoleLogCommand extends Command {
         this.client.db.settings.updateRoleLogId.run(null, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addFields([{name: 'Role Log', value:  `${oldRoleLog} ➔ \`None\``}])],
+            embeds: [embed.addFields([{name: 'Role Log', value: `${oldRoleLog} ➔ \`None\``}])],
         });
 
         this.sendReply(context, payload);

@@ -19,7 +19,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
         A \`farewell channel\` must also be set to enable farewell messages.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setfarewellmessage ?member has left the server.', 'clearfarewellmessage',],
         });
     }
@@ -48,7 +48,7 @@ module.exports = class SetFarewellMessageCommand extends Command {
             .setTitle('Settings: `Farewells`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
-            .addFields([{name: 'Channel', value:  farewellChannel?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Channel', value: farewellChannel?.toString() || '`None`', inline: true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
@@ -58,8 +58,8 @@ module.exports = class SetFarewellMessageCommand extends Command {
         if (!text) {
             const payload = ({
                 embeds: [embed
-                    .addFields([{name: 'Current Farewell Message', value:  `${oldFarewellMessage}` || '`None`'}])
-                    .addFields([{name: 'Status', value:  oldStatus, inline:  true}])
+                    .addFields([{name: 'Current Farewell Message', value: `${oldFarewellMessage}` || '`None`'}])
+                    .addFields([{name: 'Status', value: oldStatus, inline: true}])
                     .setDescription(this.description),],
             });
 
@@ -77,8 +77,8 @@ module.exports = class SetFarewellMessageCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
-                .addFields([{name: 'Message', value:  this.client.utils.replaceKeywords(text)}])
+                .addFields([{name: 'Status', value: statusUpdate, inline: true}])
+                .addFields([{name: 'Message', value: this.client.utils.replaceKeywords(text)}])
                 .setDescription(`The \`farewell message\` was successfully updated. ${success}\nUse \`clearfarewellmessage\` to clear the current \`farewell message\`.`),],
         });
 

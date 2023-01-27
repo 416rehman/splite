@@ -132,7 +132,7 @@ class Client extends Discord.Client {
         const systemChannel = guild.channels.cache.get(systemChannelId);
 
         if ( // Check channel and permissions
-            !systemChannel || !systemChannel.viewable || !systemChannel.permissionsFor(guild.members.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return;
+            !systemChannel || !systemChannel.viewable || !systemChannel.permissionsFor(guild.members.me).has(['SendMessages', 'EmbedLinks'])) return;
 
         const embed = new Discord.EmbedBuilder()
             .setAuthor({
@@ -359,13 +359,13 @@ class Client extends Discord.Client {
 
             for (const channel of guild.channels.cache.values()) {
                 try {
-                    if (channel.viewable && channel.permissionsFor(guild.members.me).has('MANAGE_ROLES')) {
+                    if (channel.viewable && channel.permissionsFor(guild.members.me).has('ManageRoles')) {
                         if (channel.type === ChannelType.GuildText) // Deny permissions in text channels
                             await channel.permissionOverwrites.edit(muteRole, {
-                                'SEND_MESSAGES': false, 'ADD_REACTIONS': false
+                                'SendMessages': false, 'AddReactions': false
                             }); else if (channel.type === ChannelType.GuildVoice && channel.manageable) // Deny permissions in voice channels
                             await channel.permissionOverwrites.edit(muteRole, {
-                                'SPEAK': false, 'STREAM': false
+                                'Speak': false, 'Stream': false
                             });
                     }
                 }

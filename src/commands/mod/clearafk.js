@@ -11,7 +11,7 @@ module.exports = class clearafkCommand extends Command {
             type: client.types.INFO,
             examples: ['clearafk'],
             clientPermissions: [],
-            userPermissions: ['MUTE_MEMBERS'],
+            userPermissions: ['MuteMembers'],
             slashCommand: new SlashCommandBuilder()
                 .addUserOption(u => u.setName('user').setDescription('The user to clear their afk status').setRequired(true))
         });
@@ -49,8 +49,8 @@ module.exports = class clearafkCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Clear AFK')
             .setDescription(`${member}'s AFK status was successfully cleared.`)
-            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
+            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+            .addFields([{name: 'Member', value: member.toString(), inline: true}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),

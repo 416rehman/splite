@@ -14,7 +14,7 @@ module.exports = class SayCommand extends Command {
         If no channel is given, then the message will be sent to the current channel.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['say #general hello world'],
             slashCommand: new SlashCommandBuilder()
                 .addStringOption(m => m.setRequired(true).setName('message').setDescription('The message to send'))
@@ -69,7 +69,7 @@ module.exports = class SayCommand extends Command {
         }
 
         // Check channel permissions
-        if (!channel.permissionsFor(context.guild.members.me).has(['SEND_MESSAGES'])) {
+        if (!channel.permissionsFor(context.guild.members.me).has(['SendMessages'])) {
             const payload = fail + ' I do not have permission to send messages in this channel.';
 
             this.sendReply(context, payload);
@@ -77,7 +77,7 @@ module.exports = class SayCommand extends Command {
         }
 
 
-        if (!channel.permissionsFor(context.member).has(['SEND_MESSAGES'])) {
+        if (!channel.permissionsFor(context.member).has(['SendMessages'])) {
             const payload = fail + ' You do not have permission to send messages in this channel.';
 
             this.sendReply(context, payload);

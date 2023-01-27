@@ -14,7 +14,7 @@ module.exports = class SetAutoRoleCommand extends Command {
         \nUse \`clearautorole\` to clear the current \`auto role\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setautorole @Member', 'clearautorole'],
         });
     }
@@ -50,7 +50,7 @@ module.exports = class SetAutoRoleCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Auto Role', value:  `${oldAutoRole}` || '`None`'}])
+                        .addFields([{name: 'Current Auto Role', value: `${oldAutoRole}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
@@ -68,7 +68,7 @@ module.exports = class SetAutoRoleCommand extends Command {
         );
 
         const payload = ({
-            embeds: [embed.addFields([{name: 'Auto Role', value:  `${oldAutoRole} ➔ ${role}`}])
+            embeds: [embed.addFields([{name: 'Auto Role', value: `${oldAutoRole} ➔ ${role}`}])
                 .setDescription(`The \`auto role\` was successfully updated. ${success}\nUse \`clearautorole\` to clear the current \`auto role\`.`)],
         });
 

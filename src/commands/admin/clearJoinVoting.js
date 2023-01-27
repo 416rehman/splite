@@ -11,8 +11,8 @@ module.exports = class clearJoinVoting extends Command {
             usage: 'clearjoinvoting',
             description: oneLine`Disables the join voting feature`,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearjoinvoting'],
         });
     }
@@ -74,8 +74,8 @@ module.exports = class clearJoinVoting extends Command {
 
         const payload = {
             embeds: [embed
-                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
-                .addFields([{name: 'Message', value:  '`None`'}]),],
+                .addFields([{name: 'Status', value: statusUpdate, inline: true}])
+                .addFields([{name: 'Message', value: '`None`'}]),],
         };
 
         this.sendReply(context, payload);

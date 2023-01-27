@@ -18,8 +18,8 @@ module.exports = class SetVerificationChannelCommand extends Command {
         \nUse \`clearverificationchannel\` to clear current \`verification channel\`.
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: [
                 'setverificationchannel #verification',
                 'clearverificationchannel',
@@ -60,8 +60,8 @@ module.exports = class SetVerificationChannelCommand extends Command {
 
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Verification`')
-            .addFields([{name: 'Role', value:  verificationRole.toString() || '`None`', inline:  true}])
-            .addFields([{name: 'Message', value:  verificationMessage || '`None`'}])
+            .addFields([{name: 'Role', value: verificationRole.toString() || '`None`', inline: true}])
+            .addFields([{name: 'Message', value: verificationMessage || '`None`'}])
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setFooter({
                 text: context.member.displayName,

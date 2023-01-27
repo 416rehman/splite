@@ -7,7 +7,7 @@ module.exports = class AutoRoleSettingsCommandGroup extends Command {
             name: 'autorole-group',
             description: 'Auto Role management - the auto role is a role that is automatically assigned to a user when they join the server',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             slashCommand: new SlashCommandBuilder().setName('autorole')
                 .addSubcommand((o) => o.setName('set').setDescription('Set the auto role - To view current role, don\'t provide a role')
                     .addRoleOption(p => p.setName('role').setRequired(false).setDescription('The role to give users when they join. To view current role, don\'t provide this option')))

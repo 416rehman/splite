@@ -13,7 +13,7 @@ module.exports = class clearNicknameLogCommand extends Command {
         clears the nickname change log text channel for your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearnicknamelog'],
         });
     }
@@ -51,7 +51,7 @@ module.exports = class clearNicknameLogCommand extends Command {
             context.guild.id
         );
 
-        const payload = {embeds: [embed.addFields([{name: 'Nickname Log', value:  `${oldNicknameLog} ➔ \`None\``}]),],};
+        const payload = {embeds: [embed.addFields([{name: 'Nickname Log', value: `${oldNicknameLog} ➔ \`None\``}]),],};
 
         this.sendReply(context, payload);
     }

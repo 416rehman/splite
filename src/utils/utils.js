@@ -361,7 +361,7 @@ async function transferCrown(client, guild, crownRoleId) {
         crownChannel.viewable &&
         crownChannel
             .permissionsFor(guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+            .has(['SendMessages', 'EmbedLinks']) &&
         crownMessage
     ) {
         crownMessage = crownMessage

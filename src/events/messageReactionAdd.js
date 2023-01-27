@@ -47,7 +47,7 @@ module.exports = async (client, messageReaction, user) => {
             !starboardChannel.viewable ||
             !starboardChannel
                 .permissionsFor(message.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS']) ||
+                .has(['SendMessages', 'EmbedLinks']) ||
             message.channel === starboardChannel
         )
             return;
@@ -108,7 +108,7 @@ module.exports = async (client, messageReaction, user) => {
                     iconURL: message.author.displayAvatarURL(),
                 })
                 .setDescription(message.content)
-                .addFields([{name: 'Original', value:  `[Jump!](${message.url})`}])
+                .addFields([{name: 'Original', value: `[Jump!](${message.url})`}])
                 .setImage(image)
                 .setTimestamp()
                 .setFooter({

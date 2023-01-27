@@ -13,7 +13,7 @@ module.exports = class clearMessageDeleteLogCommand extends Command {
         Clears the message delete log text channel for your server. 
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearmessagedeletelog'],
         });
     }

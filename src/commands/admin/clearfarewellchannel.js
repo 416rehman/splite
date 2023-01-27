@@ -13,7 +13,7 @@ module.exports = class clearFarewellChannelCommand extends Command {
         Clears the farewell message text channel for your server. 
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearfarewellchannel'],
         });
     }

@@ -11,8 +11,8 @@ module.exports = class RoleCommand extends Command {
             description:
                 'Adds/Removes the specified role from the provided user.\nSeperate multiple roles with a comma ","\nUsing + at the beginning of the role adds the role but does not remove it\nUsing - at the beginning of the role removes the role but does not add it',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
-            userPermissions: ['MANAGE_ROLES'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageRoles'],
+            userPermissions: ['ManageRoles'],
             examples: [
                 'role @split rolename',
                 'role @split rolename, +rolename2, -rolename3',
@@ -114,9 +114,9 @@ module.exports = class RoleCommand extends Command {
             const embed = new EmbedBuilder()
                 .setTitle('Role')
                 .setDescription(`Changed roles for ${member}.`)
-                .addFields([{name: 'Moderator', value:  message.member.toString(), inline:  true}])
-                .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-                .addFields([{name: 'Roles', value:  changes.join('\n') || 'None', inline:  true}])
+                .addFields([{name: 'Moderator', value: message.member.toString(), inline: true}])
+                .addFields([{name: 'Member', value: member.toString(), inline: true}])
+                .addFields([{name: 'Roles', value: changes.join('\n') || 'None', inline: true}])
                 .setFooter({
                     text: message.member.displayName,
                     iconURL: this.getAvatarURL(message.author),
@@ -124,7 +124,7 @@ module.exports = class RoleCommand extends Command {
                 .setTimestamp()
                 .setColor(message.guild.members.me.displayHexColor);
 
-            if (failed.length) embed.addFields([{name: 'Failed', value:  failed.join('\n'), inline:  true}]);
+            if (failed.length) embed.addFields([{name: 'Failed', value: failed.join('\n'), inline: true}]);
             return message.channel.send({embeds: [embed]});
         }
     }

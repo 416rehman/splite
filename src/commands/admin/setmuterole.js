@@ -11,7 +11,7 @@ module.exports = class SetMuteRoleCommand extends Command {
             description:
                 'Sets the `mute role` your server.\nUse `clearmuterole` to clear the current `mute role`.',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setmuterole @Muted', 'clearmuterole'],
         });
     }
@@ -45,7 +45,7 @@ module.exports = class SetMuteRoleCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Mute Role', value:  `${oldMuteRole}` || '`None`'}])
+                        .addFields([{name: 'Current Mute Role', value: `${oldMuteRole}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
@@ -65,7 +65,7 @@ module.exports = class SetMuteRoleCommand extends Command {
         this.client.db.settings.updateMuteRoleId.run(role.id, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addFields([{name: 'Mute Role', value:  `${oldMuteRole} ➔ ${role}`}])
+            embeds: [embed.addFields([{name: 'Mute Role', value: `${oldMuteRole} ➔ ${role}`}])
                 .setDescription(`The \`mute role\` was successfully updated. ${success}\nUse \`clearmuterole\` to clear the current \`mute role\``)],
         });
 

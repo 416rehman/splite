@@ -13,7 +13,7 @@ module.exports = class clearStarboardChannelCommand extends Command {
         clears the starboard text channel for your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearstarboardchannel'],
         });
     }

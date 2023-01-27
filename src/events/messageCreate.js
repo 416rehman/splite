@@ -135,17 +135,21 @@ module.exports = async (client, message) => {
         }
         else if ((message.content === `<@${client.user.id}>` || message.content === `<@!${client.user.id}>`) && message.channel
             .permissionsFor(message.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS']) && !modChannelIds.includes(message.channel.id)) {
+            .has(['SendMessages', 'EmbedLinks']) && !modChannelIds.includes(message.channel.id)) {
             const embed = new EmbedBuilder()
                 .setTitle(`Hi, I'm ${client.name}. Need help?`)
                 .setThumbnail('https://i.imgur.com/B0XSinY.png')
                 .setDescription(`You can see everything I can do by using the \`${prefix}help\` command.`)
-                .addFields([{name: 'Invite Me', value: oneLine`
+                .addFields([{
+                    name: 'Invite Me', value: oneLine`
           You can add me to your server by clicking 
           [here](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands)!
-        `}])
-                .addFields([{name: 'Support', value: oneLine`
-          If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`}])
+        `
+                }])
+                .addFields([{
+                    name: 'Support', value: oneLine`
+          If you have questions, suggestions, or found a bug, please use the 'report' or 'feedback' commands`
+                }])
                 .setColor(message.guild.members.me.displayHexColor);
             if (client.owners.length) {
                 await embed.setFooter({

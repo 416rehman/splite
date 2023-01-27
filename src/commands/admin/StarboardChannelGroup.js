@@ -7,7 +7,7 @@ module.exports = class StarboardChannelSettingsCommandGroup extends Command {
             name: 'starboard-group',
             description: 'Starboard Management - Starboard is a feature that lets you post messages to a channel if they receive a 🌟 reaction',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
 
             slashCommand: new SlashCommandBuilder().setName('starboard')
                 .addSubcommandGroup((o) => o.setName('channel').setDescription('The starboard channel is where the starboard messages will be posted')

@@ -21,7 +21,7 @@ module.exports = class enlargeCommand extends Command {
             usage: 'en <emoji>',
             description: 'Enlarges a custom emoji',
             type: client.types.FUN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks'],
             examples: ['enlarge 🙄'],
             slashCommand: new SlashCommandBuilder().addStringOption((s) => s.setName('emoji').setRequired(true).setDescription('The emoji to enlarge')),
         });

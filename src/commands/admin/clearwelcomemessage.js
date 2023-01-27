@@ -13,7 +13,7 @@ module.exports = class clearWelcomeMessageCommand extends Command {
         Clears the message ${client.name} will say when someone joins your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearwelcomemessage'],
         });
     }
@@ -40,7 +40,7 @@ module.exports = class clearWelcomeMessageCommand extends Command {
             .setTitle('Settings: `Welcomes`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`welcome message\` was successfully cleared. ${success}`)
-            .addFields([{name: 'Channel', value:  welcomeChannel?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Channel', value: welcomeChannel?.toString() || '`None`', inline: true}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
@@ -54,8 +54,8 @@ module.exports = class clearWelcomeMessageCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
-                .addFields([{name: 'Message', value:  '`None`'}])],
+                .addFields([{name: 'Status', value: statusUpdate, inline: true}])
+                .addFields([{name: 'Message', value: '`None`'}])],
         };
 
         this.sendReply(context, payload);

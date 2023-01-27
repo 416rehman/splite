@@ -14,7 +14,7 @@ module.exports = class setconfessionchannelCommand extends Command {
         \nUse \`clearconfessionschannel\` to clear the current \`confessions channel\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setconfessionchannel #general', 'clearconfessionchannel'],
         });
     }

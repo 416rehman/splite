@@ -12,8 +12,8 @@ module.exports = class setJoinVoting extends Command {
             description: oneLine`
         Reacts to the provided message with the specified emoji\nIf someone reacts to the emoji, a vote will start in the votingChannel.\nThe person that reacted will either be banned or \nleft alone depending on how many votes they received.\n\n**Useful if you are setting an 18+ server, anyone that\n reacts to the -18 emoji will initiate a vote.**\nUse \`clearJoinVoting\` to disable`,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: [
                 'setjoinvoting 832878346979377193 🦶 #generalChannel',
                 'clearjoinvoting',
@@ -55,7 +55,7 @@ module.exports = class setJoinVoting extends Command {
                 .setTitle('Settings: `Join Voting`')
                 .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setDescription(this.description)
-                .addFields([{name: 'Usage', value:  `\`${this.usage}\``}])
+                .addFields([{name: 'Usage', value: `\`${this.usage}\``}])
                 .setFooter({
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),
@@ -67,12 +67,12 @@ module.exports = class setJoinVoting extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addFields([{name: 'Status', value:  oldStatus, inline:  true}])
+                        .addFields([{name: 'Status', value: oldStatus, inline: true}])
                         .addFields({
                             name: 'Current MessageID',
                             value: `\`${joinvotingMessageId || 'None'}\``
                         })
-                        .addFields([{name: 'Current Emoji', value:  `${emoji || '`None`'}`}])
+                        .addFields([{name: 'Current Emoji', value: `${emoji || '`None`'}`}])
                         .addFields({
                             name: 'Current ChannelID',
                             value: `${
@@ -188,9 +188,9 @@ module.exports = class setJoinVoting extends Command {
                 .setDescription(
                     `The \`join voting system\` was successfully updated. ${success}\nUse \`clearJoinVoting\` to disable. If someone reacts with the ${parsedEmoji} emoji you set, the voting will start in the ${channel} channel.`
                 )
-                .addFields([{name: 'Status', value:  '`enabled`', inline:  true}])
-                .addFields([{name: 'message ID', value:  `\`${messageId}\``}])
-                .addFields([{name: 'Voting Channel', value:  `${channel}`, inline:  true}])
+                .addFields([{name: 'Status', value: '`enabled`', inline: true}])
+                .addFields([{name: 'message ID', value: `\`${messageId}\``}])
+                .addFields([{name: 'Voting Channel', value: `${channel}`, inline: true}])
                 .setFooter({
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),

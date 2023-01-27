@@ -13,8 +13,8 @@ module.exports = class clearVerificationRoleCommand extends Command {
         Clears the role ${client.name} will give members who are verified.
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearverificationrole'],
         });
     }
@@ -47,8 +47,8 @@ module.exports = class clearVerificationRoleCommand extends Command {
             .setTitle('Settings: `Verification`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`verification role\` was successfully cleared. ${success}`)
-            .addFields([{name: 'Channel', value:  verificationChannel?.toString() || '`None`', inline:  true}])
-            .addFields([{name: 'Message', value:  verificationMessage || '`None`'}])
+            .addFields([{name: 'Channel', value: verificationChannel?.toString() || '`None`', inline: true}])
+            .addFields([{name: 'Message', value: verificationMessage || '`None`'}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
@@ -63,8 +63,8 @@ module.exports = class clearVerificationRoleCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addFields([{name: 'Verification Role', value:  `${oldVerificationRole} ➔ \`None\``}])
-                .addFields([{name: 'Status', value:  `${oldStatus} ➔ \`${statusUpdate}\``}])],
+                .addFields([{name: 'Verification Role', value: `${oldVerificationRole} ➔ \`None\``}])
+                .addFields([{name: 'Status', value: `${oldStatus} ➔ \`${statusUpdate}\``}])],
         };
 
         this.sendReply(context, payload);

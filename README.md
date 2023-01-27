@@ -256,7 +256,7 @@ the `userPermissions` property.
 Example:
 
 ```js
-userPermissions: ['KICK_MEMBERS', 'MANAGE_MESSAGES'] // Default is null
+userPermissions: ['KickMembers', 'ManageMessages'] // Default is null
 ```
 
 ##### Restrict commands to Splite Bot Owners
@@ -333,7 +333,7 @@ module.exports = class prefixCommand extends Command {
             description: 'Shows the prefix of the bot',
             type: client.types.INFO,
             examples: ['prefix'],
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
             cooldown: 10,
             // exclusive:true will make the command wait for the done() method 
             // to be called before allowing the user to call the command again

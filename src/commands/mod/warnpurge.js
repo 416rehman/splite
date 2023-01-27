@@ -13,12 +13,12 @@ module.exports = class WarnPurgeCommand extends Command {
                 'Warns a member and then purges their messages in the current channel.',
             type: client.types.MOD,
             clientPermissions: [
-                'SEND_MESSAGES',
-                'EMBED_LINKS',
-                'KICK_MEMBERS',
-                'MANAGE_MESSAGES',
+                'SendMessages',
+                'EmbedLinks',
+                'KickMembers',
+                'ManageMessages',
             ],
-            userPermissions: ['KICK_MEMBERS', 'MANAGE_MESSAGES'],
+            userPermissions: ['KickMembers', 'ManageMessages'],
             examples: ['warnpurge @split 50'],
             slashCommand: new SlashCommandBuilder()
                 .addUserOption(u => u.setName('user').setRequired(true).setDescription('The user to warn and purge messages from.'))
@@ -104,11 +104,11 @@ module.exports = class WarnPurgeCommand extends Command {
             .setDescription(
                 `${member} has been warned, with **${messages.size}** messages purged.`
             )
-            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-            .addFields([{name: 'Warn Count', value:  `\`${warns.warns.length}\``, inline:  true}])
-            .addFields([{name: 'Found Messages', value:  `\`${messages.size}\``, inline:  true}])
-            .addFields([{name: 'Reason', value:  reason}])
+            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+            .addFields([{name: 'Member', value: member.toString(), inline: true}])
+            .addFields([{name: 'Warn Count', value: `\`${warns.warns.length}\``, inline: true}])
+            .addFields([{name: 'Found Messages', value: `\`${messages.size}\``, inline: true}])
+            .addFields([{name: 'Reason', value: reason}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),

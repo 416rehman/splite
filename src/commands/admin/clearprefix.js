@@ -10,7 +10,7 @@ module.exports = class clearPrefixCommand extends Command {
             usage: 'clearprefix',
             description: 'Resets the `prefix` for your server to the default ' + client.config.defaultPrefix,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearprefix'],
         });
     }
@@ -44,7 +44,7 @@ module.exports = class clearPrefixCommand extends Command {
                 .setTitle('Settings: `System`')
                 .setThumbnail(context.guild.iconURL({dynamic: true}))
                 .setDescription(`The \`prefix\` was successfully reset. ${success}`)
-                .addFields([{name: 'Prefix', value:  `\`${oldPrefix}\` ➔ \`${defaultPrefix}\``}])
+                .addFields([{name: 'Prefix', value: `\`${oldPrefix}\` ➔ \`${defaultPrefix}\``}])
                 .setFooter({
                     text: this.getUserIdentifier(context.author),
                     iconURL: this.getAvatarURL(context.author),

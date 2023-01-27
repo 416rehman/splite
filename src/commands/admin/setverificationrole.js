@@ -17,8 +17,8 @@ module.exports = class SetVerificationRoleCommand extends Command {
         \nUse \`clearverificationrole\` role to clear the current \`verification role\`.
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: ['setverificationrole @Verified', 'clearverificationrole'],
         });
     }
@@ -52,8 +52,8 @@ module.exports = class SetVerificationRoleCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Verification`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addFields([{name: 'Channel', value:  verificationChannel?.toString() || '`None`', inline:  true}])
-            .addFields([{name: 'Message', value:  verificationMessage || '`None`'}])
+            .addFields([{name: 'Channel', value: verificationChannel?.toString() || '`None`', inline: true}])
+            .addFields([{name: 'Message', value: verificationMessage || '`None`'}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })

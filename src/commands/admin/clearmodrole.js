@@ -10,7 +10,7 @@ module.exports = class clearModRoleCommand extends Command {
             usage: 'clearmodrole',
             description: 'clears the `mod role` for your server.',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearmodrole'],
         });
     }
@@ -47,7 +47,7 @@ module.exports = class clearModRoleCommand extends Command {
         this.client.db.settings.updateModRoleId.run(null, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addFields([{name: 'Mod Role', value:  `${oldModRole} ➔ \`None\``}])],
+            embeds: [embed.addFields([{name: 'Mod Role', value: `${oldModRole} ➔ \`None\``}])],
         });
 
         this.sendReply(context, payload);

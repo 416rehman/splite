@@ -10,7 +10,7 @@ module.exports = class ClearAdminRoleCommand extends Command {
             usage: 'clearadminrole',
             description: 'Clears the `admin role` for your server.',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearadminrole'],
         });
     }
@@ -46,7 +46,7 @@ module.exports = class ClearAdminRoleCommand extends Command {
 
         this.client.db.settings.updateAdminRoleId.run(null, context.guild.id);
 
-        const payload = {embeds: [embed.addFields([{name: 'Admin Role', value:  `${oldAdminRole} ➔ \`None\``}])],};
+        const payload = {embeds: [embed.addFields([{name: 'Admin Role', value: `${oldAdminRole} ➔ \`None\``}])],};
 
         this.sendReply(context, payload);
     }

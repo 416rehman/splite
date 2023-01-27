@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { EmbedBuilder, ChannelType } = require('discord.js');
-const { success, fail } = require('../../utils/emojis.json');
-const { oneLine } = require('common-tags');
+const {EmbedBuilder, ChannelType} = require('discord.js');
+const {success, fail} = require('../../utils/emojis.json');
+const {oneLine} = require('common-tags');
 
 module.exports = class SetMessageEditLogCommand extends Command {
     constructor(client) {
@@ -14,7 +14,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
         \nUse \`clearmessageeditlog\` to clear the current \`message edit log\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setmessageeditlog #bot-log', 'clearmessageeditlog']
         });
     }
@@ -37,7 +37,7 @@ module.exports = class SetMessageEditLogCommand extends Command {
             context.guild.channels.cache.get(messageEditLogId) || '`None`';
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Logging`')
-            .setThumbnail(context.guild.iconURL({ dynamic: true }))
+            .setThumbnail(context.guild.iconURL({dynamic: true}))
 
             .setFooter({
                 text: context.member.displayName,

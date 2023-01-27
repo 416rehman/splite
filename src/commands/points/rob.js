@@ -61,6 +61,7 @@ module.exports = class WipePointsCommand extends Command {
         }
 
         this.sendReply(context, {
+            content: `Attempting to rob ${target}...`,
             embeds: [
                 new EmbedBuilder()
                     .setDescription(`${this.getUserIdentifier(context.author)} is trying to rob ${this.getUserIdentifier(target)}...`)

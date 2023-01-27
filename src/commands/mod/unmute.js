@@ -10,8 +10,8 @@ module.exports = class UnmuteCommand extends Command {
             usage: 'unmute <user mention/ID>',
             description: 'Unmutes the specified user.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
-            userPermissions: ['MANAGE_ROLES'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageRoles'],
+            userPermissions: ['ManageRoles'],
             examples: ['unmute @split'],
             slashCommand: new SlashCommandBuilder()
                 .addUserOption(u => u.setName('user').setDescription('The user to unmute').setRequired(true))
@@ -84,7 +84,7 @@ module.exports = class UnmuteCommand extends Command {
             const embed = new EmbedBuilder()
                 .setTitle('Unmute Member')
                 .setDescription(`${member} has been unmuted.`)
-                .addFields([{name: 'Reason', value:  reason}])
+                .addFields([{name: 'Reason', value: reason}])
                 .setFooter({
                     text: context.member.displayName,
                     iconURL: this.getAvatarURL(context.author),

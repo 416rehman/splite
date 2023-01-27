@@ -13,7 +13,7 @@ module.exports = class clearWelcomeChannelCommand extends Command {
         Clears the welcome message text channel for your server. 
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearwelcomechannel'],
         });
     }

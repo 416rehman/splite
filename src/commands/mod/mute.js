@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, ButtonBuilder,ActionRowBuilder, ButtonStyle, ComponentType} = require('discord.js');
+const {EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType} = require('discord.js');
 const ms = require('ms');
 const {SlashCommandBuilder} = require('discord.js');
 
@@ -12,8 +12,8 @@ module.exports = class MuteCommand extends Command {
             description:
                 'Mutes a user for the specified amount of time (max is 14 days).',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
-            userPermissions: ['MANAGE_ROLES'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageRoles'],
+            userPermissions: ['ManageRoles'],
             examples: ['mute @split 10s', 'mute @split 30m talks too much'],
             exclusive: true,
             slashCommand: new SlashCommandBuilder()
@@ -158,10 +158,10 @@ module.exports = class MuteCommand extends Command {
                                 long: true,
                             })}**.`
                         )
-                        .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-                        .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-                        .addFields([{name: 'Time', value:  `\`${ms(time)}\``, inline:  true}])
-                        .addFields([{name: 'Reason', value:  reason}])
+                        .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+                        .addFields([{name: 'Member', value: member.toString(), inline: true}])
+                        .addFields([{name: 'Time', value: `\`${ms(time)}\``, inline: true}])
+                        .addFields([{name: 'Reason', value: reason}])
                         .setFooter({
                             text: this.getUserIdentifier(context.member),
                             iconURL: this.getAvatarURL(context.author)
