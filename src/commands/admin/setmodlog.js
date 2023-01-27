@@ -14,7 +14,7 @@ module.exports = class SetModLogCommand extends Command {
         \nUse \`clearmodlog\` to clear the current \`mod log\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setmodlog #mod-log', 'clearmodlog'],
         });
     }
@@ -49,7 +49,7 @@ module.exports = class SetModLogCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Mod Log', value:  `${oldModLog}` || '`None`'}])
+                        .addFields([{name: 'Current Mod Log', value: `${oldModLog}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             });
@@ -70,7 +70,7 @@ module.exports = class SetModLogCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addFields([{name: 'Mod Log', value:  `${oldModLog} ➔ ${channel}`}])
+                .addFields([{name: 'Mod Log', value: `${oldModLog} ➔ ${channel}`}])
                 .setDescription(
                     `The \`mod log\` was successfully updated. ${success}\nUse \`clearmodlog\` to clear the current \`mod log\`.`
                 )],

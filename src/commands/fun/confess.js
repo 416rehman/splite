@@ -9,7 +9,7 @@ module.exports = class confessCommand extends Command {
             usage: 'confess',
             description: 'Post an anonymous confession in the confession channel',
             type: client.types.FUN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
             userPermissions: [],
             cooldown: 5,
             slashCommand: new SlashCommandBuilder().addStringOption((option) =>

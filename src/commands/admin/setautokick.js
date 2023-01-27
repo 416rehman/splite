@@ -13,7 +13,7 @@ module.exports = class SetAutoKickCommand extends Command {
         Sets the amount of warns needed before ${client.name} will automatically kick someone from your server.\nUse \`clearautokick\` to disable \`auto kick\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setautokick 3', 'clearautokick'],
         });
     }
@@ -57,7 +57,7 @@ module.exports = class SetAutoKickCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Auto Kick', value:  `\`${autoKick}\``}])
+                        .addFields([{name: 'Current Auto Kick', value: `\`${autoKick}\``}])
                         .setDescription(this.description),
                 ],
             });
@@ -68,7 +68,7 @@ module.exports = class SetAutoKickCommand extends Command {
         this.client.db.settings.updateAutoKick.run(amount, context.guild.id);
         const payload = ({
             embeds: [
-                embed.addFields([{name: 'Auto Kick', value:  `\`${autoKick}\` ➔ \`${amount}\``}])
+                embed.addFields([{name: 'Auto Kick', value: `\`${autoKick}\` ➔ \`${amount}\``}])
                     .setDescription(
                         `\`Auto kick\` was successfully updated. ${success}\nUse \`clearautokick\` to disable \`auto kick\``
                     )

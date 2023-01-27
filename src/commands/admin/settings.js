@@ -15,7 +15,7 @@ module.exports = class SettingsCommand extends Command {
         If no category is given, the amount of settings for every category will be displayed.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['settings System'],
             slashCommand: new SlashCommandBuilder()
                 .addStringOption(s =>

@@ -52,7 +52,7 @@ module.exports = class whowouldwinCommand extends Command {
             files: [attachment],
         };
         this.sendReply(context, payload).then(m => {
-            if (m.channel.permissionsFor(m.guild.members.me).has('ADD_REACTIONS'))
+            if (m.channel.permissionsFor(m.guild.members.me).has('AddReactions'))
                 m.react('👈').then(() => m.react('👉'));
         });
     }

@@ -60,7 +60,7 @@ module.exports = (client, message) => {
                 messageDeleteLog.viewable &&
                 messageDeleteLog
                     .permissionsFor(message.guild.members.me)
-                    .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                    .has(['SendMessages', 'EmbedLinks'])
             ) {
                 if (message.content.length > 1024)
                     message.content = message.content.slice(0, 1021) + '...';
@@ -69,7 +69,7 @@ module.exports = (client, message) => {
                     .setDescription(
                         `${message.member}'s **message** in ${message.channel} was deleted.`
                     )
-                    .addFields([{name: 'Message', value:  message.content}]);
+                    .addFields([{name: 'Message', value: message.content}]);
 
                 messageDeleteLog.send({embeds: [embed]});
             }
@@ -92,7 +92,7 @@ module.exports = (client, message) => {
             messageDeleteLog.viewable &&
             messageDeleteLog
                 .permissionsFor(message.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                .has(['SendMessages', 'EmbedLinks'])
         ) {
             embed
                 .setTitle('Message Update: `Delete`')

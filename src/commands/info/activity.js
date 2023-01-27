@@ -65,7 +65,7 @@ module.exports = class activityCommand extends Command {
             .setDescription(`${emojis.load} Fetching Message Count...`);
 
         this.sendReply(context, {embeds: [embed]}).then(async (msg) => {
-            const moderationButton = context.member.permissions.has('VIEW_AUDIT_LOG') && new ButtonBuilder()
+            const moderationButton = context.member.permissions.has('ViewAuditLog') && new ButtonBuilder()
                 .setCustomId('moderations')
                 .setLabel('Moderation Leaderboard')
                 .setStyle(ButtonStyle.Secondary);

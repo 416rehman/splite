@@ -1,9 +1,9 @@
-const { EmbedBuilder } = require('discord.js');
-const { permissions } = require('../utils/constants.json');
-const { Collection } = require('discord.js');
-const { fail } = require('../utils/emojis.json');
+const {EmbedBuilder} = require('discord.js');
+const {permissions} = require('../utils/constants.json');
+const {Collection} = require('discord.js');
+const {fail} = require('../utils/emojis.json');
 const emojis = require('../utils/emojis.json');
-const { capitalize, removeDisabledCommandsFromGroup } = require('../utils/utils');
+const {capitalize, removeDisabledCommandsFromGroup} = require('../utils/utils');
 
 /**
  * Command class
@@ -59,8 +59,8 @@ class Command {
          * @type {Array<string>}
          */
         this.clientPermissions = options.clientPermissions || [
-            'SEND_MESSAGES',
-            'EMBED_LINKS'
+            'SendMessages',
+            'EmbedLinks'
         ];
 
         /**
@@ -274,12 +274,12 @@ class Command {
 
             if (command) command.interact(interaction, args, author);
             else {
-                interaction.reply({ content: 'Command not found', ephemeral: true });
+                interaction.reply({content: 'Command not found', ephemeral: true});
                 this.client.logger.info(`No command found for ${commandName}`);
             }
         }
         else {
-            throw { name: 'NotImplementedError', message: `${this.name} interact method not implemented` };
+            throw {name: 'NotImplementedError', message: `${this.name} interact method not implemented`};
         }
     }
 
@@ -415,7 +415,7 @@ class Command {
      * @param type enforces avatar type (i.e 'png' or 'gif')
      */
     getAvatarURL(user, type) {
-        const options = { dynamic: true, size: 2048 };
+        const options = {dynamic: true, size: 2048};
         if (type) options.format = type;
 
         if (user?.avatar?.startsWith('a_') || user?.user?.avatar?.startsWith('a_')) {
@@ -533,7 +533,7 @@ class Command {
      * @returns {*|boolean|EmbedBuilder}
      */
     checkPermissionErrors(member, channel, guild, ownerOverride = true) {
-        if (!channel.permissionsFor(guild.members.me).has(['SEND_MESSAGES', 'EMBED_LINKS']))
+        if (!channel.permissionsFor(guild.members.me).has(['SendMessages', 'EmbedLinks']))
             return new EmbedBuilder()
                 .setAuthor({
                     name: `${this.getUserIdentifier(member)}`,
@@ -541,7 +541,7 @@ class Command {
                 })
                 .setTitle(`Missing Client Permissions: \`${this.name}\``)
                 .setDescription(
-                    '```SEND_MESSAGES```\n```EMBED_LINKS```'
+                    '```SendMessages```\n```EmbedLinks```'
                 )
                 .setTimestamp();
         const clientPermission = this.checkClientPermissions(channel, guild);
@@ -622,7 +622,7 @@ class Command {
                 }
             }
 
-            if (member.permissions.has('ADMINISTRATOR')) {
+            if (member.permissions.has('Administrator')) {
                 return true;
             }
         }
@@ -716,7 +716,7 @@ class Command {
             })
             .setTitle(`${fail} Error: \`${this.name}\``)
             .setDescription(`\`\`\`diff\n- ${errorType}\n+ ${reason}\`\`\``)
-            .addFields([{ name: 'Usage', value: `\`${prefix}${this.usage}\`` }])
+            .addFields([{name: 'Usage', value: `\`${prefix}${this.usage}\``}])
             .setTimestamp()
             .setColor();
         if (this.examples)
@@ -725,8 +725,8 @@ class Command {
                 value: this.examples.map((e) => `\`${prefix}${e}\``).join('\n')
             }]);
         if (errorMessage)
-            embed.addFields([{ name: 'Error Message', value: `\`\`\`${errorMessage}\`\`\`` }]);
-        this.sendReplyAndDelete(context, { embeds: [embed] });
+            embed.addFields([{name: 'Error Message', value: `\`\`\`${errorMessage}\`\`\``}]);
+        this.sendReplyAndDelete(context, {embeds: [embed]});
     }
 
     /**
@@ -750,9 +750,9 @@ class Command {
             .setTitle(`Command: \`${command.name}\``)
             .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
             .setDescription(command.description)
-            .addFields([{ name: 'Usage', value: `\`${prefix}${command.usage}\``, inline: true }])
-            .addFields([{ name: 'Type', value: `\`${capitalize(command.type)}\``, inline: true }])
-            .addFields([{ name: 'Invocation', value: `\`${invocation}\``, inline: true }])
+            .addFields([{name: 'Usage', value: `\`${prefix}${command.usage}\``, inline: true}])
+            .addFields([{name: 'Type', value: `\`${capitalize(command.type)}\``, inline: true}])
+            .addFields([{name: 'Invocation', value: `\`${invocation}\``, inline: true}])
             .setFooter({
                 text: message.member.displayName, iconURL: this.getAvatarURL(message.author)
             })
@@ -789,7 +789,7 @@ class Command {
             modLog.viewable &&
             modLog
                 .permissionsFor(message.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                .has(['SendMessages', 'EmbedLinks'])
         ) {
             const caseNumber = await this.client.utils.getCaseNumber(
                 this.client,
@@ -800,16 +800,16 @@ class Command {
                 .setTitle(
                     `Action: \`${this.client.utils.capitalize(this.name)}\``
                 )
-                .addFields([{ name: 'Moderator', value: message.member.toString(), inline: true }])
-                .setFooter({ text: `Case #${caseNumber}` })
+                .addFields([{name: 'Moderator', value: message.member.toString(), inline: true}])
+                .setFooter({text: `Case #${caseNumber}`})
                 .setTimestamp()
                 .setColor(message.guild.members.me.displayHexColor);
             for (const field in fields) {
-                embed.addFields([{ name: field, value: fields[field], inline: true }]);
+                embed.addFields([{name: field, value: fields[field], inline: true}]);
             }
-            embed.addFields([{ name: 'Reason', value: reason }]);
+            embed.addFields([{name: 'Reason', value: reason}]);
             modLog
-                .send({ embeds: [embed] })
+                .send({embeds: [embed]})
                 .catch((err) => this.client.logger.error(err.stack));
         }
     }

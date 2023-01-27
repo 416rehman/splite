@@ -13,7 +13,7 @@ module.exports = class clearMessageEditLogCommand extends Command {
         Clears the message edit log text channel for your server. 
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearmessageeditlog'],
         });
     }

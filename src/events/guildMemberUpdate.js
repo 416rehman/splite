@@ -21,14 +21,14 @@ module.exports = (client, oldMember, newMember) => {
             nicknameLog.viewable &&
             nicknameLog
                 .permissionsFor(oldMember.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                .has(['SendMessages', 'EmbedLinks'])
         ) {
             const oldNickname = oldMember.nickname || '`None`';
             const newNickname = newMember.nickname || '`None`';
             embed
                 .setTitle('Member Update: `Nickname`')
                 .setDescription(`${newMember}'s **nickname** was changed.`)
-                .addFields([{name: 'Nickname', value:  `${oldNickname} ➔ ${newNickname}`}]);
+                .addFields([{name: 'Nickname', value: `${oldNickname} ➔ ${newNickname}`}]);
             nicknameLog.send({embeds: [embed]});
         }
     }
@@ -45,7 +45,7 @@ module.exports = (client, oldMember, newMember) => {
             roleLog.viewable &&
             roleLog
                 .permissionsFor(oldMember.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                .has(['SendMessages', 'EmbedLinks'])
         ) {
             const role = newMember.roles.cache
                 .difference(oldMember.roles.cache)
@@ -69,7 +69,7 @@ module.exports = (client, oldMember, newMember) => {
             roleLog.viewable &&
             roleLog
                 .permissionsFor(oldMember.guild.members.me)
-                .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                .has(['SendMessages', 'EmbedLinks'])
         ) {
             const role = oldMember.roles.cache
                 .difference(newMember.roles.cache)

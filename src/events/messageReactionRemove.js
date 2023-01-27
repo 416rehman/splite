@@ -1,7 +1,7 @@
 module.exports = async (client, messageReaction, user) => {
     if (client.user === user) return;
 
-    const { message, emoji } = messageReaction;
+    const {message, emoji} = messageReaction;
 
     // Starboard
     if (emoji.name === '⭐' && message.author != user) {
@@ -9,27 +9,27 @@ module.exports = async (client, messageReaction, user) => {
             .pluck()
             .get(message.guild.id);
         const starboardChannel =
-         message.guild.channels.cache.get(starboardChannelId);
+            message.guild.channels.cache.get(starboardChannelId);
         if (
             !starboardChannel ||
-         !starboardChannel.viewable ||
-         !starboardChannel
-             .permissionsFor(message.guild.members.me)
-             .has(['SEND_MESSAGES', 'EMBED_LINKS']) ||
-         message.channel === starboardChannel
+            !starboardChannel.viewable ||
+            !starboardChannel
+                .permissionsFor(message.guild.members.me)
+                .has(['SendMessages', 'EmbedLinks']) ||
+            message.channel === starboardChannel
         )
             return;
 
         const emojis = ['⭐', '🌟', '✨', '💫', '☄️'];
-        const messages = await starboardChannel.messages.fetch({ limit: 100 });
+        const messages = await starboardChannel.messages.fetch({limit: 100});
 
         const starred = messages.find((m) => {
             return emojis.some((e) => {
                 return (
                     m.content.startsWith(e) &&
-               m.embeds[0] &&
-               m.embeds[0].footer &&
-               m.embeds[0].footer.text == message.id
+                    m.embeds[0] &&
+                    m.embeds[0].footer &&
+                    m.embeds[0].footer.text == message.id
                 );
             });
         });

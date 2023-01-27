@@ -102,7 +102,7 @@ module.exports = class HelpCommand extends Command {
 
             commands['Slash Only Commands'] = this.client.slashCommands.map((s) => {
                 if (s.name === 'view') {
-                    if (context.member.permissions.has('MANAGE_GUILD')) return `\`${s.name}\` ${s.description}`;
+                    if (context.member.permissions.has('ManageGuild')) return `\`${s.name}\` ${s.description}`;
                 }
                 else return `\`${s.name}\` ${s.description}`;
             });
@@ -143,7 +143,10 @@ module.exports = class HelpCommand extends Command {
                 })
                 .setTimestamp()
                 .setThumbnail(`${this.client.config.botLogoURL || 'https://i.imgur.com/B0XSinY.png'}`)
-                .addFields([{name: '**Links**', value:  `[Invite Me](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands) | [Support Server](${this.client.config.supportServer})`}]);
+                .addFields([{
+                    name: '**Links**',
+                    value: `[Invite Me](https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot%20applications.commands) | [Support Server](${this.client.config.supportServer})`
+                }]);
 
             const chunks = 4; //tweak this to add more items per line
             let rows = new Array(Math.ceil(allButtons.length / chunks))
@@ -189,13 +192,12 @@ module.exports = class HelpCommand extends Command {
                         name: `${emojis.verified_developer} **/${type}**`, value: '' + commands[type]
                     }]);
                 }
-
                 else {
                     // empty fields
                     tempEmbed.setFields([]);
                     tempEmbed.addFields([{
                         name: `**${emojiMap[type]} [${commands[type].length}]**`,
-                        value:  `${emojiMap[type].includes('Admin') ? 'Use "clear" to clear, i.e `setmodlog` ➔ `clearmodlog`\n\n' : ''} ${commands[type].join(', ')}`,
+                        value: `${emojiMap[type].includes('Admin') ? 'Use "clear" to clear, i.e `setmodlog` ➔ `clearmodlog`\n\n' : ''} ${commands[type].join(', ')}`,
                     }]);
                 }
 

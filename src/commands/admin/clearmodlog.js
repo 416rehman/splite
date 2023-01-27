@@ -13,7 +13,7 @@ module.exports = class clearModLogCommand extends Command {
         clears the mod log text channel for your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearmodlog'],
         });
     }
@@ -45,7 +45,7 @@ module.exports = class clearModLogCommand extends Command {
         // Clear if no args provided
         this.client.db.settings.updateModLogId.run(null, context.guild.id);
         const payload = ({
-            embeds: [embed.addFields([{name: 'Mod Log', value:  `${oldModLog} ➔ \`None\``}])],
+            embeds: [embed.addFields([{name: 'Mod Log', value: `${oldModLog} ➔ \`None\``}])],
         });
 
         this.sendReply(context, payload);

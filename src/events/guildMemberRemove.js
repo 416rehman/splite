@@ -20,7 +20,7 @@ module.exports = (client, member) => {
         memberLog.viewable &&
         memberLog
             .permissionsFor(member.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+            .has(['SendMessages', 'EmbedLinks'])
     ) {
         const embed = new EmbedBuilder()
             .setTitle('Member Left')
@@ -50,7 +50,7 @@ module.exports = (client, member) => {
         farewellChannel.viewable &&
         farewellChannel
             .permissionsFor(member.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS']) &&
+            .has(['SendMessages', 'EmbedLinks']) &&
         farewellMessage
     ) {
         farewellMessage = farewellMessage

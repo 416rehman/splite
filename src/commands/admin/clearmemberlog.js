@@ -13,7 +13,7 @@ module.exports = class clearMemberLogCommand extends Command {
         Clears the member join/leave log text channel for your server. 
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearmemberlog'],
         });
     }
@@ -48,7 +48,7 @@ module.exports = class clearMemberLogCommand extends Command {
         // Clear if no args provided
         this.client.db.settings.updateMemberLogId.run(null, context.guild.id);
 
-        const payload = {embeds: [embed.addFields([{name: 'Member Log', value:  `${oldMemberLog} ➔ \`None\``}])],};
+        const payload = {embeds: [embed.addFields([{name: 'Member Log', value: `${oldMemberLog} ➔ \`None\``}])],};
 
         this.sendReply(context, payload);
     }

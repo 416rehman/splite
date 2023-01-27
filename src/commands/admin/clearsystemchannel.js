@@ -13,7 +13,7 @@ module.exports = class clearSystemChannelCommand extends Command {
         Clears the system text channel for your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearsystemchannel'],
         });
     }
@@ -51,7 +51,12 @@ module.exports = class clearSystemChannelCommand extends Command {
             context.guild.id
         );
 
-        const payload = {embeds: [embed.addFields([{name: 'System Channel', value:  `${oldSystemChannel} ➔ \`None\``}]),],};
+        const payload = {
+            embeds: [embed.addFields([{
+                name: 'System Channel',
+                value: `${oldSystemChannel} ➔ \`None\``
+            }]),],
+        };
 
         this.sendReply(context, payload);
     }

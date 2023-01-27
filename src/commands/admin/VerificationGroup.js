@@ -6,7 +6,7 @@ module.exports = class VerificationChannelSettingsCommandGroup extends Command {
             name: 'verification-group',
             description: 'Verification Management - Set a verification channel, message, and role to be shown and given to new members',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             slashCommand: new SlashCommandBuilder().setName('verification')
                 .addSubcommandGroup((o) => o.setName('channel').setDescription('The verification channel is where the message will be sent')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the verification channel - To view current channel, don\'t provide a channel').addChannelOption(p => p.setName('channel').setRequired(false).setDescription('The channel to set as the verification channel. To view current channel, don\'t provide this option')))

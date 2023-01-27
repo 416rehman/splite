@@ -10,8 +10,8 @@ module.exports = class WarnCommand extends Command {
             usage: 'warn <user mention/ID> [reason]',
             description: 'Warns a member in your server. Member will be automatically kicked if they reach the autokick limit.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'KICK_MEMBERS'],
-            userPermissions: ['KICK_MEMBERS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'KickMembers'],
+            userPermissions: ['KickMembers'],
             examples: ['warn @split'],
             slashCommand: new SlashCommandBuilder()
                 .addUserOption(u => u.setName('user').setRequired(true).setDescription('The user to warn'))
@@ -87,10 +87,10 @@ module.exports = class WarnCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Warn Member')
             .setDescription(`${member} has been warned.`)
-            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-            .addFields([{name: 'Warn Count', value:  `\`${warns.warns.length}\``, inline:  true}])
-            .addFields([{name: 'Reason', value:  reason}])
+            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+            .addFields([{name: 'Member', value: member.toString(), inline: true}])
+            .addFields([{name: 'Warn Count', value: `\`${warns.warns.length}\``, inline: true}])
+            .addFields([{name: 'Reason', value: reason}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),

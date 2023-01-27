@@ -30,7 +30,7 @@ module.exports = (client, messages) => {
         messageDeleteLog.viewable &&
         messageDeleteLog
             .permissionsFor(message.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+            .has(['SendMessages', 'EmbedLinks'])
     ) {
         const embed = new EmbedBuilder()
             .setTitle('Message Update: `Bulk Delete`')

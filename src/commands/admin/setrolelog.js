@@ -14,7 +14,7 @@ module.exports = class SetRoleLogCommand extends Command {
         \nUse \`clearrolelog\` to clear the current \`role log\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setrolelog #bot-log', 'clearrolelog'],
         });
     }
@@ -46,7 +46,7 @@ module.exports = class SetRoleLogCommand extends Command {
             return context.channel.send({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Role Log', value:  `${oldRoleLog}`}])
+                        .addFields([{name: 'Current Role Log', value: `${oldRoleLog}`}])
                         .setDescription(this.description),
                 ],
             });
@@ -63,7 +63,7 @@ module.exports = class SetRoleLogCommand extends Command {
         this.client.db.settings.updateRoleLogId.run(channel.id, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addFields([{name: 'Role Log', value:  `${oldRoleLog} ➔ ${channel}`}]).setDescription(
+            embeds: [embed.addFields([{name: 'Role Log', value: `${oldRoleLog} ➔ ${channel}`}]).setDescription(
                 `The \`role log\` was successfully updated. ${success}\nUse \`clearrolelog\` to clear the current \`role log\`.`
             )],
         });

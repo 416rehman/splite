@@ -14,7 +14,7 @@ module.exports = class SetMemberLogCommand extends Command {
         \nUse \`clearmemberlog\` to clear the current \`member log\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setmemberlog #member-log', 'clearmemberlog'],
         });
     }

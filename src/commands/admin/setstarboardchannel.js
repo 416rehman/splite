@@ -14,7 +14,7 @@ module.exports = class SetStarboardChannelCommand extends Command {
         \nUse \`clearstarboardchannel\` to clear the current \`starboard channel\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setstarboardchannel #starboard', 'clearstarboardchannel'],
         });
     }

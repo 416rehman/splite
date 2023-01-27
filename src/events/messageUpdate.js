@@ -39,7 +39,7 @@ module.exports = (client, oldMessage, newMessage) => {
         const messageEditLog = newMessage.guild.channels.cache.get(messageEditLogId);
         if (messageEditLog && messageEditLog.viewable && messageEditLog
             .permissionsFor(newMessage.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS'])) {
+            .has(['SendMessages', 'EmbedLinks'])) {
             try {
                 if (newMessage.content?.length > 1024) newMessage.content = newMessage.content.slice(0, 1021) + '...';
                 if (oldMessage.content?.length > 1024) oldMessage.content = oldMessage.content.slice(0, 1021) + '...';
@@ -52,8 +52,8 @@ module.exports = (client, oldMessage, newMessage) => {
                 embed
                     .setTitle('Message Update: `Edit`')
                     .setDescription(`${newMessage.member}'s **message** in ${newMessage.channel} was edited. [Jump to message!](${newMessage.url})`)
-                    .addFields([{name: 'Before', value:  oldMessage ? oldMessage?.content : '**'}])
-                    .addFields([{name: 'After', value:  newMessage?.content || 'None'}]);
+                    .addFields([{name: 'Before', value: oldMessage ? oldMessage?.content : '**'}])
+                    .addFields([{name: 'After', value: newMessage?.content || 'None'}]);
                 messageEditLog.send({embeds: [embed]});
             }
             catch (e) {
@@ -71,7 +71,7 @@ module.exports = (client, oldMessage, newMessage) => {
         const messageDeleteLog = newMessage.guild.channels.cache.get(messageDeleteLogId);
         if (messageDeleteLog && messageDeleteLog.viewable && messageDeleteLog
             .permissionsFor(newMessage.guild.members.me)
-            .has(['SEND_MESSAGES', 'EMBED_LINKS'])) {
+            .has(['SendMessages', 'EmbedLinks'])) {
 
             embed.setTitle('Message Update: `Delete`');
             embed.setDescription(`${newMessage.member}'s **message embed${(oldMessage.embeds.length > 1 ? 's' : '')}** in ${newMessage.channel} ${oldMessage.embeds.length > 1 ? 'were' : 'was'} deleted.`);

@@ -8,7 +8,7 @@ module.exports = class viewCommand extends Command {
             usage: 'view',
             description: 'View Details Of a Confession',
             type: client.types.FUN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
             cooldown: 5,
             slashCommand: new SlashCommandBuilder().addIntegerOption((option) => option
                 .setName('id')

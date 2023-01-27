@@ -17,7 +17,7 @@ module.exports = class clearconfessionchannelCommand extends Command {
         Clears the current \`confessions channel\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearconfessionchannel'],
         });
     }
@@ -49,7 +49,7 @@ module.exports = class clearconfessionchannelCommand extends Command {
             context.guild.id
         );
 
-        const payload = {embeds: [embed.addFields([{name: 'Confessions Channel', value:  '`None`'}])],};
+        const payload = {embeds: [embed.addFields([{name: 'Confessions Channel', value: '`None`'}])],};
 
         this.sendReply(context, payload);
     }

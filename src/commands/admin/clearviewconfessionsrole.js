@@ -19,8 +19,8 @@ module.exports = class clearViewConfessionsRoleCommand extends Command {
         Clears the role whose members can use /view command to view details about a confession.
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearviewconfessionsrole'],
         });
     }

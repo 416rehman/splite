@@ -16,8 +16,8 @@ module.exports = class SetVerificationMessageCommand extends Command {
         \nUse \`clearverificationmessage\` to clear the verification message.
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: ['setverificationmessage Please read the server rules, then react to this message.', 'clearverificationmessage',],
         });
     }
@@ -50,8 +50,8 @@ module.exports = class SetVerificationMessageCommand extends Command {
             .setTitle('Settings: `Verification`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
 
-            .addFields([{name: 'Role', value:  verificationRole?.toString() || '`None`', inline:  true}])
-            .addFields([{name: 'Channel', value:  verificationChannel?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Role', value: verificationRole?.toString() || '`None`', inline: true}])
+            .addFields([{name: 'Channel', value: verificationChannel?.toString() || '`None`', inline: true}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })
@@ -60,9 +60,9 @@ module.exports = class SetVerificationMessageCommand extends Command {
         if (!text) {
             const payload = ({
                 embeds: [embed
-                    .addFields([{name: 'Status', value:  `\`${oldStatus}\``, inline:  true}])
-                    .addFields([{name: 'Current Message ID', value:  `\`${verificationMessageId}\``}])
-                    .addFields([{name: 'Current Message', value:  `\`${oldVerificationMessage}\``}])
+                    .addFields([{name: 'Status', value: `\`${oldStatus}\``, inline: true}])
+                    .addFields([{name: 'Current Message ID', value: `\`${verificationMessageId}\``}])
+                    .addFields([{name: 'Current Message', value: `\`${oldVerificationMessage}\``}])
                     .setDescription(this.description),],
             });
 
@@ -81,8 +81,8 @@ module.exports = class SetVerificationMessageCommand extends Command {
 
         const payload = ({
             embeds: [embed
-                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
-                .addFields([{name: 'Message', value:  text}]),],
+                .addFields([{name: 'Status', value: statusUpdate, inline: true}])
+                .addFields([{name: 'Message', value: text}]),],
         });
 
         await this.sendReply(context, payload);

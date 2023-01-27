@@ -16,7 +16,7 @@ module.exports = class SetCrownChannelCommand extends Command {
         A \`crown message\` will only be sent if a \`crown channel\`, and \`crown role\` are both set.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setcrownchannel #general', 'clearcrownchannel'],
         });
     }
@@ -52,9 +52,9 @@ module.exports = class SetCrownChannelCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Crown`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addFields([{name: 'Role', value:  crownRole?.toString() || '`None`', inline:  true}])
-            .addFields([{name: 'Schedule', value:  `\`${crownSchedule ? crownSchedule : 'None'}\``, inline:  true}])
-            .addFields([{name: 'Message', value:  this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
+            .addFields([{name: 'Role', value: crownRole?.toString() || '`None`', inline: true}])
+            .addFields([{name: 'Schedule', value: `\`${crownSchedule ? crownSchedule : 'None'}\``, inline: true}])
+            .addFields([{name: 'Message', value: this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author)

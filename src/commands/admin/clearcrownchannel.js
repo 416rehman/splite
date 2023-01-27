@@ -8,7 +8,7 @@ module.exports = class clearCrownChannelCommand extends Command {
         super(client, {
             name: 'clearcrownchannel', aliases: ['clearcc', 'ccc'], usage: 'clearcrownchannel', description: oneLine`
         clears the crown message text channel for your server.
-      `, type: client.types.ADMIN, userPermissions: ['MANAGE_GUILD'], examples: ['clearcrownchannel'],
+      `, type: client.types.ADMIN, userPermissions: ['ManageGuild'], examples: ['clearcrownchannel'],
         });
     }
 
@@ -39,9 +39,9 @@ module.exports = class clearCrownChannelCommand extends Command {
             .setTitle('Settings: `Crown`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`crown channel\` was successfully cleared. ${success}`)
-            .addFields([{name: 'Role', value:  crownRole?.toString() || '`None`', inline:  true}])
-            .addFields([{name: 'Schedule', value:  `\`${crownSchedule ? crownSchedule : 'None'}\``, inline:  true}])
-            .addFields([{name: 'Status', value:  '`disabled`'}])
+            .addFields([{name: 'Role', value: crownRole?.toString() || '`None`', inline: true}])
+            .addFields([{name: 'Schedule', value: `\`${crownSchedule ? crownSchedule : 'None'}\``, inline: true}])
+            .addFields([{name: 'Status', value: '`disabled`'}])
             // .addFields([{name: 'Message', value:  this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),

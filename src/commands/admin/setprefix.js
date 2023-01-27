@@ -12,7 +12,7 @@ module.exports = class SetPrefixCommand extends Command {
             description:
                 'Sets the command `prefix` for your server. The max `prefix` length is 3 characters.',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setprefix !', 'clearprefix'],
         });
     }
@@ -49,7 +49,7 @@ module.exports = class SetPrefixCommand extends Command {
                     .setTitle('Settings: `System`')
                     .setThumbnail(context.guild.iconURL({dynamic: true}))
                     .setDescription(`The \`prefix\` was successfully updated. ${success}`)
-                    .addFields([{name: 'Prefix', value:  `\`${oldPrefix}\` ➔ \`${prefix}\``}])
+                    .addFields([{name: 'Prefix', value: `\`${oldPrefix}\` ➔ \`${prefix}\``}])
                     .setFooter({
                         text: this.getUserIdentifier(context.author),
                         iconURL: this.getAvatarURL(context.author)

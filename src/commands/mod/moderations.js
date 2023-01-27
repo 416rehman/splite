@@ -18,7 +18,7 @@ module.exports = class modActivityCommand extends Command {
                 'modactivity @CoolRole',
                 'modactivity @split 7',
             ],
-            userPermissions: ['VIEW_AUDIT_LOG'],
+            userPermissions: ['ViewAuditLog'],
             slashCommand: new SlashCommandBuilder()
                 .addIntegerOption(d => d.setName('days').setDescription('The number of days to filter by.'))
                 .addRoleOption(r => r.setName('role').setDescription('The role to get the mod activity of.'))

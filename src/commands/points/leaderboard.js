@@ -1,6 +1,6 @@
 const Command = require('../Command.js');
 const ButtonMenu = require('../ButtonMenu.js');
-const {EmbedBuilder, ButtonStyle,ActionRowBuilder, ButtonBuilder, ComponentType} = require('discord.js');
+const {EmbedBuilder, ButtonStyle, ActionRowBuilder, ButtonBuilder, ComponentType} = require('discord.js');
 const {oneLine} = require('common-tags');
 const emojis = require('../../utils/emojis.json');
 const {SlashCommandBuilder} = require('discord.js');
@@ -17,7 +17,7 @@ module.exports = class LeaderboardCommand extends Command {
         The max leaderboard size is 25.
       `,
             type: client.types.POINTS,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
             examples: ['leaderboard 20'],
             slashCommand: new SlashCommandBuilder().addIntegerOption(i => i.setName('members').setDescription('The number of members to show in the leaderboard.').setRequired(false))
         });
@@ -79,7 +79,7 @@ module.exports = class LeaderboardCommand extends Command {
                 .setLabel('Activity Leaderboard')
                 .setStyle(ButtonStyle.Secondary);
             activityButton.setEmoji(emojis.info.match(/(?<=:)(.*?)(?=>)/)[1].split(':')[1]);
-            const moderationButton = context.member.permissions.has('VIEW_AUDIT_LOG') && new ButtonBuilder()
+            const moderationButton = context.member.permissions.has('ViewAuditLog') && new ButtonBuilder()
                 .setCustomId('moderations')
                 .setLabel('Moderation Leaderboard')
                 .setStyle(ButtonStyle.Secondary);

@@ -11,7 +11,7 @@ module.exports = class SetModRoleCommand extends Command {
             description:
                 'Sets the `mod role` for your server.\nUse `clearmodrole` to clear the current `mod role`.',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setmodrole @Mod', 'clearmodrole'],
         });
     }
@@ -48,7 +48,7 @@ module.exports = class SetModRoleCommand extends Command {
             const payload = {
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Mod Role', value:  `${oldModRole}` || '`None`'}])
+                        .addFields([{name: 'Current Mod Role', value: `${oldModRole}` || '`None`'}])
                         .setDescription(this.description),
                 ],
             };
@@ -67,7 +67,7 @@ module.exports = class SetModRoleCommand extends Command {
         this.client.db.settings.updateModRoleId.run(modRole.id, context.guild.id);
 
         const payload = ({
-            embeds: [embed.addFields([{name: 'Mod Role', value:  `${oldModRole} ➔ ${modRole}`}])
+            embeds: [embed.addFields([{name: 'Mod Role', value: `${oldModRole} ➔ ${modRole}`}])
                 .setDescription(`The \`mod role\` was successfully updated. ${success}\nUse \`clearmodrole\` to clear the current \`mod role\`.`)],
         });
 

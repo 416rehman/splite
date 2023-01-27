@@ -43,7 +43,7 @@ module.exports = class BlastCommand extends Command {
                 systemChannel.viewable &&
                 systemChannel
                     .permissionsFor(guild.members.me)
-                    .has(['SEND_MESSAGES', 'EMBED_LINKS'])
+                    .has(['SendMessages', 'EmbedLinks'])
             ) {
                 const embed = new EmbedBuilder()
                     .setTitle(`${this.client.name} System Message`)

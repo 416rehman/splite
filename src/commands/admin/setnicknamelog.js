@@ -14,7 +14,7 @@ module.exports = class SetNicknameLogCommand extends Command {
         \nUse \`clearnicknamelog\` to clear the current \`nickname log\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setnicknamelog #bot-log', 'clearnicknamelog'],
         });
     }
@@ -46,7 +46,7 @@ module.exports = class SetNicknameLogCommand extends Command {
             const payload = ({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Nickname Log', value:  `${oldNicknameLog}`}])
+                        .addFields([{name: 'Current Nickname Log', value: `${oldNicknameLog}`}])
                         .setDescription(this.description),
                 ],
             });

@@ -15,7 +15,7 @@ module.exports = class SetFarewellChannelCommand extends Command {
         A \`farewell message\` must also be set to enable farewell messages.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setfarewellchannel #general', 'clearfarewellchannel'],
         });
     }

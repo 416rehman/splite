@@ -20,7 +20,7 @@ module.exports = class ToggleAnonymous extends Command {
         Enables or disables the /anonymous slash command for the server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['toggleanon'],
         });
     }

@@ -13,8 +13,8 @@ module.exports = class clearVerificationChannelCommand extends Command {
         Clears the verification text channel for your server.
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearverificationchannel'],
         });
     }
@@ -74,7 +74,7 @@ module.exports = class clearVerificationChannelCommand extends Command {
                     name: 'Verification Channel',
                     value: `${oldVerificationChannel}  ➔ \`None\``
                 })
-                .addFields([{name: 'Status', value:  `${oldStatus} ➔ \`${statusUpdate}\``}]),],
+                .addFields([{name: 'Status', value: `${oldStatus} ➔ \`${statusUpdate}\``}]),],
         };
 
         this.sendReply(context, payload);

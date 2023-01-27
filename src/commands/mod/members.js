@@ -12,8 +12,8 @@ module.exports = class MembersCommand extends Command {
             usage: 'members <role mention/ID/name>',
             description: 'Displays members with the specified role. If no role is specified, displays how many server members are online, busy, AFK, and offline.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'MANAGE_ROLES'],
-            userPermissions: ['MANAGE_ROLES'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'ManageRoles'],
+            userPermissions: ['ManageRoles'],
             examples: ['members @bots', 'members 711797614697250856', 'members bots',],
             slashCommand: new SlashCommandBuilder()
                 .addRoleOption(r => r.setName('role').setDescription('The role to display members for'))

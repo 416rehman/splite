@@ -16,7 +16,7 @@ module.exports = class SetCrownRoleCommand extends Command {
         To disable the crown feature, run this command without providing a role.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setcrownrole @Crowned', 'clearcrownrole'],
         });
     }
@@ -50,9 +50,9 @@ module.exports = class SetCrownRoleCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Settings: `Crown`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addFields([{name: 'Channel', value:  crownChannel?.toString() || '`None`', inline:  true}])
-            .addFields([{name: 'Schedule', value:  `\`${crownSchedule ? crownSchedule : 'None'}\``, inline:  true}])
-            .addFields([{name: 'Message', value:  this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
+            .addFields([{name: 'Channel', value: crownChannel?.toString() || '`None`', inline: true}])
+            .addFields([{name: 'Schedule', value: `\`${crownSchedule ? crownSchedule : 'None'}\``, inline: true}])
+            .addFields([{name: 'Message', value: this.client.utils.replaceCrownKeywords(crownMessage) || '`None`'}])
             .setFooter({
                 text: context.member.displayName, iconURL: this.getAvatarURL(context.author),
             })

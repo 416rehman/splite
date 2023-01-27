@@ -17,7 +17,7 @@ module.exports = class findStatusCommand extends Command {
         *Searches only online members.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['findstatus #general cool status'],
             disabled: !client.intents.find(n => n === GatewayIntentBits.GuildPresences), // if guild presences intent is not enabled, disable this command
             slashCommand: new SlashCommandBuilder().addRoleOption(r => r.setName('role').setRequired(false).setDescription('The role to search for members in.')).addStringOption(t => t.setName('text').setDescription('The text to search for.')),

@@ -15,7 +15,7 @@ module.exports = class SetWelcomeChannelCommand extends Command {
         \nUse \`clearwelcomechannel\` to clear the current \`welcome channel\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setwelcomechannel #general', 'clearwelcomechannel'],
         });
     }

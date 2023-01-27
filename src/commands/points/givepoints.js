@@ -1,7 +1,7 @@
 const Command = require('../Command.js');
-const { EmbedBuilder } = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const emojis = require('../../utils/emojis.json');
-const { SlashCommandBuilder } = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class GivePointsCommand extends Command {
     constructor(client) {
@@ -21,12 +21,12 @@ module.exports = class GivePointsCommand extends Command {
 
     async run(message, args) {
         if (args.length < 2) {
-            const payload = { embeds: [this.createErrorEmbed('You must specify a user and an amount of points to give')] };
+            const payload = {embeds: [this.createErrorEmbed('You must specify a user and an amount of points to give')]};
             return this.sendReplyAndDelete(message, payload);
         }
         const member = await this.getGuildMember(message.guild, args[0]);
         if (!member) {
-            const payload = { embeds: [this.createErrorEmbed('Please mention a user or provide a valid user ID')] };
+            const payload = {embeds: [this.createErrorEmbed('Please mention a user or provide a valid user ID')]};
             return this.sendReplyAndDelete(message, payload);
         }
 
@@ -69,7 +69,7 @@ module.exports = class GivePointsCommand extends Command {
 
         // Remove points
         this.client.db.users.updatePoints.run(
-            { points: -amount },
+            {points: -amount},
             context.author.id,
             context.guild.id
         );
@@ -78,23 +78,19 @@ module.exports = class GivePointsCommand extends Command {
             .pluck()
             .get(member.id, context.guild.id);
         this.client.db.users.updatePoints.run(
-            { points: amount },
+            {points: amount},
             member.id,
             context.guild.id
         );
-        let description;
-        if (amount === 1)
-            description = `${emojis.success} Successfully transferred **${amount}** points ${emojis.point} to ${member}!`;
-        else
-            description = `${emojis.success} Successfully transferred **${amount}** points ${emojis.point} to ${member}!`;
+        let description = `${emojis.success} Successfully transferred **${amount}** points ${emojis.point} to ${member}!`;
         const embed = new EmbedBuilder()
             .setTitle(`${this.getUserIdentifier(member)}'s Points ${emojis.point}`)
             .setThumbnail(this.getAvatarURL(member))
             .setDescription(description)
             .addFields(
-                { name: 'From', value: context.member.toString(), inline: true },
-                { name: 'To', value: member.toString(), inline: true },
-                { name: 'Points', value: `\`${oldPoints}\` ➔ \`${amount + oldPoints}\``, inline: true }
+                {name: 'From', value: context.member.toString(), inline: true},
+                {name: 'To', value: member.toString(), inline: true},
+                {name: 'Points', value: `\`${oldPoints}\` ➔ \`${amount + oldPoints}\``, inline: true}
             )
             .setFooter({
                 text: this.getUserIdentifier(context.member),
@@ -102,7 +98,10 @@ module.exports = class GivePointsCommand extends Command {
             })
             .setTimestamp();
 
-        const payload = { embeds: [embed] };
+        const payload = {
+            content: `Giving ${amount} points to ${member}`,
+            embeds: [embed]
+        };
         this.sendReply(context, payload);
     }
 };

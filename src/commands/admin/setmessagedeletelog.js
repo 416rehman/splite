@@ -14,7 +14,7 @@ module.exports = class SetMessageDeleteLogCommand extends Command {
         \nUse \`clearmessagedeletelog\` to clear the current \`message delete log\`.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setmessagedeletelog #bot-log', 'clearmessagedeletelog'],
         });
     }

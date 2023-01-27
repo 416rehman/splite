@@ -1,5 +1,5 @@
 const Command = require('../Command.js');
-const {ButtonBuilder,ActionRowBuilder, EmbedBuilder, ButtonStyle, ComponentType} = require('discord.js');
+const {ButtonBuilder, ActionRowBuilder, EmbedBuilder, ButtonStyle, ComponentType} = require('discord.js');
 const {SlashCommandBuilder} = require('discord.js');
 
 module.exports = class KickCommand extends Command {
@@ -9,8 +9,8 @@ module.exports = class KickCommand extends Command {
             usage: 'kick <user mention/ID> [reason]',
             description: 'Kicks a member from your server.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'KICK_MEMBERS'],
-            userPermissions: ['KICK_MEMBERS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'KickMembers'],
+            userPermissions: ['KickMembers'],
             examples: ['kick @split'],
             exclusive: true,
             slashCommand: new SlashCommandBuilder()
@@ -110,9 +110,9 @@ module.exports = class KickCommand extends Command {
                         const embed = new EmbedBuilder()
                             .setTitle('Kick Member')
                             .setDescription(`${member} was successfully kicked.`)
-                            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-                            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-                            .addFields([{name: 'Reason', value:  reason}])
+                            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+                            .addFields([{name: 'Member', value: member.toString(), inline: true}])
+                            .addFields([{name: 'Reason', value: reason}])
                             .setFooter({
                                 text: context.member.displayName,
                                 iconURL: context.author.displayAvatarURL({

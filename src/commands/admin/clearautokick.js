@@ -13,7 +13,7 @@ module.exports = class clearautokickCommand extends Command {
         Disables \`auto kick\` when enough warns have been issued.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearautokick'],
         });
     }
@@ -45,7 +45,7 @@ module.exports = class clearautokickCommand extends Command {
 
         this.client.db.settings.updateAutoKick.run(null, context.guild.id);
 
-        const payload = {embeds: [embed.addFields([{name: 'Auto Kick', value:  `\`${autoKick}\` ➔ \`disabled\``}]),],};
+        const payload = {embeds: [embed.addFields([{name: 'Auto Kick', value: `\`${autoKick}\` ➔ \`disabled\``}]),],};
 
         this.sendReply(context, payload);
     }

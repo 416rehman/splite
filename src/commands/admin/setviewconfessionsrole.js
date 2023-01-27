@@ -20,8 +20,8 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
         \nUse \`clearviewconfessionsrole\` to clear the current \`view-confessions role\`
       `,
             type: client.types.ADMIN,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
-            userPermissions: ['MANAGE_GUILD'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
+            userPermissions: ['ManageGuild'],
             examples: [
                 'setviewconfessionsrole @admins',
                 'clearviewconfessionsrole',
@@ -62,7 +62,7 @@ module.exports = class SetViewConfessionsRoleCommand extends Command {
         if (!role) {
             const payload = {
                 embeds: [embed
-                    .addFields([{name: 'Role', value:  oldViewConfessionsRole, inline:  true}])
+                    .addFields([{name: 'Role', value: oldViewConfessionsRole, inline: true}])
                     .setDescription(this.description)
                 ]
             };

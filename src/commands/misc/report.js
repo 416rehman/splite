@@ -11,7 +11,7 @@ module.exports = class reportCommand extends Command {
             aliases: ['bugreport', 'reportbug', 'report', 'bug', 'rb', 'br'],
             description: 'report a bug',
             type: client.types.INFO,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'AddReactions'],
             cooldown: 5,
             slashCommand: new SlashCommandBuilder()
                 .addSubcommand((subcommand) => subcommand
@@ -70,8 +70,8 @@ function sendBugReport(report, context) {
         .setTitle('Bug Report')
         .setThumbnail(reportChannel.guild.iconURL({dynamic: true}))
         .setDescription(report)
-        .addFields([{name: 'User', value:  context.member.toString(), inline:  true}])
-        .addFields([{name: 'Server', value:  context.guild.name, inline:  true}])
+        .addFields([{name: 'User', value: context.member.toString(), inline: true}])
+        .addFields([{name: 'Server', value: context.guild.name, inline: true}])
         .setFooter({
             text: this.getUserIdentifier(context.member), iconURL: this.getAvatarURL(context.member),
         })
@@ -90,8 +90,8 @@ function sendBugReport(report, context) {
         Successfully sent bug report!
          ${this.client.owners[0] && `To further discuss your issue, contact <@${this.client.owners[0]}>`}
       `)
-        .addFields([{name: 'Member', value:  context.member.toString(), inline:  true}])
-        .addFields([{name: 'Message', value:  report}])
+        .addFields([{name: 'Member', value: context.member.toString(), inline: true}])
+        .addFields([{name: 'Message', value: report}])
         .setFooter({
             text: this.getUserIdentifier(context.member), iconURL: this.getAvatarURL(context.member),
         })

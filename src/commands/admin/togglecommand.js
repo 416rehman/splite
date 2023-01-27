@@ -17,7 +17,7 @@ module.exports = class ToggleCommandCommand extends Command {
     )}\` commands cannot be disabled.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['togglecommand ping'],
         });
     }
@@ -91,7 +91,7 @@ module.exports = class ToggleCommandCommand extends Command {
             .setTitle('Settings: `System`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(description)
-            .addFields([{name: 'Disabled Commands', value:  disabledCommands, inline:  true}])
+            .addFields([{name: 'Disabled Commands', value: disabledCommands, inline: true}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),

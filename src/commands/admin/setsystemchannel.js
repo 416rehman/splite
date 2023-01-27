@@ -15,7 +15,7 @@ module.exports = class SetSystemChannelCommand extends Command {
         as ${client.name} requires a \`system channel\` to notify you about important errors. \n Use \`clearsystemchannel\` to clear the current \`system channel\`
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setsystemchannel #general', 'clearsystemchannel'],
         });
     }
@@ -47,7 +47,7 @@ module.exports = class SetSystemChannelCommand extends Command {
             return context.channel.send({
                 embeds: [
                     embed
-                        .addFields([{name: 'Current System Channel', value:  `${oldSystemChannel}`}])
+                        .addFields([{name: 'Current System Channel', value: `${oldSystemChannel}`}])
                         .setDescription(this.description),
                 ],
             });

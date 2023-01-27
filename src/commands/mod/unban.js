@@ -9,8 +9,8 @@ module.exports = class UnbanCommand extends Command {
             usage: 'unban <user ID> [reason]',
             description: 'Unbans a member from your server.',
             type: client.types.MOD,
-            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS', 'BAN_MEMBERS'],
-            userPermissions: ['BAN_MEMBERS'],
+            clientPermissions: ['SendMessages', 'EmbedLinks', 'BanMembers'],
+            userPermissions: ['BanMembers'],
             examples: ['unban 134672335474130944'],
             slashCommand: new SlashCommandBuilder()
                 .addStringOption(u => u.setName('userid').setDescription('The user ID to unban').setRequired(true))
@@ -53,9 +53,9 @@ module.exports = class UnbanCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Unban Member')
             .setDescription(`${user.tag} was successfully unbanned.`)
-            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-            .addFields([{name: 'Member', value:  user.tag, inline:  true}])
-            .addFields([{name: 'Reason', value:  reason}])
+            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+            .addFields([{name: 'Member', value: user.tag, inline: true}])
+            .addFields([{name: 'Reason', value: reason}])
             .setFooter({
                 text: this.getUserIdentifier(context.member),
                 iconURL: this.getAvatarURL(context.author),

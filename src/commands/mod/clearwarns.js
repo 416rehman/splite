@@ -9,7 +9,7 @@ module.exports = class ClearWarnsCommand extends Command {
             usage: 'clearwarns <user mention/ID> [reason]',
             description: 'Clears all the warns of the provided member.',
             type: client.types.MOD,
-            userPermissions: ['KICK_MEMBERS'],
+            userPermissions: ['KickMembers'],
             examples: ['clearwarns @split'],
             slashCommand: new SlashCommandBuilder()
                 .addUserOption(u => u.setRequired(true).setName('user').setDescription('The user to clear the warns of.'))
@@ -56,10 +56,10 @@ module.exports = class ClearWarnsCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle('Clear Warns')
             .setDescription(`${member}'s warns have been successfully cleared.`)
-            .addFields([{name: 'Moderator', value:  context.member.toString(), inline:  true}])
-            .addFields([{name: 'Member', value:  member.toString(), inline:  true}])
-            .addFields([{name: 'Warn Count', value:  '`0`', inline:  true}])
-            .addFields([{name: 'Reason', value:  reason}])
+            .addFields([{name: 'Moderator', value: context.member.toString(), inline: true}])
+            .addFields([{name: 'Member', value: member.toString(), inline: true}])
+            .addFields([{name: 'Warn Count', value: '`0`', inline: true}])
+            .addFields([{name: 'Reason', value: reason}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),

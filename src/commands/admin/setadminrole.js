@@ -12,7 +12,7 @@ module.exports = class SetAdminRoleCommand extends Command {
             description:
                 'Sets the `admin role` for your server.\nTo clear the `admin role`, type `clearadminrole`',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['setadminrole @Admin', 'clearadminrole'],
         });
     }
@@ -49,7 +49,7 @@ module.exports = class SetAdminRoleCommand extends Command {
             const payload = {
                 embeds: [
                     embed
-                        .addFields([{name: 'Current Admin Role', value:  `${oldAdminRole}`}])
+                        .addFields([{name: 'Current Admin Role', value: `${oldAdminRole}`}])
                         .setDescription(this.description),
                 ]
             };
@@ -72,7 +72,7 @@ module.exports = class SetAdminRoleCommand extends Command {
         );
 
         const payload = {
-            embeds: [embed.addFields([{name: 'Admin Role', value:  `${oldAdminRole} ➔ ${adminRole}`}]).setDescription(
+            embeds: [embed.addFields([{name: 'Admin Role', value: `${oldAdminRole} ➔ ${adminRole}`}]).setDescription(
                 `The \`admin role\` was successfully updated. ${success}\nTo clear the \`admin role\`, type \`clearadminrole\``
             ),]
         };

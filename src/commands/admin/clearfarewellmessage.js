@@ -13,7 +13,7 @@ module.exports = class clearFarewellMessageCommand extends Command {
         clears the message ${client.name} will say when someone leaves your server.
       `,
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             examples: ['clearfarewellmessage'],
         });
     }
@@ -40,7 +40,7 @@ module.exports = class clearFarewellMessageCommand extends Command {
             .setTitle('Settings: `Farewells`')
             .setThumbnail(context.guild.iconURL({dynamic: true}))
             .setDescription(`The \`farewell message\` was successfully cleared. ${success}`)
-            .addFields([{name: 'Channel', value:  farewellChannel?.toString() || '`None`', inline:  true}])
+            .addFields([{name: 'Channel', value: farewellChannel?.toString() || '`None`', inline: true}])
             .setFooter({
                 text: this.getUserIdentifier(context.author),
                 iconURL: this.getAvatarURL(context.author),
@@ -54,8 +54,8 @@ module.exports = class clearFarewellMessageCommand extends Command {
 
         const payload = {
             embeds: [embed
-                .addFields([{name: 'Status', value:  statusUpdate, inline:  true}])
-                .addFields([{name: 'Message', value:  '`None`'}]),],
+                .addFields([{name: 'Status', value: statusUpdate, inline: true}])
+                .addFields([{name: 'Message', value: '`None`'}]),],
         };
 
         this.sendReply(context, payload);

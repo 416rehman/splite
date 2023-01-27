@@ -1,8 +1,8 @@
 const Command = require('../Command.js');
-const { EmbedBuilder, GatewayIntentBits } = require('discord.js');
+const {EmbedBuilder, GatewayIntentBits} = require('discord.js');
 const moment = require('moment');
 const emojis = require('../../utils/emojis.json');
-const { SlashCommandBuilder } = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 
 const statuses = {
     online: `${emojis.online} \`Online\``,
@@ -28,7 +28,7 @@ const flags = {
     BOT_OWNER: `${emojis.owner} \`Bot Owner\``
 };
 
-const elevatedPerms = ['ADMINISTRATOR', 'MANAGE_GUILD', 'MANAGE_ROLES', 'MANAGE_CHANNELS', 'BAN_MEMBERS', 'KICK_MEMBERS', 'MANAGE_MESSAGES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS_AND_STICKERS'];
+const elevatedPerms = ['Administrator', 'ManageGuild', 'ManageRoles', 'ManageChannels', 'BanMembers', 'KickMembers', 'ManageMessages', 'ManageWebhooks', 'ManageEmojisAndStickers'];
 
 module.exports = class WhoIsCommand extends Command {
     constructor(client) {
@@ -87,8 +87,8 @@ module.exports = class WhoIsCommand extends Command {
         const KeyPerms = targetUser.permissions
             .toArray()
             .filter((p) => elevatedPerms.includes(p));
-        if (KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex((p) => p === 'ADMINISTRATOR'), 0);
-        if (KeyPerms.includes('MANAGE_GUILD') && KeyPerms.includes('ADMINISTRATOR')) KeyPerms.move(KeyPerms.findIndex((p) => p === 'MANAGE_GUILD'), 1); else if (KeyPerms.includes('MANAGE_GUILD')) KeyPerms.move(KeyPerms.findIndex((p) => p === 'MANAGE_GUILD'), 0);
+        if (KeyPerms.includes('Administrator')) KeyPerms.move(KeyPerms.findIndex((p) => p === 'Administrator'), 0);
+        if (KeyPerms.includes('ManageGuild') && KeyPerms.includes('Administrator')) KeyPerms.move(KeyPerms.findIndex((p) => p === 'ManageGuild'), 1); else if (KeyPerms.includes('ManageGuild')) KeyPerms.move(KeyPerms.findIndex((p) => p === 'ManageGuild'), 0);
         // Trim roles
         let roles = this.client.utils.trimArray([...targetUser.roles.cache.values()].filter((r) => !r.name.startsWith('#')));
         roles = this.client.utils
@@ -98,17 +98,17 @@ module.exports = class WhoIsCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle(`${targetUser.displayName}'s Information`)
             .setThumbnail(this.getAvatarURL(targetUser.user))
-            .addFields([{ name: 'User', value: targetUser.toString(), inline: true }])
-            .addFields([{ name: 'Discriminator', value: `\`#${targetUser.user.discriminator}\``, inline: true }])
-            .addFields([{ name: 'ID', value: `\`${targetUser.id}\``, inline: true }])
-            .addFields([{ name: 'Bot', value: `\`${targetUser.user.bot}\``, inline: true }])
+            .addFields([{name: 'User', value: targetUser.toString(), inline: true}])
+            .addFields([{name: 'Discriminator', value: `\`#${targetUser.user.discriminator}\``, inline: true}])
+            .addFields([{name: 'ID', value: `\`${targetUser.id}\``, inline: true}])
+            .addFields([{name: 'Bot', value: `\`${targetUser.user.bot}\``, inline: true}])
             .addFields({
                 name: 'Voted on Top.gg', value: (await this.client.utils.checkTopGGVote(
                     this.client,
                     targetUser.id
                 )) ? 'Yes' : 'No', inline: true
             })
-            .addFields([{ name: 'Highest Role', value: targetUser.roles.highest.toString(), inline: true }])
+            .addFields([{name: 'Highest Role', value: targetUser.roles.highest.toString(), inline: true}])
             .addFields([{
                 name: 'Joined server on',
                 value: `\`${moment(targetUser.joinedAt).format('MMM DD YYYY')}\``,
@@ -138,13 +138,13 @@ module.exports = class WhoIsCommand extends Command {
             value: userFlags.map((flag) => flags[flag]).join('\n') || '`None`',
             inline: true
         }]);
-        await embed.addFields({ name: 'Roles', value: roles || '`None`' });
+        await embed.addFields({name: 'Roles', value: roles || '`None`'});
         if (KeyPerms.length > 0) await embed.addFields({
             name: 'Key Permissions',
             value: `${context.guild.ownerId === targetUser.id ? emojis.owner + ' **`SERVER OWNER`**, ' : ''} \`${KeyPerms.join('`, `')}\``
         });
 
-        const payload = { embeds: [embed] };
+        const payload = {embeds: [embed]};
         await this.sendReply(context, payload);
     }
 };

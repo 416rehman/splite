@@ -7,7 +7,7 @@ module.exports = class WelcomeSettingsCommandGroup extends Command {
             name: 'welcome-group',
             description: 'Welcome Management - Farewell posts a message to the farewell channel when a member joins the server',
             type: client.types.ADMIN,
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: ['ManageGuild'],
             slashCommand: new SlashCommandBuilder().setName('welcome')
                 .addSubcommandGroup((o) => o.setName('channel').setDescription('Channel where new members joining the server will be announced')
                     .addSubcommand((o) => o.setName('set').setDescription('Set the welcome channel - To view current channel, don\'t provide a channel').addChannelOption(p => p.setName('channel').setRequired(false).setDescription('The channel to set as the welcome channel. To view current channel, don\'t provide this option')))
