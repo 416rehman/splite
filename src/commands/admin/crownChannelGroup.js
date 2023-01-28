@@ -9,6 +9,7 @@ module.exports = class CrownChannelCommandGroup extends Command {
             type: client.types.ADMIN,
             userPermissions: ['ManageGuild'],
             slashCommand: new SlashCommandBuilder()
+                .setName('crownchannel')
                 .addSubcommand((o) => o.setName('set').setDescription('Set the crown channel - To view current channel, don\'t provide a channel').addChannelOption(p => p.setName('channel').setRequired(false).setDescription('The channel to set as the crown channel. To view current channel, don\'t provide this option')))
                 .addSubcommand((o) => o.setName('clear').setDescription('Clear the crown channel')),
             subCommandMappings: {
