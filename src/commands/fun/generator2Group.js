@@ -12,7 +12,14 @@ module.exports = class GenerateCommandGroup2 extends Command {
                 .addSubcommand((o) => o.setName('triggered').setDescription('Generate a triggered image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User to generate the image for')))
                 .addSubcommand((o) => o.setName('trumptweet').setDescription('Generate a trump tweet image from text').addStringOption((s) => s.setName('text').setRequired(true).setDescription('The text to use')))
                 .addSubcommand((o) => o.setName('wanted').setDescription('Generate a wanted image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User to generate the image for')))
-                .addSubcommand((o) => o.setName('wasted').setDescription('Generate a wasted image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User to generate the image for')))
+                .addSubcommand((o) => o.setName('wasted').setDescription('Generate a wasted image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User to generate the image for'))),
+            subCommandMappings: {
+                trap: 'trap',
+                triggered: 'triggered',
+                trumptweet: 'trumptweet',
+                wanted: 'wanted',
+                wasted: 'wasted',
+            }
         });
     }
 };

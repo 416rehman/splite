@@ -27,7 +27,29 @@ module.exports = class FilterCommandGroup extends Command {
                 .addSubcommand((o) => o.setName('sepia').setDescription('Sepia an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply sepia filter to')))
                 .addSubcommand((o) => o.setName('sharpen').setDescription('Sharpen an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to apply sharpen filter to')))
                 .addSubcommand((o) => o.setName('unsharpen').setDescription('Unsharpen an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to unsharpen')))
-                .addSubcommand((o) => o.setName('frame').setDescription('Frame an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to frame')))
+                .addSubcommand((o) => o.setName('frame').setDescription('Frame an image').addUserOption((u) => u.setName('user').setRequired(false).setDescription('User\'s avatar to frame'))),
+            subCommandMappings: {
+                blur: 'blur',
+                blurple: 'blurple',
+                contrast: 'contrast',
+                circle: 'circle',
+                deepfry: 'deepfry',
+                distort: 'distort',
+                emboss: 'emboss',
+                gay: 'gay',
+                glitch: 'glitch',
+                greyple: 'greyple',
+                greyscale: 'greyscale',
+                invert: 'invert',
+                magik: 'magik',
+                pixelize: 'pixelize',
+                posterize: 'posterize',
+                redple: 'redple',
+                sepia: 'sepia',
+                sharpen: 'sharpen',
+                unsharpen: 'unsharpen',
+                frame: 'frame'
+            }
         });
     }
 };

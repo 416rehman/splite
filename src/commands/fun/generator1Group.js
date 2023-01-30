@@ -32,7 +32,35 @@ module.exports = class GenerateCommandGroup extends Command {
                 .addSubcommand((o) => o.setName('sniper').setDescription('Generate a sniper image').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the sniper image for')))
                 .addSubcommand((o) => o.setName('thanos').setDescription('Generate a thanos image').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the thanos image for')))
                 .addSubcommand((o) => o.setName('threats').setDescription('Generate a threats image').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the threats image for')))
-                .addSubcommand((o) => o.setName('tobecontinued').setDescription('Generate a to be continued image').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the to be continued image for')))
+                .addSubcommand((o) => o.setName('tobecontinued').setDescription('Generate a to be continued image').addUserOption(uo => uo.setRequired(false).setName('user').setDescription('The user to generate the to be continued image for'))),
+            subCommandMappings: {
+                'approved': 'approved',
+                'awooify': 'awooify',
+                'baguette': 'baguette',
+                'beautiful': 'beautiful',
+                'brazzers': 'brazzers',
+                'burn': 'burn',
+                'challenger': 'challenger',
+                'changemymind': 'changemymind',
+                'clyde': 'clyde',
+                'crush': 'crush',
+                'dictator': 'dictator',
+                'fire': 'fire',
+                'hate': 'hate',
+                'instagram': 'instagram',
+                'jail': 'jail',
+                'missionpassed': 'missionpassed',
+                'moustache': 'moustache',
+                'ps4': 'ps4',
+                'rejected': 'rejected',
+                'rip': 'rip',
+                'scary': 'scary',
+                'sniper': 'sniper',
+                'thanos': 'thanos',
+                'threats': 'threats',
+                'tobecontinued': 'tobecontinued'
+            }
+
         });
     }
 };
