@@ -1,10 +1,10 @@
 global.__basedir = __dirname;
 
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const {REST} = require('@discordjs/rest');
+const {Routes} = require('discord-api-types/v9');
 const AsciiTable = require('ascii-table');
-const { readdirSync } = require('fs');
-const { resolve, join } = require('path');
+const {readdirSync} = require('fs');
+const {resolve, join} = require('path');
 const Discord = require('discord.js');
 const {Statics} = require('./src/utils/utils');
 const logger = require('./src/utils/logger');
@@ -16,7 +16,7 @@ class CommandRegistrar extends Discord.Client {
     constructor() {
         super({
             partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-            allowedMentions: { parse: ['users', 'roles'], repliedUser: true },
+            allowedMentions: {parse: ['users', 'roles'], repliedUser: true},
             intents: intents
         });
         this.utils = require('./src/utils/utils');
@@ -39,6 +39,7 @@ class CommandRegistrar extends Discord.Client {
             OWNER: 'owner'
         };
         this.topics = {};
+        this.disabledCommands = config.disabledCommands || [];
     }
 
     loadTopics(path, type) {
@@ -96,7 +97,7 @@ class CommandRegistrar extends Discord.Client {
             process.exit(1);
         }
 
-        if (command.name && !command.disabled) {
+        if (command.name && !command.disabled && !this.disabledCommands.includes(command.name)) {
             // Map command
             this.commands.set(command.name, command);
 
@@ -126,14 +127,15 @@ class CommandRegistrar extends Discord.Client {
         this.logger.info('Started refreshing application (/) commands.');
         const commandsToRegister = this.commands.filter(
             (c) =>
-                c.slashCommand &&               // Must have a slashCommand property
-                !c.disabled &&                  // Must NOT be disabled
-                c.type !== this.types.OWNER &&  // Must not be an OWNER command
-                c.type !== this.types.MANAGER   // Must not be a MANAGER command
+                c.slashCommand &&                       // Must have a slashCommand property
+                !c.disabled &&                          // Must NOT be disabled
+                !this.disabledCommands.includes(c.name) && // Must NOT be disabled
+                c.type !== this.types.OWNER &&          // Must not be an OWNER command
+                c.type !== this.types.MANAGER           // Must not be a MANAGER command
         );
         console.log(`Registering ${commandsToRegister.size} commands...`);
 
-        const rest = new REST({ version: '9' }).setToken(this.config.token);
+        const rest = new REST({version: '9'}).setToken(this.config.token);
 
         // BULK OVERWRITE GLOBAL APP COMMANDS
         // If the command was already registered, and a new command with matching name is provided, it will be UPDATED.
@@ -176,6 +178,7 @@ class CommandRegistrar extends Discord.Client {
             (c) =>
                 c.slashCommand &&   // Must have a slashCommand component
                 !c.disabled &&      // Must not be disabled
+                !this.disabledCommands.includes(c.name) && // Must not be disabled
                 (c.type === this.types.OWNER || c.type === this.types.MANAGER)  // Must be either an OWNER or MANAGER command
         );
 
