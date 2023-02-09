@@ -67,7 +67,7 @@ module.exports = class WarnPurgeCommand extends Command {
             return this.sendErrorMessage(
                 context,
                 0,
-                'Please provide a context count between 1 and 100'
+                'Please provide a message count between 1 and 100'
             );
 
 

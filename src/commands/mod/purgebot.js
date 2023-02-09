@@ -91,7 +91,7 @@ module.exports = class PurgeBotCommand extends Command {
                     new EmbedBuilder()
                         .setTitle('Purgebot')
                         .setDescription(`Unable to find any bot messages or commands. 
-                            This context will be deleted after \`10 seconds\`.`)
+                            This message will be deleted after \`10 seconds\`.`)
                         .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
                         .addFields([{name: 'Found Messages', value: `\`${messages.size}\``, inline: true}])
                         .setFooter({
@@ -110,7 +110,7 @@ module.exports = class PurgeBotCommand extends Command {
                 const embed = new EmbedBuilder()
                     .setTitle('Purgebot')
                     .setDescription(`Successfully deleted **${msgs.size}** context(s). 
-                    This context will be deleted after \`10 seconds\`.`)
+                    This message will be deleted after \`10 seconds\`.`)
                     .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
                     .addFields([{name: 'Found Messages', value: `\`${msgs.size}\``, inline: true}])
                     .addFields([{name: 'Reason', value: reason}])

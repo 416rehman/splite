@@ -73,7 +73,7 @@ module.exports = class PurgeCommand extends Command {
             return this.sendErrorMessage(
                 context,
                 0,
-                'Please provide a context count between 1 and 100'
+                'Please provide a message count between 1 and 100'
             );
 
         // Check channel permissions
@@ -134,7 +134,7 @@ module.exports = class PurgeCommand extends Command {
                     .setDescription(
                         `
             Successfully deleted **${contexts.size}** context(s). 
-            This context will be deleted after \`10 seconds\`.
+            This message will be deleted after \`10 seconds\`.
           `
                     )
                     .addFields([{name: 'Channel', value: channel.toString(), inline: true}])

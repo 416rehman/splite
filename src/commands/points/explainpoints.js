@@ -38,7 +38,7 @@ module.exports = class ExplainPointsCommand extends Command {
             .pluck()
             .get(context.guild.id); // Get prefix
         const {
-            context_points: contextPoints,
+            message_points: messagePoints,
             command_points: commandPoints,
             voice_points: voicePoints,
         } = this.client.db.settings.selectPoints.get(context.guild.id);
@@ -51,7 +51,7 @@ module.exports = class ExplainPointsCommand extends Command {
             earningPoints += ` And if someone's feeling generous, they can give you points ${emojis.point} by using the \`${prefix}give\` command.\nAdditionally, points can be used to send anonymous contexts (Type **\`/anonymous\`**) in a server if allowed by admins.`;
 
         const pointsPer = stripIndent`
-      context Points   :: ${contextPoints} points per context
+      Message Points   :: ${messagePoints} points per message
       Command Points   :: ${commandPoints} points per command
       Voice Points     :: ${voicePoints} points per minute
       GeoGuessr Points :: 10 points per correct answer
@@ -96,16 +96,16 @@ module.exports = class ExplainPointsCommand extends Command {
         const embed = new EmbedBuilder()
             .setTitle(`${emojis.point} Points and Crown ${emojis.crown}`)
             .setThumbnail(context.guild.iconURL({dynamic: true}))
-            .addFields([{name: `Earning Points ${emojis.point}`, value:  earningPoints}])
+            .addFields([{name: `Earning Points ${emojis.point}`, value: earningPoints}])
             .setFooter({
                 text: context.member.displayName,
                 iconURL: this.getAvatarURL(context.author),
             })
             .setTimestamp();
         if (checkingPoints)
-            embed.addFields([{name: `Checking Points ${emojis.point}`, value:  checkingPoints}]);
-        if (leaderboard) embed.addFields([{name: 'The Leaderboard', value:  leaderboard}]);
-        embed.addFields([{name: `The Crown ${emojis.crown}`, value:  crown}]);
+            embed.addFields([{name: `Checking Points ${emojis.point}`, value: checkingPoints}]);
+        if (leaderboard) embed.addFields([{name: 'The Leaderboard', value: leaderboard}]);
+        embed.addFields([{name: `The Crown ${emojis.crown}`, value: crown}]);
 
 
         const payload = {embeds: [embed]};
