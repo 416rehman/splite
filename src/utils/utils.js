@@ -47,7 +47,7 @@ class Statics {
                                 // trim and split by comma
                                 obj[key] = process.env[envVar].trim().split(',').map(v => v.trim());
                             }
-                            console.log(`Set ${configFilename} value ${key} to environment variable ${envVar} with value ${process.env[envVar]}`);
+                            console.log(`Set ${configFilename} value ${key} to environment variable ${envVar} with value ${obj[key]}`);
                         }
                     }
                 }

@@ -241,7 +241,7 @@ module.exports = class SettingsCommand extends Command {
             }
             case 'c':
             case 'crown': {
-                if (context.guild.job.nextInvocation()) embed.addFields([{
+                if (context.guild.job?.nextInvocation()) embed.addFields([{
                     name: 'Next Crown Transfer',
                     value: `\`${context.guild.job.nextInvocation()}\``
                 }]);
