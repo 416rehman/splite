@@ -28,7 +28,7 @@ module.exports = class BlastCommand extends Command {
             return this.sendErrorMessage(
                 context,
                 0,
-                'Please provide a context to blast'
+                'Please provide a message to blast'
             );
 
         const guilds = [];

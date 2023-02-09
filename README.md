@@ -97,7 +97,7 @@ the repo on GitHub to help with development! ⭐
 *If you wish to run the bot over pm2, use the command `pm2 start`*
 <hr/>
 
-### Cloud Configuration
+#### Cloud Configuration
 
 Splite's configuration can be set via environment variables. This is useful for cloud deployments such as Heroku, and
 Repl.it.
@@ -120,6 +120,23 @@ Keep the following in mind when using environment variables:
 | apiKeys.topGG.api_mode.token: "q1w2e3" | SPLITE_APIKEYS_TOPGG_API_MODE_TOKEN=q1w2e3 |
 
 *For convenience, the bot will output an environment variable equivalent of your config file upon startup.*
+
+### Docker
+To run the bot in Docker, fill the `config.yaml` config file, and run the following commands:
+
+```bash
+docker build -t splite .
+docker run -d --name splite splite -v ./config.yaml:/home/node/app/config.yaml
+```
+
+You can also use environment variables by setting them in a `.env` file and running the following commands:
+
+```bash
+docker build -t splite .
+docker run -d --name splite --env-file .env splite
+```
+
+For more information on the environment variables, see [Cloud Configuration](#cloud-configuration).
 
 ## Modifying Functionality
 
