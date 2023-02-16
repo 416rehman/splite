@@ -34,11 +34,14 @@ module.exports = class clearPrefixCommand extends Command {
             defaultPrefix,
             context.guild.id
         );
-        context.guild.members.me.setNickname(
-            `[${this.client.db.settings.selectPrefix
-                .pluck()
-                .get(context.guild.id)}] ${this.client.name}`
-        );
+
+        // Set Nickname to include prefix
+        // context.guild.members.me.setNickname(
+        //     `[${this.client.db.settings.selectPrefix
+        //         .pluck()
+        //         .get(context.guild.id)}] ${this.client.name}`
+        // );
+
         const payload = {
             embeds: [new EmbedBuilder()
                 .setTitle('Settings: `System`')

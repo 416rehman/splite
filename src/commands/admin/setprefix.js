@@ -41,7 +41,9 @@ module.exports = class SetPrefixCommand extends Command {
         const oldPrefix = this.client.db.settings.selectPrefix.pluck().get(context.guild.id);
 
         this.client.db.settings.updatePrefix.run(prefix, context.guild.id);
-        await context.guild.members.me.setNickname(`[${this.client.db.settings.selectPrefix.pluck().get(context.guild.id)}] ${this.client.name}`);
+
+        // Set Nickname to include prefix
+        // await context.guild.members.me.setNickname(`[${this.client.db.settings.selectPrefix.pluck().get(context.guild.id)}] ${this.client.name}`);
 
         const payload = {
             embeds: [
