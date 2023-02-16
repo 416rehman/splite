@@ -333,7 +333,8 @@ class Client extends Discord.Client {
             }
         });
 
-        await (await guild.members.fetch(this.user.id)).setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
+        // Set Nickname to include prefix
+        // await (await guild.members.fetch(this.user.id)).setNickname(`[${this.db.settings.selectPrefix.pluck().get(guild.id)}] ${this.name}`);
     }
 
     async extractSettings(guild, createSettings) {
