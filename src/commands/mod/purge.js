@@ -87,17 +87,17 @@ module.exports = class PurgeCommand extends Command {
         if (!reason) reason = '`None`';
         if (reason.length > 1024) reason = reason.slice(0, 1021) + '...';
 
-        // Find member contexts if given
+        // Find member messages if given
         let messages;
         if (member) {
-            messages = (await channel.contexts.fetch({limit: amount})).filter(
+            messages = (await channel.messages.fetch({limit: amount})).filter(
                 (m) => m.member.id === member.id
             );
         }
         else messages = amount;
 
         if (messages.size === 0) {
-            // No contexts found
+            // No messages found
 
             context.channel
                 .send({
@@ -106,7 +106,7 @@ module.exports = class PurgeCommand extends Command {
                             .setTitle('Purge')
                             .setDescription(
                                 `
-            Unable to find any contexts from ${member}. 
+            Unable to find any messages from ${member}. 
             This message will be deleted after \`10 seconds\`.
           `
                             )
@@ -126,19 +126,19 @@ module.exports = class PurgeCommand extends Command {
                 .catch((err) => this.client.logger.error(err.stack));
         }
         else {
-            // Purge contexts
+            // Purge messages
 
-            channel.bulkDelete(messages, true).then((contexts) => {
+            channel.bulkDelete(messages, true).then((messages) => {
                 const embed = new EmbedBuilder()
                     .setTitle('Purge')
                     .setDescription(
                         `
-            Successfully deleted **${contexts.size}** context(s). 
+            Successfully deleted **${messages.size}** context(s). 
             This message will be deleted after \`10 seconds\`.
           `
                     )
                     .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
-                    .addFields([{name: 'Message Count', value: `\`${contexts.size}\``, inline: true}])
+                    .addFields([{name: 'Message Count', value: `\`${messages.size}\``, inline: true}])
                     .addFields([{name: 'Reason', value: reason}])
                     .setFooter({
                         text: context.member.displayName,
@@ -151,7 +151,7 @@ module.exports = class PurgeCommand extends Command {
                     embed
                         .spliceFields(1, 1, {
                             name: 'Found Messages',
-                            value: `\`${contexts.size}\``,
+                            value: `\`${messages.size}\``,
                             inline: true,
                         })
                         .spliceFields(1, 0, {

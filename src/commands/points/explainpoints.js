@@ -45,10 +45,10 @@ module.exports = class ExplainPointsCommand extends Command {
 
         // Points per
         let earningPoints =
-            stripIndent`You can earn points (${emojis.point}) in the following ways: by sending **contexts**, by using **commands**,` +
+            stripIndent`You can earn points (${emojis.point}) in the following ways: by sending **messages**, by using **commands**,` +
             ` playing geoGuessr, playing trivia, and spending time in **voice chat** ${emojis.voice}.`;
         if (!disabledCommands.includes('givepoints'))
-            earningPoints += ` And if someone's feeling generous, they can give you points ${emojis.point} by using the \`${prefix}give\` command.\nAdditionally, points can be used to send anonymous contexts (Type **\`/anonymous\`**) in a server if allowed by admins.`;
+            earningPoints += ` And if someone's feeling generous, they can give you points ${emojis.point} by using the \`${prefix}give\` command.\nAdditionally, points can be used to send anonymous messages (Type **\`/anonymous\`**) in a server if allowed by admins.`;
 
         const pointsPer = stripIndent`
       Message Points   :: ${messagePoints} points per message
