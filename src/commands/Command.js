@@ -842,7 +842,8 @@ class Command {
     async sendReply(context, payload) {
         try {
             if (context.commandId) // If the context is an interaction
-                return (await context.editReply(payload));
+                if (context.deferred) return await context.editReply(payload);
+                else return await context.reply(payload);
             else // If the context is a message
                 return context.loadingMessage ? await context.loadingMessage.edit(payload) : await context.reply(payload);
         }
