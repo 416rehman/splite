@@ -91,7 +91,7 @@ module.exports = class PurgeCommand extends Command {
         let messages;
         if (member) {
             messages = (await channel.messages.fetch({limit: amount})).filter(
-                (m) => m.member.id === member.id
+                (m) => m?.author?.id && m.author.id === member.id
             );
         }
         else messages = amount;
@@ -99,31 +99,26 @@ module.exports = class PurgeCommand extends Command {
         if (messages.size === 0) {
             // No messages found
 
-            context.channel
-                .send({
-                    embeds: [
-                        new EmbedBuilder()
-                            .setTitle('Purge')
-                            .setDescription(
-                                `
+            this.sendReplyAndDelete(context, {
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle('Purge')
+                        .setDescription(
+                            `
             Unable to find any messages from ${member}. 
             This message will be deleted after \`10 seconds\`.
           `
-                            )
-                            .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
-                            .addFields([{name: 'Member', value: member.toString()}])
-                            .addFields([{name: 'Found Messages', value: `\`${messages.size}\``, inline: true}])
-                            .setFooter({
-                                text: context.member.displayName,
-                                iconURL: this.getAvatarURL(context.author),
-                            })
-                            .setTimestamp()
-                    ],
-                })
-                .then((msg) => {
-                    setTimeout(() => msg.delete(), 10000);
-                })
-                .catch((err) => this.client.logger.error(err.stack));
+                        )
+                        .addFields([{name: 'Channel', value: channel.toString(), inline: true}])
+                        .addFields([{name: 'Member', value: member.toString()}])
+                        .addFields([{name: 'Found Messages', value: `\`${messages.size}\``, inline: true}])
+                        .setFooter({
+                            text: context.member.displayName,
+                            iconURL: this.getAvatarURL(context.author),
+                        })
+                        .setTimestamp()
+                ],
+            }, 10000);
         }
         else {
             // Purge messages
@@ -161,12 +156,13 @@ module.exports = class PurgeCommand extends Command {
                         });
                 }
 
-                context.channel
-                    .send({embeds: [embed]})
-                    .then((msg) => {
-                        setTimeout(() => msg.delete(), 5000);
-                    })
-                    .catch((err) => this.client.logger.error(err.stack));
+                this.sendReplyAndDelete(context, {embeds: [embed]}, 10000);
+                // context.channel
+                //     .send({embeds: [embed]})
+                //     .then((msg) => {
+                //         setTimeout(() => msg.delete(), 10000);
+                //     })
+                //     .catch((err) => this.client.logger.error(err.stack));
             });
         }
 
