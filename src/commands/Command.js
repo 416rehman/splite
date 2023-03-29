@@ -1,4 +1,4 @@
-const {EmbedBuilder} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
 const {permissions} = require('../utils/constants.json');
 const {Collection} = require('discord.js');
 const {fail} = require('../utils/emojis.json');
@@ -412,17 +412,24 @@ class Command {
     /**
      * Gets avatar from author/user/member
      * @param user the user to get avatar from
-     * @param type enforces avatar type (i.e 'png' or 'gif')
+     * @param extension the extension of the avatar
+     * @param size the size of the avatar
+     * @param forceStatic whether to force the avatar to be static (no gif)
      */
-    getAvatarURL(user, type) {
-        const options = {dynamic: true, size: 2048};
-        if (type) options.format = type;
+    getAvatarURL(user, extension, forceStatic = false, size = 2048) {
+        if (user?.avatarURL) return user.displayAvatarURL({forceStatic, size, extension});
+        else if (user?.user?.avatarURL) return user.user.displayAvatarURL({forceStatic, size, extension});
+        else {  // fallback to manual construction
+            if (user?.avatar?.startsWith('a_') || user?.user?.avatar?.startsWith('a_')) {
+                let ext = forceStatic ? 'png' : 'gif';
+                if (extension && extension !== 'gif') ext = extension;
 
-        if (user?.avatar?.startsWith('a_') || user?.user?.avatar?.startsWith('a_')) {
-            return `https://cdn.discordapp.com/avatars/${user.id || user.user.id}/${user.avatar || user.user.avatar}.gif?size=2048`;
-        }
-        else {
-            return `https://cdn.discordapp.com/avatars/${user.id || user.user.id}/${user.avatar || user.user.avatar}.png?size=2048`;
+                return `https://cdn.discordapp.com/avatars/${user.id || user.user.id}/${user.avatar || user.user.avatar}.${ext}?size=${size}`;
+            }
+            else {
+                let ext = extension || 'png';
+                return `https://cdn.discordapp.com/avatars/${user.id || user.user.id}/${user.avatar || user.user.avatar}.${ext}?size=${size}`;
+            }
         }
     }
 
@@ -860,6 +867,25 @@ class Command {
      */
     sendReplyAndDelete(context, payload, timeout = 10000) {
         this.sendReply(context, payload).then(m => setTimeout(() => m?.delete(), timeout));
+    }
+
+    async sendAmethystEmbed(context, image, payload = {}) {
+        const generatedPayload = {};
+        if (payload.text) generatedPayload.text = payload.text;
+        if (payload.targetUser) generatedPayload.url = this.getAvatarURL(payload.targetUser, 'png');
+
+        try {
+            const buffer = await context.client.ameApi.generate(image, generatedPayload);
+            const attachment = new AttachmentBuilder(buffer, {name: '' + image + '.png'});
+
+            const payload = {
+                files: [attachment],
+            };
+            await this.sendReply(context, payload);
+        }
+        catch (err) {
+            this.sendErrorMessage(context, 1, 'Could not generate the image', err.message);
+        }
     }
 }
 

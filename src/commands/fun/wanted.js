@@ -1,6 +1,4 @@
 const Command = require('../Command.js');
-const {EmbedBuilder, AttachmentBuilder} = require('discord.js');
-const {fail} = require('../../utils/emojis.json');
 
 module.exports = class wantedCommand extends Command {
     constructor(client) {
@@ -26,22 +24,6 @@ module.exports = class wantedCommand extends Command {
     }
 
     async handle(targetUser, context) {
-        try {
-            const buffer = await context.client.ameApi.generate('wanted', {
-                url: this.getAvatarURL(targetUser, 'png'),
-            });
-            const payload = {files: [new AttachmentBuilder(buffer, { name:  'wanted.png' })]};
-
-            await this.sendReply(context, payload);
-        }
-        catch (err) {
-            const payload = {
-                embeds: [new EmbedBuilder()
-                    .setTitle('Error')
-                    .setDescription(fail + ' ' + err.message)
-                    .setColor('Red')],
-            };
-            await this.sendReply(context, payload);
-        }
+        await this.sendAmethystEmbed(context, 'wanted', {targetUser});
     }
 };

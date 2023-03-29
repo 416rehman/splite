@@ -69,11 +69,11 @@ module.exports = class shipCommand extends Command {
             const progress = this.client.utils.createProgressBar(shipScore);
             const bg = await jimp.read('./data/ship/bgt.png');
             const av1 = await jimp.read(
-                this.getAvatarURL(member2, 'png', true)
+                this.getAvatarURL(member2, 'png')
             );
 
             const av2 = await jimp.read(
-                this.getAvatarURL(member, 'png', true)
+                this.getAvatarURL(member, 'png')
             );
             const overlay = await jimp.read(
                 shipScore > 50
@@ -135,7 +135,7 @@ module.exports = class shipCommand extends Command {
                             // .attachFiles(new AttachmentBuilder(buff, { name:  'ship.png') })
                             .setImage('attachment://ship.png'),
                     ],
-                    files: [new AttachmentBuilder(buff, { name:  'ship.png' })],
+                    files: [new AttachmentBuilder(buff, {name: 'ship.png'})],
                 };
 
                 this.sendReply(context, payload);

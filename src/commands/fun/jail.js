@@ -1,6 +1,4 @@
 const Command = require('../Command.js');
-const {AttachmentBuilder} = require('discord.js');
-
 
 module.exports = class jailCommand extends Command {
     constructor(client) {
@@ -27,13 +25,7 @@ module.exports = class jailCommand extends Command {
     }
 
     async handle(targetUser, context) {
-        const buffer = await context.client.ameApi.generate('jail', {
-            url: this.getAvatarURL(targetUser, 'png'),
-        });
-        const attachment = new AttachmentBuilder(buffer, { name:  'jail.png' });
+        await this.sendAmethystEmbed(context, 'jail', {targetUser});
 
-        const payload = {
-            files: [attachment],
-        }; await this.sendReply(context, payload);
     }
 };

@@ -1,5 +1,4 @@
 const Command = require('../Command.js');
-const {AttachmentBuilder} = require('discord.js');
 
 
 module.exports = class sniperCommand extends Command {
@@ -27,13 +26,6 @@ module.exports = class sniperCommand extends Command {
     }
 
     async handle(targetUser, context) {
-        const buffer = await context.client.ameApi.generate('sniper', {
-            url: this.getAvatarURL(targetUser, 'png'),
-        });
-        const attachment = new AttachmentBuilder(buffer, { name:  'sniper.png' });
-
-        const payload = {
-            files: [attachment],
-        }; await this.sendReply(context, payload);
+        await this.sendAmethystEmbed(context, 'sniper', {targetUser});
     }
 };
